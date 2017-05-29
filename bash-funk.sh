@@ -22,11 +22,31 @@
 
 if [[ $_ == $0 ]]; then
     echo "The bash-funk script must be sourced"'!'" See the 'source' command."
+    false
 else
     # not using a-zA-Z in regex as this seems to match German umlaute too
     if ! [[ ${BASH_FUNK_PREFIX:-} =~ ^[0-9abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_]*$ ]]; then
-      echo "The variable BASH_FUNK_PREFIX may only contain ASCII alphanumeric characters (a-z, A-Z, 0-9) and underscore (_)"
+        echo "The variable BASH_FUNK_PREFIX may only contain ASCII alphanumeric characters (a-z, A-Z, 0-9) and underscore (_)"
     else
+
+        if [[ $TERM == "cygwin" ]]; then
+            echo -en "\e[1;34m"
+        else
+            echo -en "\e[0;94m"
+        fi
+        echo " _               _            __             _"
+        echo "| |__   __ _ ___| |__        / _|_   _ _ __ | | __"
+        echo "| '_ \ / _\` / __| '_ \  ____| |_| | | | '_ \| |/ /"
+        echo "| |_) | (_| \__ \ | | |/___/|  _| |_| | | | |   <"
+        echo "|_.__/ \__,_|___/_| |_|     |_|  \__,_|_| |_|_|\_\\"
+        if [[ $TERM == "cygwin" ]]; then
+            echo -en "\e[0m"
+            echo -en "\e[1;27m"
+        else
+            echo -en "\e[0;97m"
+        fi
+        echo "                  by Vegard IT GmbH (vegardit.com)"
+        echo -e "\e[0m"
 
         export BASH_FUNK_PREFIX=${BASH_FUNK_PREFIX:-}
 
@@ -62,6 +82,7 @@ else
             PROMPT_COMMAND=${BASH_FUNK_PREFIX}-bash-prompt
         fi
 
+        echo
         echo "You are ready to go. Enjoy"'!'
 
     fi
