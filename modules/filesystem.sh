@@ -538,7 +538,7 @@ else
         fi
 
         if [[ $xargsWorks ]]; then
-            find "$_START_PATH:-" $findOpts -print0 | LC_ALL=C xargs -r -0 -P2 $grepCmd "$_SEARCH_STRING" 2>/dev/null
+            find "$_START_PATH" $findOpts -print0 | LC_ALL=C xargs -r -0 -P2 $grepCmd "$_SEARCH_STRING" 2>/dev/null
         else
             find "$_START_PATH" $findOpts 2>/dev/null | while read file; do
                 LC_ALL=C $grepCmd "$_SEARCH_STRING" "$file" 2>/dev/null
@@ -1024,7 +1024,7 @@ function -sudo-append() {
                 echo 
                 echo "Examples:"
                 echo -e "$ \e[1m${FUNCNAME[0]} /tmp/testfile.cfg 'foo=bar'\e[22m"
-                echo "Appending to [/tmp/testfile.cfg]..."
+                echo -e "Appending to \[/tmp/testfile.cfg\]..."
                 echo 
                 return 0
               ;;
@@ -1040,8 +1040,8 @@ function -sudo-append() {
                 stdout=$(${FUNCNAME[0]} /tmp/testfile.cfg 'foo=bar'); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0]."; return 1; fi
-                regex="^Appending to [/tmp/testfile.cfg]...$"
-                if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Appending to [/tmp/testfile.cfg]...]."; return 1; fi
+                regex="^Appending to \[/tmp/testfile.cfg\]...$"
+                if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Appending to \[/tmp/testfile.cfg\]...]."; return 1; fi
                 echo "--> OK"
                 echo "Testing function [${FUNCNAME[0]}]...DONE"
                 return 0
@@ -1144,7 +1144,7 @@ function -sudo-write() {
                 echo 
                 echo "Examples:"
                 echo -e "$ \e[1m${FUNCNAME[0]} /tmp/testfile.cfg $USER:$USER 'foo=bar'\e[22m"
-                echo "Writing [/tmp/testfile.cfg]..."
+                echo -e "Writing \[/tmp/testfile.cfg\]..."
                 echo 
                 return 0
               ;;
@@ -1160,8 +1160,8 @@ function -sudo-write() {
                 stdout=$(${FUNCNAME[0]} /tmp/testfile.cfg $USER:$USER 'foo=bar'); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0]."; return 1; fi
-                regex="^Writing [/tmp/testfile.cfg]...$"
-                if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Writing [/tmp/testfile.cfg]...]."; return 1; fi
+                regex="^Writing \[/tmp/testfile.cfg\]...$"
+                if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Writing \[/tmp/testfile.cfg\]...]."; return 1; fi
                 echo "--> OK"
                 echo "Testing function [${FUNCNAME[0]}]...DONE"
                 return 0
@@ -1225,7 +1225,7 @@ function -sudo-write() {
     if ! sudo -l -- sh -c &> /dev/null; then echo "Error: User $USER misses required sudo permission for 'sh -c'"; return 1; fi
     if ! hash "sudo" &> /dev/null; then echo "Error: Required command 'sudo' not found on this system."; return 1; fi
     if ! sudo -l -- sh chown &> /dev/null; then echo "Error: User $USER misses required sudo permission for 'sh chown'"; return 1; fi
-     
+    
     ######################################################
 
 echo "Writing [$_FILE_PATH]..."

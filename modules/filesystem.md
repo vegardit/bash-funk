@@ -223,7 +223,7 @@ else
         fi
 
         if [[ $xargsWorks ]]; then
-            find "$_START_PATH:-" $findOpts -print0 | LC_ALL=C xargs -r -0 -P2 $grepCmd "$_SEARCH_STRING" 2>/dev/null
+            find "$_START_PATH" $findOpts -print0 | LC_ALL=C xargs -r -0 -P2 $grepCmd "$_SEARCH_STRING" 2>/dev/null
         else
             find "$_START_PATH" $findOpts 2>/dev/null | while read file; do
                 LC_ALL=C $grepCmd "$_SEARCH_STRING" "$file" 2>/dev/null
@@ -433,7 +433,7 @@ Options:
 
 Examples:
 $ -sudo-append /tmp/testfile.cfg 'foo=bar'
-Appending to [/tmp/testfile.cfg]...
+Appending to \[/tmp/testfile.cfg\]...
 ```
 
 *Implementation:*
@@ -470,7 +470,7 @@ Options:
 
 Examples:
 $ -sudo-write /tmp/testfile.cfg $USER:$USER 'foo=bar'
-Writing [/tmp/testfile.cfg]...
+Writing \[/tmp/testfile.cfg\]...
 ```
 
 *Implementation:*
