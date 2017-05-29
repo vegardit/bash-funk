@@ -1093,7 +1093,7 @@ function -sudo-append() {
     fi
     
     if ! hash "sudo" &> /dev/null; then echo "Error: Required command 'sudo' not found on this system."; return 1; fi
-    if ! sudo -l -- permission &> /dev/null; then echo "Error: User misses required sudo permission for 'tee --append'"; return 1; fi
+    if ! sudo -l -- tee --append &> /dev/null; then echo "Error: User $USER misses required sudo permission for 'tee --append'"; return 1; fi
     
     ######################################################
 
@@ -1222,10 +1222,10 @@ function -sudo-write() {
     fi
     
     if ! hash "sudo" &> /dev/null; then echo "Error: Required command 'sudo' not found on this system."; return 1; fi
-    if ! sudo -l -- permission &> /dev/null; then echo "Error: User misses required sudo permission for 'sh -c'"; return 1; fi
+    if ! sudo -l -- sh -c &> /dev/null; then echo "Error: User $USER misses required sudo permission for 'sh -c'"; return 1; fi
     if ! hash "sudo" &> /dev/null; then echo "Error: Required command 'sudo' not found on this system."; return 1; fi
-    if ! sudo -l -- permission &> /dev/null; then echo "Error: User misses required sudo permission for 'sh chown'"; return 1; fi
-    
+    if ! sudo -l -- sh chown &> /dev/null; then echo "Error: User $USER misses required sudo permission for 'sh chown'"; return 1; fi
+     
     ######################################################
 
 echo "Writing [$_FILE_PATH]..."
