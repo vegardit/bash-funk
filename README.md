@@ -19,7 +19,7 @@ See the markdown files of the different [Bash modules](https://github.com/vegard
 
 check-out the master branch
 ```
-$ git clone https://github.com/vegardit/bash-funk --branch master --single-branch /opt/bash-funk
+$ git clone https://github.com/vegardit/bash-funk --branch master --single-branch ~/bash-funk
 ```
 
 
@@ -27,7 +27,7 @@ $ git clone https://github.com/vegardit/bash-funk --branch master --single-branc
 
 check-out the trunk
 ```
-$ svn checkout https://github.com/vegardit/bash-funk/trunk /opt/bash-funk
+$ svn checkout https://github.com/vegardit/bash-funk/trunk ~/bash-funk
 ```
 
 
@@ -36,7 +36,7 @@ $ svn checkout https://github.com/vegardit/bash-funk/trunk /opt/bash-funk
 Once bash-funk is installed, it can be used by sourcing the `bash-funk.sh` script which will then load all modules.
 
 ```
-$ source /opt/bash-funk/bash-funk.sh
+$ source ~/bash-funk/bash-funk.sh
 ```
 
 All bash-funk functions are prefixed with a `-` by default and support the `--help` option.
@@ -45,6 +45,7 @@ The following environment variables can be set before bash-funk is loaded to cus
 
 - `BASH_FUNK_PREFIX` - if specified, the names of all bash-funk functions will be prefixed with this prefix
 - `BASH_FUNK_PROMPT` - if set to anything else than `"yes"` bash-funk will not install it's Bash prompt function.
+- `BASH_FUNK_DIRS_COLOR` - ANSI color code to be used by the bash prompt to highlight directories, default is `94` which will be transformed to `\e[94m`
 
 
 ## <a name="license"></a>License

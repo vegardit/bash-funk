@@ -17,6 +17,18 @@
 # @author Sebastian Thomschke, Vegard IT GmbH
 # @author Patrick Spielmann, Vegard IT GmbH
 
+if [[ $TERM == "cygwin" ]]; then
+    BASH_FUNK_DIRS_COLOR="${BASH_FUNK_DIRS_COLOR:-1;34}"
+else
+    BASH_FUNK_DIRS_COLOR="${BASH_FUNK_DIRS_COLOR:-0;94}"
+fi
+
+# change the color of directories in ls
+TMP_LS_COLORS=$(dircolors -b)
+eval "${TMP_LS_COLORS/di=01;34/di=${BASH_FUNK_DIRS_COLOR}}" # replace 01;34 with custom colors
+unset TMP_LS_COLORS
+
+
 function -bash-prompt() {
     # Save the return code of last command
     local lastRC=$?
@@ -56,7 +68,7 @@ function -bash-prompt() {
     #local C_FG_RED="\e[31m"
     #local C_FG_GREEN="\e[32m"
     #local C_FG_YELLOW="\e[33m"
-    local C_FG_BLUE="\e[34m"
+    #local C_FG_BLUE="\e[34m"
     #local C_FG_MAGENTA="\e[35m"
     #local C_FG_CYAN="\e[36m"
     local C_FG_WHITE="\e[37m"
@@ -66,7 +78,7 @@ function -bash-prompt() {
     #local C_FG_LIGHT_BLUE="\e[94m"
     #local C_FG_LIGHT_MAGENTA="\e[95m"
     #local C_FG_LIGHT_CYAN="\e[96m"
-    #local C_FG_LIGHT_WHITE="\e[97m"
+    local C_FG_LIGHT_WHITE="\e[97m"
     #local C_BG_BLACK="\e[40m"
     local C_BG_RED="\e[41m"
     local C_BG_GREEN="\e[42m"
@@ -91,8 +103,14 @@ function -bash-prompt() {
         lastRC="[$lastRC] "
         BG="${C_RESET}${C_BG_RED}"
     fi
+    
+    if [[ $TERM == "cygwin" ]]; then
+        local white="$C_FX_BOLD$C_FG_WHITE"
+    else
+        local white="$C_FG_LIGHT_WHITE"
+    fi
 
-    local LINE1="${BG}$lastRC${C_FG_WHITE}${C_FX_BOLD}\u${C_FX_BOLD_OFF} ${C_FG_BLACK}| ${C_FG_WHITE}${C_FX_BOLD}\h${C_FX_BOLD_OFF} ${C_FG_BLACK}| \d \t | \j Jobs | tty #\l ${C_RESET}"
-    local LINE2="[${C_FX_BOLD}${C_FG_BLUE}${pwd}${C_RESET}]"
+    local LINE1="${BG}$lastRC${white}\u${C_RESET}${BG} ${C_FG_BLACK}| ${white}\h${C_RESET}${BG} ${C_FG_BLACK}| \d \t | \j Jobs | tty #\l ${C_RESET}"
+    local LINE2="[\e[${BASH_FUNK_DIRS_COLOR}m${pwd}${C_RESET}]"
     PS1="\n$LINE1\n$LINE2\n$ "
 }
