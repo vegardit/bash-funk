@@ -44,13 +44,13 @@ Type '$fn --help' for more details."
                 echo "  + Command 'python' must be available."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mMEMORY_IN_MB\e[22m (required)"
+                echo -e "  \033[1mMEMORY_IN_MB\033[22m (required)"
                 echo "      Amount of RAM in MB to allocate."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -58,7 +58,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -148,17 +148,17 @@ Type '$fn --help' for more details."
                 echo "Prints the free memory (in KB by default)."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mMEMORY_UNIT\e[22m "
+                echo -e "  \033[1mMEMORY_UNIT\033[22m "
                 echo "      KB, MB or GB."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 echo "12560204"
                 echo 
                 return 0
@@ -166,12 +166,12 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 stdout=$($fn ); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -285,13 +285,13 @@ Type '$fn --help' for more details."
                 echo "Prints memory information from /proc/meminfo."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 echo 
                 echo 
                 return 0
@@ -299,12 +299,12 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 stdout=$($fn ); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -379,17 +379,17 @@ Type '$fn --help' for more details."
                 echo "Prints the total memory (in KB by default)."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mMEMORY_UNIT\e[22m "
+                echo -e "  \033[1mMEMORY_UNIT\033[22m "
                 echo "      KB, MB or GB."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 echo "24689476"
                 echo 
                 return 0
@@ -397,12 +397,12 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 stdout=$($fn ); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -516,9 +516,9 @@ Type '$fn --help' for more details."
                 echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -526,7 +526,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -583,11 +583,11 @@ complete -F _${BASH_FUNK_PREFIX:-}-test-memory -- ${BASH_FUNK_PREFIX:-}-test-mem
 
 function -help-memory() {
 
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-alloc-mem MEMORY_IN_MB\e[0m  -  Allocates the given amount of RAM."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-memfree [MEMORY_UNIT]\e[0m  -  Prints the free memory (in KB by default)."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-meminfo\e[0m  -  Prints memory information from /proc/meminfo."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-memtotal [MEMORY_UNIT]\e[0m  -  Prints the total memory (in KB by default)."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-test-memory\e[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-alloc-mem MEMORY_IN_MB\033[0m  -  Allocates the given amount of RAM."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-memfree [MEMORY_UNIT]\033[0m  -  Prints the free memory (in KB by default)."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-meminfo\033[0m  -  Prints memory information from /proc/meminfo."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-memtotal [MEMORY_UNIT]\033[0m  -  Prints the total memory (in KB by default)."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-memory\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
 

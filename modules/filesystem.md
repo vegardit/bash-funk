@@ -158,18 +158,18 @@ if [[ $_verbose ]]; then
     find "$_START_PATH" $findOpts 2>/dev/null | while read file; do
         local message="Scanning $file ..."
 
-        echo -en "\e[s${message:0:$cols}"
+        echo -en "\033[s${message:0:$cols}"
         if [[ $_unpack && ( $file == *.zip || $file == *.jar || $file == *.ear || $file == *.war ) ]]; then
             if unzip -p "$file" | LC_ALL=C $grepCmd "$_SEARCH_STRING" "$file" 2>&1 >/dev/null; then
-                echo -e "\e[u\e[K$file" || echo -e "$file"
+                echo -e "\033[u\033[K$file" || echo -e "$file"
             else
-                echo -en "\e[u\e[K"
+                echo -en "\033[u\033[K"
             fi
         else
             if LC_ALL=C $grepCmd "$_SEARCH_STRING" "$file" 2>&1 >/dev/null; then
-                echo -e "\e[u\e[K$file" || echo -e "$file"
+                echo -e "\033[u\033[K$file" || echo -e "$file"
             else
-                echo -en "\e[u\e[K"
+                echo -en "\033[u\033[K"
             fi
         fi
     done

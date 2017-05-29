@@ -41,17 +41,17 @@ Type '$fn --help' for more details."
                 echo "Sets bold mode or prints the given text in bold."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mTEXT\e[22m "
+                echo -e "  \033[1mTEXT\033[22m "
                 echo "      The text to print in bold."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --off\e[22m "
+                echo -e "\033[1m    --off\033[22m "
                 echo "        Print the ANSI escape sequence that disables sets bold attribute."
-                echo -e "\e[1m    --on\e[22m "
+                echo -e "\033[1m    --on\033[22m "
                 echo "        Print the ANSI escape sequence that enables sets bold attribute."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -59,7 +59,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -113,13 +113,13 @@ Type '$fn --help' for more details."
     ######################################################
 
 if [[ $_TEXT ]]; then
-    echo -ne "\e[1m$_TEXT\e[22m"
+    echo -ne "\033[1m$_TEXT\033[22m"
 fi
 
 if [[ $_on ]]; then
-    echo -ne "\e[1m"
+    echo -ne "\033[1m"
 elif [[ $_off ]]; then
-    echo -ne "\e[22m"
+    echo -ne "\033[22m"
 fi
 
 }
@@ -155,9 +155,9 @@ Type '$fn --help' for more details."
                 echo "Determines if ANSI color escape sequences are supported by the current terminal."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -165,7 +165,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -254,9 +254,9 @@ Type '$fn --help' for more details."
                 echo "Prints an ANSI escape sequence that reset all ANSI attributes."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -264,7 +264,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -302,7 +302,7 @@ Type '$fn --help' for more details."
     
     ######################################################
 
-echo -ne "\e[0m"
+echo -ne "\033[0m"
 
 }
 function _-ansi-reset() {
@@ -337,17 +337,17 @@ Type '$fn --help' for more details."
                 echo "Sets underlined mode or prints the given text underlined."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mTEXT\e[22m "
+                echo -e "  \033[1mTEXT\033[22m "
                 echo "      The text to print underlined."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --off\e[22m "
+                echo -e "\033[1m    --off\033[22m "
                 echo "        Print the ANSI escape sequence that disables sets underlined attribute."
-                echo -e "\e[1m    --on\e[22m "
+                echo -e "\033[1m    --on\033[22m "
                 echo "        Print the ANSI escape sequence that enables sets underlined attribute."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -355,7 +355,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -409,13 +409,13 @@ Type '$fn --help' for more details."
     ######################################################
 
 if [[ $_TEXT ]]; then
-    echo -ne "\e[4m$_TEXT\e[24m"
+    echo -ne "\033[4m$_TEXT\033[24m"
 fi
 
 if [[ $_on ]]; then
-    echo -ne "\e[4m"
+    echo -ne "\033[4m"
 elif [[ $_off ]]; then
-    echo -ne "\e[24m"
+    echo -ne "\033[24m"
 fi
 
 }
@@ -451,9 +451,9 @@ Type '$fn --help' for more details."
                 echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -461,7 +461,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -518,11 +518,11 @@ complete -F _${BASH_FUNK_PREFIX:-}-test-ansi -- ${BASH_FUNK_PREFIX:-}-test-ansi
 
 function -help-ansi() {
 
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-ansi-bold [TEXT]\e[0m  -  Sets bold mode or prints the given text in bold."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-ansi-colors-supported\e[0m  -  Determines if ANSI color escape sequences are supported by the current terminal."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-ansi-reset\e[0m  -  Prints an ANSI escape sequence that reset all ANSI attributes."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-ansi-ul [TEXT]\e[0m  -  Sets underlined mode or prints the given text underlined."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-test-ansi\e[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-ansi-bold [TEXT]\033[0m  -  Sets bold mode or prints the given text in bold."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-ansi-colors-supported\033[0m  -  Determines if ANSI color escape sequences are supported by the current terminal."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-ansi-reset\033[0m  -  Prints an ANSI escape sequence that reset all ANSI attributes."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-ansi-ul [TEXT]\033[0m  -  Sets underlined mode or prints the given text underlined."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-ansi\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
 

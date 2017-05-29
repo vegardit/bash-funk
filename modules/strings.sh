@@ -41,17 +41,17 @@ Type '$fn --help' for more details."
                 echo "Prints the hexa-decimal representation of the given ASCII string."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mASCII_STRING\e[22m (required)"
+                echo -e "  \033[1mASCII_STRING\033[22m (required)"
                 echo "      The ASCII string to convert."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn XYZ\e[22m"
+                echo -e "$ \033[1m$fn XYZ\033[22m"
                 echo "58595A"
                 echo 
                 return 0
@@ -59,12 +59,12 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn XYZ\e[22m"
+                echo -e "$ \033[1m$fn XYZ\033[22m"
                 stdout=$($fn XYZ); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -148,17 +148,17 @@ Type '$fn --help' for more details."
                 echo "Prints the ASCII representation of the given hexa-decimal string."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mHEX_STRING\e[22m (required)"
+                echo -e "  \033[1mHEX_STRING\033[22m (required)"
                 echo "      The hexa-decimal string to convert."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn 58595A\e[22m"
+                echo -e "$ \033[1m$fn 58595A\033[22m"
                 echo "XYZ"
                 echo 
                 return 0
@@ -166,12 +166,12 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn 58595A\e[22m"
+                echo -e "$ \033[1m$fn 58595A\033[22m"
                 stdout=$($fn 58595A); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -255,17 +255,17 @@ Type '$fn --help' for more details."
                 echo "Prints the normalized form of the given file path."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mPATH\e[22m (required)"
+                echo -e "  \033[1mPATH\033[22m (required)"
                 echo "      The path to normalize."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn a/./b/c/d/../e\e[22m"
+                echo -e "$ \033[1m$fn a/./b/c/d/../e\033[22m"
                 echo "a/b/c/e"
                 echo 
                 return 0
@@ -273,12 +273,12 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn a/./b/c/d/../e\e[22m"
+                echo -e "$ \033[1m$fn a/./b/c/d/../e\033[22m"
                 stdout=$($fn a/./b/c/d/../e); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -369,23 +369,23 @@ Type '$fn --help' for more details."
                 echo "Prints strings joined with the given separator."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mSEPARATOR\e[22m (required)"
+                echo -e "  \033[1mSEPARATOR\033[22m (required)"
                 echo "      The separator to join the strings."
-                echo -e "  \e[1mSTRING\e[22m (0 or more)"
+                echo -e "  \033[1mSTRING\033[22m (0 or more)"
                 echo "      The strings to join."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn , a b c\e[22m"
+                echo -e "$ \033[1m$fn , a b c\033[22m"
                 echo "a,b,c"
-                echo -e "$ \e[1m$fn , a \e[22m"
+                echo -e "$ \033[1m$fn , a \033[22m"
                 echo "a"
-                echo -e "$ \e[1m$fn , \e[22m"
+                echo -e "$ \033[1m$fn , \033[22m"
                 echo 
                 echo 
                 return 0
@@ -393,26 +393,26 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn , a b c\e[22m"
+                echo -e "$ \033[1m$fn , a b c\033[22m"
                 stdout=$($fn , a b c); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^a,b,c$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [a,b,c].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn , a \e[22m"
+                echo -e "$ \033[1m$fn , a \033[22m"
                 stdout=$($fn , a ); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^a$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [a].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn , \e[22m"
+                echo -e "$ \033[1m$fn , \033[22m"
                 stdout=$($fn , ); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -510,17 +510,17 @@ Type '$fn --help' for more details."
                 echo "Prints the given string in lower cases."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mSTRING\e[22m (required)"
+                echo -e "  \033[1mSTRING\033[22m (required)"
                 echo "      The string to convert."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn aBcDeF\e[22m"
+                echo -e "$ \033[1m$fn aBcDeF\033[22m"
                 echo "abcdef"
                 echo 
                 return 0
@@ -528,12 +528,12 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aBcDeF\e[22m"
+                echo -e "$ \033[1m$fn aBcDeF\033[22m"
                 stdout=$($fn aBcDeF); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -617,32 +617,32 @@ Type '$fn --help' for more details."
                 echo "Matches the given string(s) against the regex pattern, prints the found matches and returns true if at least one match was found."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mREGEX_PATTERN\e[22m (required)"
+                echo -e "  \033[1mREGEX_PATTERN\033[22m (required)"
                 echo "      The regex pattern to match the string(s) against."
-                echo -e "  \e[1mSTRING\e[22m (0 or more)"
+                echo -e "  \033[1mSTRING\033[22m (0 or more)"
                 echo "      The strings to check."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m-a, --all\e[22m "
+                echo -e "\033[1m-a, --all\033[22m "
                 echo "        Specifies that all input strings must match."
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\e[1m-v, --verbose\e[22m "
+                echo -e "\033[1m-v, --verbose\033[22m "
                 echo "        Prints additional information during command execution."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn A\e[22m"
+                echo -e "$ \033[1m$fn A\033[22m"
                 echo 
-                echo -e "$ \e[1m$fn A A B\e[22m"
+                echo -e "$ \033[1m$fn A A B\033[22m"
                 echo "A"
-                echo -e "$ \e[1m$fn -v A A B\e[22m"
+                echo -e "$ \033[1m$fn -v A A B\033[22m"
                 echo "match: A
 no match: B"
-                echo -e "$ \e[1m$fn -a A A B\e[22m"
+                echo -e "$ \033[1m$fn -a A A B\033[22m"
                 echo "A"
-                echo -e "$ \e[1m$fn -v -a A A B\e[22m"
+                echo -e "$ \033[1m$fn -v -a A A B\033[22m"
                 echo "match: A
 no match: B"
                 echo 
@@ -651,26 +651,26 @@ no match: B"
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn A\e[22m"
+                echo -e "$ \033[1m$fn A\033[22m"
                 stdout=$($fn A); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn A A B\e[22m"
+                echo -e "$ \033[1m$fn A A B\033[22m"
                 stdout=$($fn A A B); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^A$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [A].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn -v A A B\e[22m"
+                echo -e "$ \033[1m$fn -v A A B\033[22m"
                 stdout=$($fn -v A A B); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -679,14 +679,14 @@ no match: B$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [match: A
 no match: B].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn -a A A B\e[22m"
+                echo -e "$ \033[1m$fn -a A A B\033[22m"
                 stdout=$($fn -a A A B); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^A$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [A].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn -v -a A A B\e[22m"
+                echo -e "$ \033[1m$fn -v -a A A B\033[22m"
                 stdout=$($fn -v -a A A B); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
@@ -819,19 +819,19 @@ Type '$fn --help' for more details."
                 echo "Prints the given string multiple times."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mSTRING\e[22m (required)"
+                echo -e "  \033[1mSTRING\033[22m (required)"
                 echo "      The string to repeat."
-                echo -e "  \e[1mCOUNT\e[22m (required)"
+                echo -e "  \033[1mCOUNT\033[22m (required)"
                 echo "      Number of times to repeat the string."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn a 3\e[22m"
+                echo -e "$ \033[1m$fn a 3\033[22m"
                 echo "aaa"
                 echo 
                 return 0
@@ -839,12 +839,12 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn a 3\e[22m"
+                echo -e "$ \033[1m$fn a 3\033[22m"
                 stdout=$($fn a 3); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -940,17 +940,17 @@ Type '$fn --help' for more details."
                 echo "Prints the given string without leading and trailing spaces."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mSTRING\e[22m (required)"
+                echo -e "  \033[1mSTRING\033[22m (required)"
                 echo "      The string to trim."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn \"  abc  \"\e[22m"
+                echo -e "$ \033[1m$fn \"  abc  \"\033[22m"
                 echo "abc"
                 echo 
                 return 0
@@ -958,12 +958,12 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn "  abc  "\e[22m"
+                echo -e "$ \033[1m$fn "  abc  "\033[22m"
                 stdout=$($fn "  abc  "); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -1047,17 +1047,17 @@ Type '$fn --help' for more details."
                 echo "Prints the given string in upper cases."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mSTRING\e[22m (required)"
+                echo -e "  \033[1mSTRING\033[22m (required)"
                 echo "      The string to convert."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn aBcDeF\e[22m"
+                echo -e "$ \033[1m$fn aBcDeF\033[22m"
                 echo "ABCDEF"
                 echo 
                 return 0
@@ -1065,12 +1065,12 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aBcDeF\e[22m"
+                echo -e "$ \033[1m$fn aBcDeF\033[22m"
                 stdout=$($fn aBcDeF); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -1154,17 +1154,17 @@ Type '$fn --help' for more details."
                 echo "Removes any ANSI escape sequences from the given string or from stdin."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mSTRING\e[22m (0 or more)"
+                echo -e "  \033[1mSTRING\033[22m (0 or more)"
                 echo "      The strings to strip."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn $(echo -e '\e[4mThis is underlined\e[24m')\e[22m"
+                echo -e "$ \033[1m$fn $(echo -e '\033[4mThis is underlined\033[24m')\033[22m"
                 echo "This is underlined"
                 echo 
                 return 0
@@ -1172,13 +1172,13 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn $(echo -e '\e[4mThis is underlined\e[24m')\e[22m"
-                stdout=$($fn $(echo -e '\e[4mThis is underlined\e[24m')); rc=$?
+                echo -e "$ \033[1m$fn $(echo -e '\033[4mThis is underlined\033[24m')\033[22m"
+                stdout=$($fn $(echo -e '\033[4mThis is underlined\033[24m')); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^This is underlined$"
@@ -1272,19 +1272,19 @@ Type '$fn --help' for more details."
                 echo "Prints the substring after the first occurrence of SEARCH_FOR."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mSEARCH_IN\e[22m (required)"
+                echo -e "  \033[1mSEARCH_IN\033[22m (required)"
                 echo "      The string to search."
-                echo -e "  \e[1mSEARCH_FOR\e[22m (required)"
+                echo -e "  \033[1mSEARCH_FOR\033[22m (required)"
                 echo "      The separator."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn 00aa11aa22 aa\e[22m"
+                echo -e "$ \033[1m$fn 00aa11aa22 aa\033[22m"
                 echo "11aa22"
                 echo 
                 return 0
@@ -1292,12 +1292,12 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn 00aa11aa22 aa\e[22m"
+                echo -e "$ \033[1m$fn 00aa11aa22 aa\033[22m"
                 stdout=$($fn 00aa11aa22 aa); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -1390,19 +1390,19 @@ Type '$fn --help' for more details."
                 echo "Prints the substring after the last occurrence of SEARCH_FOR."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mSEARCH_IN\e[22m (required)"
+                echo -e "  \033[1mSEARCH_IN\033[22m (required)"
                 echo "      The string to search."
-                echo -e "  \e[1mSEARCH_FOR\e[22m (required)"
+                echo -e "  \033[1mSEARCH_FOR\033[22m (required)"
                 echo "      The separator."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn 00aa11aa22 aa\e[22m"
+                echo -e "$ \033[1m$fn 00aa11aa22 aa\033[22m"
                 echo "22"
                 echo 
                 return 0
@@ -1410,12 +1410,12 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn 00aa11aa22 aa\e[22m"
+                echo -e "$ \033[1m$fn 00aa11aa22 aa\033[22m"
                 stdout=$($fn 00aa11aa22 aa); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -1508,19 +1508,19 @@ Type '$fn --help' for more details."
                 echo "Prints the substring before the first occurrence of SEARCH_FOR."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mSEARCH_IN\e[22m (required)"
+                echo -e "  \033[1mSEARCH_IN\033[22m (required)"
                 echo "      The string to search."
-                echo -e "  \e[1mSEARCH_FOR\e[22m (required)"
+                echo -e "  \033[1mSEARCH_FOR\033[22m (required)"
                 echo "      The separator."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn 00aa11aa22 aa\e[22m"
+                echo -e "$ \033[1m$fn 00aa11aa22 aa\033[22m"
                 echo "00"
                 echo 
                 return 0
@@ -1528,12 +1528,12 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn 00aa11aa22 aa\e[22m"
+                echo -e "$ \033[1m$fn 00aa11aa22 aa\033[22m"
                 stdout=$($fn 00aa11aa22 aa); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -1626,19 +1626,19 @@ Type '$fn --help' for more details."
                 echo "Prints the substring before the last occurrence of SEARCH_FOR."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mSEARCH_IN\e[22m (required)"
+                echo -e "  \033[1mSEARCH_IN\033[22m (required)"
                 echo "      The string to search."
-                echo -e "  \e[1mSEARCH_FOR\e[22m (required)"
+                echo -e "  \033[1mSEARCH_FOR\033[22m (required)"
                 echo "      The separator."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn 00aa11aa00 aa\e[22m"
+                echo -e "$ \033[1m$fn 00aa11aa00 aa\033[22m"
                 echo "00aa11"
                 echo 
                 return 0
@@ -1646,12 +1646,12 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn 00aa11aa00 aa\e[22m"
+                echo -e "$ \033[1m$fn 00aa11aa00 aa\033[22m"
                 stdout=$($fn 00aa11aa00 aa); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -1744,21 +1744,21 @@ Type '$fn --help' for more details."
                 echo "Prints the substring between PREFIX and SUFFIX."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mSEARCH_IN\e[22m (required)"
+                echo -e "  \033[1mSEARCH_IN\033[22m (required)"
                 echo "      The string to search."
-                echo -e "  \e[1mPREFIX\e[22m (required)"
+                echo -e "  \033[1mPREFIX\033[22m (required)"
                 echo "      The start separator."
-                echo -e "  \e[1mSUFFIX\e[22m (required)"
+                echo -e "  \033[1mSUFFIX\033[22m (required)"
                 echo "      The end separator."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn 00aa11aa22aa00 aa aa\e[22m"
+                echo -e "$ \033[1m$fn 00aa11aa22aa00 aa aa\033[22m"
                 echo "11"
                 echo 
                 return 0
@@ -1766,12 +1766,12 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn 00aa11aa22aa00 aa aa\e[22m"
+                echo -e "$ \033[1m$fn 00aa11aa22aa00 aa aa\033[22m"
                 stdout=$($fn 00aa11aa22aa00 aa aa); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -1874,9 +1874,9 @@ Type '$fn --help' for more details."
                 echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -1884,7 +1884,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -1952,22 +1952,22 @@ complete -F _${BASH_FUNK_PREFIX:-}-test-strings -- ${BASH_FUNK_PREFIX:-}-test-st
 
 function -help-strings() {
 
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-ascii2hex ASCII_STRING\e[0m  -  Prints the hexa-decimal representation of the given ASCII string."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-hex2ascii HEX_STRING\e[0m  -  Prints the ASCII representation of the given hexa-decimal string."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-normalize-path PATH\e[0m  -  Prints the normalized form of the given file path."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-str-join SEPARATOR [STRING]...\e[0m  -  Prints strings joined with the given separator."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-str-lower STRING\e[0m  -  Prints the given string in lower cases."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-str-matches REGEX_PATTERN [STRING]...\e[0m  -  Matches the given string(s) against the regex pattern, prints the found matches and returns true if at least one match was found."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-str-repeat STRING COUNT\e[0m  -  Prints the given string multiple times."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-str-trim STRING\e[0m  -  Prints the given string without leading and trailing spaces."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-str-upper STRING\e[0m  -  Prints the given string in upper cases."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-strip-ansi [STRING]...\e[0m  -  Removes any ANSI escape sequences from the given string or from stdin."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-substr-after SEARCH_IN SEARCH_FOR\e[0m  -  Prints the substring after the first occurrence of SEARCH_FOR."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-substr-after-last SEARCH_IN SEARCH_FOR\e[0m  -  Prints the substring after the last occurrence of SEARCH_FOR."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-substr-before SEARCH_IN SEARCH_FOR\e[0m  -  Prints the substring before the first occurrence of SEARCH_FOR."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-substr-before-last SEARCH_IN SEARCH_FOR\e[0m  -  Prints the substring before the last occurrence of SEARCH_FOR."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-substr-between SEARCH_IN PREFIX SUFFIX\e[0m  -  Prints the substring between PREFIX and SUFFIX."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-test-strings\e[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-ascii2hex ASCII_STRING\033[0m  -  Prints the hexa-decimal representation of the given ASCII string."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-hex2ascii HEX_STRING\033[0m  -  Prints the ASCII representation of the given hexa-decimal string."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-normalize-path PATH\033[0m  -  Prints the normalized form of the given file path."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-str-join SEPARATOR [STRING]...\033[0m  -  Prints strings joined with the given separator."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-str-lower STRING\033[0m  -  Prints the given string in lower cases."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-str-matches REGEX_PATTERN [STRING]...\033[0m  -  Matches the given string(s) against the regex pattern, prints the found matches and returns true if at least one match was found."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-str-repeat STRING COUNT\033[0m  -  Prints the given string multiple times."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-str-trim STRING\033[0m  -  Prints the given string without leading and trailing spaces."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-str-upper STRING\033[0m  -  Prints the given string in upper cases."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-strip-ansi [STRING]...\033[0m  -  Removes any ANSI escape sequences from the given string or from stdin."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-substr-after SEARCH_IN SEARCH_FOR\033[0m  -  Prints the substring after the first occurrence of SEARCH_FOR."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-substr-after-last SEARCH_IN SEARCH_FOR\033[0m  -  Prints the substring after the last occurrence of SEARCH_FOR."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-substr-before SEARCH_IN SEARCH_FOR\033[0m  -  Prints the substring before the first occurrence of SEARCH_FOR."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-substr-before-last SEARCH_IN SEARCH_FOR\033[0m  -  Prints the substring before the last occurrence of SEARCH_FOR."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-substr-between SEARCH_IN PREFIX SUFFIX\033[0m  -  Prints the substring between PREFIX and SUFFIX."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-strings\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
 

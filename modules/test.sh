@@ -41,19 +41,19 @@ Type '$fn --help' for more details."
                 echo "Test function with custom flags."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m-m, --myflag\e[22m "
+                echo -e "\033[1m-m, --myflag\033[22m "
                 echo "        My flag."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 echo "myflag was not specified"
-                echo -e "$ \e[1m$fn --myflag\e[22m"
+                echo -e "$ \033[1m$fn --myflag\033[22m"
                 echo "myflag was specified"
-                echo -e "$ \e[1m$fn -m\e[22m"
+                echo -e "$ \033[1m$fn -m\033[22m"
                 echo "myflag was specified"
                 echo 
                 return 0
@@ -61,26 +61,26 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 stdout=$($fn ); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^myflag was not specified$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [myflag was not specified].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --myflag\e[22m"
+                echo -e "$ \033[1m$fn --myflag\033[22m"
                 stdout=$($fn --myflag); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^myflag was specified$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [myflag was specified].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn -m\e[22m"
+                echo -e "$ \033[1m$fn -m\033[22m"
                 stdout=$($fn -m); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -159,59 +159,59 @@ Type '$fn --help' for more details."
                 echo "Test function with multi value options."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m-a, --aa [...]\e[22m "
+                echo -e "\033[1m-a, --aa [...]\033[22m "
                 echo "        Option a."
-                echo -e "\e[1m-b, --bb v1[,v2..2]\e[22m "
+                echo -e "\033[1m-b, --bb v1[,v2..2]\033[22m "
                 echo "        Option b."
-                echo -e "\e[1m-c, --cc [...]\e[22m "
+                echo -e "\033[1m-c, --cc [...]\033[22m "
                 echo "        Option c."
-                echo -e "\e[1m-d, --dd [...]\e[22m "
+                echo -e "\033[1m-d, --dd [...]\033[22m "
                 echo "        Option d."
-                echo -e "\e[1m-e, --ee [...]\e[22m "
+                echo -e "\033[1m-e, --ee [...]\033[22m "
                 echo "        Option e."
-                echo -e "\e[1m-f, --ff [...]\e[22m "
+                echo -e "\033[1m-f, --ff [...]\033[22m "
                 echo "        Option f."
-                echo -e "\e[1m-g, --gg [...]\e[22m "
+                echo -e "\033[1m-g, --gg [...]\033[22m "
                 echo "        Option g."
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 echo "aa:= bb:= cc:= dd:= ee:= ff:= gg:="
-                echo -e "$ \e[1m$fn --aa\e[22m"
+                echo -e "$ \033[1m$fn --aa\033[22m"
                 echo "aa:true= bb:= cc:= dd:= ee:= ff:= gg:="
-                echo -e "$ \e[1m$fn --aa foo\e[22m"
+                echo -e "$ \033[1m$fn --aa foo\033[22m"
                 echo "aa:true=foo bb:= cc:= dd:= ee:= ff:= gg:="
-                echo -e "$ \e[1m$fn --aa foo,bar\e[22m"
+                echo -e "$ \033[1m$fn --aa foo,bar\033[22m"
                 echo "aa:true=foo bar bb:= cc:= dd:= ee:= ff:= gg:="
-                echo -e "$ \e[1m$fn --bb\e[22m"
+                echo -e "$ \033[1m$fn --bb\033[22m"
                 echo -e "Error: For option --bb a list with at least 1 value\(s\) must be specified. Found: 0."
-                echo -e "$ \e[1m$fn --bb foo,bar\e[22m"
+                echo -e "$ \033[1m$fn --bb foo,bar\033[22m"
                 echo "aa:= bb:true=foo bar cc:= dd:= ee:= ff:= gg:="
-                echo -e "$ \e[1m$fn --bb foo,bar,fb\e[22m"
+                echo -e "$ \033[1m$fn --bb foo,bar,fb\033[22m"
                 echo "Error: For option --bb a list with no more than 2 values must be specified. Found: 3."
-                echo -e "$ \e[1m$fn --cc 123,45\e[22m"
+                echo -e "$ \033[1m$fn --cc 123,45\033[22m"
                 echo "aa:= bb:= cc:true=123 45 dd:= ee:= ff:= gg:="
-                echo -e "$ \e[1m$fn --cc 123,abc\e[22m"
+                echo -e "$ \033[1m$fn --cc 123,abc\033[22m"
                 echo "Error: Value 'abc' for option --cc is not a numeric value."
-                echo -e "$ \e[1m$fn --dd 1,3\e[22m"
+                echo -e "$ \033[1m$fn --dd 1,3\033[22m"
                 echo "aa:= bb:= cc:= dd:true=1 3 ee:= ff:= gg:="
-                echo -e "$ \e[1m$fn --dd 0,3\e[22m"
+                echo -e "$ \033[1m$fn --dd 0,3\033[22m"
                 echo "Error: Value '0' for option --dd is too low. Must be >= 1."
-                echo -e "$ \e[1m$fn --dd 3,6\e[22m"
+                echo -e "$ \033[1m$fn --dd 3,6\033[22m"
                 echo "Error: Value '6' for option --dd is too high. Must be <= 5."
-                echo -e "$ \e[1m$fn --ee A,B\e[22m"
+                echo -e "$ \033[1m$fn --ee A,B\033[22m"
                 echo "aa:= bb:= cc:= dd:= ee:true=A B ff:= gg:="
-                echo -e "$ \e[1m$fn --ee A,F\e[22m"
+                echo -e "$ \033[1m$fn --ee A,F\033[22m"
                 echo -e "Error: Value 'F' for option --ee is not one of the allowed values \[A,B,C\]."
-                echo -e "$ \e[1m$fn --ff foo,bar\e[22m"
+                echo -e "$ \033[1m$fn --ff foo,bar\033[22m"
                 echo "aa:= bb:= cc:= dd:= ee:= ff:true=foo bar gg:="
-                echo -e "$ \e[1m$fn --ff foo,123\e[22m"
+                echo -e "$ \033[1m$fn --ff foo,123\033[22m"
                 echo -e "Error: Value '123' for option --ff does not match required pattern '\[a-z\]\+'."
-                echo -e "$ \e[1m$fn --gg 123\e[22m"
+                echo -e "$ \033[1m$fn --gg 123\033[22m"
                 echo "Error: Value '123' for option --gg must only contain characters a-z."
                 echo 
                 return 0
@@ -219,124 +219,124 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 stdout=$($fn ); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^aa:= bb:= cc:= dd:= ee:= ff:= gg:=$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [aa:= bb:= cc:= dd:= ee:= ff:= gg:=].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --aa\e[22m"
+                echo -e "$ \033[1m$fn --aa\033[22m"
                 stdout=$($fn --aa); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^aa:true= bb:= cc:= dd:= ee:= ff:= gg:=$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [aa:true= bb:= cc:= dd:= ee:= ff:= gg:=].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --aa foo\e[22m"
+                echo -e "$ \033[1m$fn --aa foo\033[22m"
                 stdout=$($fn --aa foo); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^aa:true=foo bb:= cc:= dd:= ee:= ff:= gg:=$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [aa:true=foo bb:= cc:= dd:= ee:= ff:= gg:=].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --aa foo,bar\e[22m"
+                echo -e "$ \033[1m$fn --aa foo,bar\033[22m"
                 stdout=$($fn --aa foo,bar); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^aa:true=foo bar bb:= cc:= dd:= ee:= ff:= gg:=$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [aa:true=foo bar bb:= cc:= dd:= ee:= ff:= gg:=].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --bb\e[22m"
+                echo -e "$ \033[1m$fn --bb\033[22m"
                 stdout=$($fn --bb); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: For option --bb a list with at least 1 value\(s\) must be specified. Found: 0.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: For option --bb a list with at least 1 value\(s\) must be specified. Found: 0.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --bb foo,bar\e[22m"
+                echo -e "$ \033[1m$fn --bb foo,bar\033[22m"
                 stdout=$($fn --bb foo,bar); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^aa:= bb:true=foo bar cc:= dd:= ee:= ff:= gg:=$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [aa:= bb:true=foo bar cc:= dd:= ee:= ff:= gg:=].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --bb foo,bar,fb\e[22m"
+                echo -e "$ \033[1m$fn --bb foo,bar,fb\033[22m"
                 stdout=$($fn --bb foo,bar,fb); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: For option --bb a list with no more than 2 values must be specified. Found: 3.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: For option --bb a list with no more than 2 values must be specified. Found: 3.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --cc 123,45\e[22m"
+                echo -e "$ \033[1m$fn --cc 123,45\033[22m"
                 stdout=$($fn --cc 123,45); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^aa:= bb:= cc:true=123 45 dd:= ee:= ff:= gg:=$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [aa:= bb:= cc:true=123 45 dd:= ee:= ff:= gg:=].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --cc 123,abc\e[22m"
+                echo -e "$ \033[1m$fn --cc 123,abc\033[22m"
                 stdout=$($fn --cc 123,abc); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value 'abc' for option --cc is not a numeric value.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value 'abc' for option --cc is not a numeric value.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --dd 1,3\e[22m"
+                echo -e "$ \033[1m$fn --dd 1,3\033[22m"
                 stdout=$($fn --dd 1,3); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^aa:= bb:= cc:= dd:true=1 3 ee:= ff:= gg:=$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [aa:= bb:= cc:= dd:true=1 3 ee:= ff:= gg:=].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --dd 0,3\e[22m"
+                echo -e "$ \033[1m$fn --dd 0,3\033[22m"
                 stdout=$($fn --dd 0,3); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value '0' for option --dd is too low. Must be >= 1.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value '0' for option --dd is too low. Must be >= 1.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --dd 3,6\e[22m"
+                echo -e "$ \033[1m$fn --dd 3,6\033[22m"
                 stdout=$($fn --dd 3,6); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value '6' for option --dd is too high. Must be <= 5.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value '6' for option --dd is too high. Must be <= 5.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --ee A,B\e[22m"
+                echo -e "$ \033[1m$fn --ee A,B\033[22m"
                 stdout=$($fn --ee A,B); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^aa:= bb:= cc:= dd:= ee:true=A B ff:= gg:=$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [aa:= bb:= cc:= dd:= ee:true=A B ff:= gg:=].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --ee A,F\e[22m"
+                echo -e "$ \033[1m$fn --ee A,F\033[22m"
                 stdout=$($fn --ee A,F); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value 'F' for option --ee is not one of the allowed values \[A,B,C\].$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value 'F' for option --ee is not one of the allowed values \[A,B,C\].].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --ff foo,bar\e[22m"
+                echo -e "$ \033[1m$fn --ff foo,bar\033[22m"
                 stdout=$($fn --ff foo,bar); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^aa:= bb:= cc:= dd:= ee:= ff:true=foo bar gg:=$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [aa:= bb:= cc:= dd:= ee:= ff:true=foo bar gg:=].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --ff foo,123\e[22m"
+                echo -e "$ \033[1m$fn --ff foo,123\033[22m"
                 stdout=$($fn --ff foo,123); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value '123' for option --ff does not match required pattern '\[a-z\]\+'.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value '123' for option --ff does not match required pattern '\[a-z\]\+'.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --gg 123\e[22m"
+                echo -e "$ \033[1m$fn --gg 123\033[22m"
                 stdout=$($fn --gg 123); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
@@ -534,55 +534,55 @@ Type '$fn --help' for more details."
                 echo "Test function with single value parameters."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mAA\e[22m (2 to 2required)"
+                echo -e "  \033[1mAA\033[22m (2 to 2required)"
                 echo "      Param AA."
-                echo -e "  \e[1mBB\e[22m (2 to 2required)"
+                echo -e "  \033[1mBB\033[22m (2 to 2required)"
                 echo "      Param BB."
-                echo -e "  \e[1mCC\e[22m (2 to 2required)"
+                echo -e "  \033[1mCC\033[22m (2 to 2required)"
                 echo "      Param CC."
-                echo -e "  \e[1mDD\e[22m (2 to 2required)"
+                echo -e "  \033[1mDD\033[22m (2 to 2required)"
                 echo "      Param DD."
-                echo -e "  \e[1mEE\e[22m (2 to 2required)"
+                echo -e "  \033[1mEE\033[22m (2 to 2required)"
                 echo "      Param EE."
-                echo -e "  \e[1mFF\e[22m (0 or more)"
+                echo -e "  \033[1mFF\033[22m (0 or more)"
                 echo "      Param FF."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 echo "Error: For parameter AA exactly 2 values must be specified. Found: 0."
-                echo -e "$ \e[1m$fn aa\e[22m"
+                echo -e "$ \033[1m$fn aa\033[22m"
                 echo "Error: For parameter AA exactly 2 values must be specified. Found: 1."
-                echo -e "$ \e[1m$fn aa aa\e[22m"
+                echo -e "$ \033[1m$fn aa aa\033[22m"
                 echo "Error: For parameter BB exactly 2 values must be specified. Found: 0."
-                echo -e "$ \e[1m$fn aa aa 12\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12\033[22m"
                 echo "Error: For parameter BB exactly 2 values must be specified. Found: 1."
-                echo -e "$ \e[1m$fn aa aa 12 bb\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12 bb\033[22m"
                 echo "Error: Value 'bb' for parameter BB is not a numeric value."
-                echo -e "$ \e[1m$fn aa aa 12 34\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12 34\033[22m"
                 echo "Error: For parameter CC exactly 2 values must be specified. Found: 0."
-                echo -e "$ \e[1m$fn aa aa 12 34 0 3\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12 34 0 3\033[22m"
                 echo "Error: Value '0' for parameter CC is too low. Must be >= 1."
-                echo -e "$ \e[1m$fn aa aa 12 34 1 6\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12 34 1 6\033[22m"
                 echo "Error: Value '6' for parameter CC is too high. Must be <= 5."
-                echo -e "$ \e[1m$fn aa aa 12 34 1 5\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12 34 1 5\033[22m"
                 echo "Error: For parameter DD exactly 2 values must be specified. Found: 0."
-                echo -e "$ \e[1m$fn aa aa 12 34 1 5 A G\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12 34 1 5 A G\033[22m"
                 echo -e "Error: Value 'G' for parameter DD is not one of the allowed values \[A,B,C\]."
-                echo -e "$ \e[1m$fn aa aa 12 34 1 5 A B\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12 34 1 5 A B\033[22m"
                 echo "Error: For parameter EE exactly 2 values must be specified. Found: 0."
-                echo -e "$ \e[1m$fn aa aa 12 34 1 5 A B foo 123\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12 34 1 5 A B foo 123\033[22m"
                 echo -e "Error: Value '123' for parameter EE does not match required pattern '\[a-z\]\+'."
-                echo -e "$ \e[1m$fn aa aa 12 34 1 5 A B foo bar\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12 34 1 5 A B foo bar\033[22m"
                 echo "AA:aa aa BB:12 34 CC:1 5 DD:A B EE:foo bar FF:"
-                echo -e "$ \e[1m$fn aa aa 12 34 1 5 A B foo bar 123\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12 34 1 5 A B foo bar 123\033[22m"
                 echo "Error: Value '123' for parameter FF must only contain characters a-z."
-                echo -e "$ \e[1m$fn aa aa 12 34 1 5 A B foo bar a b c d e f\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12 34 1 5 A B foo bar a b c d e f\033[22m"
                 echo "AA:aa aa BB:12 34 CC:1 5 DD:A B EE:foo bar FF:a b c d e f"
                 echo 
                 return 0
@@ -590,110 +590,110 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 stdout=$($fn ); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: For parameter AA exactly 2 values must be specified. Found: 0.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: For parameter AA exactly 2 values must be specified. Found: 0.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa\e[22m"
+                echo -e "$ \033[1m$fn aa\033[22m"
                 stdout=$($fn aa); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: For parameter AA exactly 2 values must be specified. Found: 1.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: For parameter AA exactly 2 values must be specified. Found: 1.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa aa\e[22m"
+                echo -e "$ \033[1m$fn aa aa\033[22m"
                 stdout=$($fn aa aa); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: For parameter BB exactly 2 values must be specified. Found: 0.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: For parameter BB exactly 2 values must be specified. Found: 0.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa aa 12\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12\033[22m"
                 stdout=$($fn aa aa 12); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: For parameter BB exactly 2 values must be specified. Found: 1.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: For parameter BB exactly 2 values must be specified. Found: 1.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa aa 12 bb\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12 bb\033[22m"
                 stdout=$($fn aa aa 12 bb); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value 'bb' for parameter BB is not a numeric value.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value 'bb' for parameter BB is not a numeric value.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa aa 12 34\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12 34\033[22m"
                 stdout=$($fn aa aa 12 34); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: For parameter CC exactly 2 values must be specified. Found: 0.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: For parameter CC exactly 2 values must be specified. Found: 0.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa aa 12 34 0 3\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12 34 0 3\033[22m"
                 stdout=$($fn aa aa 12 34 0 3); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value '0' for parameter CC is too low. Must be >= 1.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value '0' for parameter CC is too low. Must be >= 1.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa aa 12 34 1 6\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12 34 1 6\033[22m"
                 stdout=$($fn aa aa 12 34 1 6); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value '6' for parameter CC is too high. Must be <= 5.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value '6' for parameter CC is too high. Must be <= 5.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa aa 12 34 1 5\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12 34 1 5\033[22m"
                 stdout=$($fn aa aa 12 34 1 5); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: For parameter DD exactly 2 values must be specified. Found: 0.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: For parameter DD exactly 2 values must be specified. Found: 0.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa aa 12 34 1 5 A G\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12 34 1 5 A G\033[22m"
                 stdout=$($fn aa aa 12 34 1 5 A G); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value 'G' for parameter DD is not one of the allowed values \[A,B,C\].$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value 'G' for parameter DD is not one of the allowed values \[A,B,C\].].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa aa 12 34 1 5 A B\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12 34 1 5 A B\033[22m"
                 stdout=$($fn aa aa 12 34 1 5 A B); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: For parameter EE exactly 2 values must be specified. Found: 0.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: For parameter EE exactly 2 values must be specified. Found: 0.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa aa 12 34 1 5 A B foo 123\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12 34 1 5 A B foo 123\033[22m"
                 stdout=$($fn aa aa 12 34 1 5 A B foo 123); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value '123' for parameter EE does not match required pattern '\[a-z\]\+'.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value '123' for parameter EE does not match required pattern '\[a-z\]\+'.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa aa 12 34 1 5 A B foo bar\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12 34 1 5 A B foo bar\033[22m"
                 stdout=$($fn aa aa 12 34 1 5 A B foo bar); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^AA:aa aa BB:12 34 CC:1 5 DD:A B EE:foo bar FF:$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [AA:aa aa BB:12 34 CC:1 5 DD:A B EE:foo bar FF:].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa aa 12 34 1 5 A B foo bar 123\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12 34 1 5 A B foo bar 123\033[22m"
                 stdout=$($fn aa aa 12 34 1 5 A B foo bar 123); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value '123' for parameter FF must only contain characters a-z.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value '123' for parameter FF must only contain characters a-z.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa aa 12 34 1 5 A B foo bar a b c d e f\e[22m"
+                echo -e "$ \033[1m$fn aa aa 12 34 1 5 A B foo bar a b c d e f\033[22m"
                 stdout=$($fn aa aa 12 34 1 5 A B foo bar a b c d e f); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -853,31 +853,31 @@ Type '$fn --help' for more details."
                 echo "Test function with single value parameters."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mAA\e[22m (0 to 2)"
+                echo -e "  \033[1mAA\033[22m (0 to 2)"
                 echo "      Param AA."
-                echo -e "  \e[1mBB\e[22m (2 to 2required)"
+                echo -e "  \033[1mBB\033[22m (2 to 2required)"
                 echo "      Param BB."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 echo "Error: For parameter BB exactly 2 values must be specified. Found: 0."
-                echo -e "$ \e[1m$fn bb\e[22m"
+                echo -e "$ \033[1m$fn bb\033[22m"
                 echo "Error: For parameter BB exactly 2 values must be specified. Found: 1."
-                echo -e "$ \e[1m$fn 12 bb\e[22m"
+                echo -e "$ \033[1m$fn 12 bb\033[22m"
                 echo "Error: Value 'bb' for parameter BB is not a numeric value."
-                echo -e "$ \e[1m$fn 12 34\e[22m"
+                echo -e "$ \033[1m$fn 12 34\033[22m"
                 echo "AA: BB:12 34"
-                echo -e "$ \e[1m$fn aa 12 34\e[22m"
+                echo -e "$ \033[1m$fn aa 12 34\033[22m"
                 echo "Error: Value 'aa' for parameter AA is not a numeric value."
-                echo -e "$ \e[1m$fn 00 aa 12 34\e[22m"
+                echo -e "$ \033[1m$fn 00 aa 12 34\033[22m"
                 echo "Error: Value 'aa' for parameter AA is not a numeric value."
-                echo -e "$ \e[1m$fn 12 34 bb 12 34\e[22m"
+                echo -e "$ \033[1m$fn 12 34 bb 12 34\033[22m"
                 echo "${FUNCNAME[0]}: too many parameters: '34'.*"
                 echo 
                 return 0
@@ -885,54 +885,54 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 stdout=$($fn ); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: For parameter BB exactly 2 values must be specified. Found: 0.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: For parameter BB exactly 2 values must be specified. Found: 0.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn bb\e[22m"
+                echo -e "$ \033[1m$fn bb\033[22m"
                 stdout=$($fn bb); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: For parameter BB exactly 2 values must be specified. Found: 1.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: For parameter BB exactly 2 values must be specified. Found: 1.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn 12 bb\e[22m"
+                echo -e "$ \033[1m$fn 12 bb\033[22m"
                 stdout=$($fn 12 bb); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value 'bb' for parameter BB is not a numeric value.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value 'bb' for parameter BB is not a numeric value.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn 12 34\e[22m"
+                echo -e "$ \033[1m$fn 12 34\033[22m"
                 stdout=$($fn 12 34); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^AA: BB:12 34$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [AA: BB:12 34].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa 12 34\e[22m"
+                echo -e "$ \033[1m$fn aa 12 34\033[22m"
                 stdout=$($fn aa 12 34); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value 'aa' for parameter AA is not a numeric value.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value 'aa' for parameter AA is not a numeric value.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn 00 aa 12 34\e[22m"
+                echo -e "$ \033[1m$fn 00 aa 12 34\033[22m"
                 stdout=$($fn 00 aa 12 34); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value 'aa' for parameter AA is not a numeric value.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value 'aa' for parameter AA is not a numeric value.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn 12 34 bb 12 34\e[22m"
+                echo -e "$ \033[1m$fn 12 34 bb 12 34\033[22m"
                 stdout=$($fn 12 34 bb 12 34); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
@@ -1042,23 +1042,23 @@ Type '$fn --help' for more details."
                 echo "Test function with no arguments."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\e[1m-v, --verbose\e[22m "
+                echo -e "\033[1m-v, --verbose\033[22m "
                 echo "        Prints additional information during command execution."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 echo 
-                echo -e "$ \e[1m$fn --verbose\e[22m"
+                echo -e "$ \033[1m$fn --verbose\033[22m"
                 echo "verbose mode"
-                echo -e "$ \e[1m$fn -f\e[22m"
+                echo -e "$ \033[1m$fn -f\033[22m"
                 echo "${FUNCNAME[0]}: invalid option: '-f'.*"
-                echo -e "$ \e[1m$fn --foo\e[22m"
+                echo -e "$ \033[1m$fn --foo\033[22m"
                 echo "${FUNCNAME[0]}: invalid option: '--foo'.*"
-                echo -e "$ \e[1m$fn FOO\e[22m"
+                echo -e "$ \033[1m$fn FOO\033[22m"
                 echo "${FUNCNAME[0]}: too many parameters: 'FOO'.*"
                 echo 
                 return 0
@@ -1066,40 +1066,40 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 stdout=$($fn ); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --verbose\e[22m"
+                echo -e "$ \033[1m$fn --verbose\033[22m"
                 stdout=$($fn --verbose); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^verbose mode$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [verbose mode].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn -f\e[22m"
+                echo -e "$ \033[1m$fn -f\033[22m"
                 stdout=$($fn -f); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^${FUNCNAME[0]}: invalid option: '-f'.*$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [${FUNCNAME[0]}: invalid option: '-f'.*].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --foo\e[22m"
+                echo -e "$ \033[1m$fn --foo\033[22m"
                 stdout=$($fn --foo); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^${FUNCNAME[0]}: invalid option: '--foo'.*$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [${FUNCNAME[0]}: invalid option: '--foo'.*].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn FOO\e[22m"
+                echo -e "$ \033[1m$fn FOO\033[22m"
                 stdout=$($fn FOO); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
@@ -1181,15 +1181,15 @@ Type '$fn --help' for more details."
                 echo "  + Command 'hash' must be available."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\e[1m-v, --verbose\e[22m "
+                echo -e "\033[1m-v, --verbose\033[22m "
                 echo "        Prints additional information during command execution."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 echo 
                 echo 
                 return 0
@@ -1197,12 +1197,12 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 stdout=$($fn ); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -1285,15 +1285,15 @@ Type '$fn --help' for more details."
                 echo "  + Command 'some_random_nonexistent_command' must be available."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\e[1m-v, --verbose\e[22m "
+                echo -e "\033[1m-v, --verbose\033[22m "
                 echo "        Prints additional information during command execution."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 echo "Error: Required command 'some_random_nonexistent_command' not found on this system."
                 echo 
                 return 0
@@ -1301,12 +1301,12 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 stdout=$($fn ); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
@@ -1386,55 +1386,55 @@ Type '$fn --help' for more details."
                 echo "Test function with single value options."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m-a, --aa [v]\e[22m "
+                echo -e "\033[1m-a, --aa [v]\033[22m "
                 echo "        Option a."
-                echo -e "\e[1m-b, --bb v\e[22m "
+                echo -e "\033[1m-b, --bb v\033[22m "
                 echo "        Option b."
-                echo -e "\e[1m-c, --cc v\e[22m "
+                echo -e "\033[1m-c, --cc v\033[22m "
                 echo "        Option c."
-                echo -e "\e[1m-d, --dd v\e[22m "
+                echo -e "\033[1m-d, --dd v\033[22m "
                 echo "        Option d."
-                echo -e "\e[1m-e, --ee v\e[22m "
+                echo -e "\033[1m-e, --ee v\033[22m "
                 echo "        Option e."
-                echo -e "\e[1m-f, --ff v\e[22m "
+                echo -e "\033[1m-f, --ff v\033[22m "
                 echo "        Option f."
-                echo -e "\e[1m-g, --gg v\e[22m "
+                echo -e "\033[1m-g, --gg v\033[22m "
                 echo "        Option g."
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 echo "aa:= bb:= cc:= dd:= ee:= ff:= gg:="
-                echo -e "$ \e[1m$fn --aa\e[22m"
+                echo -e "$ \033[1m$fn --aa\033[22m"
                 echo "aa:true= bb:= cc:= dd:= ee:= ff:= gg:="
-                echo -e "$ \e[1m$fn --aa foo\e[22m"
+                echo -e "$ \033[1m$fn --aa foo\033[22m"
                 echo "aa:true=foo bb:= cc:= dd:= ee:= ff:= gg:="
-                echo -e "$ \e[1m$fn --bb\e[22m"
+                echo -e "$ \033[1m$fn --bb\033[22m"
                 echo "Error: Value v for option --bb must be specified."
-                echo -e "$ \e[1m$fn --bb foo\e[22m"
+                echo -e "$ \033[1m$fn --bb foo\033[22m"
                 echo "aa:= bb:true=foo cc:= dd:= ee:= ff:= gg:="
-                echo -e "$ \e[1m$fn --cc 12345\e[22m"
+                echo -e "$ \033[1m$fn --cc 12345\033[22m"
                 echo "aa:= bb:= cc:true=12345 dd:= ee:= ff:= gg:="
-                echo -e "$ \e[1m$fn --cc abc\e[22m"
+                echo -e "$ \033[1m$fn --cc abc\033[22m"
                 echo "Error: Value 'abc' for option --cc is not a numeric value."
-                echo -e "$ \e[1m$fn --dd 3\e[22m"
+                echo -e "$ \033[1m$fn --dd 3\033[22m"
                 echo "aa:= bb:= cc:= dd:true=3 ee:= ff:= gg:="
-                echo -e "$ \e[1m$fn --dd 0\e[22m"
+                echo -e "$ \033[1m$fn --dd 0\033[22m"
                 echo "Error: Value '0' for option --dd is too low. Must be >= 1."
-                echo -e "$ \e[1m$fn --dd 6\e[22m"
+                echo -e "$ \033[1m$fn --dd 6\033[22m"
                 echo "Error: Value '6' for option --dd is too high. Must be <= 5."
-                echo -e "$ \e[1m$fn --ee A\e[22m"
+                echo -e "$ \033[1m$fn --ee A\033[22m"
                 echo "aa:= bb:= cc:= dd:= ee:true=A ff:= gg:="
-                echo -e "$ \e[1m$fn --ee F\e[22m"
+                echo -e "$ \033[1m$fn --ee F\033[22m"
                 echo -e "Error: Value 'F' for option --ee is not one of the allowed values \[A,B,C\]."
-                echo -e "$ \e[1m$fn --ff foo\e[22m"
+                echo -e "$ \033[1m$fn --ff foo\033[22m"
                 echo "aa:= bb:= cc:= dd:= ee:= ff:true=foo gg:="
-                echo -e "$ \e[1m$fn --ff 123\e[22m"
+                echo -e "$ \033[1m$fn --ff 123\033[22m"
                 echo -e "Error: Value '123' for option --ff does not match required pattern '\[a-z\]\+'."
-                echo -e "$ \e[1m$fn --gg 123\e[22m"
+                echo -e "$ \033[1m$fn --gg 123\033[22m"
                 echo "Error: Value '123' for option --gg must only contain characters a-z."
                 echo 
                 return 0
@@ -1442,110 +1442,110 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 stdout=$($fn ); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^aa:= bb:= cc:= dd:= ee:= ff:= gg:=$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [aa:= bb:= cc:= dd:= ee:= ff:= gg:=].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --aa\e[22m"
+                echo -e "$ \033[1m$fn --aa\033[22m"
                 stdout=$($fn --aa); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^aa:true= bb:= cc:= dd:= ee:= ff:= gg:=$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [aa:true= bb:= cc:= dd:= ee:= ff:= gg:=].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --aa foo\e[22m"
+                echo -e "$ \033[1m$fn --aa foo\033[22m"
                 stdout=$($fn --aa foo); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^aa:true=foo bb:= cc:= dd:= ee:= ff:= gg:=$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [aa:true=foo bb:= cc:= dd:= ee:= ff:= gg:=].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --bb\e[22m"
+                echo -e "$ \033[1m$fn --bb\033[22m"
                 stdout=$($fn --bb); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value v for option --bb must be specified.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value v for option --bb must be specified.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --bb foo\e[22m"
+                echo -e "$ \033[1m$fn --bb foo\033[22m"
                 stdout=$($fn --bb foo); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^aa:= bb:true=foo cc:= dd:= ee:= ff:= gg:=$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [aa:= bb:true=foo cc:= dd:= ee:= ff:= gg:=].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --cc 12345\e[22m"
+                echo -e "$ \033[1m$fn --cc 12345\033[22m"
                 stdout=$($fn --cc 12345); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^aa:= bb:= cc:true=12345 dd:= ee:= ff:= gg:=$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [aa:= bb:= cc:true=12345 dd:= ee:= ff:= gg:=].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --cc abc\e[22m"
+                echo -e "$ \033[1m$fn --cc abc\033[22m"
                 stdout=$($fn --cc abc); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value 'abc' for option --cc is not a numeric value.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value 'abc' for option --cc is not a numeric value.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --dd 3\e[22m"
+                echo -e "$ \033[1m$fn --dd 3\033[22m"
                 stdout=$($fn --dd 3); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^aa:= bb:= cc:= dd:true=3 ee:= ff:= gg:=$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [aa:= bb:= cc:= dd:true=3 ee:= ff:= gg:=].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --dd 0\e[22m"
+                echo -e "$ \033[1m$fn --dd 0\033[22m"
                 stdout=$($fn --dd 0); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value '0' for option --dd is too low. Must be >= 1.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value '0' for option --dd is too low. Must be >= 1.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --dd 6\e[22m"
+                echo -e "$ \033[1m$fn --dd 6\033[22m"
                 stdout=$($fn --dd 6); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value '6' for option --dd is too high. Must be <= 5.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value '6' for option --dd is too high. Must be <= 5.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --ee A\e[22m"
+                echo -e "$ \033[1m$fn --ee A\033[22m"
                 stdout=$($fn --ee A); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^aa:= bb:= cc:= dd:= ee:true=A ff:= gg:=$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [aa:= bb:= cc:= dd:= ee:true=A ff:= gg:=].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --ee F\e[22m"
+                echo -e "$ \033[1m$fn --ee F\033[22m"
                 stdout=$($fn --ee F); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value 'F' for option --ee is not one of the allowed values \[A,B,C\].$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value 'F' for option --ee is not one of the allowed values \[A,B,C\].].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --ff foo\e[22m"
+                echo -e "$ \033[1m$fn --ff foo\033[22m"
                 stdout=$($fn --ff foo); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^aa:= bb:= cc:= dd:= ee:= ff:true=foo gg:=$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [aa:= bb:= cc:= dd:= ee:= ff:true=foo gg:=].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --ff 123\e[22m"
+                echo -e "$ \033[1m$fn --ff 123\033[22m"
                 stdout=$($fn --ff 123); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value '123' for option --ff does not match required pattern '\[a-z\]\+'.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value '123' for option --ff does not match required pattern '\[a-z\]\+'.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn --gg 123\e[22m"
+                echo -e "$ \033[1m$fn --gg 123\033[22m"
                 stdout=$($fn --gg 123); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
@@ -1730,51 +1730,51 @@ Type '$fn --help' for more details."
                 echo "Test function with single value parameters."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mAA\e[22m (required)"
+                echo -e "  \033[1mAA\033[22m (required)"
                 echo "      Param AA."
-                echo -e "  \e[1mBB\e[22m (required)"
+                echo -e "  \033[1mBB\033[22m (required)"
                 echo "      Param BB."
-                echo -e "  \e[1mCC\e[22m (required)"
+                echo -e "  \033[1mCC\033[22m (required)"
                 echo "      Param CC."
-                echo -e "  \e[1mDD\e[22m (required)"
+                echo -e "  \033[1mDD\033[22m (required)"
                 echo "      Param DD."
-                echo -e "  \e[1mEE\e[22m (required)"
+                echo -e "  \033[1mEE\033[22m (required)"
                 echo "      Param EE."
-                echo -e "  \e[1mFF\e[22m "
+                echo -e "  \033[1mFF\033[22m "
                 echo "      Param FF."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 echo "Error: Parameter AA must be specified."
-                echo -e "$ \e[1m$fn aa\e[22m"
+                echo -e "$ \033[1m$fn aa\033[22m"
                 echo "Error: Parameter BB must be specified."
-                echo -e "$ \e[1m$fn aa bb\e[22m"
+                echo -e "$ \033[1m$fn aa bb\033[22m"
                 echo "Error: Value 'bb' for parameter BB is not a numeric value."
-                echo -e "$ \e[1m$fn aa 12\e[22m"
+                echo -e "$ \033[1m$fn aa 12\033[22m"
                 echo "Error: Parameter CC must be specified."
-                echo -e "$ \e[1m$fn aa 12 0\e[22m"
+                echo -e "$ \033[1m$fn aa 12 0\033[22m"
                 echo "Error: Value '0' for parameter CC is too low. Must be >= 1."
-                echo -e "$ \e[1m$fn aa 12 6\e[22m"
+                echo -e "$ \033[1m$fn aa 12 6\033[22m"
                 echo "Error: Value '6' for parameter CC is too high. Must be <= 5."
-                echo -e "$ \e[1m$fn aa 12 5\e[22m"
+                echo -e "$ \033[1m$fn aa 12 5\033[22m"
                 echo "Error: Parameter DD must be specified."
-                echo -e "$ \e[1m$fn aa 12 5 G\e[22m"
+                echo -e "$ \033[1m$fn aa 12 5 G\033[22m"
                 echo -e "Error: Value 'G' for parameter DD is not one of the allowed values \[A,B,C\]."
-                echo -e "$ \e[1m$fn aa 12 5 A\e[22m"
+                echo -e "$ \033[1m$fn aa 12 5 A\033[22m"
                 echo "Error: Parameter EE must be specified."
-                echo -e "$ \e[1m$fn aa 12 5 A 123\e[22m"
+                echo -e "$ \033[1m$fn aa 12 5 A 123\033[22m"
                 echo -e "Error: Value '123' for parameter EE does not match required pattern '\[a-z\]\+'."
-                echo -e "$ \e[1m$fn aa 12 5 A foo\e[22m"
+                echo -e "$ \033[1m$fn aa 12 5 A foo\033[22m"
                 echo "AA:aa BB:12 CC:5 DD:A EE:foo FF:"
-                echo -e "$ \e[1m$fn aa 12 5 A foo 123\e[22m"
+                echo -e "$ \033[1m$fn aa 12 5 A foo 123\033[22m"
                 echo "Error: Value '123' for parameter FF must only contain characters a-z."
-                echo -e "$ \e[1m$fn aa 12 5 A foo bar\e[22m"
+                echo -e "$ \033[1m$fn aa 12 5 A foo bar\033[22m"
                 echo "AA:aa BB:12 CC:5 DD:A EE:foo FF:bar"
                 echo 
                 return 0
@@ -1782,96 +1782,96 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 stdout=$($fn ); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Parameter AA must be specified.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Parameter AA must be specified.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa\e[22m"
+                echo -e "$ \033[1m$fn aa\033[22m"
                 stdout=$($fn aa); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Parameter BB must be specified.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Parameter BB must be specified.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa bb\e[22m"
+                echo -e "$ \033[1m$fn aa bb\033[22m"
                 stdout=$($fn aa bb); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value 'bb' for parameter BB is not a numeric value.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value 'bb' for parameter BB is not a numeric value.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa 12\e[22m"
+                echo -e "$ \033[1m$fn aa 12\033[22m"
                 stdout=$($fn aa 12); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Parameter CC must be specified.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Parameter CC must be specified.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa 12 0\e[22m"
+                echo -e "$ \033[1m$fn aa 12 0\033[22m"
                 stdout=$($fn aa 12 0); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value '0' for parameter CC is too low. Must be >= 1.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value '0' for parameter CC is too low. Must be >= 1.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa 12 6\e[22m"
+                echo -e "$ \033[1m$fn aa 12 6\033[22m"
                 stdout=$($fn aa 12 6); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value '6' for parameter CC is too high. Must be <= 5.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value '6' for parameter CC is too high. Must be <= 5.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa 12 5\e[22m"
+                echo -e "$ \033[1m$fn aa 12 5\033[22m"
                 stdout=$($fn aa 12 5); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Parameter DD must be specified.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Parameter DD must be specified.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa 12 5 G\e[22m"
+                echo -e "$ \033[1m$fn aa 12 5 G\033[22m"
                 stdout=$($fn aa 12 5 G); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value 'G' for parameter DD is not one of the allowed values \[A,B,C\].$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value 'G' for parameter DD is not one of the allowed values \[A,B,C\].].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa 12 5 A\e[22m"
+                echo -e "$ \033[1m$fn aa 12 5 A\033[22m"
                 stdout=$($fn aa 12 5 A); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Parameter EE must be specified.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Parameter EE must be specified.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa 12 5 A 123\e[22m"
+                echo -e "$ \033[1m$fn aa 12 5 A 123\033[22m"
                 stdout=$($fn aa 12 5 A 123); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value '123' for parameter EE does not match required pattern '\[a-z\]\+'.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value '123' for parameter EE does not match required pattern '\[a-z\]\+'.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa 12 5 A foo\e[22m"
+                echo -e "$ \033[1m$fn aa 12 5 A foo\033[22m"
                 stdout=$($fn aa 12 5 A foo); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^AA:aa BB:12 CC:5 DD:A EE:foo FF:$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [AA:aa BB:12 CC:5 DD:A EE:foo FF:].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa 12 5 A foo 123\e[22m"
+                echo -e "$ \033[1m$fn aa 12 5 A foo 123\033[22m"
                 stdout=$($fn aa 12 5 A foo 123); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value '123' for parameter FF must only contain characters a-z.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value '123' for parameter FF must only contain characters a-z.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa 12 5 A foo bar\e[22m"
+                echo -e "$ \033[1m$fn aa 12 5 A foo bar\033[22m"
                 stdout=$($fn aa 12 5 A foo bar); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -2011,27 +2011,27 @@ Type '$fn --help' for more details."
                 echo "Test function with single value parameters where the first one is optional."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mAA\e[22m "
+                echo -e "  \033[1mAA\033[22m "
                 echo "      Param AA."
-                echo -e "  \e[1mBB\e[22m (required)"
+                echo -e "  \033[1mBB\033[22m (required)"
                 echo "      Param BB."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 echo "Error: Parameter BB must be specified."
-                echo -e "$ \e[1m$fn bb\e[22m"
+                echo -e "$ \033[1m$fn bb\033[22m"
                 echo "Error: Value 'bb' for parameter BB is not a numeric value."
-                echo -e "$ \e[1m$fn 22\e[22m"
+                echo -e "$ \033[1m$fn 22\033[22m"
                 echo "AA: BB:22"
-                echo -e "$ \e[1m$fn aa 22\e[22m"
+                echo -e "$ \033[1m$fn aa 22\033[22m"
                 echo "Error: Value 'aa' for parameter AA is not a numeric value."
-                echo -e "$ \e[1m$fn 11 22\e[22m"
+                echo -e "$ \033[1m$fn 11 22\033[22m"
                 echo "AA:11 BB:22"
                 echo 
                 return 0
@@ -2039,40 +2039,40 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn \e[22m"
+                echo -e "$ \033[1m$fn \033[22m"
                 stdout=$($fn ); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Parameter BB must be specified.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Parameter BB must be specified.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn bb\e[22m"
+                echo -e "$ \033[1m$fn bb\033[22m"
                 stdout=$($fn bb); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value 'bb' for parameter BB is not a numeric value.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value 'bb' for parameter BB is not a numeric value.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn 22\e[22m"
+                echo -e "$ \033[1m$fn 22\033[22m"
                 stdout=$($fn 22); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^AA: BB:22$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [AA: BB:22].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn aa 22\e[22m"
+                echo -e "$ \033[1m$fn aa 22\033[22m"
                 stdout=$($fn aa 22); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Error: Value 'aa' for parameter AA is not a numeric value.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value 'aa' for parameter AA is not a numeric value.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn 11 22\e[22m"
+                echo -e "$ \033[1m$fn 11 22\033[22m"
                 stdout=$($fn 11 22); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -2165,9 +2165,9 @@ Type '$fn --help' for more details."
                 echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -2175,7 +2175,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -2238,17 +2238,17 @@ complete -F _${BASH_FUNK_PREFIX:-}-test-test -- ${BASH_FUNK_PREFIX:-}-test-test
 
 function -help-test() {
 
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-test-fn-flags\e[0m  -  Test function with custom flags."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-test-fn-multi-value-options\e[0m  -  Test function with multi value options."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-test-fn-multi-value-parameters AA1 AA2 BB1 BB2 CC1 CC2 DD1 DD2 EE1 EE2 [FF]...\e[0m  -  Test function with single value parameters."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-test-fn-multi-value-parameters-first-variable [AA1..2] BB1 BB2\e[0m  -  Test function with single value parameters."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-test-fn-noargs\e[0m  -  Test function with no arguments."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-test-fn-requires-existing\e[0m  -  Test function that requires presence of an existing command - thus always succeeds."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-test-fn-requires-nonexistent\e[0m  -  Test function that requires presence of a nonexistent command - thus always fails."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-test-fn-single-value-options\e[0m  -  Test function with single value options."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-test-fn-single-value-parameters AA BB CC DD EE [FF]\e[0m  -  Test function with single value parameters."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-test-fn-single-value-parameters-first-optional [AA] BB\e[0m  -  Test function with single value parameters where the first one is optional."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-test-test\e[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-fn-flags\033[0m  -  Test function with custom flags."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-fn-multi-value-options\033[0m  -  Test function with multi value options."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-fn-multi-value-parameters AA1 AA2 BB1 BB2 CC1 CC2 DD1 DD2 EE1 EE2 [FF]...\033[0m  -  Test function with single value parameters."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-fn-multi-value-parameters-first-variable [AA1..2] BB1 BB2\033[0m  -  Test function with single value parameters."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-fn-noargs\033[0m  -  Test function with no arguments."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-fn-requires-existing\033[0m  -  Test function that requires presence of an existing command - thus always succeeds."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-fn-requires-nonexistent\033[0m  -  Test function that requires presence of a nonexistent command - thus always fails."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-fn-single-value-options\033[0m  -  Test function with single value options."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-fn-single-value-parameters AA BB CC DD EE [FF]\033[0m  -  Test function with single value parameters."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-fn-single-value-parameters-first-optional [AA] BB\033[0m  -  Test function with single value parameters where the first one is optional."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-test\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
 

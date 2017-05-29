@@ -100,7 +100,7 @@ Options:
 
 *Implementation:*
 ```bash
-echo -ne "\e[0m"
+echo -ne "\033[0m"
 ```
 
 
@@ -129,13 +129,13 @@ Options:
 *Implementation:*
 ```bash
 if [[ $_TEXT ]]; then
-    echo -ne "\e[4m$_TEXT\e[24m"
+    echo -ne "\033[4m$_TEXT\033[24m"
 fi
 
 if [[ $_on ]]; then
-    echo -ne "\e[4m"
+    echo -ne "\033[4m"
 elif [[ $_off ]]; then
-    echo -ne "\e[24m"
+    echo -ne "\033[24m"
 fi
 ```
 

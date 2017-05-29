@@ -41,21 +41,21 @@ Type '$fn --help' for more details."
                 echo "Generates a random number of the given range. The range is inclusive."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mRANGE\e[22m (required)"
+                echo -e "  \033[1mRANGE\033[22m (required)"
                 echo "      The numeric range LOW-HIGH, e.g. 1-5."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn 1-1\e[22m"
+                echo -e "$ \033[1m$fn 1-1\033[22m"
                 echo "1"
-                echo -e "$ \e[1m$fn 1-5\e[22m"
+                echo -e "$ \033[1m$fn 1-5\033[22m"
                 echo "4"
-                echo -e "$ \e[1m$fn 200-299\e[22m"
+                echo -e "$ \033[1m$fn 200-299\033[22m"
                 echo "253"
                 echo 
                 return 0
@@ -63,26 +63,26 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn 1-1\e[22m"
+                echo -e "$ \033[1m$fn 1-1\033[22m"
                 stdout=$($fn 1-1); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^1$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [1].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn 1-5\e[22m"
+                echo -e "$ \033[1m$fn 1-5\033[22m"
                 stdout=$($fn 1-5); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^[1-5]$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [[1-5]].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn 200-299\e[22m"
+                echo -e "$ \033[1m$fn 200-299\033[22m"
                 stdout=$($fn 200-299); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -169,25 +169,25 @@ Type '$fn --help' for more details."
                 echo "Prints a random string of the given length containing the given characters."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mLENGTH\e[22m (required)"
+                echo -e "  \033[1mLENGTH\033[22m (required)"
                 echo "      Length of the string to generate."
-                echo -e "  \e[1mCHARS\e[22m "
+                echo -e "  \033[1mCHARS\033[22m "
                 echo "      String to choose random characters from."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn 12 0-9\e[22m"
+                echo -e "$ \033[1m$fn 12 0-9\033[22m"
                 echo "686026902293"
-                echo -e "$ \e[1m$fn 8 a-zA-Z\e[22m"
+                echo -e "$ \033[1m$fn 8 a-zA-Z\033[22m"
                 echo "ECtQptCz"
-                echo -e "$ \e[1m$fn 10 [:alnum:]\e[22m"
+                echo -e "$ \033[1m$fn 10 [:alnum:]\033[22m"
                 echo "w2TZ8fHaRw"
-                echo -e "$ \e[1m$fn 10 [:alnum:][:punct:]\e[22m"
+                echo -e "$ \033[1m$fn 10 [:alnum:][:punct:]\033[22m"
                 echo "4pH?+40D):"
                 echo 
                 return 0
@@ -195,33 +195,33 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn 12 0-9\e[22m"
+                echo -e "$ \033[1m$fn 12 0-9\033[22m"
                 stdout=$($fn 12 0-9); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^[0-9]{12}$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [[0-9]{12}].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn 8 a-zA-Z\e[22m"
+                echo -e "$ \033[1m$fn 8 a-zA-Z\033[22m"
                 stdout=$($fn 8 a-zA-Z); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^[a-zA-Z]{8}$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [[a-zA-Z]{8}].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn 10 [:alnum:]\e[22m"
+                echo -e "$ \033[1m$fn 10 [:alnum:]\033[22m"
                 stdout=$($fn 10 [:alnum:]); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^[[:alnum:]]{10}$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [[[:alnum:]]{10}].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn 10 [:alnum:][:punct:]\e[22m"
+                echo -e "$ \033[1m$fn 10 [:alnum:][:punct:]\033[22m"
                 stdout=$($fn 10 [:alnum:][:punct:]); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -314,9 +314,9 @@ Type '$fn --help' for more details."
                 echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -324,7 +324,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -379,9 +379,9 @@ complete -F _${BASH_FUNK_PREFIX:-}-test-random -- ${BASH_FUNK_PREFIX:-}-test-ran
 
 function -help-random() {
 
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-random-number RANGE\e[0m  -  Generates a random number of the given range. The range is inclusive."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-random-string LENGTH [CHARS]\e[0m  -  Prints a random string of the given length containing the given characters."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-test-random\e[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-random-number RANGE\033[0m  -  Generates a random number of the given range. The range is inclusive."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-random-string LENGTH [CHARS]\033[0m  -  Prints a random string of the given length containing the given characters."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-random\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
 

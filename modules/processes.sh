@@ -41,15 +41,15 @@ Type '$fn --help' for more details."
                 echo "Recursively prints all child PIDs of the process with the given PID."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mPARENT_PID\e[22m "
+                echo -e "  \033[1mPARENT_PID\033[22m "
                 echo "      The process ID of the parent process. If not specified the PID of the current Bash process is used."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --printPPID\e[22m "
+                echo -e "\033[1m    --printPPID\033[22m "
                 echo "        Specifies to also print the PID of the parent process."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -57,7 +57,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -154,13 +154,13 @@ Type '$fn --help' for more details."
                 echo "Prints the PID of the parent process of the child process with the given PID."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mCHILD_PID\e[22m "
+                echo -e "  \033[1mCHILD_PID\033[22m "
                 echo "      The process ID of the child process. If not specified the PID of the current Bash process is used."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -168,7 +168,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -256,13 +256,13 @@ Type '$fn --help' for more details."
                 echo "Prints the PID of the top-level parent process of the child process with the given PID."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mCHILD_PID\e[22m "
+                echo -e "  \033[1mCHILD_PID\033[22m "
                 echo "      The process ID of the child process. If not specified the PID of the current Bash process is used."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -270,7 +270,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -360,15 +360,15 @@ Type '$fn --help' for more details."
                 echo "Sends the given kill signal to all child processes of the process with the given PID."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mSIGNAL\e[22m (required)"
+                echo -e "  \033[1mSIGNAL\033[22m (required)"
                 echo "      The kill signal to be send, eg. 9=KILL or 15=TERM."
-                echo -e "  \e[1mPARENT_PID\e[22m "
+                echo -e "  \033[1mPARENT_PID\033[22m "
                 echo "      The process ID of the parent process. If not specified the PID of the current bash process is used."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -376,7 +376,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -476,9 +476,9 @@ Type '$fn --help' for more details."
                 echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -486,7 +486,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -543,11 +543,11 @@ complete -F _${BASH_FUNK_PREFIX:-}-test-processes -- ${BASH_FUNK_PREFIX:-}-test-
 
 function -help-processes() {
 
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-get-child-pids [PARENT_PID]\e[0m  -  Recursively prints all child PIDs of the process with the given PID."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-get-parent-pid [CHILD_PID]\e[0m  -  Prints the PID of the parent process of the child process with the given PID."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-get-toplevel-parent-pid [CHILD_PID]\e[0m  -  Prints the PID of the top-level parent process of the child process with the given PID."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-kill-childs SIGNAL [PARENT_PID]\e[0m  -  Sends the given kill signal to all child processes of the process with the given PID."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-test-processes\e[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-get-child-pids [PARENT_PID]\033[0m  -  Recursively prints all child PIDs of the process with the given PID."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-get-parent-pid [CHILD_PID]\033[0m  -  Prints the PID of the parent process of the child process with the given PID."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-get-toplevel-parent-pid [CHILD_PID]\033[0m  -  Prints the PID of the top-level parent process of the child process with the given PID."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-kill-childs SIGNAL [PARENT_PID]\033[0m  -  Sends the given kill signal to all child processes of the process with the given PID."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-processes\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
 

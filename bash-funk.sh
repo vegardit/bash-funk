@@ -30,9 +30,9 @@ else
     else
 
         if [[ $TERM == "cygwin" ]]; then
-            echo -en "\e[1;34m"
+            echo -en "\033[1;34m"
         else
-            echo -en "\e[0;94m"
+            echo -en "\033[0;94m"
         fi
         echo " _               _            __             _"
         echo "| |__   __ _ ___| |__        / _|_   _ _ __ | | __"
@@ -40,13 +40,13 @@ else
         echo "| |_) | (_| \__ \ | | |/___/|  _| |_| | | | |   <"
         echo "|_.__/ \__,_|___/_| |_|     |_|  \__,_|_| |_|_|\_\\"
         if [[ $TERM == "cygwin" ]]; then
-            echo -en "\e[0m"
-            echo -en "\e[1;27m"
+            echo -en "\033[0m"
+            echo -en "\033[1;27m"
         else
-            echo -en "\e[0;97m"
+            echo -en "\033[0;97m"
         fi
         echo "                  by Vegard IT GmbH (vegardit.com)"
-        echo -e "\e[0m"
+        echo -e "\033[0m"
 
         export BASH_FUNK_PREFIX=${BASH_FUNK_PREFIX:-}
 

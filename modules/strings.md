@@ -367,7 +367,7 @@ Options:
         Performs a self-test.
 
 Examples:
-$ -strip-ansi $(echo -e '\e[4mThis is underlined\e[24m')
+$ -strip-ansi $(echo -e '\033[4mThis is underlined\033[24m')
 This is underlined
 ```
 

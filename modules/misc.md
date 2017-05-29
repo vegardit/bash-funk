@@ -130,10 +130,10 @@ Options:
 
 *Implementation:*
 ```bash
-echo -ne "Waiting for [$(date +%T --date=@$(($_SECONDS - 3600)))] until $(date +%T --date=@$(($(date +%s) + $_SECONDS))). Press [s] to skip: \e[9C"
+echo -ne "Waiting for [$(date +%T --date=@$(($_SECONDS - 3600)))] until $(date +%T --date=@$(($(date +%s) + $_SECONDS))). Press [s] to skip: \033[9C"
 for i in $(seq 0 $_SECONDS); do
     # adding a \n new line character to the end of the line to make the output parseable by sed which is line oriented
-    echo -ne "\e[9D\e[1;32m$(date +%T --date=@$(($_SECONDS - ${i} - 3600))) \e[0m\e[s\n\e[u"
+    echo -ne "\033[9D\033[1;32m$(date +%T --date=@$(($_SECONDS - ${i} - 3600))) \033[0m\033[s\n\033[u"
     local char=
     read -s -n1 -t1 char || :
     [[ $char == "s" ]] && break

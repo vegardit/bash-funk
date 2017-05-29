@@ -41,13 +41,13 @@ Type '$fn --help' for more details."
                 echo "Prints the normalized path of the given path WITHOUT resolving symbolic links. The path is not required to exist."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mPATH\e[22m "
+                echo -e "  \033[1mPATH\033[22m "
                 echo "      The path to normalize."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -55,7 +55,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -145,13 +145,13 @@ Type '$fn --help' for more details."
                 echo "Prints disk usage information."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mPATH\e[22m (0 or more)"
+                echo -e "  \033[1mPATH\033[22m (0 or more)"
                 echo "      The path to check."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -159,7 +159,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -244,27 +244,27 @@ Type '$fn --help' for more details."
                 echo "Recursively finds all files containing the given string and displays their path."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mSTART_PATH\e[22m "
+                echo -e "  \033[1mSTART_PATH\033[22m "
                 echo "      The path where to search."
-                echo -e "  \e[1mSEARCH_STRING\e[22m (required)"
+                echo -e "  \033[1mSEARCH_STRING\033[22m (required)"
                 echo "      The string to search."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m-l, --lines\e[22m "
+                echo -e "\033[1m-l, --lines\033[22m "
                 echo "        Show matching lines of the files that contain the given string."
-                echo -e "\e[1m    --maxdepth levels\e[22m "
+                echo -e "\033[1m    --maxdepth levels\033[22m "
                 echo "        The maximum number of levels to descend into the directory tree below the starting-point."
-                echo -e "\e[1m    --mindepth levels\e[22m "
+                echo -e "\033[1m    --mindepth levels\033[22m "
                 echo "        The level of directory tree below the starting-point where to start the search."
-                echo -e "\e[1m    --name pattern\e[22m "
+                echo -e "\033[1m    --name pattern\033[22m "
                 echo "        Name pattern."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\e[1m-u, --unpack\e[22m "
+                echo -e "\033[1m-u, --unpack\033[22m "
                 echo "        Unpack supported archives (.zip, .jar, .war, .ear)."
-                echo -e "\e[1m-v, --verbose\e[22m "
+                echo -e "\033[1m-v, --verbose\033[22m "
                 echo "        Prints additional information during command execution."
                 echo 
                 return 0
@@ -272,7 +272,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -425,18 +425,18 @@ if [[ $_verbose ]]; then
     find "$_START_PATH" $findOpts 2>/dev/null | while read file; do
         local message="Scanning $file ..."
 
-        echo -en "\e[s${message:0:$cols}"
+        echo -en "\033[s${message:0:$cols}"
         if [[ $_unpack && ( $file == *.zip || $file == *.jar || $file == *.ear || $file == *.war ) ]]; then
             if unzip -p "$file" | LC_ALL=C $grepCmd "$_SEARCH_STRING" "$file" 2>&1 >/dev/null; then
-                echo -e "\e[u\e[K$file" || echo -e "$file"
+                echo -e "\033[u\033[K$file" || echo -e "$file"
             else
-                echo -en "\e[u\e[K"
+                echo -en "\033[u\033[K"
             fi
         else
             if LC_ALL=C $grepCmd "$_SEARCH_STRING" "$file" 2>&1 >/dev/null; then
-                echo -e "\e[u\e[K$file" || echo -e "$file"
+                echo -e "\033[u\033[K$file" || echo -e "$file"
             else
-                echo -en "\e[u\e[K"
+                echo -en "\033[u\033[K"
             fi
         fi
     done
@@ -507,13 +507,13 @@ Type '$fn --help' for more details."
                 echo "Alternative version of 'ls -lt' hat prints directories and symbolic links to directories before files."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mPATH\e[22m (0 or more)"
+                echo -e "  \033[1mPATH\033[22m (0 or more)"
                 echo "      The path to list."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -521,7 +521,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -613,13 +613,13 @@ Type '$fn --help' for more details."
                 echo "Prints the modification timestamp of the given file or directory."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mPATH\e[22m "
+                echo -e "  \033[1mPATH\033[22m "
                 echo "      The file or directory to check."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -627,7 +627,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -736,13 +736,13 @@ Type '$fn --help' for more details."
                 echo "Prints the owner of the given file or directory."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mPATH\e[22m "
+                echo -e "  \033[1mPATH\033[22m "
                 echo "      The file or directory to check."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -750,7 +750,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -859,13 +859,13 @@ Type '$fn --help' for more details."
                 echo "Prints the normalized path of the given path resolving any symbolic links. The path is not required to exist."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mPATH\e[22m "
+                echo -e "  \033[1mPATH\033[22m "
                 echo "      The path to normalize."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -873,7 +873,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -973,19 +973,19 @@ Type '$fn --help' for more details."
                 echo "  + Sudo 'tee --append' is required."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mFILE_PATH\e[22m (required)"
+                echo -e "  \033[1mFILE_PATH\033[22m (required)"
                 echo "      The path to the file to write."
-                echo -e "  \e[1mCONTENT\e[22m (required)"
+                echo -e "  \033[1mCONTENT\033[22m (required)"
                 echo "      The content to append to the file."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn /tmp/testfile.cfg 'foo=bar'\e[22m"
+                echo -e "$ \033[1m$fn /tmp/testfile.cfg 'foo=bar'\033[22m"
                 echo -e "Appending to \[/tmp/testfile.cfg\]..."
                 echo 
                 return 0
@@ -993,12 +993,12 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn /tmp/testfile.cfg 'foo=bar'\e[22m"
+                echo -e "$ \033[1m$fn /tmp/testfile.cfg 'foo=bar'\033[22m"
                 stdout=$($fn /tmp/testfile.cfg 'foo=bar'); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -1098,21 +1098,21 @@ Type '$fn --help' for more details."
                 echo "  + Sudo 'sh chown' is required."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mFILE_PATH\e[22m (required)"
+                echo -e "  \033[1mFILE_PATH\033[22m (required)"
                 echo "      The path to the file to write."
-                echo -e "  \e[1mOWNER\e[22m (required)"
+                echo -e "  \033[1mOWNER\033[22m (required)"
                 echo "      The owner and group to set."
-                echo -e "  \e[1mCONTENT\e[22m (required)"
+                echo -e "  \033[1mCONTENT\033[22m (required)"
                 echo "      The content to write."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn /tmp/testfile.cfg $USER:$USER 'foo=bar'\e[22m"
+                echo -e "$ \033[1m$fn /tmp/testfile.cfg $USER:$USER 'foo=bar'\033[22m"
                 echo -e "Writing \[/tmp/testfile.cfg\]..."
                 echo 
                 return 0
@@ -1120,12 +1120,12 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn /tmp/testfile.cfg $USER:$USER 'foo=bar'\e[22m"
+                echo -e "$ \033[1m$fn /tmp/testfile.cfg $USER:$USER 'foo=bar'\033[22m"
                 stdout=$($fn /tmp/testfile.cfg $USER:$USER 'foo=bar'); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -1232,9 +1232,9 @@ Type '$fn --help' for more details."
                 echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -1242,7 +1242,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -1304,16 +1304,16 @@ complete -F _${BASH_FUNK_PREFIX:-}-test-filesystem -- ${BASH_FUNK_PREFIX:-}-test
 
 function -help-filesystem() {
 
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-abspath [PATH]\e[0m  -  Prints the normalized path of the given path WITHOUT resolving symbolic links. The path is not required to exist."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-du [PATH]...\e[0m  -  Prints disk usage information."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-findfiles [START_PATH] SEARCH_STRING\e[0m  -  Recursively finds all files containing the given string and displays their path."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-ll [PATH]...\e[0m  -  Alternative version of 'ls -lt' hat prints directories and symbolic links to directories before files."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-modified [PATH]\e[0m  -  Prints the modification timestamp of the given file or directory."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-owner [PATH]\e[0m  -  Prints the owner of the given file or directory."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-realpath [PATH]\e[0m  -  Prints the normalized path of the given path resolving any symbolic links. The path is not required to exist."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-sudo-append FILE_PATH CONTENT\e[0m  -  Creates a file with the given content."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-sudo-write FILE_PATH OWNER CONTENT\e[0m  -  Creates a file with the given content."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-test-filesystem\e[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-abspath [PATH]\033[0m  -  Prints the normalized path of the given path WITHOUT resolving symbolic links. The path is not required to exist."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-du [PATH]...\033[0m  -  Prints disk usage information."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-findfiles [START_PATH] SEARCH_STRING\033[0m  -  Recursively finds all files containing the given string and displays their path."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-ll [PATH]...\033[0m  -  Alternative version of 'ls -lt' hat prints directories and symbolic links to directories before files."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-modified [PATH]\033[0m  -  Prints the modification timestamp of the given file or directory."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-owner [PATH]\033[0m  -  Prints the owner of the given file or directory."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-realpath [PATH]\033[0m  -  Prints the normalized path of the given path resolving any symbolic links. The path is not required to exist."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-sudo-append FILE_PATH CONTENT\033[0m  -  Creates a file with the given content."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-sudo-write FILE_PATH OWNER CONTENT\033[0m  -  Creates a file with the given content."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-filesystem\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
 

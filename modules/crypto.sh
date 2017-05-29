@@ -41,13 +41,13 @@ Type '$fn --help' for more details."
                 echo "Calculates the MD5 hash of the given file."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mPATH_TO_FILE\e[22m (required)"
+                echo -e "  \033[1mPATH_TO_FILE\033[22m (required)"
                 echo "      The file."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -55,7 +55,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -157,13 +157,13 @@ Type '$fn --help' for more details."
                 echo "Calculates the SHA256 hash of the given file."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mPATH_TO_FILE\e[22m (required)"
+                echo -e "  \033[1mPATH_TO_FILE\033[22m (required)"
                 echo "      The file."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -171,7 +171,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -273,9 +273,9 @@ Type '$fn --help' for more details."
                 echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -283,7 +283,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -338,9 +338,9 @@ complete -F _${BASH_FUNK_PREFIX:-}-test-crypto -- ${BASH_FUNK_PREFIX:-}-test-cry
 
 function -help-crypto() {
 
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-md5sum PATH_TO_FILE\e[0m  -  Calculates the MD5 hash of the given file."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-sha256sum PATH_TO_FILE\e[0m  -  Calculates the SHA256 hash of the given file."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-test-crypto\e[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-md5sum PATH_TO_FILE\033[0m  -  Calculates the MD5 hash of the given file."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-sha256sum PATH_TO_FILE\033[0m  -  Calculates the SHA256 hash of the given file."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-crypto\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
 

@@ -41,15 +41,15 @@ Type '$fn --help' for more details."
                 echo "Creates an in-memory copy of the Bash function with the given name."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mOLD_FUNC_NAME\e[22m (required)"
+                echo -e "  \033[1mOLD_FUNC_NAME\033[22m (required)"
                 echo "      Name of the function to copy."
-                echo -e "  \e[1mNEW_FUNC_NAME\e[22m (required)"
+                echo -e "  \033[1mNEW_FUNC_NAME\033[22m (required)"
                 echo "      Name of the function copy."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -57,7 +57,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -152,21 +152,21 @@ Type '$fn --help' for more details."
                 echo "Determines if a Bash function with the given name exists."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mFUNC_NAME\e[22m (required)"
+                echo -e "  \033[1mFUNC_NAME\033[22m (required)"
                 echo "      Name of the function to determine."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\e[1m-v, --verbose\e[22m "
+                echo -e "\033[1m-v, --verbose\033[22m "
                 echo "        Prints additional information during command execution."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn name-of-nonexistant-function\e[22m"
+                echo -e "$ \033[1m$fn name-of-nonexistant-function\033[22m"
                 echo 
-                echo -e "$ \e[1m$fn -v name-of-nonexistant-function\e[22m"
+                echo -e "$ \033[1m$fn -v name-of-nonexistant-function\033[22m"
                 echo "A function with the name 'name-of-nonexistant-function' does not exist."
                 echo 
                 return 0
@@ -174,19 +174,19 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn name-of-nonexistant-function\e[22m"
+                echo -e "$ \033[1m$fn name-of-nonexistant-function\033[22m"
                 stdout=$($fn name-of-nonexistant-function); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn -v name-of-nonexistant-function\e[22m"
+                echo -e "$ \033[1m$fn -v name-of-nonexistant-function\033[22m"
                 stdout=$($fn -v name-of-nonexistant-function); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
@@ -280,15 +280,15 @@ Type '$fn --help' for more details."
                 echo "Renames the Bash function with the given name."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mOLD_FUNC_NAME\e[22m (required)"
+                echo -e "  \033[1mOLD_FUNC_NAME\033[22m (required)"
                 echo "      Current name of the function."
-                echo -e "  \e[1mNEW_FUNC_NAME\e[22m (required)"
+                echo -e "  \033[1mNEW_FUNC_NAME\033[22m (required)"
                 echo "      New name for the function ."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -296,7 +296,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -394,17 +394,17 @@ Type '$fn --help' for more details."
                 echo "Unloads the Bash function with the given name."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mOLD_FUNC_NAME\e[22m (required)"
+                echo -e "  \033[1mOLD_FUNC_NAME\033[22m (required)"
                 echo "      Current name of the function."
-                echo -e "  \e[1mNEW_FUNC_NAME\e[22m (required)"
+                echo -e "  \033[1mNEW_FUNC_NAME\033[22m (required)"
                 echo "      New name for the function ."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\e[1m-v, --verbose\e[22m "
+                echo -e "\033[1m-v, --verbose\033[22m "
                 echo "        Prints additional information during command execution."
                 echo 
                 return 0
@@ -412,7 +412,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -512,9 +512,9 @@ Type '$fn --help' for more details."
                 echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -522,7 +522,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -579,11 +579,11 @@ complete -F _${BASH_FUNK_PREFIX:-}-test-functions -- ${BASH_FUNK_PREFIX:-}-test-
 
 function -help-functions() {
 
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-fn-copy OLD_FUNC_NAME NEW_FUNC_NAME\e[0m  -  Creates an in-memory copy of the Bash function with the given name."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-fn-exists FUNC_NAME\e[0m  -  Determines if a Bash function with the given name exists."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-fn-rename OLD_FUNC_NAME NEW_FUNC_NAME\e[0m  -  Renames the Bash function with the given name."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-fn-unload OLD_FUNC_NAME NEW_FUNC_NAME\e[0m  -  Unloads the Bash function with the given name."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-test-functions\e[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-fn-copy OLD_FUNC_NAME NEW_FUNC_NAME\033[0m  -  Creates an in-memory copy of the Bash function with the given name."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-fn-exists FUNC_NAME\033[0m  -  Determines if a Bash function with the given name exists."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-fn-rename OLD_FUNC_NAME NEW_FUNC_NAME\033[0m  -  Renames the Bash function with the given name."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-fn-unload OLD_FUNC_NAME NEW_FUNC_NAME\033[0m  -  Unloads the Bash function with the given name."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-functions\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
 

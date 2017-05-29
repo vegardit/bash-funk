@@ -41,25 +41,25 @@ Type '$fn --help' for more details."
                 echo "Checks if the given program or function is available."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mCOMMAND\e[22m (required)"
+                echo -e "  \033[1mCOMMAND\033[22m (required)"
                 echo "      Name of the program or function."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\e[1m-v, --verbose\e[22m "
+                echo -e "\033[1m-v, --verbose\033[22m "
                 echo "        Prints additional information during command execution."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn hash\e[22m"
+                echo -e "$ \033[1m$fn hash\033[22m"
                 echo 
-                echo -e "$ \e[1m$fn -v hash\e[22m"
+                echo -e "$ \033[1m$fn -v hash\033[22m"
                 echo "'hash' is available."
-                echo -e "$ \e[1m$fn -v ls\e[22m"
+                echo -e "$ \033[1m$fn -v ls\033[22m"
                 echo "'ls' is available."
-                echo -e "$ \e[1m$fn -v name-of-nonexistant-command\e[22m"
+                echo -e "$ \033[1m$fn -v name-of-nonexistant-command\033[22m"
                 echo "'name-of-nonexistant-command' not found."
                 echo 
                 return 0
@@ -67,33 +67,33 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn hash\e[22m"
+                echo -e "$ \033[1m$fn hash\033[22m"
                 stdout=$($fn hash); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn -v hash\e[22m"
+                echo -e "$ \033[1m$fn -v hash\033[22m"
                 stdout=$($fn -v hash); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^'hash' is available.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern ['hash' is available.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn -v ls\e[22m"
+                echo -e "$ \033[1m$fn -v ls\033[22m"
                 stdout=$($fn -v ls); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^'ls' is available.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern ['ls' is available.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn -v name-of-nonexistant-command\e[22m"
+                echo -e "$ \033[1m$fn -v name-of-nonexistant-command\033[22m"
                 stdout=$($fn -v name-of-nonexistant-command); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
@@ -187,15 +187,15 @@ Type '$fn --help' for more details."
                 echo "Determines if the given software package is installed."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mPACKAGE_NAME\e[22m (required)"
+                echo -e "  \033[1mPACKAGE_NAME\033[22m (required)"
                 echo "      Name of the package."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\e[1m-v, --verbose\e[22m "
+                echo -e "\033[1m-v, --verbose\033[22m "
                 echo "        Prints additional information during command execution."
                 echo 
                 return 0
@@ -203,7 +203,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -319,9 +319,9 @@ Type '$fn --help' for more details."
                 echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -329,7 +329,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -384,9 +384,9 @@ complete -F _${BASH_FUNK_PREFIX:-}-test-os -- ${BASH_FUNK_PREFIX:-}-test-os
 
 function -help-os() {
 
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-command-exists COMMAND\e[0m  -  Checks if the given program or function is available."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-pkg-installed PACKAGE_NAME\e[0m  -  Determines if the given software package is installed."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-test-os\e[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-command-exists COMMAND\033[0m  -  Checks if the given program or function is available."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-pkg-installed PACKAGE_NAME\033[0m  -  Determines if the given software package is installed."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-os\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
 

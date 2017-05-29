@@ -41,19 +41,19 @@ Type '$fn --help' for more details."
                 echo "Binds to the given port and thus block other programs from binding to it."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mBIND_ADDRESS\e[22m "
+                echo -e "  \033[1mBIND_ADDRESS\033[22m "
                 echo "      The local bind address. E.g. 127.0.0.1."
-                echo -e "  \e[1mPORT\e[22m (required)"
+                echo -e "  \033[1mPORT\033[22m (required)"
                 echo "      Number of the port to occupy."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn 70000\e[22m"
+                echo -e "$ \033[1m$fn 70000\033[22m"
                 echo "Error: Value '70000' for parameter PORT is too high. Must be <= 65535."
                 echo 
                 return 0
@@ -61,12 +61,12 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn 70000\e[22m"
+                echo -e "$ \033[1m$fn 70000\033[22m"
                 stdout=$($fn 70000); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
@@ -181,9 +181,9 @@ Type '$fn --help' for more details."
                 echo "Prints the IP v4 addresses of this host excluding 127.0.0.1."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -191,7 +191,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -264,27 +264,27 @@ Type '$fn --help' for more details."
                 echo "Checks if a TCP connection can be established to the given port."
                 echo 
                 echo "Parameters:"
-                echo -e "  \e[1mHOSTNAME\e[22m (required)"
+                echo -e "  \033[1mHOSTNAME\033[22m (required)"
                 echo "      Target hostname."
-                echo -e "  \e[1mPORT\e[22m (required)"
+                echo -e "  \033[1mPORT\033[22m (required)"
                 echo "      Target TCP port."
-                echo -e "  \e[1mCONNECT_TIMEOUT_IN_SECONDS\e[22m "
+                echo -e "  \033[1mCONNECT_TIMEOUT_IN_SECONDS\033[22m "
                 echo "      Number of seconds to try to connect to the given port. Default is 5 seconds."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\e[1m-v, --verbose\e[22m "
+                echo -e "\033[1m-v, --verbose\033[22m "
                 echo "        Prints additional information during command execution."
                 echo 
                 echo "Examples:"
-                echo -e "$ \e[1m$fn localhost 12345 1\e[22m"
+                echo -e "$ \033[1m$fn localhost 12345 1\033[22m"
                 echo 
-                echo -e "$ \e[1m$fn -v localhost 12345 1\e[22m"
+                echo -e "$ \033[1m$fn -v localhost 12345 1\033[22m"
                 echo "localhost:12345 is not reachable."
-                echo -e "$ \e[1m$fn localhost 70000\e[22m"
+                echo -e "$ \033[1m$fn localhost 70000\033[22m"
                 echo "Error: Value '70000' for parameter PORT is too high. Must be <= 65535."
                 echo 
                 return 0
@@ -292,26 +292,26 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn localhost 12345 1\e[22m"
+                echo -e "$ \033[1m$fn localhost 12345 1\033[22m"
                 stdout=$($fn localhost 12345 1); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn -v localhost 12345 1\e[22m"
+                echo -e "$ \033[1m$fn -v localhost 12345 1\033[22m"
                 stdout=$($fn -v localhost 12345 1); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^localhost:12345 is not reachable.$"
                 if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [localhost:12345 is not reachable.].$hint"; return 1; fi
                 echo "--> OK"
-                echo -e "$ \e[1m$fn localhost 70000\e[22m"
+                echo -e "$ \033[1m$fn localhost 70000\033[22m"
                 stdout=$($fn localhost 70000); rc=$?
                 echo $stdout
                 if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
@@ -448,9 +448,9 @@ Type '$fn --help' for more details."
                 echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
                 echo 
                 echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
+                echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
+                echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo 
                 return 0
@@ -458,7 +458,7 @@ Type '$fn --help' for more details."
     
             --selftest)
                 echo "Testing function [$fn]..."
-                echo -e "$ \e[1m$fn --help\e[22m"
+                echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
                 if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
@@ -514,10 +514,10 @@ complete -F _${BASH_FUNK_PREFIX:-}-test-network -- ${BASH_FUNK_PREFIX:-}-test-ne
 
 function -help-network() {
 
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-block-port [BIND_ADDRESS] PORT\e[0m  -  Binds to the given port and thus block other programs from binding to it."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-get-ips\e[0m  -  Prints the IP v4 addresses of this host excluding 127.0.0.1."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-is-port-open HOSTNAME PORT [CONNECT_TIMEOUT_IN_SECONDS]\e[0m  -  Checks if a TCP connection can be established to the given port."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-test-network\e[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-block-port [BIND_ADDRESS] PORT\033[0m  -  Binds to the given port and thus block other programs from binding to it."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-get-ips\033[0m  -  Prints the IP v4 addresses of this host excluding 127.0.0.1."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-is-port-open HOSTNAME PORT [CONNECT_TIMEOUT_IN_SECONDS]\033[0m  -  Checks if a TCP connection can be established to the given port."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-network\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
 
