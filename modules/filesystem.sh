@@ -118,99 +118,6 @@ function _-abspath() {
 }
 complete -F _${BASH_FUNK_PREFIX:-}-abspath -- ${BASH_FUNK_PREFIX:-}-abspath
     
-function -df() {
-
-    local arg optionWithValue params=() _help _selftest _PATH=()
-    for arg in "$@"; do
-        case $arg in
-    
-            --help)
-                echo "Usage: ${FUNCNAME[0]} [OPTION]... [PATH]..."
-                echo 
-                echo "Prints free disk space information in tabular form."
-                echo 
-                echo "Parameters:"
-                echo -e "  \e[1mPATH\e[22m (0 or more)"
-                echo "      The path to check."
-                echo 
-                echo "Options:"
-                echo -e "\e[1m    --help\e[22m "
-                echo "        Prints this help."
-                echo -e "\e[1m    --selftest\e[22m "
-                echo "        Performs a self-test."
-                echo 
-                return 0
-              ;;
-    
-            --selftest)
-                echo "Testing function [${FUNCNAME[0]}]..."
-                echo -e "$ \e[1m${FUNCNAME[0]} --help\e[22m"
-                local regex stdout rc
-                stdout=$(${FUNCNAME[0]} --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0]."; return 1; fi
-                echo "--> OK"
-                echo "Testing function [${FUNCNAME[0]}]...DONE"
-                return 0
-              ;;
-    
-    
-    
-            -*)
-                echo "${FUNCNAME[0]}: invalid option: '$arg'"
-                echo Type \'${FUNCNAME[0]} --help\' for usage.
-                return 1
-              ;;
-    
-            *)
-                case $optionWithValue in
-                    *)
-                        params+=("$arg")
-                esac
-              ;;
-        esac
-    done
-    unset arg optionWithValue
-    
-    for param in "${params[@]}"; do
-        if [[ ${#_PATH[@]} -lt 0 ]]; then
-            _PATH+=("$param")
-            continue
-        fi
-        local leftoverParams=$((${#params[@]} - 0 - ${#_PATH[@]}))
-        if [[ $leftoverParams -gt 0 ]]; then
-            _PATH+=("$param")
-            continue
-        fi
-        echo "${FUNCNAME[0]}: too many parameters: '$param'"
-        echo Type \'${FUNCNAME[0]} --help\' for usage.
-        return 1
-    done
-    unset param params leftoverParams
-    
-    
-    if [[ _PATH ]]; then
-        true
-    fi
-    
-    
-    ######################################################
-
-local firstColMaxWidth=$(( $(for line in $(command df -h | awk '{print $1}'); do echo ${#line}; done | sort -nr | sed q) + 2 ))
-df -h ${_PATH[@]} | sed -e :a -e '$!N;s/\n / /;ta' -e 'P;D' | awk '{printf "%-'${firstColMaxWidth}'s %-6s %-6s %-6s %-4s %s %s\n", $1,$2,$3,$4,$5,$6,$7}'
-
-}
-function _-df() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
-        local options=" --help --selftest "
-        for o in ${COMP_WORDS[@]}; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
-    else
-        COMPREPLY=($(compgen -o default -- $currentWord))
-    fi
-}
-complete -F _${BASH_FUNK_PREFIX:-}-df -- ${BASH_FUNK_PREFIX:-}-df
-    
 function -du() {
 
     local arg optionWithValue params=() _help _selftest _PATH=()
@@ -1306,7 +1213,6 @@ function -test-filesystem() {
     ######################################################
 
 ${BASH_FUNK_PREFIX:-}-abspath --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-df --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:-}-du --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:-}-findfiles --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:-}-ll --selftest && echo || return 1
@@ -1331,7 +1237,6 @@ complete -F _${BASH_FUNK_PREFIX:-}-test-filesystem -- ${BASH_FUNK_PREFIX:-}-test
 function -help-filesystem() {
 
     echo -e "\e[1m${BASH_FUNK_PREFIX:-}-abspath [PATH]\e[0m  -  Prints the normalized path of the given path WITHOUT resolving symbolic links. The path is not required to exist."
-    echo -e "\e[1m${BASH_FUNK_PREFIX:-}-df [PATH]...\e[0m  -  Prints free disk space information in tabular form."
     echo -e "\e[1m${BASH_FUNK_PREFIX:-}-du [PATH]...\e[0m  -  Prints disk usage information."
     echo -e "\e[1m${BASH_FUNK_PREFIX:-}-findfiles [START_PATH] SEARCH_STRING\e[0m  -  Recursively finds all files containing the given string and displays their path."
     echo -e "\e[1m${BASH_FUNK_PREFIX:-}-ll [PATH]...\e[0m  -  Alternative version of 'ls -lt' hat prints directories and symbolic links to directories before files."

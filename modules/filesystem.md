@@ -12,7 +12,6 @@ alias ll="${BASH_FUNK_PREFIX:-}-ll"
 The following commands are available when this module is loaded:
 
 1. [-abspath](#-abspath)
-1. [-df](#-df)
 1. [-du](#-du)
 1. [-findfiles](#-findfiles)
 1. [-ll](#-ll)
@@ -55,31 +54,6 @@ else
     python -c "import os
 print os.path.abspath('${_PATH:-.}')"
 fi
-```
-
-
-## <a name="-df"></a>-df
-
-```
-Usage: -df [OPTION]... [PATH]...
-
-Prints free disk space information in tabular form.
-
-Parameters:
-  PATH (0 or more)
-      The path to check.
-
-Options:
-    --help 
-        Prints this help.
-    --selftest 
-        Performs a self-test.
-```
-
-*Implementation:*
-```bash
-local firstColMaxWidth=$(( $(for line in $(command df -h | awk '{print $1}'); do echo ${#line}; done | sort -nr | sed q) + 2 ))
-df -h ${_PATH[@]} | sed -e :a -e '$!N;s/\n / /;ta' -e 'P;D' | awk '{printf "%-'${firstColMaxWidth}'s %-6s %-6s %-6s %-4s %s %s\n", $1,$2,$3,$4,$5,$6,$7}'
 ```
 
 
@@ -497,7 +471,6 @@ Options:
 *Implementation:*
 ```bash
 ${BASH_FUNK_PREFIX:-}-abspath --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-df --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:-}-du --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:-}-findfiles --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:-}-ll --selftest && echo || return 1
