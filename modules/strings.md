@@ -115,7 +115,7 @@ echo $normalized
 ## <a name="-str-join"></a>-str-join
 
 ```
-Usage: -str-join [OPTION]... SEPARATOR [STRING]...
+Usage: -str-join [OPTION]... SEPARATOR  [STRING]...
 
 Prints strings joined with the given separator.
 
@@ -185,7 +185,7 @@ echo "${_STRING,,}"
 ## <a name="-str-matches"></a>-str-matches
 
 ```
-Usage: -str-matches [OPTION]... REGEX_PATTERN [STRING]...
+Usage: -str-matches [OPTION]... REGEX_PATTERN  [STRING]...
 
 Matches the given string(s) against the regex pattern, prints the found matches and returns true if at least one match was found.
 
@@ -350,7 +350,7 @@ echo "${1^^}"
 ## <a name="-strip-ansi"></a>-strip-ansi
 
 ```
-Usage: -strip-ansi [OPTION]... [STRING]...
+Usage: -strip-ansi [OPTION]...  [STRING]...
 
 Removes any ANSI escape sequences from the given string or from stdin.
 

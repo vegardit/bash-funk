@@ -521,7 +521,7 @@ function -test-fn-multi-value-parameters() {
     local fn=${FUNCNAME[0]}
     [[ $_in_pipe || $_in_subshell ]] && local hint= || local hint="
 
-Usage: $fn [OPTION]... AA1 AA2 BB1 BB2 CC1 CC2 DD1 DD2 EE1 EE2 [FF]...
+Usage: $fn [OPTION]... AA1 AA2 BB1 BB2 CC1 CC2 DD1 DD2 EE1 EE2  [FF]...
 
 Type '$fn --help' for more details."
     local arg optionWithValue params=() _help _selftest _AA=() _BB=() _CC=() _DD=() _EE=() _FF=()
@@ -529,7 +529,7 @@ Type '$fn --help' for more details."
         case $arg in
     
             --help)
-                echo "Usage: $fn [OPTION]... AA1 AA2 BB1 BB2 CC1 CC2 DD1 DD2 EE1 EE2 [FF]..."
+                echo "Usage: $fn [OPTION]... AA1 AA2 BB1 BB2 CC1 CC2 DD1 DD2 EE1 EE2  [FF]..."
                 echo 
                 echo "Test function with single value parameters."
                 echo 
@@ -840,7 +840,7 @@ function -test-fn-multi-value-parameters-first-variable() {
     local fn=${FUNCNAME[0]}
     [[ $_in_pipe || $_in_subshell ]] && local hint= || local hint="
 
-Usage: $fn [OPTION]... [AA1..2] BB1 BB2
+Usage: $fn [OPTION]...  [AA1..2] BB1 BB2
 
 Type '$fn --help' for more details."
     local arg optionWithValue params=() _help _selftest _AA=() _BB=()
@@ -848,7 +848,7 @@ Type '$fn --help' for more details."
         case $arg in
     
             --help)
-                echo "Usage: $fn [OPTION]... [AA1..2] BB1 BB2"
+                echo "Usage: $fn [OPTION]...  [AA1..2] BB1 BB2"
                 echo 
                 echo "Test function with single value parameters."
                 echo 
@@ -2240,7 +2240,7 @@ function -help-test() {
 
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-fn-flags\033[0m  -  Test function with custom flags."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-fn-multi-value-options\033[0m  -  Test function with multi value options."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-fn-multi-value-parameters AA1 AA2 BB1 BB2 CC1 CC2 DD1 DD2 EE1 EE2 [FF]...\033[0m  -  Test function with single value parameters."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-fn-multi-value-parameters AA1 AA2 BB1 BB2 CC1 CC2 DD1 DD2 EE1 EE2  [FF]...\033[0m  -  Test function with single value parameters."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-fn-multi-value-parameters-first-variable [AA1..2] BB1 BB2\033[0m  -  Test function with single value parameters."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-fn-noargs\033[0m  -  Test function with no arguments."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-fn-requires-existing\033[0m  -  Test function that requires presence of an existing command - thus always succeeds."

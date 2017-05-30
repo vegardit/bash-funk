@@ -356,7 +356,7 @@ function -str-join() {
     local fn=${FUNCNAME[0]}
     [[ $_in_pipe || $_in_subshell ]] && local hint= || local hint="
 
-Usage: $fn [OPTION]... SEPARATOR [STRING]...
+Usage: $fn [OPTION]... SEPARATOR  [STRING]...
 
 Type '$fn --help' for more details."
     local arg optionWithValue params=() _help _selftest _SEPARATOR _STRING=()
@@ -364,7 +364,7 @@ Type '$fn --help' for more details."
         case $arg in
     
             --help)
-                echo "Usage: $fn [OPTION]... SEPARATOR [STRING]..."
+                echo "Usage: $fn [OPTION]... SEPARATOR  [STRING]..."
                 echo 
                 echo "Prints strings joined with the given separator."
                 echo 
@@ -604,7 +604,7 @@ function -str-matches() {
     local fn=${FUNCNAME[0]}
     [[ $_in_pipe || $_in_subshell ]] && local hint= || local hint="
 
-Usage: $fn [OPTION]... REGEX_PATTERN [STRING]...
+Usage: $fn [OPTION]... REGEX_PATTERN  [STRING]...
 
 Type '$fn --help' for more details."
     local arg optionWithValue params=() _all _help _selftest _verbose _REGEX_PATTERN _STRING=()
@@ -612,7 +612,7 @@ Type '$fn --help' for more details."
         case $arg in
     
             --help)
-                echo "Usage: $fn [OPTION]... REGEX_PATTERN [STRING]..."
+                echo "Usage: $fn [OPTION]... REGEX_PATTERN  [STRING]..."
                 echo 
                 echo "Matches the given string(s) against the regex pattern, prints the found matches and returns true if at least one match was found."
                 echo 
@@ -1141,7 +1141,7 @@ function -strip-ansi() {
     local fn=${FUNCNAME[0]}
     [[ $_in_pipe || $_in_subshell ]] && local hint= || local hint="
 
-Usage: $fn [OPTION]... [STRING]...
+Usage: $fn [OPTION]...  [STRING]...
 
 Type '$fn --help' for more details."
     local arg optionWithValue params=() _help _selftest _STRING=()
@@ -1149,7 +1149,7 @@ Type '$fn --help' for more details."
         case $arg in
     
             --help)
-                echo "Usage: $fn [OPTION]... [STRING]..."
+                echo "Usage: $fn [OPTION]...  [STRING]..."
                 echo 
                 echo "Removes any ANSI escape sequences from the given string or from stdin."
                 echo 
@@ -1955,9 +1955,9 @@ function -help-strings() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-ascii2hex ASCII_STRING\033[0m  -  Prints the hexa-decimal representation of the given ASCII string."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-hex2ascii HEX_STRING\033[0m  -  Prints the ASCII representation of the given hexa-decimal string."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-normalize-path PATH\033[0m  -  Prints the normalized form of the given file path."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-str-join SEPARATOR [STRING]...\033[0m  -  Prints strings joined with the given separator."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-str-join SEPARATOR  [STRING]...\033[0m  -  Prints strings joined with the given separator."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-str-lower STRING\033[0m  -  Prints the given string in lower cases."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-str-matches REGEX_PATTERN [STRING]...\033[0m  -  Matches the given string(s) against the regex pattern, prints the found matches and returns true if at least one match was found."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-str-matches REGEX_PATTERN  [STRING]...\033[0m  -  Matches the given string(s) against the regex pattern, prints the found matches and returns true if at least one match was found."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-str-repeat STRING COUNT\033[0m  -  Prints the given string multiple times."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-str-trim STRING\033[0m  -  Prints the given string without leading and trailing spaces."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-str-upper STRING\033[0m  -  Prints the given string in upper cases."

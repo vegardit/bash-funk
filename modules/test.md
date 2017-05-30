@@ -121,7 +121,7 @@ echo "aa:$_aa=${_aa_value[@]} bb:$_bb=${_bb_value[@]} cc:$_cc=${_cc_value[@]} dd
 ## <a name="-test-fn-multi-value-parameters"></a>-test-fn-multi-value-parameters
 
 ```
-Usage: -test-fn-multi-value-parameters [OPTION]... AA1 AA2 BB1 BB2 CC1 CC2 DD1 DD2 EE1 EE2 [FF]...
+Usage: -test-fn-multi-value-parameters [OPTION]... AA1 AA2 BB1 BB2 CC1 CC2 DD1 DD2 EE1 EE2  [FF]...
 
 Test function with single value parameters.
 
@@ -187,7 +187,7 @@ echo "AA:${_AA[@]} BB:${_BB[@]} CC:${_CC[@]} DD:${_DD[@]} EE:${_EE[@]} FF:${_FF[
 ## <a name="-test-fn-multi-value-parameters-first-variable"></a>-test-fn-multi-value-parameters-first-variable
 
 ```
-Usage: -test-fn-multi-value-parameters-first-variable [OPTION]... [AA1..2] BB1 BB2
+Usage: -test-fn-multi-value-parameters-first-variable [OPTION]...  [AA1..2] BB1 BB2
 
 Test function with single value parameters.
 

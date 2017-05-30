@@ -132,7 +132,7 @@ function -count-words() {
     local fn=${FUNCNAME[0]}
     [[ $_in_pipe || $_in_subshell ]] && local hint= || local hint="
 
-Usage: $fn [OPTION]... FILE WORD1[WORD]...
+Usage: $fn [OPTION]... FILE WORD1 [WORD]...
 
 Type '$fn --help' for more details."
     local arg optionWithValue params=() _sort _sort_value _help _selftest _FILE _WORD=()
@@ -140,7 +140,7 @@ Type '$fn --help' for more details."
         case $arg in
     
             --help)
-                echo "Usage: $fn [OPTION]... FILE WORD1[WORD]..."
+                echo "Usage: $fn [OPTION]... FILE WORD1 [WORD]..."
                 echo 
                 echo "Counts the number of occurences of the word(s) in the given file."
                 echo 
@@ -283,7 +283,7 @@ function -du() {
     local fn=${FUNCNAME[0]}
     [[ $_in_pipe || $_in_subshell ]] && local hint= || local hint="
 
-Usage: $fn [OPTION]... [PATH]...
+Usage: $fn [OPTION]...  [PATH]...
 
 Type '$fn --help' for more details."
     local arg optionWithValue params=() _help _selftest _PATH=()
@@ -291,7 +291,7 @@ Type '$fn --help' for more details."
         case $arg in
     
             --help)
-                echo "Usage: $fn [OPTION]... [PATH]..."
+                echo "Usage: $fn [OPTION]...  [PATH]..."
                 echo 
                 echo "Prints disk usage information."
                 echo 
@@ -645,7 +645,7 @@ function -ll() {
     local fn=${FUNCNAME[0]}
     [[ $_in_pipe || $_in_subshell ]] && local hint= || local hint="
 
-Usage: $fn [OPTION]... [PATH]...
+Usage: $fn [OPTION]...  [PATH]...
 
 Type '$fn --help' for more details."
     local arg optionWithValue params=() _help _selftest _PATH=()
@@ -653,7 +653,7 @@ Type '$fn --help' for more details."
         case $arg in
     
             --help)
-                echo "Usage: $fn [OPTION]... [PATH]..."
+                echo "Usage: $fn [OPTION]...  [PATH]..."
                 echo 
                 echo "Alternative version of 'ls -lt' hat prints directories and symbolic links to directories before files."
                 echo 
@@ -1457,7 +1457,7 @@ complete -F _${BASH_FUNK_PREFIX:-}-test-filesystem -- ${BASH_FUNK_PREFIX:-}-test
 function -help-filesystem() {
 
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-abspath [PATH]\033[0m  -  Prints the normalized path of the given path WITHOUT resolving symbolic links. The path is not required to exist."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-count-words FILE WORD1[WORD]...\033[0m  -  Counts the number of occurences of the word(s) in the given file."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-count-words FILE WORD1 [WORD]...\033[0m  -  Counts the number of occurences of the word(s) in the given file."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-du [PATH]...\033[0m  -  Prints disk usage information."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-findfiles [START_PATH] SEARCH_STRING\033[0m  -  Recursively finds all files containing the given string and displays their path."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-ll [PATH]...\033[0m  -  Alternative version of 'ls -lt' hat prints directories and symbolic links to directories before files."

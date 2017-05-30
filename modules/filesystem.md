@@ -58,7 +58,7 @@ fi
 ## <a name="-count-words"></a>-count-words
 
 ```
-Usage: -count-words [OPTION]... FILE WORD1[WORD]...
+Usage: -count-words [OPTION]... FILE WORD1 [WORD]...
 
 Counts the number of occurences of the word(s) in the given file.
 
@@ -112,7 +112,7 @@ fi
 ## <a name="-du"></a>-du
 
 ```
-Usage: -du [OPTION]... [PATH]...
+Usage: -du [OPTION]...  [PATH]...
 
 Prints disk usage information.
 
@@ -263,7 +263,7 @@ fi
 ## <a name="-ll"></a>-ll
 
 ```
-Usage: -ll [OPTION]... [PATH]...
+Usage: -ll [OPTION]...  [PATH]...
 
 Alternative version of 'ls -lt' hat prints directories and symbolic links to directories before files.
 
