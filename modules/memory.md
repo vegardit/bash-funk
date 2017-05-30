@@ -61,7 +61,11 @@ Options:
 
 Examples:
 $ -memfree 
-12560204
+1036560
+$ -memfree MB
+1012
+$ -memfree GB
+1
 ```
 
 *Implementation:*
@@ -141,7 +145,11 @@ Options:
 
 Examples:
 $ -memtotal 
-24689476
+1036560
+$ -memtotal MB
+1012
+$ -memtotal GB
+1
 ```
 
 *Implementation:*

@@ -159,7 +159,11 @@ Type '$fn --help' for more details."
                 echo 
                 echo "Examples:"
                 echo -e "$ \033[1m$fn \033[22m"
-                echo "12560204"
+                echo "1036560"
+                echo -e "$ \033[1m$fn MB\033[22m"
+                echo "1012"
+                echo -e "$ \033[1m$fn GB\033[22m"
+                echo "1"
                 echo 
                 return 0
               ;;
@@ -173,6 +177,20 @@ Type '$fn --help' for more details."
                 echo -e "--> [32mOK[0m"
                 echo -e "$ \033[1m$fn \033[22m"
                 stdout=$($fn ); rc=$?
+                echo $stdout
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                regex="^[1-9][0-9]*$"
+                if [[ ! "$stdout" =~ $regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$stdout] does not match required pattern [[1-9][0-9]*].$hint"; return 1; fi
+                echo "--> [32mOK[0m"
+                echo -e "$ \033[1m$fn MB\033[22m"
+                stdout=$($fn MB); rc=$?
+                echo $stdout
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                regex="^[1-9][0-9]*$"
+                if [[ ! "$stdout" =~ $regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$stdout] does not match required pattern [[1-9][0-9]*].$hint"; return 1; fi
+                echo "--> [32mOK[0m"
+                echo -e "$ \033[1m$fn GB\033[22m"
+                stdout=$($fn GB); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^[1-9][0-9]*$"
@@ -390,7 +408,11 @@ Type '$fn --help' for more details."
                 echo 
                 echo "Examples:"
                 echo -e "$ \033[1m$fn \033[22m"
-                echo "24689476"
+                echo "1036560"
+                echo -e "$ \033[1m$fn MB\033[22m"
+                echo "1012"
+                echo -e "$ \033[1m$fn GB\033[22m"
+                echo "1"
                 echo 
                 return 0
               ;;
@@ -404,6 +426,20 @@ Type '$fn --help' for more details."
                 echo -e "--> [32mOK[0m"
                 echo -e "$ \033[1m$fn \033[22m"
                 stdout=$($fn ); rc=$?
+                echo $stdout
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                regex="^[1-9][0-9]*$"
+                if [[ ! "$stdout" =~ $regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$stdout] does not match required pattern [[1-9][0-9]*].$hint"; return 1; fi
+                echo "--> [32mOK[0m"
+                echo -e "$ \033[1m$fn MB\033[22m"
+                stdout=$($fn MB); rc=$?
+                echo $stdout
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                regex="^[1-9][0-9]*$"
+                if [[ ! "$stdout" =~ $regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$stdout] does not match required pattern [[1-9][0-9]*].$hint"; return 1; fi
+                echo "--> [32mOK[0m"
+                echo -e "$ \033[1m$fn GB\033[22m"
+                stdout=$($fn GB); rc=$?
                 echo $stdout
                 if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^[1-9][0-9]*$"
