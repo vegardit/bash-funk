@@ -161,7 +161,7 @@ local cursor9Right="\033[9C"
 local cursor9Left="\033[9D"
 
 echo -ne "Waiting for [$(date +%T --date=@$(($_SECONDS - 3600)))] until $(date +%T --date=@$(($(date +%s) + $_SECONDS))). Press [s] to skip: $cursor9Right"
-for (( i = 0; i < $_SECONDS; i++ )); do
+for (( i = 0; i < _SECONDS; i++ )); do
     if [[ $_in_pipe || $_in_subshell ]]; then
         # adding a \n new line character to the end of the line to make the output parseable by sed which is line oriented
         local newLine="$saveCursor\n$restoreCursor"
