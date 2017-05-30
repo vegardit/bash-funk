@@ -13,14 +13,17 @@ The following commands are available when this module is loaded:
 1. [-abspath](#-abspath)
 1. [-count-words](#-count-words)
 1. [-du](#-du)
+1. [-extract](#-extract)
 1. [-findfiles](#-findfiles)
 1. [-ll](#-ll)
+1. [-mkcd](#-mkcd)
 1. [-modified](#-modified)
 1. [-owner](#-owner)
 1. [-realpath](#-realpath)
 1. [-sudo-append](#-sudo-append)
 1. [-sudo-write](#-sudo-write)
 1. [-test-filesystem](#-test-filesystem)
+1. [-up](#-up)
 
 ## <a name="-abspath"></a>-abspath
 
@@ -129,6 +132,56 @@ Options:
 *Implementation:*
 ```bash
 du -s -h ${_PATH[@]}
+```
+
+
+## <a name="-extract"></a>-extract
+
+```
+Usage: -extract [OPTION]... FILE
+
+Extracts the given archive using the compatible extractor.
+
+Parameters:
+  FILE (required)
+      The archive to extract.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+```
+
+*Implementation:*
+```bash
+if [[ ! -e "$_FILE" ]]; then
+    echo "Error: File [$_FILE] does not exist."
+    return 1
+fi
+
+if [[ ! -r "$_FILE" ]]; then
+    echo "Error: File [$_FILE] is not readable by user '$USER'."
+    return 1
+fi
+
+if [[ ! -f "$_FILE" ]]; then
+    echo "Error: Path [$_FILE] does not point to a file."
+    return 1
+fi
+
+case "$_FILE" in
+    *.bz2)            bunzip2    "$_FILE" ;;
+    *.gz)             gunzip     "$_FILE" ;;
+    *.rar)            unrar x    "$_FILE" ;;
+    *.tar)            tar xvf    "$_FILE" ;;
+    *.tbz2|*.tar.bz2) tar xvjf   "$_FILE" ;;
+    *.tgz|*.tar.gz)   tar xvzf   "$_FILE" ;;
+    *.zip)            unzip      "$_FILE" ;;
+    *.Z)              uncompress "$_FILE" ;;
+    *.7z)             7z x       "$_FILE" ;;
+    *) echo "Error: Unsupported archive format '$_FILE'"; return 1 ;;
+esac
 ```
 
 
@@ -279,14 +332,55 @@ Options:
 
 *Implementation:*
 ```bash
-command ls -lAph -I lost+found --color=always ${_PATH[@]} | awk '
-    BEGIN { dirs = ""; files = "" }
-    /^total/ { total = $0 }                 # capture total line
-    /^d/ { dirs = dirs "\n" $0 };           # capture directories
-    /^l.*[/]$/ { dirs = dirs "\n" $0 };     # capture symlinks to directories
-    /^-/ { files = files "\n" $0 };         # capture files
-    /^l.*[^/]$/ { files = files "\n" $0 };  # capture symlinks to files
-    END { print total dirs files }'
+
+if ls --help | grep -- --group-directories-first >/dev/null; then
+    command ls -lAph -I lost+found --color=always --group-directories-first ${_PATH[@]}   
+else
+    command ls -lAph -I lost+found --color=always ${_PATH[@]} | awk '
+        BEGIN { dirs = ""; files = "" }
+        /^total/ { total = $0 }                 # capture total line
+        /^d/ { dirs = dirs "\n" $0 };           # capture directories
+        /^l.*[/]$/ { dirs = dirs "\n" $0 };     # capture symlinks to directories
+        /^-/ { files = files "\n" $0 };         # capture files
+        /^l.*[^/]$/ { files = files "\n" $0 };  # capture symlinks to files
+        END { print total dirs files }'
+fi
+```
+
+
+## <a name="-mkcd"></a>-mkcd
+
+```
+Usage: -mkcd [OPTION]... PATH
+
+Creates a directory and changes into it.
+
+Parameters:
+  PATH (required)
+      The path to create.
+
+Options:
+    --help 
+        Prints this help.
+-m, --mode MODE (pattern: "[0-7]{3}")
+        The file mode for the new directory.
+-p, --parents 
+        Automatically create missing parent directories.
+    --selftest 
+        Performs a self-test.
+-v, --verbose 
+        Prints additional information during command execution.
+```
+
+*Implementation:*
+```bash
+local mkdirOpts
+
+[[ $_mode    ]] && mkdirOpts="$mkdirOpts -m $_mode_value" || true
+[[ $_parents ]] && mkdirOpts="$mkdirOpts -p" || true
+[[ $_verbose ]] && mkdirOpts="$mkdirOpts -v" || true
+
+mkdir "$_PATH" && cd "$_PATH"
 ```
 
 
@@ -524,13 +618,54 @@ Options:
 -abspath --selftest && echo || return 1
 -count-words --selftest && echo || return 1
 -du --selftest && echo || return 1
+-extract --selftest && echo || return 1
 -findfiles --selftest && echo || return 1
 -ll --selftest && echo || return 1
+-mkcd --selftest && echo || return 1
 -modified --selftest && echo || return 1
 -owner --selftest && echo || return 1
 -realpath --selftest && echo || return 1
 -sudo-append --selftest && echo || return 1
 -sudo-write --selftest && echo || return 1
+-up --selftest && echo || return 1
+```
+
+
+## <a name="-up"></a>-up
+
+```
+Usage: -up [OPTION]... [LEVEL_OR_NAME]
+
+Navigates the given levels up in the directory tree.
+
+Parameters:
+  LEVEL_OR_NAME 
+      The level to navigate up in the directory structure. Numeric value or the name of the directory to go back to.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+```
+
+*Implementation:*
+```bash
+if [[ ! $_LEVEL_OR_NAME ]]; then 
+    cd ..
+    return 0
+fi
+
+if [[ $_LEVEL_OR_NAME =~ ^[0-9]+$ ]]; then
+    local cdArgs
+    for (( i = 0; i < _LEVEL_OR_NAME; i++ )); do
+        cdArgs="../$cdArgs"
+    done
+    cd $cdArgs
+else
+    local path=$(pwd)
+    cd "${path%${_LEVEL_OR_NAME}*}${_LEVEL_OR_NAME}"
+fi
 ```
 
 

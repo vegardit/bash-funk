@@ -374,6 +374,129 @@ function _-du() {
 }
 complete -F _${BASH_FUNK_PREFIX:-}-du -- ${BASH_FUNK_PREFIX:-}-du
 
+function -extract() {
+
+    [[ -p /dev/stdout ]] && local _in_pipe=1 || local _in_pipe=
+    [ -t 1 ] && local _in_subshell= || local _in_subshell=1
+    local fn=${FUNCNAME[0]}
+    [[ $_in_pipe || $_in_subshell ]] && local hint= || local hint="
+
+Usage: $fn [OPTION]... FILE
+
+Type '$fn --help' for more details."
+    local arg optionWithValue params=() _help _selftest _FILE
+    for arg in "$@"; do
+        case $arg in
+    
+            --help)
+                echo "Usage: $fn [OPTION]... FILE"
+                echo 
+                echo "Extracts the given archive using the compatible extractor."
+                echo 
+                echo "Parameters:"
+                echo -e "  \033[1mFILE\033[22m (required)"
+                echo "      The archive to extract."
+                echo 
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo 
+                return 0
+              ;;
+    
+            --selftest)
+                echo "Testing function [$fn]..."
+                echo -e "$ \033[1m$fn --help\033[22m"
+                local regex stdout rc
+                stdout=$($fn --help); rc=$?
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
+                echo "Testing function [$fn]...DONE"
+                return 0
+              ;;
+    
+    
+    
+            -*)
+                echo "$fn: invalid option: '$arg'"
+                echo Type \'$fn --help\' for usage.
+                return 1
+              ;;
+    
+            *)
+                case $optionWithValue in
+                    *)
+                        params+=("$arg")
+                esac
+              ;;
+        esac
+    done
+    unset arg optionWithValue
+    
+    for param in "${params[@]}"; do
+        if [[ ! $_FILE ]]; then
+            _FILE=$param
+            continue
+        fi
+        echo "$fn: Error: too many parameters: '$param'$hint"
+        return 1
+    done
+    unset param params leftoverParams
+    
+    
+    if [[ $_FILE ]]; then
+        true
+    else
+        echo "$fn: Error: Parameter FILE must be specified.$hint"; return 1
+    fi
+    
+    
+    ######################################################
+
+if [[ ! -e "$_FILE" ]]; then
+    echo "Error: File [$_FILE] does not exist."
+    return 1
+fi
+
+if [[ ! -r "$_FILE" ]]; then
+    echo "Error: File [$_FILE] is not readable by user '$USER'."
+    return 1
+fi
+
+if [[ ! -f "$_FILE" ]]; then
+    echo "Error: Path [$_FILE] does not point to a file."
+    return 1
+fi
+
+case "$_FILE" in
+    *.bz2)            bunzip2    "$_FILE" ;;
+    *.gz)             gunzip     "$_FILE" ;;
+    *.rar)            unrar x    "$_FILE" ;;
+    *.tar)            tar xvf    "$_FILE" ;;
+    *.tbz2|*.tar.bz2) tar xvjf   "$_FILE" ;;
+    *.tgz|*.tar.gz)   tar xvzf   "$_FILE" ;;
+    *.zip)            unzip      "$_FILE" ;;
+    *.Z)              uncompress "$_FILE" ;;
+    *.7z)             7z x       "$_FILE" ;;
+    *) echo "Error: Unsupported archive format '$_FILE'"; return 1 ;;
+esac
+
+
+}
+function _-extract() {
+    local currentWord=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${currentWord} == -* ]]; then
+        local options=" --help --selftest "
+        for o in ${COMP_WORDS[@]}; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+    else
+        COMPREPLY=($(compgen -o default -- $currentWord))
+    fi
+}
+complete -F _${BASH_FUNK_PREFIX:-}-extract -- ${BASH_FUNK_PREFIX:-}-extract
+
 function -findfiles() {
 
     [[ -p /dev/stdout ]] && local _in_pipe=1 || local _in_pipe=
@@ -721,14 +844,19 @@ Type '$fn --help' for more details."
     
     ######################################################
 
-command ls -lAph -I lost+found --color=always ${_PATH[@]} | awk '
-    BEGIN { dirs = ""; files = "" }
-    /^total/ { total = $0 }                 # capture total line
-    /^d/ { dirs = dirs "\n" $0 };           # capture directories
-    /^l.*[/]$/ { dirs = dirs "\n" $0 };     # capture symlinks to directories
-    /^-/ { files = files "\n" $0 };         # capture files
-    /^l.*[^/]$/ { files = files "\n" $0 };  # capture symlinks to files
-    END { print total dirs files }'
+
+if ls --help | grep -- --group-directories-first >/dev/null; then
+    command ls -lAph -I lost+found --color=always --group-directories-first ${_PATH[@]}   
+else
+    command ls -lAph -I lost+found --color=always ${_PATH[@]} | awk '
+        BEGIN { dirs = ""; files = "" }
+        /^total/ { total = $0 }                 # capture total line
+        /^d/ { dirs = dirs "\n" $0 };           # capture directories
+        /^l.*[/]$/ { dirs = dirs "\n" $0 };     # capture symlinks to directories
+        /^-/ { files = files "\n" $0 };         # capture files
+        /^l.*[^/]$/ { files = files "\n" $0 };  # capture symlinks to files
+        END { print total dirs files }'
+fi
 
 }
 function _-ll() {
@@ -742,6 +870,139 @@ function _-ll() {
     fi
 }
 complete -F _${BASH_FUNK_PREFIX:-}-ll -- ${BASH_FUNK_PREFIX:-}-ll
+
+function -mkcd() {
+
+    [[ -p /dev/stdout ]] && local _in_pipe=1 || local _in_pipe=
+    [ -t 1 ] && local _in_subshell= || local _in_subshell=1
+    local fn=${FUNCNAME[0]}
+    [[ $_in_pipe || $_in_subshell ]] && local hint= || local hint="
+
+Usage: $fn [OPTION]... PATH
+
+Type '$fn --help' for more details."
+    local arg optionWithValue params=() _mode _mode_value _parents _help _selftest _verbose _PATH
+    for arg in "$@"; do
+        case $arg in
+    
+            --help)
+                echo "Usage: $fn [OPTION]... PATH"
+                echo 
+                echo "Creates a directory and changes into it."
+                echo 
+                echo "Parameters:"
+                echo -e "  \033[1mPATH\033[22m (required)"
+                echo "      The path to create."
+                echo 
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m-m, --mode MODE\033[22m (pattern: \"[0-7]{3}\")"
+                echo "        The file mode for the new directory."
+                echo -e "\033[1m-p, --parents\033[22m "
+                echo "        Automatically create missing parent directories."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo -e "\033[1m-v, --verbose\033[22m "
+                echo "        Prints additional information during command execution."
+                echo 
+                return 0
+              ;;
+    
+            --selftest)
+                echo "Testing function [$fn]..."
+                echo -e "$ \033[1m$fn --help\033[22m"
+                local regex stdout rc
+                stdout=$($fn --help); rc=$?
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
+                echo "Testing function [$fn]...DONE"
+                return 0
+              ;;
+    
+            --mode|-m)
+                _mode=true
+                _mode_value=
+                optionWithValue=--mode
+            ;;
+    
+            --parents|-p)
+                _parents=true
+            ;;
+    
+    
+    
+            --verbose|-v)
+                _verbose=true
+            ;;
+    
+            -*)
+                echo "$fn: invalid option: '$arg'"
+                echo Type \'$fn --help\' for usage.
+                return 1
+              ;;
+    
+            *)
+                case $optionWithValue in
+                    --mode)
+                        _mode_value=$arg
+                        optionWithValue=
+                      ;;
+                    *)
+                        params+=("$arg")
+                esac
+              ;;
+        esac
+    done
+    unset arg optionWithValue
+    
+    for param in "${params[@]}"; do
+        if [[ ! $_PATH ]]; then
+            _PATH=$param
+            continue
+        fi
+        echo "$fn: Error: too many parameters: '$param'$hint"
+        return 1
+    done
+    unset param params leftoverParams
+    
+    if [[ $_mode ]]; then
+        if [[ ! $_mode_value ]]; then echo "$fn: Error: Value MODE for option --mode must be specified.$hint"; return 1; fi
+        local regex="^[0-7]{3}$"
+        if [[ ! "$_mode_value" =~ $regex ]]; then echo "$fn: Error: Value '$_mode_value' for option --mode does not match required pattern '[0-7]{3}'.$hint"; return 1; fi
+        unset regex
+        true
+    fi
+    
+    if [[ $_PATH ]]; then
+        true
+    else
+        echo "$fn: Error: Parameter PATH must be specified.$hint"; return 1
+    fi
+    
+    
+    ######################################################
+
+local mkdirOpts
+
+[[ $_mode    ]] && mkdirOpts="$mkdirOpts -m $_mode_value" || true
+[[ $_parents ]] && mkdirOpts="$mkdirOpts -p" || true
+[[ $_verbose ]] && mkdirOpts="$mkdirOpts -v" || true
+
+mkdir "$_PATH" && cd "$_PATH"
+
+}
+function _-mkcd() {
+    local currentWord=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${currentWord} == -* ]]; then
+        local options=" --mode -m --parents -p --help --selftest --verbose -v "
+        for o in ${COMP_WORDS[@]}; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+    else
+        COMPREPLY=($(compgen -o default -- $currentWord))
+    fi
+}
+complete -F _${BASH_FUNK_PREFIX:-}-mkcd -- ${BASH_FUNK_PREFIX:-}-mkcd
 
 function -modified() {
 
@@ -1433,13 +1694,16 @@ Type '$fn --help' for more details."
 ${BASH_FUNK_PREFIX:-}-abspath --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:-}-count-words --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:-}-du --selftest && echo || return 1
+${BASH_FUNK_PREFIX:-}-extract --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:-}-findfiles --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:-}-ll --selftest && echo || return 1
+${BASH_FUNK_PREFIX:-}-mkcd --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:-}-modified --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:-}-owner --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:-}-realpath --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:-}-sudo-append --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:-}-sudo-write --selftest && echo || return 1
+${BASH_FUNK_PREFIX:-}-up --selftest && echo || return 1
 }
 function _-test-filesystem() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -1453,19 +1717,130 @@ function _-test-filesystem() {
 }
 complete -F _${BASH_FUNK_PREFIX:-}-test-filesystem -- ${BASH_FUNK_PREFIX:-}-test-filesystem
 
+function -up() {
+
+    [[ -p /dev/stdout ]] && local _in_pipe=1 || local _in_pipe=
+    [ -t 1 ] && local _in_subshell= || local _in_subshell=1
+    local fn=${FUNCNAME[0]}
+    [[ $_in_pipe || $_in_subshell ]] && local hint= || local hint="
+
+Usage: $fn [OPTION]... [LEVEL_OR_NAME]
+
+Type '$fn --help' for more details."
+    local arg optionWithValue params=() _help _selftest _LEVEL_OR_NAME
+    for arg in "$@"; do
+        case $arg in
+    
+            --help)
+                echo "Usage: $fn [OPTION]... [LEVEL_OR_NAME]"
+                echo 
+                echo "Navigates the given levels up in the directory tree."
+                echo 
+                echo "Parameters:"
+                echo -e "  \033[1mLEVEL_OR_NAME\033[22m "
+                echo "      The level to navigate up in the directory structure. Numeric value or the name of the directory to go back to."
+                echo 
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo 
+                return 0
+              ;;
+    
+            --selftest)
+                echo "Testing function [$fn]..."
+                echo -e "$ \033[1m$fn --help\033[22m"
+                local regex stdout rc
+                stdout=$($fn --help); rc=$?
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
+                echo "Testing function [$fn]...DONE"
+                return 0
+              ;;
+    
+    
+    
+            -*)
+                echo "$fn: invalid option: '$arg'"
+                echo Type \'$fn --help\' for usage.
+                return 1
+              ;;
+    
+            *)
+                case $optionWithValue in
+                    *)
+                        params+=("$arg")
+                esac
+              ;;
+        esac
+    done
+    unset arg optionWithValue
+    
+    for param in "${params[@]}"; do
+        if [[ ! $_LEVEL_OR_NAME && ${#params[@]} > 0 ]]; then
+            _LEVEL_OR_NAME=$param
+            continue
+        fi
+        echo "$fn: Error: too many parameters: '$param'$hint"
+        return 1
+    done
+    unset param params leftoverParams
+    
+    
+    if [[ $_LEVEL_OR_NAME ]]; then
+        true
+    fi
+    
+    
+    ######################################################
+
+if [[ ! $_LEVEL_OR_NAME ]]; then 
+    cd ..
+    return 0
+fi
+
+if [[ $_LEVEL_OR_NAME =~ ^[0-9]+$ ]]; then
+    local cdArgs
+    for (( i = 0; i < _LEVEL_OR_NAME; i++ )); do
+        cdArgs="../$cdArgs"
+    done
+    cd $cdArgs
+else
+    local path=$(pwd)
+    cd "${path%${_LEVEL_OR_NAME}*}${_LEVEL_OR_NAME}"
+fi
+
+}
+function _-up() {
+    local currentWord=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${currentWord} == -* ]]; then
+        local options=" --help --selftest "
+        for o in ${COMP_WORDS[@]}; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+    else
+        local path="$(pwd)"; COMPREPLY=( $(IFS=$'\n' compgen -o default -W "$( echo -e "${path////\n}" | sed 's/^/\x27/; s/$/\x27/' )" -- "$currentWord") )
+    fi
+}
+complete -F _${BASH_FUNK_PREFIX:-}-up -- ${BASH_FUNK_PREFIX:-}-up
+
 function -help-filesystem() {
 
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-abspath [PATH]\033[0m  -  Prints the normalized path of the given path WITHOUT resolving symbolic links. The path is not required to exist."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-count-words FILE WORD1 [WORD]...\033[0m  -  Counts the number of occurences of the word(s) in the given file."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-du [PATH]...\033[0m  -  Prints disk usage information."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-extract FILE\033[0m  -  Extracts the given archive using the compatible extractor."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-findfiles [START_PATH] SEARCH_STRING\033[0m  -  Recursively finds all files containing the given string and displays their path."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-ll [PATH]...\033[0m  -  Alternative version of 'ls -lt' hat prints directories and symbolic links to directories before files."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-mkcd PATH\033[0m  -  Creates a directory and changes into it."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-modified [PATH]\033[0m  -  Prints the modification timestamp of the given file or directory."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-owner [PATH]\033[0m  -  Prints the owner of the given file or directory."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-realpath [PATH]\033[0m  -  Prints the normalized path of the given path resolving any symbolic links. The path is not required to exist."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-sudo-append FILE_PATH CONTENT\033[0m  -  Creates a file with the given content."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-sudo-write FILE_PATH OWNER CONTENT\033[0m  -  Creates a file with the given content."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-filesystem\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-up [LEVEL_OR_NAME]\033[0m  -  Navigates the given levels up in the directory tree."
 
 }
 
