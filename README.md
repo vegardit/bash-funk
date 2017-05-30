@@ -12,6 +12,8 @@ bash-funk is a collection of useful Bash functions for everyday use.
 
 See the markdown files of the different [Bash modules](https://github.com/vegardit/bash-funk/tree/master/modules) for detailed information about the provided functions.
 
+![bash-funk console](README_console.png)
+
 
 ## <a name="install"></a>Installation
 
