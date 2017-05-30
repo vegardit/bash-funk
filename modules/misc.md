@@ -153,10 +153,22 @@ Options:
 
 *Implementation:*
 ```bash
-echo -ne "Waiting for [$(date +%T --date=@$(($_SECONDS - 3600)))] until $(date +%T --date=@$(($(date +%s) + $_SECONDS))). Press [s] to skip: \033[9C"
+local green="\033[1;32m"
+local reset="\033[0m"
+local saveCursor="\033[s"
+local restoreCursor="\033[u"
+local cursor9Right="\033[9C"
+local cursor9Left="\033[9D"
+
+echo -ne "Waiting for [$(date +%T --date=@$(($_SECONDS - 3600)))] until $(date +%T --date=@$(($(date +%s) + $_SECONDS))). Press [s] to skip: $cursor9Right"
 for (( i = 0; i < $_SECONDS; i++ )); do
-    # adding a \n new line character to the end of the line to make the output parseable by sed which is line oriented
-    echo -ne "\033[9D\033[1;32m$(date +%T --date=@$(($_SECONDS - ${i} - 3600))) \033[0m\033[s\n\033[u"
+    if [[ $_in_pipe || $_in_subshell ]]; then
+        # adding a \n new line character to the end of the line to make the output parseable by sed which is line oriented
+        local newLine="$saveCursor\n$restoreCursor"
+    else
+        local newLine
+    fi
+    echo -ne "$cursor9Left$green$(date +%T --date=@$(($_SECONDS - ${i} - 3600))) $reset$newLine"
     local char=
     read -s -n1 -t1 char || :
     [[ $char == "s" ]] && break
