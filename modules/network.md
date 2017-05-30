@@ -8,8 +8,6 @@ The following commands are available when this module is loaded:
 1. [-get-ips](#-get-ips)
 1. [-is-port-open](#-is-port-open)
 1. [-test-network](#-test-network)
-1. [License](#license)
-
 
 ## <a name="-block-port"></a>-block-port
 
@@ -32,7 +30,7 @@ Options:
 
 Examples:
 $ -block-port 70000
-Error: Value '70000' for parameter PORT is too high. Must be <= 65535.
+-block-port: Error: Value '70000' for parameter PORT is too high. Must be <= 65535.
 ```
 
 *Implementation:*
@@ -111,7 +109,7 @@ $ -is-port-open localhost 12345 1
 $ -is-port-open -v localhost 12345 1
 localhost:12345 is not reachable.
 $ -is-port-open localhost 70000
-Error: Value '70000' for parameter PORT is too high. Must be <= 65535.
+-is-port-open: Error: Value '70000' for parameter PORT is too high. Must be <= 65535.
 ```
 
 *Implementation:*
@@ -165,9 +163,9 @@ Options:
 
 *Implementation:*
 ```bash
-${BASH_FUNK_PREFIX:-}-block-port --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-get-ips --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-is-port-open --selftest && echo || return 1
+-block-port --selftest && echo || return 1
+-get-ips --selftest && echo || return 1
+-is-port-open --selftest && echo || return 1
 ```
 
 

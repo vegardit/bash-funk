@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copyright (c) 2015-2017 Vegard IT GmbH, http://vegardit.com
 # 
@@ -66,29 +66,29 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo -e "$ \033[1m$fn 1-1\033[22m"
                 stdout=$($fn 1-1); rc=$?
                 echo $stdout
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^1$"
-                if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [1].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ ! "$stdout" =~ $regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$stdout] does not match required pattern [1].$hint"; return 1; fi
+                echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$fn 1-5\033[22m"
                 stdout=$($fn 1-5); rc=$?
                 echo $stdout
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^[1-5]$"
-                if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [[1-5]].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ ! "$stdout" =~ $regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$stdout] does not match required pattern [[1-5]].$hint"; return 1; fi
+                echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$fn 200-299\033[22m"
                 stdout=$($fn 200-299); rc=$?
                 echo $stdout
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^[2-3][0-9][0-9]$"
-                if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [[2-3][0-9][0-9]].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ ! "$stdout" =~ $regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$stdout] does not match required pattern [[2-3][0-9][0-9]].$hint"; return 1; fi
+                echo "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -198,36 +198,36 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo -e "$ \033[1m$fn 12 0-9\033[22m"
                 stdout=$($fn 12 0-9); rc=$?
                 echo $stdout
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^[0-9]{12}$"
-                if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [[0-9]{12}].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ ! "$stdout" =~ $regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$stdout] does not match required pattern [[0-9]{12}].$hint"; return 1; fi
+                echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$fn 8 a-zA-Z\033[22m"
                 stdout=$($fn 8 a-zA-Z); rc=$?
                 echo $stdout
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^[a-zA-Z]{8}$"
-                if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [[a-zA-Z]{8}].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ ! "$stdout" =~ $regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$stdout] does not match required pattern [[a-zA-Z]{8}].$hint"; return 1; fi
+                echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$fn 10 [:alnum:]\033[22m"
                 stdout=$($fn 10 [:alnum:]); rc=$?
                 echo $stdout
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^[[:alnum:]]{10}$"
-                if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [[[:alnum:]]{10}].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ ! "$stdout" =~ $regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$stdout] does not match required pattern [[[:alnum:]]{10}].$hint"; return 1; fi
+                echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$fn 10 [:alnum:][:punct:]\033[22m"
                 stdout=$($fn 10 [:alnum:][:punct:]); rc=$?
                 echo $stdout
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^[[:alnum:][:punct:]]{10}$"
-                if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [[[:alnum:][:punct:]]{10}].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ ! "$stdout" =~ $regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$stdout] does not match required pattern [[[:alnum:][:punct:]]{10}].$hint"; return 1; fi
+                echo "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -327,8 +327,8 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;

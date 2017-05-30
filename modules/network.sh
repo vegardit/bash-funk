@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copyright (c) 2015-2017 Vegard IT GmbH, http://vegardit.com
 # 
@@ -54,7 +54,7 @@ Type '$fn --help' for more details."
                 echo 
                 echo "Examples:"
                 echo -e "$ \033[1m$fn 70000\033[22m"
-                echo "Error: Value '70000' for parameter PORT is too high. Must be <= 65535."
+                echo "${FUNCNAME[0]}: Error: Value '70000' for parameter PORT is too high. Must be <= 65535."
                 echo 
                 return 0
               ;;
@@ -64,15 +64,15 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo -e "$ \033[1m$fn 70000\033[22m"
                 stdout=$($fn 70000); rc=$?
                 echo $stdout
-                if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
-                regex="^Error: Value '70000' for parameter PORT is too high. Must be <= 65535.$"
-                if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value '70000' for parameter PORT is too high. Must be <= 65535.].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 1 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [1].$hint"; return 1; fi
+                regex="^${FUNCNAME[0]}: Error: Value '70000' for parameter PORT is too high. Must be <= 65535.$"
+                if [[ ! "$stdout" =~ $regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$stdout] does not match required pattern [${FUNCNAME[0]}: Error: Value '70000' for parameter PORT is too high. Must be <= 65535.].$hint"; return 1; fi
+                echo "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -194,8 +194,8 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -285,7 +285,7 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn -v localhost 12345 1\033[22m"
                 echo "localhost:12345 is not reachable."
                 echo -e "$ \033[1m$fn localhost 70000\033[22m"
-                echo "Error: Value '70000' for parameter PORT is too high. Must be <= 65535."
+                echo "${FUNCNAME[0]}: Error: Value '70000' for parameter PORT is too high. Must be <= 65535."
                 echo 
                 return 0
               ;;
@@ -295,29 +295,29 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo -e "$ \033[1m$fn localhost 12345 1\033[22m"
                 stdout=$($fn localhost 12345 1); rc=$?
                 echo $stdout
-                if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
+                if [[ $rc != 1 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^$"
-                if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ ! "$stdout" =~ $regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$stdout] does not match required pattern [].$hint"; return 1; fi
+                echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$fn -v localhost 12345 1\033[22m"
                 stdout=$($fn -v localhost 12345 1); rc=$?
                 echo $stdout
-                if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
+                if [[ $rc != 1 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^localhost:12345 is not reachable.$"
-                if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [localhost:12345 is not reachable.].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ ! "$stdout" =~ $regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$stdout] does not match required pattern [localhost:12345 is not reachable.].$hint"; return 1; fi
+                echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$fn localhost 70000\033[22m"
                 stdout=$($fn localhost 70000); rc=$?
                 echo $stdout
-                if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
-                regex="^Error: Value '70000' for parameter PORT is too high. Must be <= 65535.$"
-                if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Error: Value '70000' for parameter PORT is too high. Must be <= 65535.].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 1 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [1].$hint"; return 1; fi
+                regex="^${FUNCNAME[0]}: Error: Value '70000' for parameter PORT is too high. Must be <= 65535.$"
+                if [[ ! "$stdout" =~ $regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$stdout] does not match required pattern [${FUNCNAME[0]}: Error: Value '70000' for parameter PORT is too high. Must be <= 65535.].$hint"; return 1; fi
+                echo "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -461,8 +461,8 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;

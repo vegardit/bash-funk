@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copyright (c) 2015-2017 Vegard IT GmbH, http://vegardit.com
 #
@@ -29,7 +29,7 @@ eval "${TMP_LS_COLORS/di=01;34/di=${BASH_FUNK_DIRS_COLOR}}" # replace 01;34 with
 unset TMP_LS_COLORS
 
 
-function -bash-prompt() {
+-bash-prompt() {
     # Save the return code of last command
     local lastRC=$?
 

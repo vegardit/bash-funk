@@ -9,8 +9,6 @@ The following commands are available when this module is loaded:
 1. [-meminfo](#-meminfo)
 1. [-memtotal](#-memtotal)
 1. [-test-memory](#-test-memory)
-1. [License](#license)
-
 
 ## <a name="-alloc-mem"></a>-alloc-mem
 
@@ -197,10 +195,10 @@ Options:
 
 *Implementation:*
 ```bash
-${BASH_FUNK_PREFIX:-}-alloc-mem --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-memfree --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-meminfo --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-memtotal --selftest && echo || return 1
+-alloc-mem --selftest && echo || return 1
+-memfree --selftest && echo || return 1
+-meminfo --selftest && echo || return 1
+-memtotal --selftest && echo || return 1
 ```
 
 

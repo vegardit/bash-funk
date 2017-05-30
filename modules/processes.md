@@ -9,8 +9,6 @@ The following commands are available when this module is loaded:
 1. [-get-toplevel-parent-pid](#-get-toplevel-parent-pid)
 1. [-kill-childs](#-kill-childs)
 1. [-test-processes](#-test-processes)
-1. [License](#license)
-
 
 ## <a name="-get-child-pids"></a>-get-child-pids
 
@@ -165,10 +163,10 @@ Options:
 
 *Implementation:*
 ```bash
-${BASH_FUNK_PREFIX:-}-get-child-pids --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-get-parent-pid --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-get-toplevel-parent-pid --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-kill-childs --selftest && echo || return 1
+-get-child-pids --selftest && echo || return 1
+-get-parent-pid --selftest && echo || return 1
+-get-toplevel-parent-pid --selftest && echo || return 1
+-kill-childs --selftest && echo || return 1
 ```
 
 

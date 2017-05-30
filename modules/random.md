@@ -7,8 +7,6 @@ The following commands are available when this module is loaded:
 1. [-random-number](#-random-number)
 1. [-random-string](#-random-string)
 1. [-test-random](#-test-random)
-1. [License](#license)
-
 
 ## <a name="-random-number"></a>-random-number
 
@@ -94,8 +92,8 @@ Options:
 
 *Implementation:*
 ```bash
-${BASH_FUNK_PREFIX:-}-random-number --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-random-string --selftest && echo || return 1
+-random-number --selftest && echo || return 1
+-random-string --selftest && echo || return 1
 ```
 
 

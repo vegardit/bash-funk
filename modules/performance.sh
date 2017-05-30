@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copyright (c) 2015-2017 Vegard IT GmbH, http://vegardit.com
 # 
@@ -54,8 +54,8 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -137,8 +137,8 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -220,8 +220,8 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;

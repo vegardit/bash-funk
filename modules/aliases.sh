@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copyright (c) 2015-2017 Vegard IT GmbH, http://vegardit.com
 # 
@@ -33,7 +33,6 @@ if [[ $OSTYPE == "cygwin" ]]; then
         if [[ -e /cygdrive/${drive} ]]; then
             alias "${drive}:"="cd /cygdrive/${drive}"
             alias "${drive^^}:"="cd /cygdrive/${drive}"
-
         fi
     done
 fi

@@ -20,8 +20,6 @@ The following commands are available when this module is loaded:
 1. [-substr-before-last](#-substr-before-last)
 1. [-substr-between](#-substr-between)
 1. [-test-strings](#-test-strings)
-1. [License](#license)
-
 
 ## <a name="-ascii2hex"></a>-ascii2hex
 
@@ -554,21 +552,21 @@ Options:
 
 *Implementation:*
 ```bash
-${BASH_FUNK_PREFIX:-}-ascii2hex --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-hex2ascii --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-normalize-path --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-str-join --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-str-lower --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-str-matches --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-str-repeat --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-str-trim --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-str-upper --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-strip-ansi --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-substr-after --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-substr-after-last --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-substr-before --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-substr-before-last --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-substr-between --selftest && echo || return 1
+-ascii2hex --selftest && echo || return 1
+-hex2ascii --selftest && echo || return 1
+-normalize-path --selftest && echo || return 1
+-str-join --selftest && echo || return 1
+-str-lower --selftest && echo || return 1
+-str-matches --selftest && echo || return 1
+-str-repeat --selftest && echo || return 1
+-str-trim --selftest && echo || return 1
+-str-upper --selftest && echo || return 1
+-strip-ansi --selftest && echo || return 1
+-substr-after --selftest && echo || return 1
+-substr-after-last --selftest && echo || return 1
+-substr-before --selftest && echo || return 1
+-substr-before-last --selftest && echo || return 1
+-substr-between --selftest && echo || return 1
 ```
 
 

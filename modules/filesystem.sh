@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copyright (c) 2015-2017 Vegard IT GmbH, http://vegardit.com
 # 
@@ -58,8 +58,8 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -125,6 +125,157 @@ function _-abspath() {
 }
 complete -F _${BASH_FUNK_PREFIX:-}-abspath -- ${BASH_FUNK_PREFIX:-}-abspath
 
+function -count-words() {
+
+    [[ -p /dev/stdout ]] && local _in_pipe=1 || local _in_pipe=
+    [ -t 1 ] && local _in_subshell= || local _in_subshell=1
+    local fn=${FUNCNAME[0]}
+    [[ $_in_pipe || $_in_subshell ]] && local hint= || local hint="
+
+Usage: $fn [OPTION]... FILE WORD1[WORD]...
+
+Type '$fn --help' for more details."
+    local arg optionWithValue params=() _sort _sort_value _help _selftest _FILE _WORD=()
+    for arg in "$@"; do
+        case $arg in
+    
+            --help)
+                echo "Usage: $fn [OPTION]... FILE WORD1[WORD]..."
+                echo 
+                echo "Counts the number of occurences of the word(s) in the given file."
+                echo 
+                echo "Parameters:"
+                echo -e "  \033[1mFILE\033[22m (required)"
+                echo "      The file to analyze."
+                echo -e "  \033[1mWORD\033[22m (1 or more required)"
+                echo "      The word to count."
+                echo 
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo -e "\033[1m-s, --sort MODE\033[22m "
+                echo "        Specifies how to sort the output."
+                echo 
+                return 0
+              ;;
+    
+            --selftest)
+                echo "Testing function [$fn]..."
+                echo -e "$ \033[1m$fn --help\033[22m"
+                local regex stdout rc
+                stdout=$($fn --help); rc=$?
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
+                echo "Testing function [$fn]...DONE"
+                return 0
+              ;;
+    
+            --sort|-s)
+                _sort=true
+                _sort_value=
+                optionWithValue=--sort
+            ;;
+    
+    
+    
+            -*)
+                echo "$fn: invalid option: '$arg'"
+                echo Type \'$fn --help\' for usage.
+                return 1
+              ;;
+    
+            *)
+                case $optionWithValue in
+                    --sort)
+                        _sort_value=$arg
+                        optionWithValue=
+                      ;;
+                    *)
+                        params+=("$arg")
+                esac
+              ;;
+        esac
+    done
+    unset arg optionWithValue
+    
+    for param in "${params[@]}"; do
+        if [[ ! $_FILE ]]; then
+            _FILE=$param
+            continue
+        fi
+        _WORD+=("$param")
+        continue
+        echo "$fn: Error: too many parameters: '$param'$hint"
+        return 1
+    done
+    unset param params leftoverParams
+    
+    if [[ $_sort ]]; then
+        if [[ ! $_sort_value ]]; then echo "$fn: Error: Value MODE for option --sort must be specified.$hint"; return 1; fi
+        declare -A allowed=( [count]=1 [word]=1 )
+        if [[ ! ${allowed[$_sort_value]} ]]; then echo "$fn: Error: Value '$_sort_value' for option --sort is not one of the allowed values [count,word].$hint"; return 1; fi
+        unset allowed
+        true
+    fi
+    
+    if [[ $_FILE ]]; then
+        true
+    else
+        echo "$fn: Error: Parameter FILE must be specified.$hint"; return 1
+    fi
+    if [[ _WORD ]]; then
+        if [[ ${#_WORD[@]} -lt 1 ]]; then echo "$fn: Error: For parameter WORD 1 value(s) must be specified. Found: ${#_WORD[@]}.$hint"; return 1; fi
+        true
+    else
+        echo "$fn: Error: Parameter WORD must be specified."; return 1
+    fi
+    
+    
+    ######################################################
+
+if [[ ! -e $_FILE ]]; then
+    echo "Error: File [$_FILE] does not exist."
+    return 1
+fi
+
+if [[ ! -r $_FILE ]]; then
+    echo "Error: File [$_FILE] is not readable by user '$USER'."
+    return 1
+fi
+
+if [[ ! -f $_FILE ]]; then
+    echo "Error: Path [$_FILE] does not point to a file."
+    return 1
+fi
+
+local sedCmds=
+local grepCmds=
+for word in "${_WORD[@]}"; do
+    sedCmds="s/$word/\n$word\n/g; $sedCmds"
+    grepCmds="$grepCmds -e $word"
+done
+
+if [[ $_sort_value == "count" ]]; then
+    sed "$sedCmds" $_FILE | grep $grepCmds | sort | uniq -c | sort -r
+else
+    sed "$sedCmds" $_FILE | grep $grepCmds | sort | uniq -c
+fi
+
+}
+function _-count-words() {
+    local currentWord=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${currentWord} == -* ]]; then
+        local options=" --sort -s --help --selftest "
+        for o in ${COMP_WORDS[@]}; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+    else
+        COMPREPLY=($(compgen -o default -- $currentWord))
+    fi
+}
+complete -F _${BASH_FUNK_PREFIX:-}-count-words -- ${BASH_FUNK_PREFIX:-}-count-words
+
 function -du() {
 
     [[ -p /dev/stdout ]] && local _in_pipe=1 || local _in_pipe=
@@ -162,8 +313,8 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -275,8 +426,8 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -524,8 +675,8 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -630,8 +781,8 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -680,26 +831,26 @@ if [[ ! -e $_PATH ]]; then
     return 1
 fi
 
-if [[ ! -f $_PATH ]]; then
+if [[ ! -r $_PATH ]]; then
     echo "Error: Path [$_PATH] is not readable by user '$USER'."
     return 1
 fi
 
 # use stat if available
 if hash stat &> /dev/null; then
-    echo $(stat -c %y ${_PATH:-.})
+    echo $(stat -c %y $_PATH})
 
 # use perl if available
 elif hash perl &> /dev/null; then
     perl << EOF
 use File::stat;
-print stat("${_PATH:-.}")->mtime, "\n"
+print stat("$_PATH")->mtime, "\n"
 EOF
 
 # use python as last resort
 else
     python -c "import os, pwd
-print int(os.path.getmtime('${_PATH:-.}'))"
+print int(os.path.getmtime('$_PATH'))"
 fi
 
 
@@ -753,8 +904,8 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -803,26 +954,26 @@ if [[ ! -e $_PATH ]]; then
     return 1
 fi
 
-if [[ ! -f $_PATH ]]; then
+if [[ ! -r $_PATH ]]; then
     echo "Error: Path [$_PATH] is not readable by user '$USER'."
     return 1
 fi
 
 # use stat if available
 if hash stat &> /dev/null; then
-    echo $(stat -c %U ${_PATH:-.})
+    echo $(stat -c %U $_PATH)
 
 # use perl if available
 elif hash perl &> /dev/null; then
     perl << EOF
 use File::stat;
-print getpwuid(stat("${_PATH:-.}")->uid), "\n"
+print getpwuid(stat("$_PATH")->uid), "\n"
 EOF
 
 # use python as last resort
 else
     python -c "import os, pwd
-print pwd.getpwuid(os.stat('${_PATH:-.}').st_uid).pw_name"
+print pwd.getpwuid(os.stat('$_PATH').st_uid).pw_name"
 fi
 
 
@@ -876,8 +1027,8 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -996,15 +1147,15 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo -e "$ \033[1m$fn /tmp/testfile.cfg 'foo=bar'\033[22m"
                 stdout=$($fn /tmp/testfile.cfg 'foo=bar'); rc=$?
                 echo $stdout
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^Appending to \[/tmp/testfile.cfg\]...$"
-                if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Appending to \[/tmp/testfile.cfg\]...].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ ! "$stdout" =~ $regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$stdout] does not match required pattern [Appending to \[/tmp/testfile.cfg\]...].$hint"; return 1; fi
+                echo "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -1123,15 +1274,15 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo -e "$ \033[1m$fn /tmp/testfile.cfg $USER:$USER 'foo=bar'\033[22m"
                 stdout=$($fn /tmp/testfile.cfg $USER:$USER 'foo=bar'); rc=$?
                 echo $stdout
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^Writing \[/tmp/testfile.cfg\]...$"
-                if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Writing \[/tmp/testfile.cfg\]...].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ ! "$stdout" =~ $regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$stdout] does not match required pattern [Writing \[/tmp/testfile.cfg\]...].$hint"; return 1; fi
+                echo "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -1245,8 +1396,8 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -1281,6 +1432,7 @@ Type '$fn --help' for more details."
     ######################################################
 
 ${BASH_FUNK_PREFIX:-}-abspath --selftest && echo || return 1
+${BASH_FUNK_PREFIX:-}-count-words --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:-}-du --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:-}-findfiles --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:-}-ll --selftest && echo || return 1
@@ -1305,6 +1457,7 @@ complete -F _${BASH_FUNK_PREFIX:-}-test-filesystem -- ${BASH_FUNK_PREFIX:-}-test
 function -help-filesystem() {
 
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-abspath [PATH]\033[0m  -  Prints the normalized path of the given path WITHOUT resolving symbolic links. The path is not required to exist."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-count-words FILE WORD1[WORD]...\033[0m  -  Counts the number of occurences of the word(s) in the given file."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-du [PATH]...\033[0m  -  Prints disk usage information."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-findfiles [START_PATH] SEARCH_STRING\033[0m  -  Recursively finds all files containing the given string and displays their path."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-ll [PATH]...\033[0m  -  Alternative version of 'ls -lt' hat prints directories and symbolic links to directories before files."

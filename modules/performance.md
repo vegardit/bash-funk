@@ -7,8 +7,6 @@ The following commands are available when this module is loaded:
 1. [-cpu-count](#-cpu-count)
 1. [-perftest](#-perftest)
 1. [-test-performance](#-test-performance)
-1. [License](#license)
-
 
 ## <a name="-cpu-count"></a>-cpu-count
 
@@ -66,8 +64,8 @@ Options:
 
 *Implementation:*
 ```bash
-${BASH_FUNK_PREFIX:-}-cpu-count --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-perftest --selftest && echo || return 1
+-cpu-count --selftest && echo || return 1
+-perftest --selftest && echo || return 1
 ```
 
 

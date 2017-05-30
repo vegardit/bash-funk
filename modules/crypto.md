@@ -7,8 +7,6 @@ The following commands are available when this module is loaded:
 1. [-md5sum](#-md5sum)
 1. [-sha256sum](#-sha256sum)
 1. [-test-crypto](#-test-crypto)
-1. [License](#license)
-
 
 ## <a name="-md5sum"></a>-md5sum
 
@@ -112,8 +110,8 @@ Options:
 
 *Implementation:*
 ```bash
-${BASH_FUNK_PREFIX:-}-md5sum --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-sha256sum --selftest && echo || return 1
+-md5sum --selftest && echo || return 1
+-sha256sum --selftest && echo || return 1
 ```
 
 

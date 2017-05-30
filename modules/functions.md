@@ -9,8 +9,6 @@ The following commands are available when this module is loaded:
 1. [-fn-rename](#-fn-rename)
 1. [-fn-unload](#-fn-unload)
 1. [-test-functions](#-test-functions)
-1. [License](#license)
-
 
 ## <a name="-fn-copy"></a>-fn-copy
 
@@ -116,15 +114,13 @@ unset -f $_OLD_FUNC_NAME
 ## <a name="-fn-unload"></a>-fn-unload
 
 ```
-Usage: -fn-unload [OPTION]... OLD_FUNC_NAME NEW_FUNC_NAME
+Usage: -fn-unload [OPTION]... FUNC_NAME
 
 Unloads the Bash function with the given name.
 
 Parameters:
-  OLD_FUNC_NAME (required)
-      Current name of the function.
-  NEW_FUNC_NAME (required)
-      New name for the function .
+  FUNC_NAME (required)
+      Name of the function to unload.
 
 Options:
     --help 
@@ -137,12 +133,12 @@ Options:
 
 *Implementation:*
 ```bash
-if ! declare -F $_OLD_FUNC_NAME > /dev/null; then
-    [[ $_verbose ]] && echo "A function with the name '$_OLD_FUNC_NAME' does not exist." || :
+if ! declare -F $_FUNC_NAME > /dev/null; then
+    [[ $_verbose ]] && echo "A function with the name '$_FUNC_NAME' does not exist." || :
     return 0
 fi
 
-unset -f $_OLD_FUNC_NAME
+unset -f $_FUNC_NAME
 ```
 
 
@@ -162,10 +158,10 @@ Options:
 
 *Implementation:*
 ```bash
-${BASH_FUNK_PREFIX:-}-fn-copy --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-fn-exists --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-fn-rename --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-fn-unload --selftest && echo || return 1
+-fn-copy --selftest && echo || return 1
+-fn-exists --selftest && echo || return 1
+-fn-rename --selftest && echo || return 1
+-fn-unload --selftest && echo || return 1
 ```
 
 

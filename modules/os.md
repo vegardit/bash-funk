@@ -7,8 +7,6 @@ The following commands are available when this module is loaded:
 1. [-command-exists](#-command-exists)
 1. [-pkg-installed](#-pkg-installed)
 1. [-test-os](#-test-os)
-1. [License](#license)
-
 
 ## <a name="-command-exists"></a>-command-exists
 
@@ -124,8 +122,8 @@ Options:
 
 *Implementation:*
 ```bash
-${BASH_FUNK_PREFIX:-}-command-exists --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-pkg-installed --selftest && echo || return 1
+-command-exists --selftest && echo || return 1
+-pkg-installed --selftest && echo || return 1
 ```
 
 

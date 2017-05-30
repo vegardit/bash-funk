@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copyright (c) 2015-2017 Vegard IT GmbH, http://vegardit.com
 # 
@@ -54,8 +54,8 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -106,6 +106,93 @@ function _-help() {
 }
 complete -F _${BASH_FUNK_PREFIX:-}-help -- ${BASH_FUNK_PREFIX:-}-help
 
+function -test-all() {
+
+    [[ -p /dev/stdout ]] && local _in_pipe=1 || local _in_pipe=
+    [ -t 1 ] && local _in_subshell= || local _in_subshell=1
+    local fn=${FUNCNAME[0]}
+    [[ $_in_pipe || $_in_subshell ]] && local hint= || local hint="
+
+Usage: $fn [OPTION]...
+
+Type '$fn --help' for more details."
+    local arg optionWithValue params=() _help _selftest
+    for arg in "$@"; do
+        case $arg in
+    
+            --help)
+                echo "Usage: $fn [OPTION]..."
+                echo 
+                echo "Executes the selftests of all loaded bash-funk commands."
+                echo 
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo 
+                return 0
+              ;;
+    
+            --selftest)
+                echo "Testing function [$fn]..."
+                echo -e "$ \033[1m$fn --help\033[22m"
+                local regex stdout rc
+                stdout=$($fn --help); rc=$?
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
+                echo "Testing function [$fn]...DONE"
+                return 0
+              ;;
+    
+    
+    
+            -*)
+                echo "$fn: invalid option: '$arg'"
+                echo Type \'$fn --help\' for usage.
+                return 1
+              ;;
+    
+            *)
+                case $optionWithValue in
+                    *)
+                        params+=("$arg")
+                esac
+              ;;
+        esac
+    done
+    unset arg optionWithValue
+    
+    for param in "${params[@]}"; do
+        echo "$fn: Error: too many parameters: '$param'$hint"
+        return 1
+    done
+    unset param params leftoverParams
+    
+    
+    
+    
+    ######################################################
+
+for testfunc in $(compgen -A function -- ${BASH_FUNK_PREFIX}-test-); do
+    if [[ $testfunc != "${BASH_FUNK_PREFIX}-test-all" ]]; then
+        $testfunc || return 1
+    fi
+done
+
+}
+function _-test-all() {
+    local currentWord=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${currentWord} == -* ]]; then
+        local options=" --help --selftest "
+        for o in ${COMP_WORDS[@]}; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+    else
+        COMPREPLY=($(compgen -o default -- $currentWord))
+    fi
+}
+complete -F _${BASH_FUNK_PREFIX:-}-test-all -- ${BASH_FUNK_PREFIX:-}-test-all
+
 function -test-misc() {
 
     [[ -p /dev/stdout ]] && local _in_pipe=1 || local _in_pipe=
@@ -139,8 +226,8 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -175,6 +262,7 @@ Type '$fn --help' for more details."
     ######################################################
 
 ${BASH_FUNK_PREFIX:-}-help --selftest && echo || return 1
+${BASH_FUNK_PREFIX:-}-test-all --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:-}-var-exists --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:-}-wait --selftest && echo || return 1
 }
@@ -237,29 +325,29 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo -e "$ \033[1m$fn USER\033[22m"
                 stdout=$($fn USER); rc=$?
                 echo $stdout
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^$"
-                if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ ! "$stdout" =~ $regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$stdout] does not match required pattern [].$hint"; return 1; fi
+                echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$fn -v USER\033[22m"
                 stdout=$($fn -v USER); rc=$?
                 echo $stdout
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
                 regex="^Bash variable 'USER' is exists.$"
-                if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Bash variable 'USER' is exists.].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ ! "$stdout" =~ $regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$stdout] does not match required pattern [Bash variable 'USER' is exists.].$hint"; return 1; fi
+                echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$fn -v NON_EXISTANT_VARIABLE\033[22m"
                 stdout=$($fn -v NON_EXISTANT_VARIABLE); rc=$?
                 echo $stdout
-                if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
+                if [[ $rc != 1 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^Bash variable 'NON_EXISTANT_VARIABLE' does not exist.$"
-                if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [Bash variable 'NON_EXISTANT_VARIABLE' does not exist.].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ ! "$stdout" =~ $regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$stdout] does not match required pattern [Bash variable 'NON_EXISTANT_VARIABLE' does not exist.].$hint"; return 1; fi
+                echo "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -307,10 +395,10 @@ Type '$fn --help' for more details."
     ######################################################
 
 if declare -p ${_VARIABLE_NAME} &>/dev/null; then
-    [[ $_verbose ]] && echo "Bash variable '${_VARIABLE_NAME}' is exists." || true
+    [[ $_verbose ]] && echo "Bash variable '${_VARIABLE_NAME}' is exist." || true
     return 0
 else
-    [[ $_verbose ]] && echo "Bash variable '${_VARIABLE_NAME}' does not exists." || true
+    [[ $_verbose ]] && echo "Bash variable '${_VARIABLE_NAME}' does not exist." || true
     return 1
 fi
 
@@ -364,8 +452,8 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -409,7 +497,7 @@ Type '$fn --help' for more details."
     ######################################################
 
 echo -ne "Waiting for [$(date +%T --date=@$(($_SECONDS - 3600)))] until $(date +%T --date=@$(($(date +%s) + $_SECONDS))). Press [s] to skip: \033[9C"
-for i in $(seq 0 $_SECONDS); do
+for (( i = 0; i < $_SECONDS; i++ )); do
     # adding a \n new line character to the end of the line to make the output parseable by sed which is line oriented
     echo -ne "\033[9D\033[1;32m$(date +%T --date=@$(($_SECONDS - ${i} - 3600))) \033[0m\033[s\n\033[u"
     local char=
@@ -434,6 +522,7 @@ complete -F _${BASH_FUNK_PREFIX:-}-wait -- ${BASH_FUNK_PREFIX:-}-wait
 function -help-misc() {
 
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-help\033[0m  -  Prints the online help of all bash-funk commands."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-all\033[0m  -  Executes the selftests of all loaded bash-funk commands."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-misc\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-var-exists VARIABLE_NAME\033[0m  -  Determines if the given variable is declared."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-wait SECONDS\033[0m  -  Waits for the given number of seconds or until the key 's' pressed."

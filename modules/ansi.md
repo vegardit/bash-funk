@@ -9,8 +9,6 @@ The following commands are available when this module is loaded:
 1. [-ansi-reset](#-ansi-reset)
 1. [-ansi-ul](#-ansi-ul)
 1. [-test-ansi](#-test-ansi)
-1. [License](#license)
-
 
 ## <a name="-ansi-bold"></a>-ansi-bold
 
@@ -156,10 +154,10 @@ Options:
 
 *Implementation:*
 ```bash
-${BASH_FUNK_PREFIX:-}-ansi-bold --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-ansi-colors-supported --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-ansi-reset --selftest && echo || return 1
-${BASH_FUNK_PREFIX:-}-ansi-ul --selftest && echo || return 1
+-ansi-bold --selftest && echo || return 1
+-ansi-colors-supported --selftest && echo || return 1
+-ansi-reset --selftest && echo || return 1
+-ansi-ul --selftest && echo || return 1
 ```
 
 

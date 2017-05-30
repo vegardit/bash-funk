@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copyright (c) 2015-2017 Vegard IT GmbH, http://vegardit.com
 # 
@@ -60,8 +60,8 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -177,22 +177,22 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo -e "$ \033[1m$fn name-of-nonexistant-function\033[22m"
                 stdout=$($fn name-of-nonexistant-function); rc=$?
                 echo $stdout
-                if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
+                if [[ $rc != 1 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^$"
-                if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ ! "$stdout" =~ $regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$stdout] does not match required pattern [].$hint"; return 1; fi
+                echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$fn -v name-of-nonexistant-function\033[22m"
                 stdout=$($fn -v name-of-nonexistant-function); rc=$?
                 echo $stdout
-                if [[ $rc != 1 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [1].$hint"; return 1; fi
+                if [[ $rc != 1 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [1].$hint"; return 1; fi
                 regex="^A function with the name 'name-of-nonexistant-function' does not exist.$"
-                if [[ ! "$stdout" =~ $regex ]]; then echo "--> FAILED - stdout [$stdout] does not match required pattern [A function with the name 'name-of-nonexistant-function' does not exist.].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ ! "$stdout" =~ $regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$stdout] does not match required pattern [A function with the name 'name-of-nonexistant-function' does not exist.].$hint"; return 1; fi
+                echo "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -299,8 +299,8 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -381,23 +381,21 @@ function -fn-unload() {
     local fn=${FUNCNAME[0]}
     [[ $_in_pipe || $_in_subshell ]] && local hint= || local hint="
 
-Usage: $fn [OPTION]... OLD_FUNC_NAME NEW_FUNC_NAME
+Usage: $fn [OPTION]... FUNC_NAME
 
 Type '$fn --help' for more details."
-    local arg optionWithValue params=() _help _selftest _verbose _OLD_FUNC_NAME _NEW_FUNC_NAME
+    local arg optionWithValue params=() _help _selftest _verbose _FUNC_NAME
     for arg in "$@"; do
         case $arg in
     
             --help)
-                echo "Usage: $fn [OPTION]... OLD_FUNC_NAME NEW_FUNC_NAME"
+                echo "Usage: $fn [OPTION]... FUNC_NAME"
                 echo 
                 echo "Unloads the Bash function with the given name."
                 echo 
                 echo "Parameters:"
-                echo -e "  \033[1mOLD_FUNC_NAME\033[22m (required)"
-                echo "      Current name of the function."
-                echo -e "  \033[1mNEW_FUNC_NAME\033[22m (required)"
-                echo "      New name for the function ."
+                echo -e "  \033[1mFUNC_NAME\033[22m (required)"
+                echo "      Name of the function to unload."
                 echo 
                 echo "Options:"
                 echo -e "\033[1m    --help\033[22m "
@@ -415,8 +413,8 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -444,12 +442,8 @@ Type '$fn --help' for more details."
     unset arg optionWithValue
     
     for param in "${params[@]}"; do
-        if [[ ! $_OLD_FUNC_NAME ]]; then
-            _OLD_FUNC_NAME=$param
-            continue
-        fi
-        if [[ ! $_NEW_FUNC_NAME ]]; then
-            _NEW_FUNC_NAME=$param
+        if [[ ! $_FUNC_NAME ]]; then
+            _FUNC_NAME=$param
             continue
         fi
         echo "$fn: Error: too many parameters: '$param'$hint"
@@ -458,26 +452,21 @@ Type '$fn --help' for more details."
     unset param params leftoverParams
     
     
-    if [[ $_OLD_FUNC_NAME ]]; then
+    if [[ $_FUNC_NAME ]]; then
         true
     else
-        echo "$fn: Error: Parameter OLD_FUNC_NAME must be specified.$hint"; return 1
-    fi
-    if [[ $_NEW_FUNC_NAME ]]; then
-        true
-    else
-        echo "$fn: Error: Parameter NEW_FUNC_NAME must be specified.$hint"; return 1
+        echo "$fn: Error: Parameter FUNC_NAME must be specified.$hint"; return 1
     fi
     
     
     ######################################################
 
-if ! declare -F $_OLD_FUNC_NAME > /dev/null; then
-    [[ $_verbose ]] && echo "A function with the name '$_OLD_FUNC_NAME' does not exist." || :
+if ! declare -F $_FUNC_NAME > /dev/null; then
+    [[ $_verbose ]] && echo "A function with the name '$_FUNC_NAME' does not exist." || :
     return 0
 fi
 
-unset -f $_OLD_FUNC_NAME
+unset -f $_FUNC_NAME
 
 }
 function _-fn-unload() {
@@ -525,8 +514,8 @@ Type '$fn --help' for more details."
                 echo -e "$ \033[1m$fn --help\033[22m"
                 local regex stdout rc
                 stdout=$($fn --help); rc=$?
-                if [[ $rc != 0 ]]; then echo "--> FAILED - exit code [$rc] instead of expected [0].$hint"; return 1; fi
-                echo "--> OK"
+                if [[ $rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$rc] instead of expected [0].$hint"; return 1; fi
+                echo -e "--> [32mOK[0m"
                 echo "Testing function [$fn]...DONE"
                 return 0
               ;;
@@ -582,7 +571,7 @@ function -help-functions() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-fn-copy OLD_FUNC_NAME NEW_FUNC_NAME\033[0m  -  Creates an in-memory copy of the Bash function with the given name."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-fn-exists FUNC_NAME\033[0m  -  Determines if a Bash function with the given name exists."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-fn-rename OLD_FUNC_NAME NEW_FUNC_NAME\033[0m  -  Renames the Bash function with the given name."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-fn-unload OLD_FUNC_NAME NEW_FUNC_NAME\033[0m  -  Unloads the Bash function with the given name."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-fn-unload FUNC_NAME\033[0m  -  Unloads the Bash function with the given name."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-functions\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
