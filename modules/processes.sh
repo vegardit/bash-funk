@@ -41,7 +41,7 @@ Type '$fn --help' for more details."
                 echo "Recursively prints all child PIDs of the process with the given PID."
                 echo 
                 echo "Parameters:"
-                echo -e "  \033[1mPARENT_PID\033[22m "
+                echo -e "  \033[1mPARENT_PID\033[22m (integer: 0-?)"
                 echo "      The process ID of the parent process. If not specified the PID of the current Bash process is used."
                 echo 
                 echo "Options:"
@@ -101,6 +101,7 @@ Type '$fn --help' for more details."
     
     if [[ $_PARENT_PID ]]; then
         if [[ ! "$_PARENT_PID" =~ ^-?[0-9]*$ ]]; then echo "$fn: Error: Value '$_PARENT_PID' for parameter PARENT_PID is not a numeric value.$hint"; return 1; fi
+        if [[ $_PARENT_PID -lt 0 ]]; then echo "$fn: Error: Value '$_PARENT_PID' for parameter PARENT_PID is too low. Must be >= 0.$hint"; return 1; fi
         true
     fi
     
@@ -154,7 +155,7 @@ Type '$fn --help' for more details."
                 echo "Prints the PID of the parent process of the child process with the given PID."
                 echo 
                 echo "Parameters:"
-                echo -e "  \033[1mCHILD_PID\033[22m "
+                echo -e "  \033[1mCHILD_PID\033[22m (integer: 0-?)"
                 echo "      The process ID of the child process. If not specified the PID of the current Bash process is used."
                 echo 
                 echo "Options:"
@@ -208,6 +209,7 @@ Type '$fn --help' for more details."
     
     if [[ $_CHILD_PID ]]; then
         if [[ ! "$_CHILD_PID" =~ ^-?[0-9]*$ ]]; then echo "$fn: Error: Value '$_CHILD_PID' for parameter CHILD_PID is not a numeric value.$hint"; return 1; fi
+        if [[ $_CHILD_PID -lt 0 ]]; then echo "$fn: Error: Value '$_CHILD_PID' for parameter CHILD_PID is too low. Must be >= 0.$hint"; return 1; fi
         true
     fi
     
@@ -256,7 +258,7 @@ Type '$fn --help' for more details."
                 echo "Prints the PID of the top-level parent process of the child process with the given PID."
                 echo 
                 echo "Parameters:"
-                echo -e "  \033[1mCHILD_PID\033[22m "
+                echo -e "  \033[1mCHILD_PID\033[22m (integer: 0-?)"
                 echo "      The process ID of the child process. If not specified the PID of the current Bash process is used."
                 echo 
                 echo "Options:"
@@ -310,6 +312,7 @@ Type '$fn --help' for more details."
     
     if [[ $_CHILD_PID ]]; then
         if [[ ! "$_CHILD_PID" =~ ^-?[0-9]*$ ]]; then echo "$fn: Error: Value '$_CHILD_PID' for parameter CHILD_PID is not a numeric value.$hint"; return 1; fi
+        if [[ $_CHILD_PID -lt 0 ]]; then echo "$fn: Error: Value '$_CHILD_PID' for parameter CHILD_PID is too low. Must be >= 0.$hint"; return 1; fi
         true
     fi
     
@@ -360,9 +363,9 @@ Type '$fn --help' for more details."
                 echo "Sends the given kill signal to all child processes of the process with the given PID."
                 echo 
                 echo "Parameters:"
-                echo -e "  \033[1mSIGNAL\033[22m (required)"
+                echo -e "  \033[1mSIGNAL\033[22m (required, integer: 1-64)"
                 echo "      The kill signal to be send, eg. 9=KILL or 15=TERM."
-                echo -e "  \033[1mPARENT_PID\033[22m "
+                echo -e "  \033[1mPARENT_PID\033[22m (integer: 0-?)"
                 echo "      The process ID of the parent process. If not specified the PID of the current bash process is used."
                 echo 
                 echo "Options:"
@@ -420,12 +423,15 @@ Type '$fn --help' for more details."
     
     if [[ $_SIGNAL ]]; then
         if [[ ! "$_SIGNAL" =~ ^-?[0-9]*$ ]]; then echo "$fn: Error: Value '$_SIGNAL' for parameter SIGNAL is not a numeric value.$hint"; return 1; fi
+        if [[ $_SIGNAL -lt 1 ]]; then echo "$fn: Error: Value '$_SIGNAL' for parameter SIGNAL is too low. Must be >= 1.$hint"; return 1; fi
+        if [[ $_SIGNAL -gt 64 ]]; then echo "$fn: Error: Value '$_SIGNAL' for parameter SIGNAL is too high. Must be <= 64.$hint"; return 1; fi
         true
     else
         echo "$fn: Error: Parameter SIGNAL must be specified.$hint"; return 1
     fi
     if [[ $_PARENT_PID ]]; then
         if [[ ! "$_PARENT_PID" =~ ^-?[0-9]*$ ]]; then echo "$fn: Error: Value '$_PARENT_PID' for parameter PARENT_PID is not a numeric value.$hint"; return 1; fi
+        if [[ $_PARENT_PID -lt 0 ]]; then echo "$fn: Error: Value '$_PARENT_PID' for parameter PARENT_PID is too low. Must be >= 0.$hint"; return 1; fi
         true
     fi
     

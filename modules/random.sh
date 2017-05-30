@@ -41,7 +41,7 @@ Type '$fn --help' for more details."
                 echo "Generates a random number of the given range. The range is inclusive."
                 echo 
                 echo "Parameters:"
-                echo -e "  \033[1mRANGE\033[22m (required)"
+                echo -e "  \033[1mRANGE\033[22m (required, pattern: \"[1-9][0-9]*-[1-9][0-9]*\")"
                 echo "      The numeric range LOW-HIGH, e.g. 1-5."
                 echo 
                 echo "Options:"
@@ -169,7 +169,7 @@ Type '$fn --help' for more details."
                 echo "Prints a random string of the given length containing the given characters."
                 echo 
                 echo "Parameters:"
-                echo -e "  \033[1mLENGTH\033[22m (required)"
+                echo -e "  \033[1mLENGTH\033[22m (required, integer: 1-?)"
                 echo "      Length of the string to generate."
                 echo -e "  \033[1mCHARS\033[22m "
                 echo "      String to choose random characters from."

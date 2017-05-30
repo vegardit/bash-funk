@@ -44,7 +44,7 @@ Type '$fn --help' for more details."
                 echo "  + Command 'python' must be available."
                 echo 
                 echo "Parameters:"
-                echo -e "  \033[1mMEMORY_IN_MB\033[22m (required)"
+                echo -e "  \033[1mMEMORY_IN_MB\033[22m (required, integer: 1-?)"
                 echo "      Amount of RAM in MB to allocate."
                 echo 
                 echo "Options:"
@@ -148,8 +148,8 @@ Type '$fn --help' for more details."
                 echo "Prints the free memory (in KB by default)."
                 echo 
                 echo "Parameters:"
-                echo -e "  \033[1mMEMORY_UNIT\033[22m "
-                echo "      KB, MB or GB."
+                echo -e "  \033[1mMEMORY_UNIT\033[22m (one of: [KB,MB,GB])"
+                echo "      The memory unit of the printed value."
                 echo 
                 echo "Options:"
                 echo -e "\033[1m    --help\033[22m "
@@ -397,8 +397,8 @@ Type '$fn --help' for more details."
                 echo "Prints the total memory (in KB by default)."
                 echo 
                 echo "Parameters:"
-                echo -e "  \033[1mMEMORY_UNIT\033[22m "
-                echo "      KB, MB or GB."
+                echo -e "  \033[1mMEMORY_UNIT\033[22m (one of: [KB,MB,GB])"
+                echo "      The memory unit of the printed value."
                 echo 
                 echo "Options:"
                 echo -e "\033[1m    --help\033[22m "

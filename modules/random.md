@@ -16,7 +16,7 @@ Usage: -random-number [OPTION]... RANGE
 Generates a random number of the given range. The range is inclusive.
 
 Parameters:
-  RANGE (required)
+  RANGE (required, pattern: "[1-9][0-9]*-[1-9][0-9]*")
       The numeric range LOW-HIGH, e.g. 1-5.
 
 Options:
@@ -48,7 +48,7 @@ Usage: -random-string [OPTION]... LENGTH [CHARS]
 Prints a random string of the given length containing the given characters.
 
 Parameters:
-  LENGTH (required)
+  LENGTH (required, integer: 1-?)
       Length of the string to generate.
   CHARS 
       String to choose random characters from.

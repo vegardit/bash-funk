@@ -821,7 +821,7 @@ Type '$fn --help' for more details."
                 echo "Parameters:"
                 echo -e "  \033[1mSTRING\033[22m (required)"
                 echo "      The string to repeat."
-                echo -e "  \033[1mCOUNT\033[22m (required)"
+                echo -e "  \033[1mCOUNT\033[22m (required, integer: 1-?)"
                 echo "      Number of times to repeat the string."
                 echo 
                 echo "Options:"

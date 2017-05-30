@@ -21,7 +21,7 @@ Requirements:
   + Command 'python' must be available.
 
 Parameters:
-  MEMORY_IN_MB (required)
+  MEMORY_IN_MB (required, integer: 1-?)
       Amount of RAM in MB to allocate.
 
 Options:
@@ -50,8 +50,8 @@ Usage: -memfree [OPTION]... [MEMORY_UNIT]
 Prints the free memory (in KB by default).
 
 Parameters:
-  MEMORY_UNIT 
-      KB, MB or GB.
+  MEMORY_UNIT (one of: [KB,MB,GB])
+      The memory unit of the printed value.
 
 Options:
     --help 
@@ -134,8 +134,8 @@ Usage: -memtotal [OPTION]... [MEMORY_UNIT]
 Prints the total memory (in KB by default).
 
 Parameters:
-  MEMORY_UNIT 
-      KB, MB or GB.
+  MEMORY_UNIT (one of: [KB,MB,GB])
+      The memory unit of the printed value.
 
 Options:
     --help 

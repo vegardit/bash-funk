@@ -19,7 +19,7 @@ Binds to the given port and thus block other programs from binding to it.
 Parameters:
   BIND_ADDRESS 
       The local bind address. E.g. 127.0.0.1.
-  PORT (required)
+  PORT (required, integer: 0-65535)
       Number of the port to occupy.
 
 Options:
@@ -90,9 +90,9 @@ Checks if a TCP connection can be established to the given port.
 Parameters:
   HOSTNAME (required)
       Target hostname.
-  PORT (required)
+  PORT (required, integer: 0-65535)
       Target TCP port.
-  CONNECT_TIMEOUT_IN_SECONDS 
+  CONNECT_TIMEOUT_IN_SECONDS (integer: ?-?)
       Number of seconds to try to connect to the given port. Default is 5 seconds.
 
 Options:

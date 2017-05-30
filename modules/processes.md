@@ -18,7 +18,7 @@ Usage: -get-child-pids [OPTION]... [PARENT_PID]
 Recursively prints all child PIDs of the process with the given PID.
 
 Parameters:
-  PARENT_PID 
+  PARENT_PID (integer: 0-?)
       The process ID of the parent process. If not specified the PID of the current Bash process is used.
 
 Options:
@@ -56,7 +56,7 @@ Usage: -get-parent-pid [OPTION]... [CHILD_PID]
 Prints the PID of the parent process of the child process with the given PID.
 
 Parameters:
-  CHILD_PID 
+  CHILD_PID (integer: 0-?)
       The process ID of the child process. If not specified the PID of the current Bash process is used.
 
 Options:
@@ -87,7 +87,7 @@ Usage: -get-toplevel-parent-pid [OPTION]... [CHILD_PID]
 Prints the PID of the top-level parent process of the child process with the given PID.
 
 Parameters:
-  CHILD_PID 
+  CHILD_PID (integer: 0-?)
       The process ID of the child process. If not specified the PID of the current Bash process is used.
 
 Options:
@@ -120,9 +120,9 @@ Usage: -kill-childs [OPTION]... SIGNAL [PARENT_PID]
 Sends the given kill signal to all child processes of the process with the given PID.
 
 Parameters:
-  SIGNAL (required)
+  SIGNAL (required, integer: 1-64)
       The kill signal to be send, eg. 9=KILL or 15=TERM.
-  PARENT_PID 
+  PARENT_PID (integer: 0-?)
       The process ID of the parent process. If not specified the PID of the current bash process is used.
 
 Options:

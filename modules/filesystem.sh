@@ -155,7 +155,7 @@ Type '$fn --help' for more details."
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\033[1m-s, --sort MODE\033[22m "
+                echo -e "\033[1m-s, --sort MODE\033[22m (one of: [count,word])"
                 echo "        Specifies how to sort the output."
                 echo 
                 return 0
@@ -235,32 +235,31 @@ Type '$fn --help' for more details."
     
     ######################################################
 
-if [[ ! -e $_FILE ]]; then
+if [[ ! -e "$_FILE" ]]; then
     echo "Error: File [$_FILE] does not exist."
     return 1
 fi
 
-if [[ ! -r $_FILE ]]; then
+if [[ ! -r "$_FILE" ]]; then
     echo "Error: File [$_FILE] is not readable by user '$USER'."
     return 1
 fi
 
-if [[ ! -f $_FILE ]]; then
+if [[ ! -f "$_FILE" ]]; then
     echo "Error: Path [$_FILE] does not point to a file."
     return 1
 fi
 
-local sedCmds=
-local grepCmds=
+local sedCmds grepCmds
 for word in "${_WORD[@]}"; do
     sedCmds="s/$word/\n$word\n/g; $sedCmds"
     grepCmds="$grepCmds -e $word"
 done
 
 if [[ $_sort_value == "count" ]]; then
-    sed "$sedCmds" $_FILE | grep $grepCmds | sort | uniq -c | sort -r
+    sed "$sedCmds" "$_FILE" | grep $grepCmds | sort | uniq -c | sort -r
 else
-    sed "$sedCmds" $_FILE | grep $grepCmds | sort | uniq -c
+    sed "$sedCmds" "$_FILE" | grep $grepCmds | sort | uniq -c
 fi
 
 }
@@ -405,9 +404,9 @@ Type '$fn --help' for more details."
                 echo "        Prints this help."
                 echo -e "\033[1m-l, --lines\033[22m "
                 echo "        Show matching lines of the files that contain the given string."
-                echo -e "\033[1m    --maxdepth levels\033[22m "
+                echo -e "\033[1m    --maxdepth levels\033[22m (integer: ?-?)"
                 echo "        The maximum number of levels to descend into the directory tree below the starting-point."
-                echo -e "\033[1m    --mindepth levels\033[22m "
+                echo -e "\033[1m    --mindepth levels\033[22m (integer: ?-?)"
                 echo "        The level of directory tree below the starting-point where to start the search."
                 echo -e "\033[1m    --name pattern\033[22m "
                 echo "        Name pattern."
@@ -536,12 +535,12 @@ Type '$fn --help' for more details."
 
 local _START_PATH=${_START_PATH:-.}
 
-if [[ ! -e $_START_PATH ]]; then
+if [[ ! -e "$_START_PATH" ]]; then
     echo "Error: Path [$_START_PATH] does not exist."
     return 1
 fi
 
-if [[ ! -r $_START_PATH ]]; then
+if [[ ! -r "$_START_PATH" ]]; then
     echo "Error: Path [$_START_PATH] is not readable by user '$USER'."
     return 1
 fi
@@ -826,19 +825,19 @@ Type '$fn --help' for more details."
 
 local _PATH=${_PATH:-.}
 
-if [[ ! -e $_PATH ]]; then
+if [[ ! -e "$_PATH" ]]; then
     echo "Error: Path [$_PATH] does not exist."
     return 1
 fi
 
-if [[ ! -r $_PATH ]]; then
+if [[ ! -r "$_PATH" ]]; then
     echo "Error: Path [$_PATH] is not readable by user '$USER'."
     return 1
 fi
 
 # use stat if available
 if hash stat &> /dev/null; then
-    echo $(stat -c %y $_PATH})
+    echo $(stat -c %y "$_PATH"})
 
 # use perl if available
 elif hash perl &> /dev/null; then
@@ -949,19 +948,19 @@ Type '$fn --help' for more details."
 
 local _PATH=${_PATH:-.}
 
-if [[ ! -e $_PATH ]]; then
+if [[ ! -e "$_PATH" ]]; then
     echo "Error: Path [$_PATH] does not exist."
     return 1
 fi
 
-if [[ ! -r $_PATH ]]; then
+if [[ ! -r "$_PATH" ]]; then
     echo "Error: Path [$_PATH] is not readable by user '$USER'."
     return 1
 fi
 
 # use stat if available
 if hash stat &> /dev/null; then
-    echo $(stat -c %U $_PATH)
+    echo $(stat -c %U "$_PATH")
 
 # use perl if available
 elif hash perl &> /dev/null; then
@@ -1072,7 +1071,7 @@ Type '$fn --help' for more details."
 
 # use readlink if available
 if hash readlink &> /dev/null; then
-    readlink -m ${_PATH:-.}
+    readlink -m "${_PATH:-.}"
 
 # use perl if available
 elif hash perl &> /dev/null; then

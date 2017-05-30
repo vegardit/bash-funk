@@ -270,7 +270,7 @@ Prints the given string multiple times.
 Parameters:
   STRING (required)
       The string to repeat.
-  COUNT (required)
+  COUNT (required, integer: 1-?)
       Number of times to repeat the string.
 
 Options:

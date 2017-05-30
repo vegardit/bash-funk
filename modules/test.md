@@ -60,15 +60,15 @@ Options:
         Option a.
 -b, --bb v1[,v2..2] 
         Option b.
--c, --cc [...] 
+-c, --cc [...] (integer: ?-?)
         Option c.
--d, --dd [...] 
+-d, --dd [...] (integer: 1-5)
         Option d.
--e, --ee [...] 
+-e, --ee [...] (one of: [A,B,C])
         Option e.
--f, --ff [...] 
+-f, --ff [...] (pattern: "[a-z]+")
         Option f.
--g, --gg [...] 
+-g, --gg [...] (pattern: "[a-z]+")
         Option g.
     --help 
         Prints this help.
@@ -126,17 +126,17 @@ Usage: -test-fn-multi-value-parameters [OPTION]... AA1 AA2 BB1 BB2 CC1 CC2 DD1 D
 Test function with single value parameters.
 
 Parameters:
-  AA (2 to 2required)
+  AA (2 to 2 required)
       Param AA.
-  BB (2 to 2required)
+  BB (2 to 2 required, integer: ?-?)
       Param BB.
-  CC (2 to 2required)
+  CC (2 to 2 required, integer: 1-5)
       Param CC.
-  DD (2 to 2required)
+  DD (2 to 2 required, one of: [A,B,C])
       Param DD.
-  EE (2 to 2required)
+  EE (2 to 2 required, pattern: "[a-z]+")
       Param EE.
-  FF (0 or more)
+  FF (0 or more, pattern: "[a-z]+")
       Param FF.
 
 Options:
@@ -192,9 +192,9 @@ Usage: -test-fn-multi-value-parameters-first-variable [OPTION]...  [AA1..2] BB1 
 Test function with single value parameters.
 
 Parameters:
-  AA (0 to 2)
+  AA (0 to 2, integer: ?-?)
       Param AA.
-  BB (2 to 2required)
+  BB (2 to 2 required, integer: ?-?)
       Param BB.
 
 Options:
@@ -329,15 +329,15 @@ Options:
         Option a.
 -b, --bb v 
         Option b.
--c, --cc v 
+-c, --cc v (integer: ?-?)
         Option c.
--d, --dd v 
+-d, --dd v (integer: 1-5)
         Option d.
--e, --ee v 
+-e, --ee v (one of: [A,B,C])
         Option e.
--f, --ff v 
+-f, --ff v (pattern: "[a-z]+")
         Option f.
--g, --gg v 
+-g, --gg v (pattern: "[a-z]+")
         Option g.
     --help 
         Prints this help.
@@ -393,15 +393,15 @@ Test function with single value parameters.
 Parameters:
   AA (required)
       Param AA.
-  BB (required)
+  BB (required, integer: ?-?)
       Param BB.
-  CC (required)
+  CC (required, integer: 1-5)
       Param CC.
-  DD (required)
+  DD (required, one of: [A,B,C])
       Param DD.
-  EE (required)
+  EE (required, pattern: "[a-z]+")
       Param EE.
-  FF 
+  FF (pattern: "[a-z]+")
       Param FF.
 
 Options:
@@ -453,9 +453,9 @@ Usage: -test-fn-single-value-parameters-first-optional [OPTION]... [AA] BB
 Test function with single value parameters where the first one is optional.
 
 Parameters:
-  AA 
+  AA (integer: ?-?)
       Param AA.
-  BB (required)
+  BB (required, integer: ?-?)
       Param BB.
 
 Options:
