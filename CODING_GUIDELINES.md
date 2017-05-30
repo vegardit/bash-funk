@@ -19,11 +19,6 @@
 1. Use `\033` as escape sequence instead of `\e` to support MacOS
 
 
-## Avoid deprecated APIs
-1. Use `myfunc() { ... } ` instead of `function myfunc { ... }`
-2. `
-
-
 ## References
 
 1. https://github.com/kvz/bash3boilerplate#best-practices
