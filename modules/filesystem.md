@@ -634,12 +634,12 @@ Options:
 ## <a name="-up"></a>-up
 
 ```
-Usage: -up [OPTION]... [LEVEL_OR_NAME]
+Usage: -up [OPTION]... [LEVEL_OR_DIRECTORY_NAME]
 
-Navigates the given levels up in the directory tree.
+Navigates to the given level or directory up in the directory tree. Bash completion will auto-complete the names of the parent directories.
 
 Parameters:
-  LEVEL_OR_NAME 
+  LEVEL_OR_DIRECTORY_NAME 
       The level to navigate up in the directory structure. Numeric value or the name of the directory to go back to.
 
 Options:
@@ -651,20 +651,20 @@ Options:
 
 *Implementation:*
 ```bash
-if [[ ! $_LEVEL_OR_NAME ]]; then 
+if [[ ! $_LEVEL_OR_DIRECTORY_NAME ]]; then 
     cd ..
     return 0
 fi
 
-if [[ $_LEVEL_OR_NAME =~ ^[0-9]+$ ]]; then
+if [[ $_LEVEL_OR_DIRECTORY_NAME =~ ^[0-9]+$ ]]; then
     local cdArgs
-    for (( i = 0; i < _LEVEL_OR_NAME; i++ )); do
+    for (( i = 0; i < _LEVEL_OR_DIRECTORY_NAME; i++ )); do
         cdArgs="../$cdArgs"
     done
     cd $cdArgs
 else
     local path=$(pwd)
-    cd "${path%${_LEVEL_OR_NAME}*}${_LEVEL_OR_NAME}"
+    cd "${path%${_LEVEL_OR_DIRECTORY_NAME}*}${_LEVEL_OR_DIRECTORY_NAME}"
 fi
 ```
 

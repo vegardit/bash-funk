@@ -1724,20 +1724,20 @@ function -up() {
     local fn=${FUNCNAME[0]}
     [[ $_in_pipe || $_in_subshell ]] && local hint= || local hint="
 
-Usage: $fn [OPTION]... [LEVEL_OR_NAME]
+Usage: $fn [OPTION]... [LEVEL_OR_DIRECTORY_NAME]
 
 Type '$fn --help' for more details."
-    local arg optionWithValue params=() _help _selftest _LEVEL_OR_NAME
+    local arg optionWithValue params=() _help _selftest _LEVEL_OR_DIRECTORY_NAME
     for arg in "$@"; do
         case $arg in
     
             --help)
-                echo "Usage: $fn [OPTION]... [LEVEL_OR_NAME]"
+                echo "Usage: $fn [OPTION]... [LEVEL_OR_DIRECTORY_NAME]"
                 echo 
-                echo "Navigates the given levels up in the directory tree."
+                echo "Navigates to the given level or directory up in the directory tree. Bash completion will auto-complete the names of the parent directories."
                 echo 
                 echo "Parameters:"
-                echo -e "  \033[1mLEVEL_OR_NAME\033[22m "
+                echo -e "  \033[1mLEVEL_OR_DIRECTORY_NAME\033[22m "
                 echo "      The level to navigate up in the directory structure. Numeric value or the name of the directory to go back to."
                 echo 
                 echo "Options:"
@@ -1779,8 +1779,8 @@ Type '$fn --help' for more details."
     unset arg optionWithValue
     
     for param in "${params[@]}"; do
-        if [[ ! $_LEVEL_OR_NAME && ${#params[@]} > 0 ]]; then
-            _LEVEL_OR_NAME=$param
+        if [[ ! $_LEVEL_OR_DIRECTORY_NAME && ${#params[@]} > 0 ]]; then
+            _LEVEL_OR_DIRECTORY_NAME=$param
             continue
         fi
         echo "$fn: Error: too many parameters: '$param'$hint"
@@ -1789,27 +1789,27 @@ Type '$fn --help' for more details."
     unset param params leftoverParams
     
     
-    if [[ $_LEVEL_OR_NAME ]]; then
+    if [[ $_LEVEL_OR_DIRECTORY_NAME ]]; then
         true
     fi
     
     
     ######################################################
 
-if [[ ! $_LEVEL_OR_NAME ]]; then 
+if [[ ! $_LEVEL_OR_DIRECTORY_NAME ]]; then 
     cd ..
     return 0
 fi
 
-if [[ $_LEVEL_OR_NAME =~ ^[0-9]+$ ]]; then
+if [[ $_LEVEL_OR_DIRECTORY_NAME =~ ^[0-9]+$ ]]; then
     local cdArgs
-    for (( i = 0; i < _LEVEL_OR_NAME; i++ )); do
+    for (( i = 0; i < _LEVEL_OR_DIRECTORY_NAME; i++ )); do
         cdArgs="../$cdArgs"
     done
     cd $cdArgs
 else
     local path=$(pwd)
-    cd "${path%${_LEVEL_OR_NAME}*}${_LEVEL_OR_NAME}"
+    cd "${path%${_LEVEL_OR_DIRECTORY_NAME}*}${_LEVEL_OR_DIRECTORY_NAME}"
 fi
 
 }
@@ -1840,7 +1840,7 @@ function -help-filesystem() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-sudo-append FILE_PATH CONTENT\033[0m  -  Creates a file with the given content."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-sudo-write FILE_PATH OWNER CONTENT\033[0m  -  Creates a file with the given content."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-test-filesystem\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-up [LEVEL_OR_NAME]\033[0m  -  Navigates the given levels up in the directory tree."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-up [LEVEL_OR_DIRECTORY_NAME]\033[0m  -  Navigates to the given level or directory up in the directory tree. Bash completion will auto-complete the names of the parent directories."
 
 }
 
