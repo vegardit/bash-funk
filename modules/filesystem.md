@@ -5,7 +5,19 @@
 The following statements are automatically executed when this module loads:
 
 ```bash
+alias l="ll"
 alias ll="${BASH_FUNK_PREFIX:-}-ll"
+alias ..="${BASH_FUNK_PREFIX:-}-up"
+alias ...="command cd ../.."
+
+if [[ $OSTYPE == "cygwin" ]]; then
+    for drive in {a..z}; do
+        if [[ -e /cygdrive/${drive} ]]; then
+            alias "${drive}:"="cd /cygdrive/${drive}"
+            alias "${drive^^}:"="cd /cygdrive/${drive}"
+        fi
+    done
+fi
 ```
 
 The following commands are available when this module is loaded:
@@ -131,20 +143,22 @@ Options:
 
 *Implementation:*
 ```bash
-du -s -h ${_PATH[@]}
+du -s -h "${_PATH[@]}"
 ```
 
 
 ## <a name="-extract"></a>-extract
 
 ```
-Usage: -extract [OPTION]... FILE
+Usage: -extract [OPTION]... ARCHIVE [TO_DIR]
 
 Extracts the given archive using the compatible extractor.
 
 Parameters:
-  FILE (required)
+  ARCHIVE (required)
       The archive to extract.
+  TO_DIR 
+      The target folder.
 
 Options:
     --help 
@@ -155,33 +169,43 @@ Options:
 
 *Implementation:*
 ```bash
-if [[ ! -e "$_FILE" ]]; then
-    echo "Error: File [$_FILE] does not exist."
+if [[ ! -e "$_ARCHIVE" ]]; then
+    echo "Error: File [$_ARCHIVE] does not exist."
     return 1
 fi
 
-if [[ ! -r "$_FILE" ]]; then
-    echo "Error: File [$_FILE] is not readable by user '$USER'."
+if [[ ! -r "$_ARCHIVE" ]]; then
+    echo "Error: File [$_ARCHIVE] is not readable by user '$USER'."
     return 1
 fi
 
 if [[ ! -f "$_FILE" ]]; then
-    echo "Error: Path [$_FILE] does not point to a file."
+    echo "Error: Path [$_ARCHIVE] does not point to a file."
     return 1
 fi
 
+if [[ $_TARGET ]]; then
+    local pwd="$(pwd)"
+    mkdir "$_TARGET"
+    cd "$_TARGET"
+fi
+
 case "$_FILE" in
-    *.bz2)            bunzip2    "$_FILE" ;;
-    *.gz)             gunzip     "$_FILE" ;;
-    *.rar)            unrar x    "$_FILE" ;;
-    *.tar)            tar xvf    "$_FILE" ;;
-    *.tbz2|*.tar.bz2) tar xvjf   "$_FILE" ;;
-    *.tgz|*.tar.gz)   tar xvzf   "$_FILE" ;;
-    *.zip)            unzip      "$_FILE" ;;
-    *.Z)              uncompress "$_FILE" ;;
-    *.7z)             7z x       "$_FILE" ;;
-    *) echo "Error: Unsupported archive format '$_FILE'"; return 1 ;;
+    *.bz2)            bunzip2    "$_ARCHIVE" ;;
+    *.gz)             gunzip     "$_ARCHIVE" ;;
+    *.rar)            unrar x    "$_ARCHIVE" ;;
+    *.tar)            tar xvf    "$_ARCHIVE" ;;
+    *.tbz2|*.tar.bz2) tar xvjf   "$_ARCHIVE" ;;
+    *.tgz|*.tar.gz)   tar xvzf   "$_ARCHIVE" ;;
+    *.zip)            unzip      "$_ARCHIVE" ;;
+    *.Z)              uncompress "$_ARCHIVE" ;;
+    *.7z)             7z x       "$_ARCHIVE" ;;
+    *) echo "Error: Unsupported archive format '$_ARCHIVE'"; return 1 ;;
 esac
+
+if [[ $_TARGET ]]; then
+    cd "$pwd"  
+fi
 ```
 
 
@@ -334,9 +358,9 @@ Options:
 ```bash
 
 if ls --help | grep -- --group-directories-first >/dev/null; then
-    command ls -lAph -I lost+found --color=always --group-directories-first ${_PATH[@]}   
+    command ls -lAph -I lost+found --color=always --group-directories-first "${_PATH[@]}"
 else
-    command ls -lAph -I lost+found --color=always ${_PATH[@]} | awk '
+    command ls -lAph -I lost+found --color=always "${_PATH[@]}" | awk '
         BEGIN { dirs = ""; files = "" }
         /^total/ { total = $0 }                 # capture total line
         /^d/ { dirs = dirs "\n" $0 };           # capture directories
@@ -509,21 +533,23 @@ Options:
 *Implementation:*
 ```bash
 
+local _PATH=${_PATH:-.}
+
 # use readlink if available
 if hash readlink &> /dev/null; then
-    readlink -m "${_PATH:-.}"
+    readlink -m "$_PATH"
 
 # use perl if available
 elif hash perl &> /dev/null; then
     perl << EOF
 use Cwd 'abs_path';
-print abs_path('${_PATH:-.}'), "\n"
+print abs_path('$_PATH'), "\n"
 EOF
 
 # use python as last resort
 else
     python -c "import os
-print os.path.realpath('${_PATH:-.}')"
+print os.path.realpath('$_PATH')"
 fi
 ```
 
@@ -595,7 +621,7 @@ Writing \[/tmp/testfile.cfg\]...
 *Implementation:*
 ```bash
 echo "Writing [$_FILE_PATH]..."
-sudo sh -c "echo '$_CONTENT' > $_FILE_PATH" && sudo chown $_OWNER "$_FILE_PATH"
+sudo sh -c "echo '$_CONTENT' > '$_FILE_PATH'" && sudo chown "$_OWNER" "$_FILE_PATH"
 ```
 
 

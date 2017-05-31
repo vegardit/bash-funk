@@ -359,7 +359,7 @@ Type '$fn --help' for more details."
     
     ######################################################
 
-du -s -h ${_PATH[@]}
+du -s -h "${_PATH[@]}"
 
 }
 function _-du() {
@@ -381,21 +381,23 @@ function -extract() {
     local fn=${FUNCNAME[0]}
     [[ $_in_pipe || $_in_subshell ]] && local hint= || local hint="
 
-Usage: $fn [OPTION]... FILE
+Usage: $fn [OPTION]... ARCHIVE [TO_DIR]
 
 Type '$fn --help' for more details."
-    local arg optionWithValue params=() _help _selftest _FILE
+    local arg optionWithValue params=() _help _selftest _ARCHIVE _TO_DIR
     for arg in "$@"; do
         case $arg in
     
             --help)
-                echo "Usage: $fn [OPTION]... FILE"
+                echo "Usage: $fn [OPTION]... ARCHIVE [TO_DIR]"
                 echo 
                 echo "Extracts the given archive using the compatible extractor."
                 echo 
                 echo "Parameters:"
-                echo -e "  \033[1mFILE\033[22m (required)"
+                echo -e "  \033[1mARCHIVE\033[22m (required)"
                 echo "      The archive to extract."
+                echo -e "  \033[1mTO_DIR\033[22m "
+                echo "      The target folder."
                 echo 
                 echo "Options:"
                 echo -e "\033[1m    --help\033[22m "
@@ -436,8 +438,12 @@ Type '$fn --help' for more details."
     unset arg optionWithValue
     
     for param in "${params[@]}"; do
-        if [[ ! $_FILE ]]; then
-            _FILE=$param
+        if [[ ! $_ARCHIVE ]]; then
+            _ARCHIVE=$param
+            continue
+        fi
+        if [[ ! $_TO_DIR ]]; then
+            _TO_DIR=$param
             continue
         fi
         echo "$fn: Error: too many parameters: '$param'$hint"
@@ -446,42 +452,55 @@ Type '$fn --help' for more details."
     unset param params leftoverParams
     
     
-    if [[ $_FILE ]]; then
+    if [[ $_ARCHIVE ]]; then
         true
     else
-        echo "$fn: Error: Parameter FILE must be specified.$hint"; return 1
+        echo "$fn: Error: Parameter ARCHIVE must be specified.$hint"; return 1
+    fi
+    if [[ $_TO_DIR ]]; then
+        true
     fi
     
     
     ######################################################
 
-if [[ ! -e "$_FILE" ]]; then
-    echo "Error: File [$_FILE] does not exist."
+if [[ ! -e "$_ARCHIVE" ]]; then
+    echo "Error: File [$_ARCHIVE] does not exist."
     return 1
 fi
 
-if [[ ! -r "$_FILE" ]]; then
-    echo "Error: File [$_FILE] is not readable by user '$USER'."
+if [[ ! -r "$_ARCHIVE" ]]; then
+    echo "Error: File [$_ARCHIVE] is not readable by user '$USER'."
     return 1
 fi
 
 if [[ ! -f "$_FILE" ]]; then
-    echo "Error: Path [$_FILE] does not point to a file."
+    echo "Error: Path [$_ARCHIVE] does not point to a file."
     return 1
 fi
 
+if [[ $_TARGET ]]; then
+    local pwd="$(pwd)"
+    mkdir "$_TARGET"
+    cd "$_TARGET"
+fi
+
 case "$_FILE" in
-    *.bz2)            bunzip2    "$_FILE" ;;
-    *.gz)             gunzip     "$_FILE" ;;
-    *.rar)            unrar x    "$_FILE" ;;
-    *.tar)            tar xvf    "$_FILE" ;;
-    *.tbz2|*.tar.bz2) tar xvjf   "$_FILE" ;;
-    *.tgz|*.tar.gz)   tar xvzf   "$_FILE" ;;
-    *.zip)            unzip      "$_FILE" ;;
-    *.Z)              uncompress "$_FILE" ;;
-    *.7z)             7z x       "$_FILE" ;;
-    *) echo "Error: Unsupported archive format '$_FILE'"; return 1 ;;
+    *.bz2)            bunzip2    "$_ARCHIVE" ;;
+    *.gz)             gunzip     "$_ARCHIVE" ;;
+    *.rar)            unrar x    "$_ARCHIVE" ;;
+    *.tar)            tar xvf    "$_ARCHIVE" ;;
+    *.tbz2|*.tar.bz2) tar xvjf   "$_ARCHIVE" ;;
+    *.tgz|*.tar.gz)   tar xvzf   "$_ARCHIVE" ;;
+    *.zip)            unzip      "$_ARCHIVE" ;;
+    *.Z)              uncompress "$_ARCHIVE" ;;
+    *.7z)             7z x       "$_ARCHIVE" ;;
+    *) echo "Error: Unsupported archive format '$_ARCHIVE'"; return 1 ;;
 esac
+
+if [[ $_TARGET ]]; then
+    cd "$pwd"  
+fi
 
 
 }
@@ -846,9 +865,9 @@ Type '$fn --help' for more details."
 
 
 if ls --help | grep -- --group-directories-first >/dev/null; then
-    command ls -lAph -I lost+found --color=always --group-directories-first ${_PATH[@]}   
+    command ls -lAph -I lost+found --color=always --group-directories-first "${_PATH[@]}"
 else
-    command ls -lAph -I lost+found --color=always ${_PATH[@]} | awk '
+    command ls -lAph -I lost+found --color=always "${_PATH[@]}" | awk '
         BEGIN { dirs = ""; files = "" }
         /^total/ { total = $0 }                 # capture total line
         /^d/ { dirs = dirs "\n" $0 };           # capture directories
@@ -1330,21 +1349,23 @@ Type '$fn --help' for more details."
     ######################################################
 
 
+local _PATH=${_PATH:-.}
+
 # use readlink if available
 if hash readlink &> /dev/null; then
-    readlink -m "${_PATH:-.}"
+    readlink -m "$_PATH"
 
 # use perl if available
 elif hash perl &> /dev/null; then
     perl << EOF
 use Cwd 'abs_path';
-print abs_path('${_PATH:-.}'), "\n"
+print abs_path('$_PATH'), "\n"
 EOF
 
 # use python as last resort
 else
     python -c "import os
-print os.path.realpath('${_PATH:-.}')"
+print os.path.realpath('$_PATH')"
 fi
 
 
@@ -1608,7 +1629,7 @@ Type '$fn --help' for more details."
     ######################################################
 
 echo "Writing [$_FILE_PATH]..."
-sudo sh -c "echo '$_CONTENT' > $_FILE_PATH" && sudo chown $_OWNER "$_FILE_PATH"
+sudo sh -c "echo '$_CONTENT' > '$_FILE_PATH'" && sudo chown "$_OWNER" "$_FILE_PATH"
 
 }
 function _-sudo-write() {
@@ -1830,7 +1851,7 @@ function -help-filesystem() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-abspath [PATH]\033[0m  -  Prints the normalized path of the given path WITHOUT resolving symbolic links. The path is not required to exist."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-count-words FILE WORD1 [WORD]...\033[0m  -  Counts the number of occurences of the word(s) in the given file."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-du [PATH]...\033[0m  -  Prints disk usage information."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-extract FILE\033[0m  -  Extracts the given archive using the compatible extractor."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:-}-extract ARCHIVE [TO_DIR]\033[0m  -  Extracts the given archive using the compatible extractor."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-findfiles [START_PATH] SEARCH_STRING\033[0m  -  Recursively finds all files containing the given string and displays their path."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-ll [PATH]...\033[0m  -  Alternative version of 'ls -lt' hat prints directories and symbolic links to directories before files."
     echo -e "\033[1m${BASH_FUNK_PREFIX:-}-mkcd PATH\033[0m  -  Creates a directory and changes into it."
@@ -1845,5 +1866,17 @@ function -help-filesystem() {
 }
 
 
+alias l="ll"
 alias ll="${BASH_FUNK_PREFIX:-}-ll"
+alias ..="${BASH_FUNK_PREFIX:-}-up"
+alias ...="command cd ../.."
+
+if [[ $OSTYPE == "cygwin" ]]; then
+    for drive in {a..z}; do
+        if [[ -e /cygdrive/${drive} ]]; then
+            alias "${drive}:"="cd /cygdrive/${drive}"
+            alias "${drive^^}:"="cd /cygdrive/${drive}"
+        fi
+    done
+fi
 

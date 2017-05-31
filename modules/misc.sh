@@ -542,6 +542,9 @@ function -help-misc() {
 }
 
 
+alias gh='command history|command grep'
+alias grep="command grep --colour=auto"
+
 function -timeout() {
     if [[ $# < 2 || ${1:-} == "--help" ]]; then
         echo "Usage: ${FUNCNAME[0]} TIMEOUT COMMAND [ARG]..."
