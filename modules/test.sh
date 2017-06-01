@@ -24,11 +24,11 @@ function -test-fn-flags() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -156,11 +156,11 @@ function -test-fn-multi-value-options() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -540,11 +540,11 @@ function -test-fn-multi-value-parameters() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -849,11 +849,11 @@ function -test-fn-multi-value-parameters-first-variable() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -995,7 +995,7 @@ function __impl-test-fn-multi-value-parameters-first-variable() {
             _AA+=("$__param")
             continue
         fi
-        local __leftoverParams=$((${#__params[@]} - 2 - ${#_AA[@]}))
+        local __leftoverParams=$(( ${#__params[@]} - 2 - ${#_AA[@]} ))
         if [[ $__leftoverParams -gt 0 ]]; then
             if [[ ${#_AA[@]} -lt 2 ]]; then
                 _AA+=("$__param")
@@ -1046,11 +1046,11 @@ function -test-fn-noargs() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -1196,11 +1196,11 @@ function -test-fn-requires-existing() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -1314,11 +1314,11 @@ function -test-fn-requires-nonexistent() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -1432,11 +1432,11 @@ function -test-fn-single-value-options() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -1787,11 +1787,11 @@ function -test-fn-single-value-parameters() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -2079,11 +2079,11 @@ function -test-fn-single-value-parameters-first-optional() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -2247,11 +2247,11 @@ function -test-test() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt

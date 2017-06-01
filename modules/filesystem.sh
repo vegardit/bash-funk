@@ -24,11 +24,11 @@ function -abspath() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -141,11 +141,11 @@ function -count-words() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -299,11 +299,11 @@ function -du() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -378,7 +378,7 @@ function __impl-du() {
             _PATH+=("$__param")
             continue
         fi
-        local __leftoverParams=$((${#__params[@]} - 0 - ${#_PATH[@]}))
+        local __leftoverParams=$(( ${#__params[@]} - 0 - ${#_PATH[@]} ))
         if [[ $__leftoverParams -gt 0 ]]; then
             _PATH+=("$__param")
             continue
@@ -411,11 +411,11 @@ function -extract() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -573,11 +573,11 @@ function -findfiles() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -849,11 +849,11 @@ function -ll() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -928,7 +928,7 @@ function __impl-ll() {
             _PATH+=("$__param")
             continue
         fi
-        local __leftoverParams=$((${#__params[@]} - 0 - ${#_PATH[@]}))
+        local __leftoverParams=$(( ${#__params[@]} - 0 - ${#_PATH[@]} ))
         if [[ $__leftoverParams -gt 0 ]]; then
             _PATH+=("$__param")
             continue
@@ -972,11 +972,11 @@ function -mkcd() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -1118,11 +1118,11 @@ function -modified() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -1254,11 +1254,11 @@ function -owner() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -1390,11 +1390,11 @@ function -realpath() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -1516,11 +1516,11 @@ function -sudo-append() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -1654,11 +1654,11 @@ function -sudo-write() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -1806,11 +1806,11 @@ function -test-filesystem() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -1915,11 +1915,11 @@ function -up() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt

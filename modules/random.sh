@@ -24,11 +24,11 @@ function -random-number() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -165,11 +165,11 @@ function -random-string() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt
@@ -324,11 +324,11 @@ function -test-random() {
     local opts=""
     local opt
     for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt ; $opts" || opts="set +$opt ; $opts"
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
-    shopt -q -o pipefail && opts="set -o pipefail ; $opts" || opts="set +o pipefail ; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob ; do
-        shopt -q $opt && opts="shopt -s $opt ; $opts" || opts="shopt -u $opt ; $opts"
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
     done
 
     set +auHt

@@ -69,7 +69,6 @@ else
         # export all functions
         echo "Exporting functions..."
         for __fname in ${__BASH_FUNK_FUNCS[@]}; do
-            echo $__fname
             export -f -- ${BASH_FUNK_PREFIX}${__fname}
         done
         unset __fname __fnames
