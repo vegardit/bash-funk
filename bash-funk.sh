@@ -25,8 +25,8 @@ if [[ $_ == $0 ]]; then
     false
 else
     # not using a-zA-Z in regex as this seems to match German umlaute too
-    if ! [[ ${BASH_FUNK_PREFIX:-} =~ ^[0-9abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_]*$ ]]; then
-        echo "The variable BASH_FUNK_PREFIX may only contain ASCII alphanumeric characters (a-z, A-Z, 0-9) and underscore (_)"
+    if ! [[ ${BASH_FUNK_PREFIX:-} =~ ^[0-9abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-]*$ ]]; then
+        echo "The variable BASH_FUNK_PREFIX may only contain ASCII alphanumeric characters (a-z, A-Z, 0-9), dash (-) and underscore (_)"
     else
 
         if [[ $TERM == "cygwin" ]]; then
@@ -39,47 +39,45 @@ else
         echo "| '_ \ / _\` / __| '_ \  ____| |_| | | | '_ \| |/ /"
         echo "| |_) | (_| \__ \ | | |/___/|  _| |_| | | | |   <"
         echo "|_.__/ \__,_|___/_| |_|     |_|  \__,_|_| |_|_|\_\\"
-        if [[ $TERM == "cygwin" ]]; then
-            echo -en "\033[0m"
-            echo -en "\033[1;27m"
-        else
-            echo -en "\033[0;97m"
-        fi
+        echo -en "\033[0m"
         echo "                  by Vegard IT GmbH (vegardit.com)"
-        echo -e "\033[0m"
+        echo
 
-        export BASH_FUNK_PREFIX=${BASH_FUNK_PREFIX:-}
+        export BASH_FUNK_PREFIX=${BASH_FUNK_PREFIX:--}
 
-        script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        __BASH_FUNK_FUNCS=()
+
+        __script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
         # load all modules
-        for module in $(command ls ${script_dir}/modules/*.sh | sort); do
+        for __module in $(command ls ${__script_dir}/modules/*.sh | sort); do
             # don't load the test module automatically
-            if [[ $(basename ${module}) == "test.sh" ]]; then
+            if [[ $(basename ${__module}) == "test.sh" ]]; then
                 continue;
             fi
 
-            echo "Loading [modules/$(basename ${module})]..."
+            echo "Loading [modules/$(basename ${__module})]..."
             # rename the functions based on the given BASH_FUNK_PREFIX
-            if [[ $BASH_FUNK_PREFIX == "" ]]; then
-                source "${module}"
+            if [[ $BASH_FUNK_PREFIX == "-" ]]; then
+                source "${__module}"
             else
-                eval "$(sed "s/function -/function ${BASH_FUNK_PREFIX}-/g; s/function _-/function _${BASH_FUNK_PREFIX}-/g" ${module})"
+                eval "$(sed -r "s/function -/function ${BASH_FUNK_PREFIX}/g; s/function __([^-]*)-/function __\1${BASH_FUNK_PREFIX}/g" ${__module})"
             fi
         done
-        unset module
+        unset __module
 
         # export all functions
         echo "Exporting functions..."
-        for fname in $(compgen -A function ${BASH_FUNK_PREFIX}-); do
-            export -f -- ${fname}
+        for __fname in ${__BASH_FUNK_FUNCS[@]}; do
+            echo $__fname
+            export -f -- ${BASH_FUNK_PREFIX}${__fname}
         done
-        unset fname
+        unset __fname __fnames
 
-        unset script_dir
+        unset __script_dir
 
         if [[ ${BASH_FUNK_PROMPT:-yes} == "yes" ]]; then
-            PROMPT_COMMAND=${BASH_FUNK_PREFIX}-bash-prompt
+            PROMPT_COMMAND=__${BASH_FUNK_PREFIX}bash-prompt
         fi
 
         echo

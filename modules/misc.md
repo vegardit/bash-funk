@@ -30,7 +30,7 @@ The following commands are available when this module is loaded:
 ## <a name="-help"></a>-help
 
 ```
-Usage: -help [OPTION]...
+Usage: help [OPTION]...
 
 Prints the online help of all bash-funk commands.
 
@@ -43,7 +43,7 @@ Options:
 
 *Implementation:*
 ```bash
-for helpfunc in $(compgen -A function -- ${BASH_FUNK_PREFIX}-help-); do
+for helpfunc in $(compgen -A function -- -help-); do
     $helpfunc
 done | sort
 ```
@@ -52,7 +52,7 @@ done | sort
 ## <a name="-test-all"></a>-test-all
 
 ```
-Usage: -test-all [OPTION]...
+Usage: test-all [OPTION]...
 
 Executes the selftests of all loaded bash-funk commands.
 
@@ -65,8 +65,8 @@ Options:
 
 *Implementation:*
 ```bash
-for testfunc in $(compgen -A function -- ${BASH_FUNK_PREFIX}-test-); do
-    if [[ $testfunc != "${BASH_FUNK_PREFIX}-test-all" ]]; then
+for testfunc in $(compgen -A function -- -test-); do
+    if [[ $testfunc != "-test-all" ]]; then
         $testfunc || return 1
     fi
 done
@@ -76,7 +76,7 @@ done
 ## <a name="-test-misc"></a>-test-misc
 
 ```
-Usage: -test-misc [OPTION]...
+Usage: test-misc [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
@@ -99,7 +99,7 @@ Options:
 ## <a name="-var-exists"></a>-var-exists
 
 ```
-Usage: -var-exists [OPTION]... VARIABLE_NAME
+Usage: var-exists [OPTION]... VARIABLE_NAME
 
 Determines if the given variable is declared.
 
@@ -116,18 +116,18 @@ Options:
         Prints additional information during command execution.
 
 Examples:
-$ -var-exists USER
+$ var-exists USER
 
-$ -var-exists -v USER
-Bash variable 'USER' is exists.
-$ -var-exists -v NON_EXISTANT_VARIABLE
+$ var-exists -v USER
+Bash variable 'USER' exists.
+$ var-exists -v NON_EXISTANT_VARIABLE
 Bash variable 'NON_EXISTANT_VARIABLE' does not exist.
 ```
 
 *Implementation:*
 ```bash
 if declare -p ${_VARIABLE_NAME} &>/dev/null; then
-    [[ $_verbose ]] && echo "Bash variable '${_VARIABLE_NAME}' is exist." || true
+    [[ $_verbose ]] && echo "Bash variable '${_VARIABLE_NAME}' exists." || true
     return 0
 else
     [[ $_verbose ]] && echo "Bash variable '${_VARIABLE_NAME}' does not exist." || true
@@ -139,7 +139,7 @@ fi
 ## <a name="-wait"></a>-wait
 
 ```
-Usage: -wait [OPTION]... SECONDS
+Usage: wait [OPTION]... SECONDS
 
 Waits for the given number of seconds or until the key 's' pressed.
 
@@ -165,7 +165,7 @@ local cursor9Left="\033[9D"
 
 echo -ne "Waiting for [$(date +%T --date=@$(($_SECONDS - 3600)))] until $(date +%T --date=@$(($(date +%s) + $_SECONDS))). Press [s] to skip: $cursor9Right"
 for (( i = 0; i < _SECONDS; i++ )); do
-    if [[ $_in_pipe || $_in_subshell ]]; then
+    if [[ $__in_pipe || $__in_subshell ]]; then
         # adding a \n new line character to the end of the line to make the output parseable by sed which is line oriented
         local newLine="$saveCursor\n$restoreCursor"
     else

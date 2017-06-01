@@ -11,7 +11,7 @@ The following commands are available when this module is loaded:
 ## <a name="-cpu-count"></a>-cpu-count
 
 ```
-Usage: -cpu-count [OPTION]...
+Usage: cpu-count [OPTION]...
 
 Prints the number of processors.
 
@@ -24,14 +24,14 @@ Options:
 
 *Implementation:*
 ```bash
-cat /proc/cpuinfo | grep processor | wc -l
+grep processor /proc/cpuinfo | wc -l
 ```
 
 
 ## <a name="-perftest"></a>-perftest
 
 ```
-Usage: -perftest [OPTION]...
+Usage: perftest [OPTION]...
 
 Performs a CPU speed test using openssl utilizing all available processors.
 
@@ -51,7 +51,7 @@ openssl speed rsa1024 -multi $(cat /proc/cpuinfo | grep processor | wc -l)
 ## <a name="-test-performance"></a>-test-performance
 
 ```
-Usage: -test-performance [OPTION]...
+Usage: test-performance [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

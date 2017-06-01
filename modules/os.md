@@ -11,7 +11,7 @@ The following commands are available when this module is loaded:
 ## <a name="-command-exists"></a>-command-exists
 
 ```
-Usage: -command-exists [OPTION]... COMMAND
+Usage: command-exists [OPTION]... COMMAND
 
 Checks if the given program or function is available.
 
@@ -28,13 +28,13 @@ Options:
         Prints additional information during command execution.
 
 Examples:
-$ -command-exists hash
+$ command-exists hash
 
-$ -command-exists -v hash
+$ command-exists -v hash
 'hash' is available.
-$ -command-exists -v ls
+$ command-exists -v ls
 'ls' is available.
-$ -command-exists -v name-of-nonexistant-command
+$ command-exists -v name-of-nonexistant-command
 'name-of-nonexistant-command' not found.
 ```
 
@@ -53,7 +53,7 @@ fi
 ## <a name="-pkg-installed"></a>-pkg-installed
 
 ```
-Usage: -pkg-installed [OPTION]... PACKAGE_NAME
+Usage: pkg-installed [OPTION]... PACKAGE_NAME
 
 Determines if the given software package is installed.
 
@@ -109,7 +109,7 @@ return 1
 ## <a name="-test-os"></a>-test-os
 
 ```
-Usage: -test-os [OPTION]...
+Usage: test-os [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

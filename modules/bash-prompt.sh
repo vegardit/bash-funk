@@ -29,7 +29,7 @@ eval "${TMP_LS_COLORS/di=01;34/di=${BASH_FUNK_DIRS_COLOR}}" # replace 01;34 with
 unset TMP_LS_COLORS
 
 
--bash-prompt() {
+function __-bash-prompt() {
     # Save the return code of last command
     local lastRC=$?
 
@@ -103,7 +103,7 @@ unset TMP_LS_COLORS
         lastRC="[$lastRC] "
         BG="${C_RESET}${C_BG_RED}"
     fi
-    
+
     if [[ $TERM == "cygwin" ]]; then
         local white="$C_FX_BOLD$C_FG_WHITE"
     else

@@ -13,7 +13,7 @@ The following commands are available when this module is loaded:
 ## <a name="-get-child-pids"></a>-get-child-pids
 
 ```
-Usage: -get-child-pids [OPTION]... [PARENT_PID]
+Usage: get-child-pids [OPTION]... [PARENT_PID]
 
 Recursively prints all child PIDs of the process with the given PID.
 
@@ -40,7 +40,7 @@ if [[ $? != 0 ]]; then
     return 1
 fi
 for childPid in $childPids; do
-    ${FUNCNAME[0]} --printPPID $childPid
+    $__fn --printPPID $childPid
 done
 if [[ $_printPPID ]]; then
     echo $_PARENT_PID
@@ -51,7 +51,7 @@ fi
 ## <a name="-get-parent-pid"></a>-get-parent-pid
 
 ```
-Usage: -get-parent-pid [OPTION]... [CHILD_PID]
+Usage: get-parent-pid [OPTION]... [CHILD_PID]
 
 Prints the PID of the parent process of the child process with the given PID.
 
@@ -82,7 +82,7 @@ echo $parentPid
 ## <a name="-get-toplevel-parent-pid"></a>-get-toplevel-parent-pid
 
 ```
-Usage: -get-toplevel-parent-pid [OPTION]... [CHILD_PID]
+Usage: get-toplevel-parent-pid [OPTION]... [CHILD_PID]
 
 Prints the PID of the top-level parent process of the child process with the given PID.
 
@@ -102,7 +102,7 @@ Options:
 if [[ $_CHILD_PID ]]; then _CHILD_PID=$$; fi
 local pid=$_CHILD_PID
 while [[ $pid != 0 ]]; do
-    pid=$(${BASH_FUNK_PREFIX}-get-parent-pid ${pid})
+    pid=$(-get-parent-pid ${pid})
     if [[ $? != 0 ]]; then
         echo $pid
         return 1
@@ -115,7 +115,7 @@ echo ${pid}
 ## <a name="-kill-childs"></a>-kill-childs
 
 ```
-Usage: -kill-childs [OPTION]... SIGNAL [PARENT_PID]
+Usage: kill-childs [OPTION]... SIGNAL [PARENT_PID]
 
 Sends the given kill signal to all child processes of the process with the given PID.
 
@@ -135,7 +135,7 @@ Options:
 *Implementation:*
 ```bash
 if [[ ! $_PARENT_PID ]]; then _PARENT_PID=$$; fi
-local childPids=$(${BASH_FUNK_PREFIX}-get-child-pids $_PARENT_PID)
+local childPids=$(-get-child-pids $_PARENT_PID)
 if [[ $? != 0 ]]; then
     echo $childPids
     return 1
@@ -150,7 +150,7 @@ done
 ## <a name="-test-processes"></a>-test-processes
 
 ```
-Usage: -test-processes [OPTION]...
+Usage: test-processes [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

@@ -21,7 +21,7 @@ The following commands are available when this module is loaded:
 ## <a name="-test-fn-flags"></a>-test-fn-flags
 
 ```
-Usage: -test-fn-flags [OPTION]...
+Usage: test-fn-flags [OPTION]...
 
 Test function with custom flags.
 
@@ -34,11 +34,11 @@ Options:
         Performs a self-test.
 
 Examples:
-$ -test-fn-flags 
+$ test-fn-flags 
 myflag was not specified
-$ -test-fn-flags --myflag
+$ test-fn-flags --myflag
 myflag was specified
-$ -test-fn-flags -m
+$ test-fn-flags -m
 myflag was specified
 ```
 
@@ -51,7 +51,7 @@ myflag was specified
 ## <a name="-test-fn-multi-value-options"></a>-test-fn-multi-value-options
 
 ```
-Usage: -test-fn-multi-value-options [OPTION]...
+Usage: test-fn-multi-value-options [OPTION]...
 
 Test function with multi value options.
 
@@ -76,39 +76,39 @@ Options:
         Performs a self-test.
 
 Examples:
-$ -test-fn-multi-value-options 
+$ test-fn-multi-value-options 
 aa:= bb:= cc:= dd:= ee:= ff:= gg:=
-$ -test-fn-multi-value-options --aa
+$ test-fn-multi-value-options --aa
 aa:true= bb:= cc:= dd:= ee:= ff:= gg:=
-$ -test-fn-multi-value-options --aa foo
+$ test-fn-multi-value-options --aa foo
 aa:true=foo bb:= cc:= dd:= ee:= ff:= gg:=
-$ -test-fn-multi-value-options --aa foo,bar
+$ test-fn-multi-value-options --aa foo,bar
 aa:true=foo bar bb:= cc:= dd:= ee:= ff:= gg:=
-$ -test-fn-multi-value-options --bb
+$ test-fn-multi-value-options --bb
 Error: For option --bb a list with at least 1 value\(s\) must be specified. Found: 0.
-$ -test-fn-multi-value-options --bb foo,bar
+$ test-fn-multi-value-options --bb foo,bar
 aa:= bb:true=foo bar cc:= dd:= ee:= ff:= gg:=
-$ -test-fn-multi-value-options --bb foo,bar,fb
+$ test-fn-multi-value-options --bb foo,bar,fb
 Error: For option --bb a list with no more than 2 values must be specified. Found: 3.
-$ -test-fn-multi-value-options --cc 123,45
+$ test-fn-multi-value-options --cc 123,45
 aa:= bb:= cc:true=123 45 dd:= ee:= ff:= gg:=
-$ -test-fn-multi-value-options --cc 123,abc
+$ test-fn-multi-value-options --cc 123,abc
 Error: Value 'abc' for option --cc is not a numeric value.
-$ -test-fn-multi-value-options --dd 1,3
+$ test-fn-multi-value-options --dd 1,3
 aa:= bb:= cc:= dd:true=1 3 ee:= ff:= gg:=
-$ -test-fn-multi-value-options --dd 0,3
+$ test-fn-multi-value-options --dd 0,3
 Error: Value '0' for option --dd is too low. Must be >= 1.
-$ -test-fn-multi-value-options --dd 3,6
+$ test-fn-multi-value-options --dd 3,6
 Error: Value '6' for option --dd is too high. Must be <= 5.
-$ -test-fn-multi-value-options --ee A,B
+$ test-fn-multi-value-options --ee A,B
 aa:= bb:= cc:= dd:= ee:true=A B ff:= gg:=
-$ -test-fn-multi-value-options --ee A,F
+$ test-fn-multi-value-options --ee A,F
 Error: Value 'F' for option --ee is not one of the allowed values \[A,B,C\].
-$ -test-fn-multi-value-options --ff foo,bar
+$ test-fn-multi-value-options --ff foo,bar
 aa:= bb:= cc:= dd:= ee:= ff:true=foo bar gg:=
-$ -test-fn-multi-value-options --ff foo,123
+$ test-fn-multi-value-options --ff foo,123
 Error: Value '123' for option --ff does not match required pattern '\[a-z\]\+'.
-$ -test-fn-multi-value-options --gg 123
+$ test-fn-multi-value-options --gg 123
 Error: Value '123' for option --gg must only contain characters a-z.
 ```
 
@@ -121,22 +121,22 @@ echo "aa:$_aa=${_aa_value[@]} bb:$_bb=${_bb_value[@]} cc:$_cc=${_cc_value[@]} dd
 ## <a name="-test-fn-multi-value-parameters"></a>-test-fn-multi-value-parameters
 
 ```
-Usage: -test-fn-multi-value-parameters [OPTION]... AA1 AA2 BB1 BB2 CC1 CC2 DD1 DD2 EE1 EE2  [FF]...
+Usage: test-fn-multi-value-parameters [OPTION]... AA1 AA2 BB1 BB2 CC1 CC2 DD1 DD2 EE1 EE2 [FF]...
 
 Test function with single value parameters.
 
 Parameters:
-  AA (2 to 2 required)
+  AA (2 required)
       Param AA.
-  BB (2 to 2 required, integer: ?-?)
+  BB (2 required, integer: ?-?)
       Param BB.
-  CC (2 to 2 required, integer: 1-5)
+  CC (2 required, integer: 1-5)
       Param CC.
-  DD (2 to 2 required, one of: [A,B,C])
+  DD (2 required, one of: [A,B,C])
       Param DD.
-  EE (2 to 2 required, pattern: "[a-z]+")
+  EE (2 required, pattern: "[a-z]+")
       Param EE.
-  FF (0 or more, pattern: "[a-z]+")
+  FF (pattern: "[a-z]+")
       Param FF.
 
 Options:
@@ -146,35 +146,35 @@ Options:
         Performs a self-test.
 
 Examples:
-$ -test-fn-multi-value-parameters 
+$ test-fn-multi-value-parameters 
 Error: For parameter AA exactly 2 values must be specified. Found: 0.
-$ -test-fn-multi-value-parameters aa
+$ test-fn-multi-value-parameters aa
 Error: For parameter AA exactly 2 values must be specified. Found: 1.
-$ -test-fn-multi-value-parameters aa aa
+$ test-fn-multi-value-parameters aa aa
 Error: For parameter BB exactly 2 values must be specified. Found: 0.
-$ -test-fn-multi-value-parameters aa aa 12
+$ test-fn-multi-value-parameters aa aa 12
 Error: For parameter BB exactly 2 values must be specified. Found: 1.
-$ -test-fn-multi-value-parameters aa aa 12 bb
+$ test-fn-multi-value-parameters aa aa 12 bb
 Error: Value 'bb' for parameter BB is not a numeric value.
-$ -test-fn-multi-value-parameters aa aa 12 34
+$ test-fn-multi-value-parameters aa aa 12 34
 Error: For parameter CC exactly 2 values must be specified. Found: 0.
-$ -test-fn-multi-value-parameters aa aa 12 34 0 3
+$ test-fn-multi-value-parameters aa aa 12 34 0 3
 Error: Value '0' for parameter CC is too low. Must be >= 1.
-$ -test-fn-multi-value-parameters aa aa 12 34 1 6
+$ test-fn-multi-value-parameters aa aa 12 34 1 6
 Error: Value '6' for parameter CC is too high. Must be <= 5.
-$ -test-fn-multi-value-parameters aa aa 12 34 1 5
+$ test-fn-multi-value-parameters aa aa 12 34 1 5
 Error: For parameter DD exactly 2 values must be specified. Found: 0.
-$ -test-fn-multi-value-parameters aa aa 12 34 1 5 A G
+$ test-fn-multi-value-parameters aa aa 12 34 1 5 A G
 Error: Value 'G' for parameter DD is not one of the allowed values \[A,B,C\].
-$ -test-fn-multi-value-parameters aa aa 12 34 1 5 A B
+$ test-fn-multi-value-parameters aa aa 12 34 1 5 A B
 Error: For parameter EE exactly 2 values must be specified. Found: 0.
-$ -test-fn-multi-value-parameters aa aa 12 34 1 5 A B foo 123
+$ test-fn-multi-value-parameters aa aa 12 34 1 5 A B foo 123
 Error: Value '123' for parameter EE does not match required pattern '\[a-z\]\+'.
-$ -test-fn-multi-value-parameters aa aa 12 34 1 5 A B foo bar
+$ test-fn-multi-value-parameters aa aa 12 34 1 5 A B foo bar
 AA:aa aa BB:12 34 CC:1 5 DD:A B EE:foo bar FF:
-$ -test-fn-multi-value-parameters aa aa 12 34 1 5 A B foo bar 123
+$ test-fn-multi-value-parameters aa aa 12 34 1 5 A B foo bar 123
 Error: Value '123' for parameter FF must only contain characters a-z.
-$ -test-fn-multi-value-parameters aa aa 12 34 1 5 A B foo bar a b c d e f
+$ test-fn-multi-value-parameters aa aa 12 34 1 5 A B foo bar a b c d e f
 AA:aa aa BB:12 34 CC:1 5 DD:A B EE:foo bar FF:a b c d e f
 ```
 
@@ -187,14 +187,14 @@ echo "AA:${_AA[@]} BB:${_BB[@]} CC:${_CC[@]} DD:${_DD[@]} EE:${_EE[@]} FF:${_FF[
 ## <a name="-test-fn-multi-value-parameters-first-variable"></a>-test-fn-multi-value-parameters-first-variable
 
 ```
-Usage: -test-fn-multi-value-parameters-first-variable [OPTION]...  [AA1..2] BB1 BB2
+Usage: test-fn-multi-value-parameters-first-variable [OPTION]... [AA1..2] BB1 BB2
 
 Test function with single value parameters.
 
 Parameters:
-  AA (0 to 2, integer: ?-?)
+  AA (0 to 2 required, integer: ?-?)
       Param AA.
-  BB (2 to 2 required, integer: ?-?)
+  BB (2 required, integer: ?-?)
       Param BB.
 
 Options:
@@ -204,20 +204,20 @@ Options:
         Performs a self-test.
 
 Examples:
-$ -test-fn-multi-value-parameters-first-variable 
+$ test-fn-multi-value-parameters-first-variable 
 Error: For parameter BB exactly 2 values must be specified. Found: 0.
-$ -test-fn-multi-value-parameters-first-variable bb
+$ test-fn-multi-value-parameters-first-variable bb
 Error: For parameter BB exactly 2 values must be specified. Found: 1.
-$ -test-fn-multi-value-parameters-first-variable 12 bb
+$ test-fn-multi-value-parameters-first-variable 12 bb
 Error: Value 'bb' for parameter BB is not a numeric value.
-$ -test-fn-multi-value-parameters-first-variable 12 34
+$ test-fn-multi-value-parameters-first-variable 12 34
 AA: BB:12 34
-$ -test-fn-multi-value-parameters-first-variable aa 12 34
+$ test-fn-multi-value-parameters-first-variable aa 12 34
 Error: Value 'aa' for parameter AA is not a numeric value.
-$ -test-fn-multi-value-parameters-first-variable 00 aa 12 34
+$ test-fn-multi-value-parameters-first-variable 00 aa 12 34
 Error: Value 'aa' for parameter AA is not a numeric value.
-$ -test-fn-multi-value-parameters-first-variable 12 34 bb 12 34
--test-fn-multi-value-parameters-first-variable: too many parameters: '34'.*
+$ test-fn-multi-value-parameters-first-variable 12 34 bb 12 34
+Error: too many parameters: '34'
 ```
 
 *Implementation:*
@@ -229,7 +229,7 @@ echo "AA:${_AA[@]} BB:${_BB[@]}"
 ## <a name="-test-fn-noargs"></a>-test-fn-noargs
 
 ```
-Usage: -test-fn-noargs [OPTION]...
+Usage: test-fn-noargs [OPTION]...
 
 Test function with no arguments.
 
@@ -242,16 +242,16 @@ Options:
         Prints additional information during command execution.
 
 Examples:
-$ -test-fn-noargs 
+$ test-fn-noargs 
 
-$ -test-fn-noargs --verbose
+$ test-fn-noargs --verbose
 verbose mode
-$ -test-fn-noargs -f
--test-fn-noargs: invalid option: '-f'.*
-$ -test-fn-noargs --foo
--test-fn-noargs: invalid option: '--foo'.*
-$ -test-fn-noargs FOO
--test-fn-noargs: too many parameters: 'FOO'.*
+$ test-fn-noargs -f
+invalid option: '-f'
+$ test-fn-noargs --foo
+invalid option: '--foo'
+$ test-fn-noargs FOO
+too many parameters: 'FOO'
 ```
 
 *Implementation:*
@@ -263,7 +263,7 @@ $ -test-fn-noargs FOO
 ## <a name="-test-fn-requires-existing"></a>-test-fn-requires-existing
 
 ```
-Usage: -test-fn-requires-existing [OPTION]...
+Usage: test-fn-requires-existing [OPTION]...
 
 Test function that requires presence of an existing command - thus always succeeds.
 
@@ -279,7 +279,7 @@ Options:
         Prints additional information during command execution.
 
 Examples:
-$ -test-fn-requires-existing 
+$ test-fn-requires-existing 
 ```
 
 *Implementation:*
@@ -291,7 +291,7 @@ $ -test-fn-requires-existing
 ## <a name="-test-fn-requires-nonexistent"></a>-test-fn-requires-nonexistent
 
 ```
-Usage: -test-fn-requires-nonexistent [OPTION]...
+Usage: test-fn-requires-nonexistent [OPTION]...
 
 Test function that requires presence of a nonexistent command - thus always fails.
 
@@ -307,7 +307,7 @@ Options:
         Prints additional information during command execution.
 
 Examples:
-$ -test-fn-requires-nonexistent 
+$ test-fn-requires-nonexistent 
 Error: Required command 'some_random_nonexistent_command' not found on this system.
 ```
 
@@ -320,7 +320,7 @@ Error: Required command 'some_random_nonexistent_command' not found on this syst
 ## <a name="-test-fn-single-value-options"></a>-test-fn-single-value-options
 
 ```
-Usage: -test-fn-single-value-options [OPTION]...
+Usage: test-fn-single-value-options [OPTION]...
 
 Test function with single value options.
 
@@ -345,35 +345,35 @@ Options:
         Performs a self-test.
 
 Examples:
-$ -test-fn-single-value-options 
+$ test-fn-single-value-options 
 aa:= bb:= cc:= dd:= ee:= ff:= gg:=
-$ -test-fn-single-value-options --aa
+$ test-fn-single-value-options --aa
 aa:true= bb:= cc:= dd:= ee:= ff:= gg:=
-$ -test-fn-single-value-options --aa foo
+$ test-fn-single-value-options --aa foo
 aa:true=foo bb:= cc:= dd:= ee:= ff:= gg:=
-$ -test-fn-single-value-options --bb
+$ test-fn-single-value-options --bb
 Error: Value v for option --bb must be specified.
-$ -test-fn-single-value-options --bb foo
+$ test-fn-single-value-options --bb foo
 aa:= bb:true=foo cc:= dd:= ee:= ff:= gg:=
-$ -test-fn-single-value-options --cc 12345
+$ test-fn-single-value-options --cc 12345
 aa:= bb:= cc:true=12345 dd:= ee:= ff:= gg:=
-$ -test-fn-single-value-options --cc abc
+$ test-fn-single-value-options --cc abc
 Error: Value 'abc' for option --cc is not a numeric value.
-$ -test-fn-single-value-options --dd 3
+$ test-fn-single-value-options --dd 3
 aa:= bb:= cc:= dd:true=3 ee:= ff:= gg:=
-$ -test-fn-single-value-options --dd 0
+$ test-fn-single-value-options --dd 0
 Error: Value '0' for option --dd is too low. Must be >= 1.
-$ -test-fn-single-value-options --dd 6
+$ test-fn-single-value-options --dd 6
 Error: Value '6' for option --dd is too high. Must be <= 5.
-$ -test-fn-single-value-options --ee A
+$ test-fn-single-value-options --ee A
 aa:= bb:= cc:= dd:= ee:true=A ff:= gg:=
-$ -test-fn-single-value-options --ee F
+$ test-fn-single-value-options --ee F
 Error: Value 'F' for option --ee is not one of the allowed values \[A,B,C\].
-$ -test-fn-single-value-options --ff foo
+$ test-fn-single-value-options --ff foo
 aa:= bb:= cc:= dd:= ee:= ff:true=foo gg:=
-$ -test-fn-single-value-options --ff 123
+$ test-fn-single-value-options --ff 123
 Error: Value '123' for option --ff does not match required pattern '\[a-z\]\+'.
-$ -test-fn-single-value-options --gg 123
+$ test-fn-single-value-options --gg 123
 Error: Value '123' for option --gg must only contain characters a-z.
 ```
 
@@ -386,7 +386,7 @@ echo "aa:$_aa=$_aa_value bb:$_bb=$_bb_value cc:$_cc=$_cc_value dd:$_dd=$_dd_valu
 ## <a name="-test-fn-single-value-parameters"></a>-test-fn-single-value-parameters
 
 ```
-Usage: -test-fn-single-value-parameters [OPTION]... AA BB CC DD EE [FF]
+Usage: test-fn-single-value-parameters [OPTION]... AA BB CC DD EE [FF]
 
 Test function with single value parameters.
 
@@ -411,31 +411,31 @@ Options:
         Performs a self-test.
 
 Examples:
-$ -test-fn-single-value-parameters 
+$ test-fn-single-value-parameters 
 Error: Parameter AA must be specified.
-$ -test-fn-single-value-parameters aa
+$ test-fn-single-value-parameters aa
 Error: Parameter BB must be specified.
-$ -test-fn-single-value-parameters aa bb
+$ test-fn-single-value-parameters aa bb
 Error: Value 'bb' for parameter BB is not a numeric value.
-$ -test-fn-single-value-parameters aa 12
+$ test-fn-single-value-parameters aa 12
 Error: Parameter CC must be specified.
-$ -test-fn-single-value-parameters aa 12 0
+$ test-fn-single-value-parameters aa 12 0
 Error: Value '0' for parameter CC is too low. Must be >= 1.
-$ -test-fn-single-value-parameters aa 12 6
+$ test-fn-single-value-parameters aa 12 6
 Error: Value '6' for parameter CC is too high. Must be <= 5.
-$ -test-fn-single-value-parameters aa 12 5
+$ test-fn-single-value-parameters aa 12 5
 Error: Parameter DD must be specified.
-$ -test-fn-single-value-parameters aa 12 5 G
+$ test-fn-single-value-parameters aa 12 5 G
 Error: Value 'G' for parameter DD is not one of the allowed values \[A,B,C\].
-$ -test-fn-single-value-parameters aa 12 5 A
+$ test-fn-single-value-parameters aa 12 5 A
 Error: Parameter EE must be specified.
-$ -test-fn-single-value-parameters aa 12 5 A 123
+$ test-fn-single-value-parameters aa 12 5 A 123
 Error: Value '123' for parameter EE does not match required pattern '\[a-z\]\+'.
-$ -test-fn-single-value-parameters aa 12 5 A foo
+$ test-fn-single-value-parameters aa 12 5 A foo
 AA:aa BB:12 CC:5 DD:A EE:foo FF:
-$ -test-fn-single-value-parameters aa 12 5 A foo 123
+$ test-fn-single-value-parameters aa 12 5 A foo 123
 Error: Value '123' for parameter FF must only contain characters a-z.
-$ -test-fn-single-value-parameters aa 12 5 A foo bar
+$ test-fn-single-value-parameters aa 12 5 A foo bar
 AA:aa BB:12 CC:5 DD:A EE:foo FF:bar
 ```
 
@@ -448,7 +448,7 @@ echo "AA:$_AA BB:$_BB CC:$_CC DD:$_DD EE:$_EE FF:$_FF"
 ## <a name="-test-fn-single-value-parameters-first-optional"></a>-test-fn-single-value-parameters-first-optional
 
 ```
-Usage: -test-fn-single-value-parameters-first-optional [OPTION]... [AA] BB
+Usage: test-fn-single-value-parameters-first-optional [OPTION]... [AA] BB
 
 Test function with single value parameters where the first one is optional.
 
@@ -465,15 +465,15 @@ Options:
         Performs a self-test.
 
 Examples:
-$ -test-fn-single-value-parameters-first-optional 
+$ test-fn-single-value-parameters-first-optional 
 Error: Parameter BB must be specified.
-$ -test-fn-single-value-parameters-first-optional bb
+$ test-fn-single-value-parameters-first-optional bb
 Error: Value 'bb' for parameter BB is not a numeric value.
-$ -test-fn-single-value-parameters-first-optional 22
+$ test-fn-single-value-parameters-first-optional 22
 AA: BB:22
-$ -test-fn-single-value-parameters-first-optional aa 22
+$ test-fn-single-value-parameters-first-optional aa 22
 Error: Value 'aa' for parameter AA is not a numeric value.
-$ -test-fn-single-value-parameters-first-optional 11 22
+$ test-fn-single-value-parameters-first-optional 11 22
 AA:11 BB:22
 ```
 
@@ -486,7 +486,7 @@ echo "AA:$_AA BB:$_BB"
 ## <a name="-test-test"></a>-test-test
 
 ```
-Usage: -test-test [OPTION]...
+Usage: test-test [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

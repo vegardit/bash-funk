@@ -12,7 +12,7 @@ The following commands are available when this module is loaded:
 ## <a name="-block-port"></a>-block-port
 
 ```
-Usage: -block-port [OPTION]... [BIND_ADDRESS] PORT
+Usage: block-port [OPTION]... [BIND_ADDRESS] PORT
 
 Binds to the given port and thus block other programs from binding to it.
 
@@ -29,8 +29,8 @@ Options:
         Performs a self-test.
 
 Examples:
-$ -block-port 70000
--block-port: Error: Value '70000' for parameter PORT is too high. Must be <= 65535.
+$ block-port 70000
+Error: Value '70000' for parameter PORT is too high. Must be <= 65535.
 ```
 
 *Implementation:*
@@ -63,7 +63,7 @@ EOF
 ## <a name="-get-ips"></a>-get-ips
 
 ```
-Usage: -get-ips [OPTION]...
+Usage: get-ips [OPTION]...
 
 Prints the IP v4 addresses of this host excluding 127.0.0.1.
 
@@ -83,7 +83,7 @@ ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}
 ## <a name="-is-port-open"></a>-is-port-open
 
 ```
-Usage: -is-port-open [OPTION]... HOSTNAME PORT [CONNECT_TIMEOUT_IN_SECONDS]
+Usage: is-port-open [OPTION]... HOSTNAME PORT [CONNECT_TIMEOUT_IN_SECONDS]
 
 Checks if a TCP connection can be established to the given port.
 
@@ -104,12 +104,12 @@ Options:
         Prints additional information during command execution.
 
 Examples:
-$ -is-port-open localhost 12345 1
+$ is-port-open localhost 12345 1
 
-$ -is-port-open -v localhost 12345 1
+$ is-port-open -v localhost 12345 1
 localhost:12345 is not reachable.
-$ -is-port-open localhost 70000
--is-port-open: Error: Value '70000' for parameter PORT is too high. Must be <= 65535.
+$ is-port-open localhost 70000
+Error: Value '70000' for parameter PORT is too high. Must be <= 65535.
 ```
 
 *Implementation:*
@@ -150,7 +150,7 @@ fi
 ## <a name="-test-network"></a>-test-network
 
 ```
-Usage: -test-network [OPTION]...
+Usage: test-network [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
