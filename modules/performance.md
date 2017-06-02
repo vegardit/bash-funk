@@ -5,7 +5,8 @@
 The following commands are available when this module is loaded:
 
 1. [-cpu-count](#-cpu-count)
-1. [-perftest](#-perftest)
+1. [-cpu-perf](#-cpu-perf)
+1. [-scp-perf](#-scp-perf)
 1. [-test-performance](#-test-performance)
 
 ## <a name="-cpu-count"></a>-cpu-count
@@ -28,10 +29,10 @@ grep processor /proc/cpuinfo | wc -l
 ```
 
 
-## <a name="-perftest"></a>-perftest
+## <a name="-cpu-perf"></a>-cpu-perf
 
 ```
-Usage: perftest [OPTION]...
+Usage: cpu-perf [OPTION]...
 
 Performs a CPU speed test using openssl utilizing all available processors.
 
@@ -45,6 +46,63 @@ Options:
 *Implementation:*
 ```bash
 openssl speed rsa1024 -multi $(cat /proc/cpuinfo | grep processor | wc -l)
+```
+
+
+## <a name="-scp-perf"></a>-scp-perf
+
+```
+Usage: scp-perf [OPTION]... TARGET [SIZE_MB]
+
+Performs an SCP speed test.
+
+Parameters:
+  TARGET (required)
+      [user@:]hostname.
+  SIZE_MB (integer: ?-?)
+      Test file size in MB. Default is 10MB.
+
+Options:
+    --help 
+        Prints this help.
+-i, --identity_file PATH 
+        Path to the private key for public key authentication.
+-P, --port PORT (integer: 0-65535)
+        Ssh port.
+    --selftest 
+        Performs a self-test.
+```
+
+*Implementation:*
+```bash
+local dataFile=$(mktemp)
+
+local sshOpts=""
+if [[ ${_port} ]]; then
+    sshOpts="$sshOpts -P $_port_value"
+fi
+if [[ ${_identity_file} ]]; then
+    sshOpts="$sshOpts -i $_identity_file_value"
+fi
+
+local _SIZE_MB=${_SIZE_MB:-10}
+
+echo "Generating $_SIZE_MB MB of random data..."
+dd if=/dev/urandom bs=1M count=$_SIZE_MB of=$dataFile conv=notrunc
+
+echo
+echo "Uploading $_SIZE_MB MB to $_TARGET..."
+scp $sshOpts "$dataFile" "$_TARGET:${dataFile}-copy"
+
+echo
+echo "Downloading $_SIZE_MB MB from $_TARGET..."
+scp $sshOpts "$_TARGET:${dataFile}-copy" "$dataFile"
+
+echo
+echo "Removing test data on $_TARGET..."
+ssh $sshOpts "$_TARGET" "rm ${dataFile}-copy"
+echo "Removing local test data..."
+rm $dataFile
 ```
 
 
@@ -65,7 +123,8 @@ Options:
 *Implementation:*
 ```bash
 -cpu-count --selftest && echo || return 1
--perftest --selftest && echo || return 1
+-cpu-perf --selftest && echo || return 1
+-scp-perf --selftest && echo || return 1
 ```
 
 
