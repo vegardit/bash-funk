@@ -13,7 +13,7 @@ The following commands are available when this module is loaded:
 ## <a name="-alloc-mem"></a>-alloc-mem
 
 ```
-Usage: alloc-mem [OPTION]... MEMORY_IN_MB
+Usage: -alloc-mem [OPTION]... MEMORY_IN_MB
 
 Allocates the given amount of RAM.
 
@@ -45,7 +45,7 @@ raw_input('Press enter to exit...')
 ## <a name="-memfree"></a>-memfree
 
 ```
-Usage: memfree [OPTION]... [MEMORY_UNIT]
+Usage: -memfree [OPTION]... [MEMORY_UNIT]
 
 Prints the free memory (in KB by default).
 
@@ -60,11 +60,11 @@ Options:
         Performs a self-test.
 
 Examples:
-$ memfree 
+$ -memfree 
 1036560
-$ memfree MB
+$ -memfree MB
 1012
-$ memfree GB
+$ -memfree GB
 1
 ```
 
@@ -106,7 +106,7 @@ esac
 ## <a name="-meminfo"></a>-meminfo
 
 ```
-Usage: meminfo [OPTION]...
+Usage: -meminfo [OPTION]...
 
 Prints memory information from /proc/meminfo.
 
@@ -117,7 +117,7 @@ Options:
         Performs a self-test.
 
 Examples:
-$ meminfo 
+$ -meminfo 
 ```
 
 *Implementation:*
@@ -129,7 +129,7 @@ cat /proc/meminfo
 ## <a name="-memtotal"></a>-memtotal
 
 ```
-Usage: memtotal [OPTION]... [MEMORY_UNIT]
+Usage: -memtotal [OPTION]... [MEMORY_UNIT]
 
 Prints the total memory (in KB by default).
 
@@ -144,11 +144,11 @@ Options:
         Performs a self-test.
 
 Examples:
-$ memtotal 
+$ -memtotal 
 1036560
-$ memtotal MB
+$ -memtotal MB
 1012
-$ memtotal GB
+$ -memtotal GB
 1
 ```
 
@@ -190,7 +190,7 @@ esac
 ## <a name="-test-memory"></a>-test-memory
 
 ```
-Usage: test-memory [OPTION]...
+Usage: -test-memory [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

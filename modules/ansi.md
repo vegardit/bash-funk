@@ -13,7 +13,7 @@ The following commands are available when this module is loaded:
 ## <a name="-ansi-bold"></a>-ansi-bold
 
 ```
-Usage: ansi-bold [OPTION]... [TEXT]
+Usage: -ansi-bold [OPTION]... [TEXT]
 
 Sets bold mode or prints the given text in bold.
 
@@ -49,7 +49,7 @@ fi
 ## <a name="-ansi-colors-supported"></a>-ansi-colors-supported
 
 ```
-Usage: ansi-colors-supported [OPTION]...
+Usage: -ansi-colors-supported [OPTION]...
 
 Determines if ANSI color escape sequences are supported by the current terminal.
 
@@ -85,7 +85,7 @@ return 1
 ## <a name="-ansi-reset"></a>-ansi-reset
 
 ```
-Usage: ansi-reset [OPTION]...
+Usage: -ansi-reset [OPTION]...
 
 Prints an ANSI escape sequence that reset all ANSI attributes.
 
@@ -105,7 +105,7 @@ echo -ne "\033[0m"
 ## <a name="-ansi-ul"></a>-ansi-ul
 
 ```
-Usage: ansi-ul [OPTION]... [TEXT]
+Usage: -ansi-ul [OPTION]... [TEXT]
 
 Sets underlined mode or prints the given text underlined.
 
@@ -141,7 +141,7 @@ fi
 ## <a name="-test-ansi"></a>-test-ansi
 
 ```
-Usage: test-ansi [OPTION]...
+Usage: -test-ansi [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

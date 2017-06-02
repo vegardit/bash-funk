@@ -11,7 +11,7 @@ The following commands are available when this module is loaded:
 ## <a name="-md5sum"></a>-md5sum
 
 ```
-Usage: md5sum [OPTION]... PATH_TO_FILE
+Usage: -md5sum [OPTION]... PATH_TO_FILE
 
 Calculates the MD5 hash of the given file.
 
@@ -54,7 +54,7 @@ fi
 ## <a name="-sha256sum"></a>-sha256sum
 
 ```
-Usage: sha256sum [OPTION]... PATH_TO_FILE
+Usage: -sha256sum [OPTION]... PATH_TO_FILE
 
 Calculates the SHA256 hash of the given file.
 
@@ -97,7 +97,7 @@ fi
 ## <a name="-test-crypto"></a>-test-crypto
 
 ```
-Usage: test-crypto [OPTION]...
+Usage: -test-crypto [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

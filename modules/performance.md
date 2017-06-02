@@ -12,7 +12,7 @@ The following commands are available when this module is loaded:
 ## <a name="-cpu-count"></a>-cpu-count
 
 ```
-Usage: cpu-count [OPTION]...
+Usage: -cpu-count [OPTION]...
 
 Prints the number of processors.
 
@@ -32,7 +32,7 @@ grep processor /proc/cpuinfo | wc -l
 ## <a name="-cpu-perf"></a>-cpu-perf
 
 ```
-Usage: cpu-perf [OPTION]...
+Usage: -cpu-perf [OPTION]...
 
 Performs a CPU speed test using openssl utilizing all available processors.
 
@@ -52,7 +52,7 @@ openssl speed rsa1024 -multi $(cat /proc/cpuinfo | grep processor | wc -l)
 ## <a name="-scp-perf"></a>-scp-perf
 
 ```
-Usage: scp-perf [OPTION]... TARGET [SIZE_MB]
+Usage: -scp-perf [OPTION]... TARGET [SIZE_MB]
 
 Performs an SCP speed test.
 
@@ -109,7 +109,7 @@ rm $dataFile
 ## <a name="-test-performance"></a>-test-performance
 
 ```
-Usage: test-performance [OPTION]...
+Usage: -test-performance [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

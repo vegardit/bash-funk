@@ -30,7 +30,7 @@ The following commands are available when this module is loaded:
 ## <a name="-help"></a>-help
 
 ```
-Usage: help [OPTION]...
+Usage: -help [OPTION]...
 
 Prints the online help of all bash-funk commands.
 
@@ -52,7 +52,7 @@ done | sort
 ## <a name="-test-all"></a>-test-all
 
 ```
-Usage: test-all [OPTION]...
+Usage: -test-all [OPTION]...
 
 Executes the selftests of all loaded bash-funk commands.
 
@@ -76,7 +76,7 @@ done
 ## <a name="-test-misc"></a>-test-misc
 
 ```
-Usage: test-misc [OPTION]...
+Usage: -test-misc [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
@@ -99,7 +99,7 @@ Options:
 ## <a name="-var-exists"></a>-var-exists
 
 ```
-Usage: var-exists [OPTION]... VARIABLE_NAME
+Usage: -var-exists [OPTION]... VARIABLE_NAME
 
 Determines if the given variable is declared.
 
@@ -116,11 +116,11 @@ Options:
         Prints additional information during command execution.
 
 Examples:
-$ var-exists USER
+$ -var-exists USER
 
-$ var-exists -v USER
+$ -var-exists -v USER
 Bash variable 'USER' exists.
-$ var-exists -v NON_EXISTANT_VARIABLE
+$ -var-exists -v NON_EXISTANT_VARIABLE
 Bash variable 'NON_EXISTANT_VARIABLE' does not exist.
 ```
 
@@ -139,7 +139,7 @@ fi
 ## <a name="-wait"></a>-wait
 
 ```
-Usage: wait [OPTION]... SECONDS
+Usage: -wait [OPTION]... SECONDS
 
 Waits for the given number of seconds or until the key 's' pressed.
 

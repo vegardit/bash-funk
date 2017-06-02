@@ -40,7 +40,7 @@ The following commands are available when this module is loaded:
 ## <a name="-abspath"></a>-abspath
 
 ```
-Usage: abspath [OPTION]... [PATH]
+Usage: -abspath [OPTION]... [PATH]
 
 Prints the normalized path of the given path WITHOUT resolving symbolic links. The path is not required to exist.
 
@@ -73,7 +73,7 @@ fi
 ## <a name="-count-words"></a>-count-words
 
 ```
-Usage: count-words [OPTION]... FILE WORD1[WORD]...
+Usage: -count-words [OPTION]... FILE WORD1[WORD]...
 
 Counts the number of occurences of the word(s) in the given file.
 
@@ -126,7 +126,7 @@ fi
 ## <a name="-du"></a>-du
 
 ```
-Usage: du [OPTION]... [PATH]...
+Usage: -du [OPTION]... [PATH]...
 
 Prints disk usage information.
 
@@ -152,7 +152,7 @@ du -s -h "${_PATH[@]}"
 ## <a name="-extract"></a>-extract
 
 ```
-Usage: extract [OPTION]... ARCHIVE [TO_DIR]
+Usage: -extract [OPTION]... ARCHIVE [TO_DIR]
 
 Extracts the given archive using the compatible extractor.
 
@@ -221,7 +221,7 @@ fi
 ## <a name="-findfiles"></a>-findfiles
 
 ```
-Usage: findfiles [OPTION]... [START_PATH] SEARCH_STRING
+Usage: -findfiles [OPTION]... [START_PATH] SEARCH_STRING
 
 Recursively finds all files containing the given string and displays their path.
 
@@ -348,7 +348,7 @@ fi
 ## <a name="-ll"></a>-ll
 
 ```
-Usage: ll [OPTION]... [PATH]...
+Usage: -ll [OPTION]... [PATH]...
 
 Alternative version of 'ls -lt' hat prints directories and symbolic links to directories before files.
 
@@ -385,7 +385,7 @@ fi
 ## <a name="-mkcd"></a>-mkcd
 
 ```
-Usage: mkcd [OPTION]... PATH
+Usage: -mkcd [OPTION]... PATH
 
 Creates a directory and changes into it.
 
@@ -421,7 +421,7 @@ mkdir "$_PATH" && cd "$_PATH"
 ## <a name="-modified"></a>-modified
 
 ```
-Usage: modified [OPTION]... [PATH]
+Usage: -modified [OPTION]... [PATH]
 
 Prints the modification timestamp of the given file or directory.
 
@@ -473,7 +473,7 @@ fi
 ## <a name="-owner"></a>-owner
 
 ```
-Usage: owner [OPTION]... [PATH]
+Usage: -owner [OPTION]... [PATH]
 
 Prints the owner of the given file or directory.
 
@@ -525,7 +525,7 @@ fi
 ## <a name="-realpath"></a>-realpath
 
 ```
-Usage: realpath [OPTION]... [PATH]
+Usage: -realpath [OPTION]... [PATH]
 
 Prints the normalized path of the given path resolving any symbolic links. The path is not required to exist.
 
@@ -567,7 +567,7 @@ fi
 ## <a name="-sudo-append"></a>-sudo-append
 
 ```
-Usage: sudo-append [OPTION]... FILE_PATH CONTENT
+Usage: -sudo-append [OPTION]... FILE_PATH CONTENT
 
 Creates a file with the given content.
 
@@ -587,7 +587,7 @@ Options:
         Performs a self-test.
 
 Examples:
-$ sudo-append /tmp/testfile.cfg 'foo=bar'
+$ -sudo-append /tmp/testfile.cfg 'foo=bar'
 Appending to \[/tmp/testfile.cfg\]...
 ```
 
@@ -601,7 +601,7 @@ echo "$_CONTENT" | sudo tee --append "$_FILE_PATH" > /dev/null
 ## <a name="-sudo-write"></a>-sudo-write
 
 ```
-Usage: sudo-write [OPTION]... FILE_PATH OWNER CONTENT
+Usage: -sudo-write [OPTION]... FILE_PATH OWNER CONTENT
 
 Creates a file with the given content.
 
@@ -624,7 +624,7 @@ Options:
         Performs a self-test.
 
 Examples:
-$ sudo-write /tmp/testfile.cfg $USER:$USER 'foo=bar'
+$ -sudo-write /tmp/testfile.cfg $USER:$USER 'foo=bar'
 Writing \[/tmp/testfile.cfg\]...
 ```
 
@@ -638,7 +638,7 @@ sudo sh -c "echo '$_CONTENT' > '$_FILE_PATH'" && sudo chown "$_OWNER" "$_FILE_PA
 ## <a name="-test-filesystem"></a>-test-filesystem
 
 ```
-Usage: test-filesystem [OPTION]...
+Usage: -test-filesystem [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
@@ -670,7 +670,7 @@ Options:
 ## <a name="-up"></a>-up
 
 ```
-Usage: up [OPTION]... [LEVEL_OR_DIRECTORY_NAME]
+Usage: -up [OPTION]... [LEVEL_OR_DIRECTORY_NAME]
 
 Navigates to the given level or directory up in the directory tree. Bash completion will auto-complete the names of the parent directories.
 

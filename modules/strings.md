@@ -24,7 +24,7 @@ The following commands are available when this module is loaded:
 ## <a name="-ascii2hex"></a>-ascii2hex
 
 ```
-Usage: ascii2hex [OPTION]... ASCII_STRING
+Usage: -ascii2hex [OPTION]... ASCII_STRING
 
 Prints the hexa-decimal representation of the given ASCII string.
 
@@ -39,7 +39,7 @@ Options:
         Performs a self-test.
 
 Examples:
-$ ascii2hex XYZ
+$ -ascii2hex XYZ
 58595A
 ```
 
@@ -52,7 +52,7 @@ printf "${_ASCII_STRING}" | xxd -p | tr "[a-z]" "[A-z]"
 ## <a name="-hex2ascii"></a>-hex2ascii
 
 ```
-Usage: hex2ascii [OPTION]... HEX_STRING
+Usage: -hex2ascii [OPTION]... HEX_STRING
 
 Prints the ASCII representation of the given hexa-decimal string.
 
@@ -67,7 +67,7 @@ Options:
         Performs a self-test.
 
 Examples:
-$ hex2ascii 58595A
+$ -hex2ascii 58595A
 XYZ
 ```
 
@@ -80,7 +80,7 @@ printf "${_HEX_STRING}" | xxd -r -p
 ## <a name="-normalize-path"></a>-normalize-path
 
 ```
-Usage: normalize-path [OPTION]... PATH
+Usage: -normalize-path [OPTION]... PATH
 
 Prints the normalized form of the given file path.
 
@@ -95,7 +95,7 @@ Options:
         Performs a self-test.
 
 Examples:
-$ normalize-path a/./b/c/d/../e
+$ -normalize-path a/./b/c/d/../e
 a/b/c/e
 ```
 
@@ -115,7 +115,7 @@ echo $normalized
 ## <a name="-str-join"></a>-str-join
 
 ```
-Usage: str-join [OPTION]... SEPARATOR [STRING]...
+Usage: -str-join [OPTION]... SEPARATOR [STRING]...
 
 Prints strings joined with the given separator.
 
@@ -132,11 +132,11 @@ Options:
         Performs a self-test.
 
 Examples:
-$ str-join , a b c
+$ -str-join , a b c
 a,b,c
-$ str-join , a 
+$ -str-join , a 
 a
-$ str-join , 
+$ -str-join , 
 ```
 
 *Implementation:*
@@ -157,7 +157,7 @@ printf "%s" "$firstItem${additionalItems[@]/#/$_SEPARATOR}"
 ## <a name="-str-lower"></a>-str-lower
 
 ```
-Usage: str-lower [OPTION]... STRING
+Usage: -str-lower [OPTION]... STRING
 
 Prints the given string in lower cases.
 
@@ -172,7 +172,7 @@ Options:
         Performs a self-test.
 
 Examples:
-$ str-lower aBcDeF
+$ -str-lower aBcDeF
 abcdef
 ```
 
@@ -185,7 +185,7 @@ echo "${_STRING,,}"
 ## <a name="-str-matches"></a>-str-matches
 
 ```
-Usage: str-matches [OPTION]... REGEX_PATTERN [STRING]...
+Usage: -str-matches [OPTION]... REGEX_PATTERN [STRING]...
 
 Matches the given string(s) against the regex pattern, prints the found matches and returns true if at least one match was found.
 
@@ -206,16 +206,16 @@ Options:
         Prints additional information during command execution.
 
 Examples:
-$ str-matches A
+$ -str-matches A
 
-$ str-matches A A B
+$ -str-matches A A B
 A
-$ str-matches -v A A B
+$ -str-matches -v A A B
 match: A
 no match: B
-$ str-matches -a A A B
+$ -str-matches -a A A B
 A
-$ str-matches -v -a A A B
+$ -str-matches -v -a A A B
 match: A
 no match: B
 ```
@@ -263,7 +263,7 @@ fi
 ## <a name="-str-repeat"></a>-str-repeat
 
 ```
-Usage: str-repeat [OPTION]... STRING COUNT
+Usage: -str-repeat [OPTION]... STRING COUNT
 
 Prints the given string multiple times.
 
@@ -280,7 +280,7 @@ Options:
         Performs a self-test.
 
 Examples:
-$ str-repeat a 3
+$ -str-repeat a 3
 aaa
 ```
 
@@ -294,7 +294,7 @@ echo "${spaces// /${_STRING}}"
 ## <a name="-str-trim"></a>-str-trim
 
 ```
-Usage: str-trim [OPTION]... STRING
+Usage: -str-trim [OPTION]... STRING
 
 Prints the given string without leading and trailing spaces.
 
@@ -309,7 +309,7 @@ Options:
         Performs a self-test.
 
 Examples:
-$ str-trim "  abc  "
+$ -str-trim "  abc  "
 abc
 ```
 
@@ -322,7 +322,7 @@ echo ${_STRING}
 ## <a name="-str-upper"></a>-str-upper
 
 ```
-Usage: str-upper [OPTION]... STRING
+Usage: -str-upper [OPTION]... STRING
 
 Prints the given string in upper cases.
 
@@ -337,7 +337,7 @@ Options:
         Performs a self-test.
 
 Examples:
-$ str-upper aBcDeF
+$ -str-upper aBcDeF
 ABCDEF
 ```
 
@@ -350,7 +350,7 @@ echo "${1^^}"
 ## <a name="-strip-ansi"></a>-strip-ansi
 
 ```
-Usage: strip-ansi [OPTION]... [STRING]...
+Usage: -strip-ansi [OPTION]... [STRING]...
 
 Removes any ANSI escape sequences from the given string or from stdin.
 
@@ -365,7 +365,7 @@ Options:
         Performs a self-test.
 
 Examples:
-$ strip-ansi $(echo -e '\033[4mThis is underlined\033[24m')
+$ -strip-ansi $(echo -e '\033[4mThis is underlined\033[24m')
 This is underlined
 ```
 
@@ -386,7 +386,7 @@ fi
 ## <a name="-substr-after"></a>-substr-after
 
 ```
-Usage: substr-after [OPTION]... SEARCH_IN SEARCH_FOR
+Usage: -substr-after [OPTION]... SEARCH_IN SEARCH_FOR
 
 Prints the substring after the first occurrence of SEARCH_FOR.
 
@@ -403,7 +403,7 @@ Options:
         Performs a self-test.
 
 Examples:
-$ substr-after 00aa11aa22 aa
+$ -substr-after 00aa11aa22 aa
 11aa22
 ```
 
@@ -416,7 +416,7 @@ echo ${_SEARCH_IN#*${_SEARCH_FOR}}
 ## <a name="-substr-after-last"></a>-substr-after-last
 
 ```
-Usage: substr-after-last [OPTION]... SEARCH_IN SEARCH_FOR
+Usage: -substr-after-last [OPTION]... SEARCH_IN SEARCH_FOR
 
 Prints the substring after the last occurrence of SEARCH_FOR.
 
@@ -433,7 +433,7 @@ Options:
         Performs a self-test.
 
 Examples:
-$ substr-after-last 00aa11aa22 aa
+$ -substr-after-last 00aa11aa22 aa
 22
 ```
 
@@ -446,7 +446,7 @@ echo "${_SEARCH_IN#${_SEARCH_IN%${_SEARCH_FOR}*}${_SEARCH_FOR}}"
 ## <a name="-substr-before"></a>-substr-before
 
 ```
-Usage: substr-before [OPTION]... SEARCH_IN SEARCH_FOR
+Usage: -substr-before [OPTION]... SEARCH_IN SEARCH_FOR
 
 Prints the substring before the first occurrence of SEARCH_FOR.
 
@@ -463,7 +463,7 @@ Options:
         Performs a self-test.
 
 Examples:
-$ substr-before 00aa11aa22 aa
+$ -substr-before 00aa11aa22 aa
 00
 ```
 
@@ -476,7 +476,7 @@ echo "${_SEARCH_IN%%${_SEARCH_FOR}*}"
 ## <a name="-substr-before-last"></a>-substr-before-last
 
 ```
-Usage: substr-before-last [OPTION]... SEARCH_IN SEARCH_FOR
+Usage: -substr-before-last [OPTION]... SEARCH_IN SEARCH_FOR
 
 Prints the substring before the last occurrence of SEARCH_FOR.
 
@@ -493,7 +493,7 @@ Options:
         Performs a self-test.
 
 Examples:
-$ substr-before-last 00aa11aa00 aa
+$ -substr-before-last 00aa11aa00 aa
 00aa11
 ```
 
@@ -506,7 +506,7 @@ echo "${_SEARCH_IN%${_SEARCH_FOR}*}"
 ## <a name="-substr-between"></a>-substr-between
 
 ```
-Usage: substr-between [OPTION]... SEARCH_IN PREFIX SUFFIX
+Usage: -substr-between [OPTION]... SEARCH_IN PREFIX SUFFIX
 
 Prints the substring between PREFIX and SUFFIX.
 
@@ -525,7 +525,7 @@ Options:
         Performs a self-test.
 
 Examples:
-$ substr-between 00aa11aa22aa00 aa aa
+$ -substr-between 00aa11aa22aa00 aa aa
 11
 ```
 
@@ -539,7 +539,7 @@ echo "${withoutPrefix%%${_SUFFIX}*}"
 ## <a name="-test-strings"></a>-test-strings
 
 ```
-Usage: test-strings [OPTION]...
+Usage: -test-strings [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

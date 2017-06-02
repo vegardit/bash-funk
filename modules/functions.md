@@ -13,7 +13,7 @@ The following commands are available when this module is loaded:
 ## <a name="-fn-copy"></a>-fn-copy
 
 ```
-Usage: fn-copy [OPTION]... OLD_FUNC_NAME NEW_FUNC_NAME
+Usage: -fn-copy [OPTION]... OLD_FUNC_NAME NEW_FUNC_NAME
 
 Creates an in-memory copy of the Bash function with the given name.
 
@@ -43,7 +43,7 @@ eval "$(echo "$_NEW_FUNC_NAME()"; declare -f $_OLD_FUNC_NAME | tail -n +2)"
 ## <a name="-fn-exists"></a>-fn-exists
 
 ```
-Usage: fn-exists [OPTION]... FUNC_NAME
+Usage: -fn-exists [OPTION]... FUNC_NAME
 
 Determines if a Bash function with the given name exists.
 
@@ -60,9 +60,9 @@ Options:
         Prints additional information during command execution.
 
 Examples:
-$ fn-exists name-of-nonexistant-function
+$ -fn-exists name-of-nonexistant-function
 
-$ fn-exists -v name-of-nonexistant-function
+$ -fn-exists -v name-of-nonexistant-function
 A function with the name 'name-of-nonexistant-function' does not exist.
 ```
 
@@ -81,7 +81,7 @@ fi
 ## <a name="-fn-rename"></a>-fn-rename
 
 ```
-Usage: fn-rename [OPTION]... OLD_FUNC_NAME NEW_FUNC_NAME
+Usage: -fn-rename [OPTION]... OLD_FUNC_NAME NEW_FUNC_NAME
 
 Renames the Bash function with the given name.
 
@@ -114,7 +114,7 @@ unset -f $_OLD_FUNC_NAME
 ## <a name="-fn-unload"></a>-fn-unload
 
 ```
-Usage: fn-unload [OPTION]... FUNC_NAME
+Usage: -fn-unload [OPTION]... FUNC_NAME
 
 Unloads the Bash function with the given name.
 
@@ -145,7 +145,7 @@ unset -f $_FUNC_NAME
 ## <a name="-test-functions"></a>-test-functions
 
 ```
-Usage: test-functions [OPTION]...
+Usage: -test-functions [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

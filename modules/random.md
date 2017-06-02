@@ -11,7 +11,7 @@ The following commands are available when this module is loaded:
 ## <a name="-random-number"></a>-random-number
 
 ```
-Usage: random-number [OPTION]... RANGE
+Usage: -random-number [OPTION]... RANGE
 
 Generates a random number of the given range. The range is inclusive.
 
@@ -26,11 +26,11 @@ Options:
         Performs a self-test.
 
 Examples:
-$ random-number 1-1
+$ -random-number 1-1
 1
-$ random-number 1-5
+$ -random-number 1-5
 4
-$ random-number 200-299
+$ -random-number 200-299
 253
 ```
 
@@ -43,7 +43,7 @@ shuf -i ${_RANGE} -n 1
 ## <a name="-random-string"></a>-random-string
 
 ```
-Usage: random-string [OPTION]... LENGTH [CHARS]
+Usage: -random-string [OPTION]... LENGTH [CHARS]
 
 Prints a random string of the given length containing the given characters.
 
@@ -60,13 +60,13 @@ Options:
         Performs a self-test.
 
 Examples:
-$ random-string 12 0-9
+$ -random-string 12 0-9
 686026902293
-$ random-string 8 a-zA-Z
+$ -random-string 8 a-zA-Z
 ECtQptCz
-$ random-string 10 [:alnum:]
+$ -random-string 10 [:alnum:]
 w2TZ8fHaRw
-$ random-string 10 [:alnum:][:punct:]
+$ -random-string 10 [:alnum:][:punct:]
 4pH?+40D):
 ```
 
@@ -79,7 +79,7 @@ env LC_CTYPE=C tr -dc "${_CHARS:-[:graph:]}" < /dev/urandom | fold -w ${_LENGTH}
 ## <a name="-test-random"></a>-test-random
 
 ```
-Usage: test-random [OPTION]...
+Usage: -test-random [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
