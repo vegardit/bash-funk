@@ -35,13 +35,13 @@ Options:
 *Implementation:*
 ```bash
 if [[ $_TEXT ]]; then
-    echo -ne "$_TEXT"
+    echo -ne "\033[1m$_TEXT\033[22m"
 fi
 
 if [[ $_on ]]; then
-    echo -ne ""
+    echo -ne "\033[1m"
 elif [[ $_off ]]; then
-    echo -ne ""
+    echo -ne "\033[22m"
 fi
 ```
 

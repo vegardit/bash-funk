@@ -117,7 +117,7 @@ Options:
         Performs a self-test.
 
 Examples:
-$ -meminfo 
+$ -meminfo
 ```
 
 *Implementation:*

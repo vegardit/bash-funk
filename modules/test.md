@@ -279,7 +279,7 @@ Options:
         Prints additional information during command execution.
 
 Examples:
-$ -test-fn-requires-existing 
+$ -test-fn-requires-existing
 ```
 
 *Implementation:*

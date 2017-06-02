@@ -136,7 +136,7 @@ $ -str-join , a b c
 a,b,c
 $ -str-join , a 
 a
-$ -str-join , 
+$ -str-join ,
 ```
 
 *Implementation:*
