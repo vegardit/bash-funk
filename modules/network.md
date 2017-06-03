@@ -7,6 +7,7 @@ The following commands are available when this module is loaded:
 1. [-block-port](#-block-port)
 1. [-get-ips](#-get-ips)
 1. [-is-port-open](#-is-port-open)
+1. [-ssh-trust-host](#-ssh-trust-host)
 1. [-test-network](#-test-network)
 
 ## <a name="-block-port"></a>-block-port
@@ -17,7 +18,7 @@ Usage: -block-port [OPTION]... [BIND_ADDRESS] PORT
 Binds to the given port and thus block other programs from binding to it.
 
 Parameters:
-  BIND_ADDRESS 
+  BIND_ADDRESS (default: '0.0.0.0')
       The local bind address. E.g. 127.0.0.1.
   PORT (required, integer: 0-65535)
       Number of the port to occupy.
@@ -35,25 +36,17 @@ Error: Value '70000' for parameter PORT is too high. Must be <= 65535.
 
 *Implementation:*
 ```bash
-if [[ $_BIND_ADDRESS ]]; then
-    local localAddr=$_BIND_ADDRESS
-    local localPort=$_PORT
-else
-    local localAddr=0.0.0.0
-    local localPort=$_PORT
-fi
-
-echo "Binding to $localAddr:$localPort..."
+echo "Binding to $_BIND_ADDRESS:$_PORT..."
 
 perl << EOF
     use IO::Socket;
     \$server = IO::Socket::INET->new(
-        LocalAddr => '$localAddr',
-        LocalPort => $localPort,
+        LocalAddr => '$_BIND_ADDRESS',
+        LocalPort => $_PORT,
         Type => SOCK_STREAM,
         ReuseAddr => 1,
         Listen => 10
-    ) or die "Couldn't bind to $localAddr:$localPort: \$@\n";
+    ) or die "Couldn't bind to $_BIND_ADDRESS:$_PORT: \$@\n";
     while (\$client = \$server->accept()) { }
     close(\$server);
 EOF
@@ -92,7 +85,7 @@ Parameters:
       Target hostname.
   PORT (required, integer: 0-65535)
       Target TCP port.
-  CONNECT_TIMEOUT_IN_SECONDS (integer: ?-?)
+  CONNECT_TIMEOUT_IN_SECONDS (default: '5', integer: ?-?)
       Number of seconds to try to connect to the given port. Default is 5 seconds.
 
 Options:
@@ -115,7 +108,7 @@ Error: Value '70000' for parameter PORT is too high. Must be <= 65535.
 *Implementation:*
 ```bash
 if hash nc &> /dev/null; then
-    if nc -vz -w ${_CONNECT_TIMEOUT_IN_SECONDS:-5} $_HOSTNAME $_PORT; then
+    if nc -vz -w $_CONNECT_TIMEOUT_IN_SECONDS $_HOSTNAME $_PORT; then
         portStatus=open
     else
         portStatus=
@@ -126,7 +119,7 @@ else
         my \$socket=IO::Socket::INET->new(
             PeerAddr => "$_HOSTNAME",
             PeerPort => $_PORT,
-            Timeout => ${_CONNECT_TIMEOUT_IN_SECONDS:-5}
+            Timeout => $_CONNECT_TIMEOUT_IN_SECONDS
         );
 
         if (defined \$socket) {
@@ -144,6 +137,34 @@ else
     [[ $_verbose ]] && echo "$_HOSTNAME:$_PORT is not reachable." || true
     return 1
 fi
+```
+
+
+## <a name="-ssh-trust-host"></a>-ssh-trust-host
+
+```
+Usage: -ssh-trust-host [OPTION]... HOSTNAME [PORT]
+
+Adds the public key of the given host to the ~/.ssh/known_hosts file.
+
+Parameters:
+  HOSTNAME (required)
+      Remote SSH Hostname.
+  PORT (default: '22', integer: 0-65535)
+      Remote SSH port.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+```
+
+*Implementation:*
+```bash
+touch ~/.ssh/known_hosts
+ssh-keyscan -t rsa,dsa -p $_PORT $_HOSTNAME 2>/dev/null | sort -u - ~/.ssh/known_hosts > ~/.ssh/known_hosts.tmp
+mv ~/.ssh/known_hosts.tmp ~/.ssh/known_hosts
 ```
 
 
@@ -166,6 +187,7 @@ Options:
 -block-port --selftest && echo || return 1
 -get-ips --selftest && echo || return 1
 -is-port-open --selftest && echo || return 1
+-ssh-trust-host --selftest && echo || return 1
 ```
 
 

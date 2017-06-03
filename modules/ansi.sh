@@ -48,9 +48,10 @@ function -ansi-bold() {
     return $rc
 }
 function __impl-ansi-bold() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _on _off _help _selftest _TEXT
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -87,11 +88,11 @@ function __impl-ansi-bold() {
               ;;
 
             --on)
-                _on=true
+                local _on=1
             ;;
 
             --off)
-                _off=true
+                local _off=1
             ;;
 
 
@@ -176,9 +177,10 @@ function -ansi-colors-supported() {
     return $rc
 }
 function __impl-ansi-colors-supported() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -289,9 +291,10 @@ function -ansi-reset() {
     return $rc
 }
 function __impl-ansi-reset() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -386,9 +389,10 @@ function -ansi-ul() {
     return $rc
 }
 function __impl-ansi-ul() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _on _off _help _selftest _TEXT
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -425,11 +429,11 @@ function __impl-ansi-ul() {
               ;;
 
             --on)
-                _on=true
+                local _on=1
             ;;
 
             --off)
-                _off=true
+                local _off=1
             ;;
 
 
@@ -514,9 +518,10 @@ function -test-ansi() {
     return $rc
 }
 function __impl-test-ansi() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 

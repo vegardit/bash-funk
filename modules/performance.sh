@@ -48,9 +48,10 @@ function -cpu-count() {
     return $rc
 }
 function __impl-cpu-count() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -145,9 +146,10 @@ function -cpu-perf() {
     return $rc
 }
 function __impl-cpu-perf() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -242,9 +244,10 @@ function -scp-perf() {
     return $rc
 }
 function __impl-scp-perf() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _port _port_value _identity_file _identity_file_value _help _selftest _TARGET _SIZE_MB
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -256,8 +259,8 @@ function __impl-scp-perf() {
                 echo "Parameters:"
                 echo -e "  \033[1mTARGET\033[22m (required)"
                 echo "      [user@:]hostname."
-                echo -e "  \033[1mSIZE_MB\033[22m (integer: ?-?)"
-                echo "      Test file size in MB. Default is 10MB."
+                echo -e "  \033[1mSIZE_MB\033[22m (default: '10', integer: ?-?)"
+                echo "      Test file size in MB."
                 echo
                 echo "Options:"
                 echo -e "\033[1m    --help\033[22m "
@@ -283,15 +286,13 @@ function __impl-scp-perf() {
               ;;
 
             --port|-P)
-                _port=true
-                _port_value=
-                __optionWithValue=--port
+                local _port=
+                __optionWithValue=port
             ;;
 
             --identity_file|-i)
-                _identity_file=true
-                _identity_file_value=
-                __optionWithValue=--identity_file
+                local _identity_file=
+                __optionWithValue=identity_file
             ;;
 
 
@@ -303,12 +304,12 @@ function __impl-scp-perf() {
 
             *)
                 case $__optionWithValue in
-                    --port)
-                        _port_value=$__arg
+                    port)
+                        _port=$__arg
                         __optionWithValue=
                       ;;
-                    --identity_file)
-                        _identity_file_value=$__arg
+                    identity_file)
+                        _identity_file=$__arg
                         __optionWithValue=
                       ;;
                     *)
@@ -331,15 +332,16 @@ function __impl-scp-perf() {
         return 64
     done
 
-    if [[ $_port ]]; then
-        if [[ ! $_port_value ]]; then echo "$__fn: Error: Value PORT for option --port must be specified."; return 64; fi
-        if [[ ! "$_port_value" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_port_value' for option --port is not a numeric value."; return 64; fi
-        if [[ $_port_value -lt 0 ]]; then echo "$__fn: Error: Value '$_port_value' for option --port is too low. Must be >= 0."; return 64; fi
-        if [[ $_port_value -gt 65535 ]]; then echo "$__fn: Error: Value '$_port_value' for option --port is too high. Must be <= 65535."; return 64; fi
+        if [[ ! $_SIZE_MB ]]; then _SIZE_MB="10"; fi
+    if declare -p _port &>/dev/null; then
+        if [[ ! $_port ]]; then echo "$__fn: Error: Value PORT for option --port must be specified."; return 64; fi
+        if [[ ! "$_port" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_port' for option --port is not a numeric value."; return 64; fi
+        if [[ $_port -lt 0 ]]; then echo "$__fn: Error: Value '$_port' for option --port is too low. Must be >= 0."; return 64; fi
+        if [[ $_port -gt 65535 ]]; then echo "$__fn: Error: Value '$_port' for option --port is too high. Must be <= 65535."; return 64; fi
         true
     fi
-    if [[ $_identity_file ]]; then
-        if [[ ! $_identity_file_value ]]; then echo "$__fn: Error: Value PATH for option --identity_file must be specified."; return 64; fi
+    if declare -p _identity_file &>/dev/null; then
+        if [[ ! $_identity_file ]]; then echo "$__fn: Error: Value PATH for option --identity_file must be specified."; return 64; fi
         true
     fi
 
@@ -359,10 +361,10 @@ local dataFile=$(mktemp)
 
 local sshOpts=""
 if [[ ${_port} ]]; then
-    sshOpts="$sshOpts -P $_port_value"
+    sshOpts="$sshOpts -P $_port"
 fi
 if [[ ${_identity_file} ]]; then
-    sshOpts="$sshOpts -i $_identity_file_value"
+    sshOpts="$sshOpts -i $_identity_file"
 fi
 
 local _SIZE_MB=${_SIZE_MB:-10}
@@ -424,9 +426,10 @@ function -test-performance() {
     return $rc
 }
 function __impl-test-performance() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 

@@ -59,8 +59,8 @@ Performs an SCP speed test.
 Parameters:
   TARGET (required)
       [user@:]hostname.
-  SIZE_MB (integer: ?-?)
-      Test file size in MB. Default is 10MB.
+  SIZE_MB (default: '10', integer: ?-?)
+      Test file size in MB.
 
 Options:
     --help 
@@ -79,10 +79,10 @@ local dataFile=$(mktemp)
 
 local sshOpts=""
 if [[ ${_port} ]]; then
-    sshOpts="$sshOpts -P $_port_value"
+    sshOpts="$sshOpts -P $_port"
 fi
 if [[ ${_identity_file} ]]; then
-    sshOpts="$sshOpts -i $_identity_file_value"
+    sshOpts="$sshOpts -i $_identity_file"
 fi
 
 local _SIZE_MB=${_SIZE_MB:-10}

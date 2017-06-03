@@ -50,7 +50,7 @@ Usage: -memfree [OPTION]... [MEMORY_UNIT]
 Prints the free memory (in KB by default).
 
 Parameters:
-  MEMORY_UNIT (one of: [KB,MB,GB])
+  MEMORY_UNIT (default: 'KB', one of: [KB,MB,GB])
       The memory unit of the printed value.
 
 Options:
@@ -89,7 +89,7 @@ case ${totalMemUnit} in
         ;;
 esac
 
-case ${_MEMORY_UNIT:-KB} in
+case $_MEMORY_UNIT in
     KB)
         echo $memTotalKB
         ;;
@@ -134,7 +134,7 @@ Usage: -memtotal [OPTION]... [MEMORY_UNIT]
 Prints the total memory (in KB by default).
 
 Parameters:
-  MEMORY_UNIT (one of: [KB,MB,GB])
+  MEMORY_UNIT (default: 'KB', one of: [KB,MB,GB])
       The memory unit of the printed value.
 
 Options:
@@ -173,7 +173,7 @@ case ${totalMemUnit} in
         ;;
 esac
 
-case ${_MEMORY_UNIT:-KB} in
+case $_MEMORY_UNIT in
     KB)
         echo $memTotalKB
         ;;

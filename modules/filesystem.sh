@@ -48,9 +48,10 @@ function -abspath() {
     return $rc
 }
 function __impl-abspath() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -60,7 +61,7 @@ function __impl-abspath() {
                 echo "Prints the normalized path of the given path WITHOUT resolving symbolic links. The path is not required to exist."
                 echo
                 echo "Parameters:"
-                echo -e "  \033[1mPATH\033[22m "
+                echo -e "  \033[1mPATH\033[22m (default: '.')"
                 echo "      The path to normalize."
                 echo
                 echo "Options:"
@@ -107,6 +108,7 @@ function __impl-abspath() {
         return 64
     done
 
+        if [[ ! $_PATH ]]; then _PATH="."; fi
 
     if [[ $_PATH ]]; then
         true
@@ -117,12 +119,12 @@ function __impl-abspath() {
 
 # use realpath if available
 if hash realpath &> /dev/null; then
-    realpath -m ${_PATH:-.}
+    realpath -m $_PATH
 
 # use python as last resort
 else
     python -c "import os
-print os.path.abspath('${_PATH:-.}')"
+print os.path.abspath('$_PATH')"
 fi
 }
 function __complete-abspath() {
@@ -165,9 +167,10 @@ function -count-words() {
     return $rc
 }
 function __impl-count-words() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _sort _sort_value _help _selftest _FILE _WORD=()
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -204,9 +207,8 @@ function __impl-count-words() {
               ;;
 
             --sort|-s)
-                _sort=true
-                _sort_value=
-                __optionWithValue=--sort
+                local _sort=
+                __optionWithValue=sort
             ;;
 
 
@@ -218,8 +220,8 @@ function __impl-count-words() {
 
             *)
                 case $__optionWithValue in
-                    --sort)
-                        _sort_value=$__arg
+                    sort)
+                        _sort=$__arg
                         __optionWithValue=
                       ;;
                     *)
@@ -240,10 +242,10 @@ function __impl-count-words() {
         return 64
     done
 
-    if [[ $_sort ]]; then
-        if [[ ! $_sort_value ]]; then echo "$__fn: Error: Value MODE for option --sort must be specified."; return 64; fi
+    if declare -p _sort &>/dev/null; then
+        if [[ ! $_sort ]]; then echo "$__fn: Error: Value MODE for option --sort must be specified."; return 64; fi
         declare -A __allowed=( [count]=1 [word]=1 )
-        if [[ ! ${__allowed[$_sort_value]} ]]; then echo "$__fn: Error: Value '$_sort_value' for option --sort is not one of the allowed values [count,word]."; return 64; fi
+        if [[ ! ${__allowed[$_sort]} ]]; then echo "$__fn: Error: Value '$_sort' for option --sort is not one of the allowed values [count,word]."; return 64; fi
         true
     fi
 
@@ -277,7 +279,7 @@ for word in "${_WORD[@]}"; do
     grepCmds="$grepCmds -e $word"
 done
 
-if [[ $_sort_value == "count" ]]; then
+if [[ $_sort == "count" ]]; then
     sed "$sedCmds" "$_FILE" | grep $grepCmds | sort | uniq -c | sort -r
 else
     sed "$sedCmds" "$_FILE" | grep $grepCmds | sort | uniq -c
@@ -323,9 +325,10 @@ function -du() {
     return $rc
 }
 function __impl-du() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH=()
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -435,9 +438,10 @@ function -extract() {
     return $rc
 }
 function __impl-extract() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _ARCHIVE _TO_DIR
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -522,15 +526,15 @@ if [[ ! -r "$_ARCHIVE" ]]; then
     return 1
 fi
 
-if [[ ! -f "$_FILE" ]]; then
+if [[ ! -f "$_ARCHIVE" ]]; then
     echo "Error: Path [$_ARCHIVE] does not point to a file."
     return 1
 fi
 
-if [[ $_TARGET ]]; then
+if [[ $_TO_DIR ]]; then
     local origPWD="$(pwd)"
-    mkdir "$_TARGET"
-    cd "$_TARGET"
+    mkdir "$_TO_DIR"
+    cd "$_TO_DIR"
 fi
 
 if [[ ! -w "$(pwd)" ]]; then
@@ -553,7 +557,7 @@ case "$_FILE" in
     *) echo "Error: Unsupported archive format '$_ARCHIVE'"; return 1 ;;
 esac
 
-if [[ $_TARGET ]]; then
+if [[ $_TO_DIR ]]; then
     cd "$origPWD"
 fi
 }
@@ -597,9 +601,10 @@ function -findfiles() {
     return $rc
 }
 function __impl-findfiles() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _lines _unpack _maxdepth _maxdepth_value _mindepth _mindepth_value _name _name_value _help _selftest _verbose _START_PATH _SEARCH_STRING
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -609,7 +614,7 @@ function __impl-findfiles() {
                 echo "Recursively finds all files containing the given string and displays their path."
                 echo
                 echo "Parameters:"
-                echo -e "  \033[1mSTART_PATH\033[22m "
+                echo -e "  \033[1mSTART_PATH\033[22m (default: '.')"
                 echo "      The path where to search."
                 echo -e "  \033[1mSEARCH_STRING\033[22m (required)"
                 echo "      The string to search."
@@ -646,35 +651,32 @@ function __impl-findfiles() {
               ;;
 
             --lines|-l)
-                _lines=true
+                local _lines=1
             ;;
 
             --unpack|-u)
-                _unpack=true
+                local _unpack=1
             ;;
 
             --maxdepth)
-                _maxdepth=true
-                _maxdepth_value=
-                __optionWithValue=--maxdepth
+                local _maxdepth=
+                __optionWithValue=maxdepth
             ;;
 
             --mindepth)
-                _mindepth=true
-                _mindepth_value=
-                __optionWithValue=--mindepth
+                local _mindepth=
+                __optionWithValue=mindepth
             ;;
 
             --name)
-                _name=true
-                _name_value=
-                __optionWithValue=--name
+                local _name=
+                __optionWithValue=name
             ;;
 
 
 
             --verbose|-v)
-                _verbose=true
+                local _verbose=1
             ;;
 
             -*)
@@ -684,16 +686,16 @@ function __impl-findfiles() {
 
             *)
                 case $__optionWithValue in
-                    --maxdepth)
-                        _maxdepth_value=$__arg
+                    maxdepth)
+                        _maxdepth=$__arg
                         __optionWithValue=
                       ;;
-                    --mindepth)
-                        _mindepth_value=$__arg
+                    mindepth)
+                        _mindepth=$__arg
                         __optionWithValue=
                       ;;
-                    --name)
-                        _name_value=$__arg
+                    name)
+                        _name=$__arg
                         __optionWithValue=
                       ;;
                     *)
@@ -716,18 +718,19 @@ function __impl-findfiles() {
         return 64
     done
 
-    if [[ $_maxdepth ]]; then
-        if [[ ! $_maxdepth_value ]]; then echo "$__fn: Error: Value levels for option --maxdepth must be specified."; return 64; fi
-        if [[ ! "$_maxdepth_value" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_maxdepth_value' for option --maxdepth is not a numeric value."; return 64; fi
+        if [[ ! $_START_PATH ]]; then _START_PATH="."; fi
+    if declare -p _maxdepth &>/dev/null; then
+        if [[ ! $_maxdepth ]]; then echo "$__fn: Error: Value levels for option --maxdepth must be specified."; return 64; fi
+        if [[ ! "$_maxdepth" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_maxdepth' for option --maxdepth is not a numeric value."; return 64; fi
         true
     fi
-    if [[ $_mindepth ]]; then
-        if [[ ! $_mindepth_value ]]; then echo "$__fn: Error: Value levels for option --mindepth must be specified."; return 64; fi
-        if [[ ! "$_mindepth_value" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_mindepth_value' for option --mindepth is not a numeric value."; return 64; fi
+    if declare -p _mindepth &>/dev/null; then
+        if [[ ! $_mindepth ]]; then echo "$__fn: Error: Value levels for option --mindepth must be specified."; return 64; fi
+        if [[ ! "$_mindepth" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_mindepth' for option --mindepth is not a numeric value."; return 64; fi
         true
     fi
-    if [[ $_name ]]; then
-        if [[ ! $_name_value ]]; then echo "$__fn: Error: Value pattern for option --name must be specified."; return 64; fi
+    if declare -p _name &>/dev/null; then
+        if [[ ! $_name ]]; then echo "$__fn: Error: Value pattern for option --name must be specified."; return 64; fi
         true
     fi
 
@@ -742,9 +745,6 @@ function __impl-findfiles() {
 
 
     ######################################################
-
-local _START_PATH=${_START_PATH:-.}
-
 if [[ ! -e "$_START_PATH" ]]; then
     echo "Error: Path [$_START_PATH] does not exist."
     return 1
@@ -763,13 +763,13 @@ fi
 
 local findOpts="-type f"
 if [[ $_name ]]; then
-    findOpts="$findOpts -name $_name_value"
+    findOpts="$findOpts -name $_name"
 fi
 if [[ $_maxdepth ]]; then
-    findOpts="$findOpts -maxdepth $_maxdepth_value"
+    findOpts="$findOpts -maxdepth $_maxdepth"
 fi
 if [[ $_mindepth ]]; then
-    findOpts="$findOpts -mindepth $_mindepth_value"
+    findOpts="$findOpts -mindepth $_mindepth"
 fi
 
 # turn off verbose if part of pipe or subshell
@@ -873,9 +873,10 @@ function -ll() {
     return $rc
 }
 function __impl-ll() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH=()
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -996,9 +997,10 @@ function -mkcd() {
     return $rc
 }
 function __impl-mkcd() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _mode _mode_value _parents _help _selftest _verbose _PATH
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -1037,19 +1039,18 @@ function __impl-mkcd() {
               ;;
 
             --mode|-m)
-                _mode=true
-                _mode_value=
-                __optionWithValue=--mode
+                local _mode=
+                __optionWithValue=mode
             ;;
 
             --parents|-p)
-                _parents=true
+                local _parents=1
             ;;
 
 
 
             --verbose|-v)
-                _verbose=true
+                local _verbose=1
             ;;
 
             -*)
@@ -1059,8 +1060,8 @@ function __impl-mkcd() {
 
             *)
                 case $__optionWithValue in
-                    --mode)
-                        _mode_value=$__arg
+                    mode)
+                        _mode=$__arg
                         __optionWithValue=
                       ;;
                     *)
@@ -1079,10 +1080,10 @@ function __impl-mkcd() {
         return 64
     done
 
-    if [[ $_mode ]]; then
-        if [[ ! $_mode_value ]]; then echo "$__fn: Error: Value MODE for option --mode must be specified."; return 64; fi
+    if declare -p _mode &>/dev/null; then
+        if [[ ! $_mode ]]; then echo "$__fn: Error: Value MODE for option --mode must be specified."; return 64; fi
         local __regex="^[0-7]{3}$"
-        if [[ ! "$_mode_value" =~ $__regex ]]; then echo "$__fn: Error: Value '$_mode_value' for option --mode does not match required pattern '[0-7]{3}'."; return 64; fi
+        if [[ ! "$_mode" =~ $__regex ]]; then echo "$__fn: Error: Value '$_mode' for option --mode does not match required pattern '[0-7]{3}'."; return 64; fi
         true
     fi
 
@@ -1096,7 +1097,7 @@ function __impl-mkcd() {
     ######################################################
 local mkdirOpts
 
-[[ $_mode    ]] && mkdirOpts="$mkdirOpts -m $_mode_value" || true
+[[ $_mode    ]] && mkdirOpts="$mkdirOpts -m $_mode" || true
 [[ $_parents ]] && mkdirOpts="$mkdirOpts -p" || true
 [[ $_verbose ]] && mkdirOpts="$mkdirOpts -v" || true
 
@@ -1142,9 +1143,10 @@ function -modified() {
     return $rc
 }
 function __impl-modified() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -1154,7 +1156,7 @@ function __impl-modified() {
                 echo "Prints the modification timestamp of the given file or directory."
                 echo
                 echo "Parameters:"
-                echo -e "  \033[1mPATH\033[22m "
+                echo -e "  \033[1mPATH\033[22m (default: '.')"
                 echo "      The file or directory to check."
                 echo
                 echo "Options:"
@@ -1201,6 +1203,7 @@ function __impl-modified() {
         return 64
     done
 
+        if [[ ! $_PATH ]]; then _PATH="."; fi
 
     if [[ $_PATH ]]; then
         true
@@ -1208,9 +1211,6 @@ function __impl-modified() {
 
 
     ######################################################
-
-local _PATH=${_PATH:-.}
-
 if [[ ! -e "$_PATH" ]]; then
     echo "Error: Path [$_PATH] does not exist."
     return 1
@@ -1278,9 +1278,10 @@ function -owner() {
     return $rc
 }
 function __impl-owner() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -1290,7 +1291,7 @@ function __impl-owner() {
                 echo "Prints the owner of the given file or directory."
                 echo
                 echo "Parameters:"
-                echo -e "  \033[1mPATH\033[22m "
+                echo -e "  \033[1mPATH\033[22m (default: '.')"
                 echo "      The file or directory to check."
                 echo
                 echo "Options:"
@@ -1337,6 +1338,7 @@ function __impl-owner() {
         return 64
     done
 
+        if [[ ! $_PATH ]]; then _PATH="."; fi
 
     if [[ $_PATH ]]; then
         true
@@ -1344,9 +1346,6 @@ function __impl-owner() {
 
 
     ######################################################
-
-local _PATH=${_PATH:-.}
-
 if [[ ! -e "$_PATH" ]]; then
     echo "Error: Path [$_PATH] does not exist."
     return 1
@@ -1414,9 +1413,10 @@ function -realpath() {
     return $rc
 }
 function __impl-realpath() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -1426,7 +1426,7 @@ function __impl-realpath() {
                 echo "Prints the normalized path of the given path resolving any symbolic links. The path is not required to exist."
                 echo
                 echo "Parameters:"
-                echo -e "  \033[1mPATH\033[22m "
+                echo -e "  \033[1mPATH\033[22m (default: '.')"
                 echo "      The path to normalize."
                 echo
                 echo "Options:"
@@ -1473,6 +1473,7 @@ function __impl-realpath() {
         return 64
     done
 
+        if [[ ! $_PATH ]]; then _PATH="."; fi
 
     if [[ $_PATH ]]; then
         true
@@ -1480,9 +1481,6 @@ function __impl-realpath() {
 
 
     ######################################################
-
-local _PATH=${_PATH:-.}
-
 # use readlink if available
 if hash readlink &> /dev/null; then
     readlink -m "$_PATH"
@@ -1540,9 +1538,10 @@ function -sudo-append() {
     return $rc
 }
 function __impl-sudo-append() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _FILE_PATH _CONTENT
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -1678,9 +1677,10 @@ function -sudo-write() {
     return $rc
 }
 function __impl-sudo-write() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _FILE_PATH _OWNER _CONTENT
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -1830,9 +1830,10 @@ function -test-filesystem() {
     return $rc
 }
 function __impl-test-filesystem() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -1939,9 +1940,10 @@ function -up() {
     return $rc
 }
 function __impl-up() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _LEVEL_OR_DIRECTORY_NAME
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -1951,7 +1953,7 @@ function __impl-up() {
                 echo "Navigates to the given level or directory up in the directory tree. Bash completion will auto-complete the names of the parent directories."
                 echo
                 echo "Parameters:"
-                echo -e "  \033[1mLEVEL_OR_DIRECTORY_NAME\033[22m "
+                echo -e "  \033[1mLEVEL_OR_DIRECTORY_NAME\033[22m (default: '..')"
                 echo "      The level to navigate up in the directory structure. Numeric value or the name of the directory to go back to."
                 echo
                 echo "Options:"
@@ -1998,6 +2000,7 @@ function __impl-up() {
         return 64
     done
 
+        if [[ ! $_LEVEL_OR_DIRECTORY_NAME ]]; then _LEVEL_OR_DIRECTORY_NAME=".."; fi
 
     if [[ $_LEVEL_OR_DIRECTORY_NAME ]]; then
         true
@@ -2005,7 +2008,7 @@ function __impl-up() {
 
 
     ######################################################
-if [[ ! $_LEVEL_OR_DIRECTORY_NAME ]]; then
+if [[ $_LEVEL_OR_DIRECTORY_NAME == ".." ]]; then
     cd ..
     return 0
 fi

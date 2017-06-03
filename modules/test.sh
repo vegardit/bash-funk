@@ -48,9 +48,10 @@ function -test-fn-flags() {
     return $rc
 }
 function __impl-test-fn-flags() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _myflag _help _selftest
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -110,7 +111,7 @@ function __impl-test-fn-flags() {
               ;;
 
             --myflag|-m)
-                _myflag=true
+                local _myflag=1
             ;;
 
 
@@ -180,9 +181,10 @@ function -test-fn-multi-value-options() {
     return $rc
 }
 function __impl-test-fn-multi-value-options() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _aa _aa_value _bb _bb_value _cc _cc_value _dd _dd_value _ee _ee_value _ff _ff_value _gg _gg_value _help _selftest
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -213,35 +215,35 @@ function __impl-test-fn-multi-value-options() {
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn \033[22m"
-                echo "aa:= bb:= cc:= dd:= ee:= ff:= gg:="
+                echo "aa: bb: cc: dd: ee: ff: gg:"
                 echo -e "$ \033[1m$__fn --aa\033[22m"
-                echo "aa:true= bb:= cc:= dd:= ee:= ff:= gg:="
+                echo "aa: bb: cc: dd: ee: ff: gg:"
                 echo -e "$ \033[1m$__fn --aa foo\033[22m"
-                echo "aa:true=foo bb:= cc:= dd:= ee:= ff:= gg:="
+                echo "aa:foo bb: cc: dd: ee: ff: gg:"
                 echo -e "$ \033[1m$__fn --aa foo,bar\033[22m"
-                echo "aa:true=foo bar bb:= cc:= dd:= ee:= ff:= gg:="
+                echo "aa:foo bar bb: cc: dd: ee: ff: gg:"
                 echo -e "$ \033[1m$__fn --bb\033[22m"
                 echo -e "Error: For option --bb a list with at least 1 value\(s\) must be specified. Found: 0."
                 echo -e "$ \033[1m$__fn --bb foo,bar\033[22m"
-                echo "aa:= bb:true=foo bar cc:= dd:= ee:= ff:= gg:="
+                echo "aa: bb:foo bar cc: dd: ee: ff: gg:"
                 echo -e "$ \033[1m$__fn --bb foo,bar,fb\033[22m"
                 echo "Error: For option --bb a list with no more than 2 values must be specified. Found: 3."
                 echo -e "$ \033[1m$__fn --cc 123,45\033[22m"
-                echo "aa:= bb:= cc:true=123 45 dd:= ee:= ff:= gg:="
+                echo "aa: bb: cc:123 45 dd: ee: ff: gg:"
                 echo -e "$ \033[1m$__fn --cc 123,abc\033[22m"
                 echo "Error: Value 'abc' for option --cc is not a numeric value."
                 echo -e "$ \033[1m$__fn --dd 1,3\033[22m"
-                echo "aa:= bb:= cc:= dd:true=1 3 ee:= ff:= gg:="
+                echo "aa: bb: cc: dd:1 3 ee: ff: gg:"
                 echo -e "$ \033[1m$__fn --dd 0,3\033[22m"
                 echo "Error: Value '0' for option --dd is too low. Must be >= 1."
                 echo -e "$ \033[1m$__fn --dd 3,6\033[22m"
                 echo "Error: Value '6' for option --dd is too high. Must be <= 5."
                 echo -e "$ \033[1m$__fn --ee A,B\033[22m"
-                echo "aa:= bb:= cc:= dd:= ee:true=A B ff:= gg:="
+                echo "aa: bb: cc: dd: ee:A B ff: gg:"
                 echo -e "$ \033[1m$__fn --ee A,F\033[22m"
                 echo -e "Error: Value 'F' for option --ee is not one of the allowed values \[A,B,C\]."
                 echo -e "$ \033[1m$__fn --ff foo,bar\033[22m"
-                echo "aa:= bb:= cc:= dd:= ee:= ff:true=foo bar gg:="
+                echo "aa: bb: cc: dd: ee: ff:foo bar gg:"
                 echo -e "$ \033[1m$__fn --ff foo,123\033[22m"
                 echo -e "Error: Value '123' for option --ff does not match required pattern '\[a-z\]\+'."
                 echo -e "$ \033[1m$__fn --gg 123\033[22m"
@@ -260,29 +262,29 @@ function __impl-test-fn-multi-value-options() {
                 __stdout=$($__fn ); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^aa:= bb:= cc:= dd:= ee:= ff:= gg:=$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa:= bb:= cc:= dd:= ee:= ff:= gg:=]."; return 64; fi
+                __regex="^aa: bb: cc: dd: ee: ff: gg:$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa: bb: cc: dd: ee: ff: gg:]."; return 64; fi
                 echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$__fn --aa\033[22m"
                 __stdout=$($__fn --aa); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^aa:true= bb:= cc:= dd:= ee:= ff:= gg:=$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa:true= bb:= cc:= dd:= ee:= ff:= gg:=]."; return 64; fi
+                __regex="^aa: bb: cc: dd: ee: ff: gg:$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa: bb: cc: dd: ee: ff: gg:]."; return 64; fi
                 echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$__fn --aa foo\033[22m"
                 __stdout=$($__fn --aa foo); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^aa:true=foo bb:= cc:= dd:= ee:= ff:= gg:=$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa:true=foo bb:= cc:= dd:= ee:= ff:= gg:=]."; return 64; fi
+                __regex="^aa:foo bb: cc: dd: ee: ff: gg:$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa:foo bb: cc: dd: ee: ff: gg:]."; return 64; fi
                 echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$__fn --aa foo,bar\033[22m"
                 __stdout=$($__fn --aa foo,bar); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^aa:true=foo bar bb:= cc:= dd:= ee:= ff:= gg:=$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa:true=foo bar bb:= cc:= dd:= ee:= ff:= gg:=]."; return 64; fi
+                __regex="^aa:foo bar bb: cc: dd: ee: ff: gg:$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa:foo bar bb: cc: dd: ee: ff: gg:]."; return 64; fi
                 echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$__fn --bb\033[22m"
                 __stdout=$($__fn --bb); __rc=$?
@@ -295,8 +297,8 @@ function __impl-test-fn-multi-value-options() {
                 __stdout=$($__fn --bb foo,bar); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^aa:= bb:true=foo bar cc:= dd:= ee:= ff:= gg:=$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa:= bb:true=foo bar cc:= dd:= ee:= ff:= gg:=]."; return 64; fi
+                __regex="^aa: bb:foo bar cc: dd: ee: ff: gg:$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa: bb:foo bar cc: dd: ee: ff: gg:]."; return 64; fi
                 echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$__fn --bb foo,bar,fb\033[22m"
                 __stdout=$($__fn --bb foo,bar,fb); __rc=$?
@@ -309,8 +311,8 @@ function __impl-test-fn-multi-value-options() {
                 __stdout=$($__fn --cc 123,45); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^aa:= bb:= cc:true=123 45 dd:= ee:= ff:= gg:=$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa:= bb:= cc:true=123 45 dd:= ee:= ff:= gg:=]."; return 64; fi
+                __regex="^aa: bb: cc:123 45 dd: ee: ff: gg:$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa: bb: cc:123 45 dd: ee: ff: gg:]."; return 64; fi
                 echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$__fn --cc 123,abc\033[22m"
                 __stdout=$($__fn --cc 123,abc); __rc=$?
@@ -323,8 +325,8 @@ function __impl-test-fn-multi-value-options() {
                 __stdout=$($__fn --dd 1,3); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^aa:= bb:= cc:= dd:true=1 3 ee:= ff:= gg:=$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa:= bb:= cc:= dd:true=1 3 ee:= ff:= gg:=]."; return 64; fi
+                __regex="^aa: bb: cc: dd:1 3 ee: ff: gg:$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa: bb: cc: dd:1 3 ee: ff: gg:]."; return 64; fi
                 echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$__fn --dd 0,3\033[22m"
                 __stdout=$($__fn --dd 0,3); __rc=$?
@@ -344,8 +346,8 @@ function __impl-test-fn-multi-value-options() {
                 __stdout=$($__fn --ee A,B); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^aa:= bb:= cc:= dd:= ee:true=A B ff:= gg:=$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa:= bb:= cc:= dd:= ee:true=A B ff:= gg:=]."; return 64; fi
+                __regex="^aa: bb: cc: dd: ee:A B ff: gg:$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa: bb: cc: dd: ee:A B ff: gg:]."; return 64; fi
                 echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$__fn --ee A,F\033[22m"
                 __stdout=$($__fn --ee A,F); __rc=$?
@@ -358,8 +360,8 @@ function __impl-test-fn-multi-value-options() {
                 __stdout=$($__fn --ff foo,bar); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^aa:= bb:= cc:= dd:= ee:= ff:true=foo bar gg:=$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa:= bb:= cc:= dd:= ee:= ff:true=foo bar gg:=]."; return 64; fi
+                __regex="^aa: bb: cc: dd: ee: ff:foo bar gg:$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa: bb: cc: dd: ee: ff:foo bar gg:]."; return 64; fi
                 echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$__fn --ff foo,123\033[22m"
                 __stdout=$($__fn --ff foo,123); __rc=$?
@@ -380,45 +382,38 @@ function __impl-test-fn-multi-value-options() {
               ;;
 
             --aa|-a)
-                _aa=true
-                _aa_value=()
-                __optionWithValue=--aa
+                local _aa=()
+                __optionWithValue=aa
             ;;
 
             --bb|-b)
-                _bb=true
-                _bb_value=()
-                __optionWithValue=--bb
+                local _bb=()
+                __optionWithValue=bb
             ;;
 
             --cc|-c)
-                _cc=true
-                _cc_value=()
-                __optionWithValue=--cc
+                local _cc=()
+                __optionWithValue=cc
             ;;
 
             --dd|-d)
-                _dd=true
-                _dd_value=()
-                __optionWithValue=--dd
+                local _dd=()
+                __optionWithValue=dd
             ;;
 
             --ee|-e)
-                _ee=true
-                _ee_value=()
-                __optionWithValue=--ee
+                local _ee=()
+                __optionWithValue=ee
             ;;
 
             --ff|-f)
-                _ff=true
-                _ff_value=()
-                __optionWithValue=--ff
+                local _ff=()
+                __optionWithValue=ff
             ;;
 
             --gg|-g)
-                _gg=true
-                _gg_value=()
-                __optionWithValue=--gg
+                local _gg=()
+                __optionWithValue=gg
             ;;
 
 
@@ -430,32 +425,32 @@ function __impl-test-fn-multi-value-options() {
 
             *)
                 case $__optionWithValue in
-                    --aa)
-                        _aa_value=(${__arg//,/ })
+                    aa)
+                        _aa=(${__arg//,/ })
                         __optionWithValue=
                       ;;
-                    --bb)
-                        _bb_value=(${__arg//,/ })
+                    bb)
+                        _bb=(${__arg//,/ })
                         __optionWithValue=
                       ;;
-                    --cc)
-                        _cc_value=(${__arg//,/ })
+                    cc)
+                        _cc=(${__arg//,/ })
                         __optionWithValue=
                       ;;
-                    --dd)
-                        _dd_value=(${__arg//,/ })
+                    dd)
+                        _dd=(${__arg//,/ })
                         __optionWithValue=
                       ;;
-                    --ee)
-                        _ee_value=(${__arg//,/ })
+                    ee)
+                        _ee=(${__arg//,/ })
                         __optionWithValue=
                       ;;
-                    --ff)
-                        _ff_value=(${__arg//,/ })
+                    ff)
+                        _ff=(${__arg//,/ })
                         __optionWithValue=
                       ;;
-                    --gg)
-                        _gg_value=(${__arg//,/ })
+                    gg)
+                        _gg=(${__arg//,/ })
                         __optionWithValue=
                       ;;
                     *)
@@ -470,50 +465,50 @@ function __impl-test-fn-multi-value-options() {
         return 64
     done
 
-    if [[ $_aa ]]; then
+    if declare -p _aa &>/dev/null; then
         true
     fi
-    if [[ $_bb ]]; then
-        if [[ ${#_bb_value[@]} -lt 1 ]]; then echo "$__fn: Error: For option --bb a list with at least 1 value(s) must be specified. Found: ${#_bb_value[@]}."; return 64; fi
-        if [[ ${#_bb_value[@]} -gt 2 ]]; then echo "$__fn: Error: For option --bb a list with no more than 2 values must be specified. Found: ${#_bb_value[@]}."; return 64; fi
+    if declare -p _bb &>/dev/null; then
+        if [[ ${#_bb[@]} -lt 1 ]]; then echo "$__fn: Error: For option --bb a list with at least 1 value(s) must be specified. Found: ${#_bb[@]}."; return 64; fi
+        if [[ ${#_bb[@]} -gt 2 ]]; then echo "$__fn: Error: For option --bb a list with no more than 2 values must be specified. Found: ${#_bb[@]}."; return 64; fi
         true
     fi
-    if [[ $_cc ]]; then
+    if declare -p _cc &>/dev/null; then
         local __param
-        for __param in "${_cc_value[@]}"; do
+        for __param in "${_cc[@]}"; do
             if [[ ! "$__param" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$__param' for option --cc is not a numeric value."; return 64; fi
         done
         true
     fi
-    if [[ $_dd ]]; then
+    if declare -p _dd &>/dev/null; then
         local __param
-        for __param in "${_dd_value[@]}"; do
+        for __param in "${_dd[@]}"; do
             if [[ ! "$__param" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$__param' for option --dd is not a numeric value."; return 64; fi
             if [[ $__param -lt 1 ]]; then echo "$__fn: Error: Value '$__param' for option --dd is too low. Must be >= 1."; return 64; fi
             if [[ $__param -gt 5 ]]; then echo "$__fn: Error: Value '$__param' for option --dd is too high. Must be <= 5."; return 64; fi
         done
         true
     fi
-    if [[ $_ee ]]; then
+    if declare -p _ee &>/dev/null; then
         declare -A __allowed=([A]=1 [B]=1 [C]=1)
         local __param
-        for __param in "${_ee_value[@]}"; do
+        for __param in "${_ee[@]}"; do
             if [[ ! ${__allowed[$__param]} ]]; then echo "$__fn: Error: Value '$__param' for option --ee is not one of the allowed values [A,B,C]."; return 64; fi
         done
         true
     fi
-    if [[ $_ff ]]; then
+    if declare -p _ff &>/dev/null; then
         local __regex="^[a-z]+$"
         local __param
-        for __param in "${_ff_value[@]}"; do
+        for __param in "${_ff[@]}"; do
             if [[ ! "$__param" =~ $__regex ]]; then echo "$__fn: Error: Value '$__param' for option --ff does not match required pattern '[a-z]+'."; return 64; fi
         done
         true
     fi
-    if [[ $_gg ]]; then
+    if declare -p _gg &>/dev/null; then
         local __regex="^[a-z]+$"
         local __param
-        for __param in "${_gg_value[@]}"; do
+        for __param in "${_gg[@]}"; do
             if [[ ! "$__param" =~ $__regex ]]; then echo "$__fn: Error: Value '$__param' for option --gg must only contain characters a-z."; return 64; fi
         done
         true
@@ -522,7 +517,7 @@ function __impl-test-fn-multi-value-options() {
 
 
     ######################################################
-echo "aa:$_aa=${_aa_value[@]} bb:$_bb=${_bb_value[@]} cc:$_cc=${_cc_value[@]} dd:$_dd=${_dd_value[@]} ee:$_ee=${_ee_value[@]} ff:$_ff=${_ff_value[@]} gg:$_gg=${_gg_value[@]}"
+echo "aa:${_aa[@]} bb:${_bb[@]} cc:${_cc[@]} dd:${_dd[@]} ee:${_ee[@]} ff:${_ff[@]} gg:${_gg[@]}"
 }
 function __complete-test-fn-multi-value-options() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -564,9 +559,10 @@ function -test-fn-multi-value-parameters() {
     return $rc
 }
 function __impl-test-fn-multi-value-parameters() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA=() _BB=() _CC=() _DD=() _EE=() _FF=()
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -873,9 +869,10 @@ function -test-fn-multi-value-parameters-first-variable() {
     return $rc
 }
 function __impl-test-fn-multi-value-parameters-first-variable() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA=() _BB=()
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -1070,9 +1067,10 @@ function -test-fn-noargs() {
     return $rc
 }
 function __impl-test-fn-noargs() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -1152,7 +1150,7 @@ function __impl-test-fn-noargs() {
 
 
             --verbose|-v)
-                _verbose=true
+                local _verbose=1
             ;;
 
             -*)
@@ -1220,9 +1218,10 @@ function -test-fn-requires-existing() {
     return $rc
 }
 function __impl-test-fn-requires-existing() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -1269,7 +1268,7 @@ function __impl-test-fn-requires-existing() {
 
 
             --verbose|-v)
-                _verbose=true
+                local _verbose=1
             ;;
 
             -*)
@@ -1338,9 +1337,10 @@ function -test-fn-requires-nonexistent() {
     return $rc
 }
 function __impl-test-fn-requires-nonexistent() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -1387,7 +1387,7 @@ function __impl-test-fn-requires-nonexistent() {
 
 
             --verbose|-v)
-                _verbose=true
+                local _verbose=1
             ;;
 
             -*)
@@ -1456,9 +1456,10 @@ function -test-fn-single-value-options() {
     return $rc
 }
 function __impl-test-fn-single-value-options() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _aa _aa_value _bb _bb_value _cc _cc_value _dd _dd_value _ee _ee_value _ff _ff_value _gg _gg_value _help _selftest
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -1468,7 +1469,7 @@ function __impl-test-fn-single-value-options() {
                 echo "Test function with single value options."
                 echo
                 echo "Options:"
-                echo -e "\033[1m-a, --aa [v]\033[22m "
+                echo -e "\033[1m-a, --aa [v]\033[22m (default: 'cat')"
                 echo "        Option a."
                 echo -e "\033[1m-b, --bb v\033[22m "
                 echo "        Option b."
@@ -1489,31 +1490,31 @@ function __impl-test-fn-single-value-options() {
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn \033[22m"
-                echo "aa:= bb:= cc:= dd:= ee:= ff:= gg:="
+                echo "aa: bb: cc: dd: ee: ff: gg:"
                 echo -e "$ \033[1m$__fn --aa\033[22m"
-                echo "aa:true= bb:= cc:= dd:= ee:= ff:= gg:="
+                echo "aa:cat bb: cc: dd: ee: ff: gg:"
                 echo -e "$ \033[1m$__fn --aa foo\033[22m"
-                echo "aa:true=foo bb:= cc:= dd:= ee:= ff:= gg:="
+                echo "aa:foo bb: cc: dd: ee: ff: gg:"
                 echo -e "$ \033[1m$__fn --bb\033[22m"
                 echo "Error: Value v for option --bb must be specified."
                 echo -e "$ \033[1m$__fn --bb foo\033[22m"
-                echo "aa:= bb:true=foo cc:= dd:= ee:= ff:= gg:="
+                echo "aa: bb:foo cc: dd: ee: ff: gg:"
                 echo -e "$ \033[1m$__fn --cc 12345\033[22m"
-                echo "aa:= bb:= cc:true=12345 dd:= ee:= ff:= gg:="
+                echo "aa: bb: cc:12345 dd: ee: ff: gg:"
                 echo -e "$ \033[1m$__fn --cc abc\033[22m"
                 echo "Error: Value 'abc' for option --cc is not a numeric value."
                 echo -e "$ \033[1m$__fn --dd 3\033[22m"
-                echo "aa:= bb:= cc:= dd:true=3 ee:= ff:= gg:="
+                echo "aa: bb: cc: dd:3 ee: ff: gg:"
                 echo -e "$ \033[1m$__fn --dd 0\033[22m"
                 echo "Error: Value '0' for option --dd is too low. Must be >= 1."
                 echo -e "$ \033[1m$__fn --dd 6\033[22m"
                 echo "Error: Value '6' for option --dd is too high. Must be <= 5."
                 echo -e "$ \033[1m$__fn --ee A\033[22m"
-                echo "aa:= bb:= cc:= dd:= ee:true=A ff:= gg:="
+                echo "aa: bb: cc: dd: ee:A ff: gg:"
                 echo -e "$ \033[1m$__fn --ee F\033[22m"
                 echo -e "Error: Value 'F' for option --ee is not one of the allowed values \[A,B,C\]."
                 echo -e "$ \033[1m$__fn --ff foo\033[22m"
-                echo "aa:= bb:= cc:= dd:= ee:= ff:true=foo gg:="
+                echo "aa: bb: cc: dd: ee: ff:foo gg:"
                 echo -e "$ \033[1m$__fn --ff 123\033[22m"
                 echo -e "Error: Value '123' for option --ff does not match required pattern '\[a-z\]\+'."
                 echo -e "$ \033[1m$__fn --gg 123\033[22m"
@@ -1532,22 +1533,22 @@ function __impl-test-fn-single-value-options() {
                 __stdout=$($__fn ); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^aa:= bb:= cc:= dd:= ee:= ff:= gg:=$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa:= bb:= cc:= dd:= ee:= ff:= gg:=]."; return 64; fi
+                __regex="^aa: bb: cc: dd: ee: ff: gg:$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa: bb: cc: dd: ee: ff: gg:]."; return 64; fi
                 echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$__fn --aa\033[22m"
                 __stdout=$($__fn --aa); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^aa:true= bb:= cc:= dd:= ee:= ff:= gg:=$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa:true= bb:= cc:= dd:= ee:= ff:= gg:=]."; return 64; fi
+                __regex="^aa:cat bb: cc: dd: ee: ff: gg:$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa:cat bb: cc: dd: ee: ff: gg:]."; return 64; fi
                 echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$__fn --aa foo\033[22m"
                 __stdout=$($__fn --aa foo); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^aa:true=foo bb:= cc:= dd:= ee:= ff:= gg:=$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa:true=foo bb:= cc:= dd:= ee:= ff:= gg:=]."; return 64; fi
+                __regex="^aa:foo bb: cc: dd: ee: ff: gg:$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa:foo bb: cc: dd: ee: ff: gg:]."; return 64; fi
                 echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$__fn --bb\033[22m"
                 __stdout=$($__fn --bb); __rc=$?
@@ -1560,15 +1561,15 @@ function __impl-test-fn-single-value-options() {
                 __stdout=$($__fn --bb foo); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^aa:= bb:true=foo cc:= dd:= ee:= ff:= gg:=$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa:= bb:true=foo cc:= dd:= ee:= ff:= gg:=]."; return 64; fi
+                __regex="^aa: bb:foo cc: dd: ee: ff: gg:$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa: bb:foo cc: dd: ee: ff: gg:]."; return 64; fi
                 echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$__fn --cc 12345\033[22m"
                 __stdout=$($__fn --cc 12345); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^aa:= bb:= cc:true=12345 dd:= ee:= ff:= gg:=$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa:= bb:= cc:true=12345 dd:= ee:= ff:= gg:=]."; return 64; fi
+                __regex="^aa: bb: cc:12345 dd: ee: ff: gg:$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa: bb: cc:12345 dd: ee: ff: gg:]."; return 64; fi
                 echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$__fn --cc abc\033[22m"
                 __stdout=$($__fn --cc abc); __rc=$?
@@ -1581,8 +1582,8 @@ function __impl-test-fn-single-value-options() {
                 __stdout=$($__fn --dd 3); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^aa:= bb:= cc:= dd:true=3 ee:= ff:= gg:=$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa:= bb:= cc:= dd:true=3 ee:= ff:= gg:=]."; return 64; fi
+                __regex="^aa: bb: cc: dd:3 ee: ff: gg:$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa: bb: cc: dd:3 ee: ff: gg:]."; return 64; fi
                 echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$__fn --dd 0\033[22m"
                 __stdout=$($__fn --dd 0); __rc=$?
@@ -1602,8 +1603,8 @@ function __impl-test-fn-single-value-options() {
                 __stdout=$($__fn --ee A); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^aa:= bb:= cc:= dd:= ee:true=A ff:= gg:=$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa:= bb:= cc:= dd:= ee:true=A ff:= gg:=]."; return 64; fi
+                __regex="^aa: bb: cc: dd: ee:A ff: gg:$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa: bb: cc: dd: ee:A ff: gg:]."; return 64; fi
                 echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$__fn --ee F\033[22m"
                 __stdout=$($__fn --ee F); __rc=$?
@@ -1616,8 +1617,8 @@ function __impl-test-fn-single-value-options() {
                 __stdout=$($__fn --ff foo); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^aa:= bb:= cc:= dd:= ee:= ff:true=foo gg:=$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa:= bb:= cc:= dd:= ee:= ff:true=foo gg:=]."; return 64; fi
+                __regex="^aa: bb: cc: dd: ee: ff:foo gg:$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aa: bb: cc: dd: ee: ff:foo gg:]."; return 64; fi
                 echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$__fn --ff 123\033[22m"
                 __stdout=$($__fn --ff 123); __rc=$?
@@ -1638,45 +1639,38 @@ function __impl-test-fn-single-value-options() {
               ;;
 
             --aa|-a)
-                _aa=true
-                _aa_value=
-                __optionWithValue=--aa
+                local _aa="cat"
+                __optionWithValue=aa
             ;;
 
             --bb|-b)
-                _bb=true
-                _bb_value=
-                __optionWithValue=--bb
+                local _bb=
+                __optionWithValue=bb
             ;;
 
             --cc|-c)
-                _cc=true
-                _cc_value=
-                __optionWithValue=--cc
+                local _cc=
+                __optionWithValue=cc
             ;;
 
             --dd|-d)
-                _dd=true
-                _dd_value=
-                __optionWithValue=--dd
+                local _dd=
+                __optionWithValue=dd
             ;;
 
             --ee|-e)
-                _ee=true
-                _ee_value=
-                __optionWithValue=--ee
+                local _ee=
+                __optionWithValue=ee
             ;;
 
             --ff|-f)
-                _ff=true
-                _ff_value=
-                __optionWithValue=--ff
+                local _ff=
+                __optionWithValue=ff
             ;;
 
             --gg|-g)
-                _gg=true
-                _gg_value=
-                __optionWithValue=--gg
+                local _gg=
+                __optionWithValue=gg
             ;;
 
 
@@ -1688,32 +1682,32 @@ function __impl-test-fn-single-value-options() {
 
             *)
                 case $__optionWithValue in
-                    --aa)
-                        _aa_value=$__arg
+                    aa)
+                        _aa=$__arg
                         __optionWithValue=
                       ;;
-                    --bb)
-                        _bb_value=$__arg
+                    bb)
+                        _bb=$__arg
                         __optionWithValue=
                       ;;
-                    --cc)
-                        _cc_value=$__arg
+                    cc)
+                        _cc=$__arg
                         __optionWithValue=
                       ;;
-                    --dd)
-                        _dd_value=$__arg
+                    dd)
+                        _dd=$__arg
                         __optionWithValue=
                       ;;
-                    --ee)
-                        _ee_value=$__arg
+                    ee)
+                        _ee=$__arg
                         __optionWithValue=
                       ;;
-                    --ff)
-                        _ff_value=$__arg
+                    ff)
+                        _ff=$__arg
                         __optionWithValue=
                       ;;
-                    --gg)
-                        _gg_value=$__arg
+                    gg)
+                        _gg=$__arg
                         __optionWithValue=
                       ;;
                     *)
@@ -1728,48 +1722,48 @@ function __impl-test-fn-single-value-options() {
         return 64
     done
 
-    if [[ $_aa ]]; then
+    if declare -p _aa &>/dev/null; then
         true
     fi
-    if [[ $_bb ]]; then
-        if [[ ! $_bb_value ]]; then echo "$__fn: Error: Value v for option --bb must be specified."; return 64; fi
+    if declare -p _bb &>/dev/null; then
+        if [[ ! $_bb ]]; then echo "$__fn: Error: Value v for option --bb must be specified."; return 64; fi
         true
     fi
-    if [[ $_cc ]]; then
-        if [[ ! $_cc_value ]]; then echo "$__fn: Error: Value v for option --cc must be specified."; return 64; fi
-        if [[ ! "$_cc_value" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_cc_value' for option --cc is not a numeric value."; return 64; fi
+    if declare -p _cc &>/dev/null; then
+        if [[ ! $_cc ]]; then echo "$__fn: Error: Value v for option --cc must be specified."; return 64; fi
+        if [[ ! "$_cc" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_cc' for option --cc is not a numeric value."; return 64; fi
         true
     fi
-    if [[ $_dd ]]; then
-        if [[ ! $_dd_value ]]; then echo "$__fn: Error: Value v for option --dd must be specified."; return 64; fi
-        if [[ ! "$_dd_value" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_dd_value' for option --dd is not a numeric value."; return 64; fi
-        if [[ $_dd_value -lt 1 ]]; then echo "$__fn: Error: Value '$_dd_value' for option --dd is too low. Must be >= 1."; return 64; fi
-        if [[ $_dd_value -gt 5 ]]; then echo "$__fn: Error: Value '$_dd_value' for option --dd is too high. Must be <= 5."; return 64; fi
+    if declare -p _dd &>/dev/null; then
+        if [[ ! $_dd ]]; then echo "$__fn: Error: Value v for option --dd must be specified."; return 64; fi
+        if [[ ! "$_dd" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_dd' for option --dd is not a numeric value."; return 64; fi
+        if [[ $_dd -lt 1 ]]; then echo "$__fn: Error: Value '$_dd' for option --dd is too low. Must be >= 1."; return 64; fi
+        if [[ $_dd -gt 5 ]]; then echo "$__fn: Error: Value '$_dd' for option --dd is too high. Must be <= 5."; return 64; fi
         true
     fi
-    if [[ $_ee ]]; then
-        if [[ ! $_ee_value ]]; then echo "$__fn: Error: Value v for option --ee must be specified."; return 64; fi
+    if declare -p _ee &>/dev/null; then
+        if [[ ! $_ee ]]; then echo "$__fn: Error: Value v for option --ee must be specified."; return 64; fi
         declare -A __allowed=( [A]=1 [B]=1 [C]=1 )
-        if [[ ! ${__allowed[$_ee_value]} ]]; then echo "$__fn: Error: Value '$_ee_value' for option --ee is not one of the allowed values [A,B,C]."; return 64; fi
+        if [[ ! ${__allowed[$_ee]} ]]; then echo "$__fn: Error: Value '$_ee' for option --ee is not one of the allowed values [A,B,C]."; return 64; fi
         true
     fi
-    if [[ $_ff ]]; then
-        if [[ ! $_ff_value ]]; then echo "$__fn: Error: Value v for option --ff must be specified."; return 64; fi
+    if declare -p _ff &>/dev/null; then
+        if [[ ! $_ff ]]; then echo "$__fn: Error: Value v for option --ff must be specified."; return 64; fi
         local __regex="^[a-z]+$"
-        if [[ ! "$_ff_value" =~ $__regex ]]; then echo "$__fn: Error: Value '$_ff_value' for option --ff does not match required pattern '[a-z]+'."; return 64; fi
+        if [[ ! "$_ff" =~ $__regex ]]; then echo "$__fn: Error: Value '$_ff' for option --ff does not match required pattern '[a-z]+'."; return 64; fi
         true
     fi
-    if [[ $_gg ]]; then
-        if [[ ! $_gg_value ]]; then echo "$__fn: Error: Value v for option --gg must be specified."; return 64; fi
+    if declare -p _gg &>/dev/null; then
+        if [[ ! $_gg ]]; then echo "$__fn: Error: Value v for option --gg must be specified."; return 64; fi
         local __regex="^[a-z]+$"
-        if [[ ! "$_gg_value" =~ $__regex ]]; then echo "$__fn: Error: Value '$_gg_value' for option --gg must only contain characters a-z."; return 64; fi
+        if [[ ! "$_gg" =~ $__regex ]]; then echo "$__fn: Error: Value '$_gg' for option --gg must only contain characters a-z."; return 64; fi
         true
     fi
 
 
 
     ######################################################
-echo "aa:$_aa=$_aa_value bb:$_bb=$_bb_value cc:$_cc=$_cc_value dd:$_dd=$_dd_value ee:$_ee=$_ee_value ff:$_ff=$_ff_value gg:$_gg=$_gg_value"
+echo "aa:$_aa bb:$_bb cc:$_cc dd:$_dd ee:$_ee ff:$_ff gg:$_gg"
 }
 function __complete-test-fn-single-value-options() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -1811,9 +1805,10 @@ function -test-fn-single-value-parameters() {
     return $rc
 }
 function __impl-test-fn-single-value-parameters() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA _BB _CC _DD _EE _FF
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -1833,7 +1828,7 @@ function __impl-test-fn-single-value-parameters() {
                 echo "      Param DD."
                 echo -e "  \033[1mEE\033[22m (required, pattern: \"[a-z]+\")"
                 echo "      Param EE."
-                echo -e "  \033[1mFF\033[22m (pattern: \"[a-z]+\")"
+                echo -e "  \033[1mFF\033[22m (default: 'cat', pattern: \"[a-z]+\")"
                 echo "      Param FF."
                 echo
                 echo "Options:"
@@ -1864,7 +1859,7 @@ function __impl-test-fn-single-value-parameters() {
                 echo -e "$ \033[1m$__fn aa 12 5 A 123\033[22m"
                 echo -e "Error: Value '123' for parameter EE does not match required pattern '\[a-z\]\+'."
                 echo -e "$ \033[1m$__fn aa 12 5 A foo\033[22m"
-                echo "AA:aa BB:12 CC:5 DD:A EE:foo FF:"
+                echo "AA:aa BB:12 CC:5 DD:A EE:foo FF:cat"
                 echo -e "$ \033[1m$__fn aa 12 5 A foo 123\033[22m"
                 echo "Error: Value '123' for parameter FF must only contain characters a-z."
                 echo -e "$ \033[1m$__fn aa 12 5 A foo bar\033[22m"
@@ -1953,8 +1948,8 @@ function __impl-test-fn-single-value-parameters() {
                 __stdout=$($__fn aa 12 5 A foo); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^AA:aa BB:12 CC:5 DD:A EE:foo FF:$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [AA:aa BB:12 CC:5 DD:A EE:foo FF:]."; return 64; fi
+                __regex="^AA:aa BB:12 CC:5 DD:A EE:foo FF:cat$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [AA:aa BB:12 CC:5 DD:A EE:foo FF:cat]."; return 64; fi
                 echo "--> [32mOK[0m"
                 echo -e "$ \033[1m$__fn aa 12 5 A foo 123\033[22m"
                 __stdout=$($__fn aa 12 5 A foo 123); __rc=$?
@@ -2019,6 +2014,7 @@ function __impl-test-fn-single-value-parameters() {
         return 64
     done
 
+        if [[ ! $_FF ]]; then _FF="cat"; fi
 
     if [[ $_AA ]]; then
         true
@@ -2103,9 +2099,10 @@ function -test-fn-single-value-parameters-first-optional() {
     return $rc
 }
 function __impl-test-fn-single-value-parameters-first-optional() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA _BB
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -2271,9 +2268,10 @@ function -test-test() {
     return $rc
 }
 function __impl-test-test() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 

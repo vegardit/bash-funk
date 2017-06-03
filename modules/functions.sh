@@ -48,9 +48,10 @@ function -fn-copy() {
     return $rc
 }
 function __impl-fn-copy() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _OLD_FUNC_NAME _NEW_FUNC_NAME
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -173,9 +174,10 @@ function -fn-exists() {
     return $rc
 }
 function __impl-fn-exists() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _FUNC_NAME
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -232,7 +234,7 @@ function __impl-fn-exists() {
 
 
             --verbose|-v)
-                _verbose=true
+                local _verbose=1
             ;;
 
             -*)
@@ -315,9 +317,10 @@ function -fn-rename() {
     return $rc
 }
 function __impl-fn-rename() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _OLD_FUNC_NAME _NEW_FUNC_NAME
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -443,9 +446,10 @@ function -fn-unload() {
     return $rc
 }
 function __impl-fn-unload() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _FUNC_NAME
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -482,7 +486,7 @@ function __impl-fn-unload() {
 
 
             --verbose|-v)
-                _verbose=true
+                local _verbose=1
             ;;
 
             -*)
@@ -564,9 +568,10 @@ function -test-functions() {
     return $rc
 }
 function __impl-test-functions() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 

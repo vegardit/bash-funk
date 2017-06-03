@@ -45,7 +45,7 @@ $ -ascii2hex XYZ
 
 *Implementation:*
 ```bash
-printf "${_ASCII_STRING}" | xxd -p | tr "[a-z]" "[A-z]"
+printf "$_ASCII_STRING" | xxd -p | tr "[a-z]" "[A-z]"
 ```
 
 
@@ -73,7 +73,7 @@ XYZ
 
 *Implementation:*
 ```bash
-printf "${_HEX_STRING}" | xxd -r -p
+printf "$_HEX_STRING" | xxd -r -p
 ```
 
 
@@ -226,8 +226,8 @@ if [[ ! ${_STRING} ]]; then
     return 0
 fi
 
-local matchFound=false
-local mismatchFound=false
+local matchFound=
+local mismatchFound=
 local str
 for str in ${_STRING[@]}; do
     if [[ $str =~ $_REGEX_PATTERN ]]; then
@@ -236,7 +236,7 @@ for str in ${_STRING[@]}; do
         else
             echo "$str"
         fi
-        matchFound=true
+        matchFound=1
         local i=1
         local n=${#BASH_REMATCH[*]}
         while [[ $i -lt $n ]]
@@ -248,14 +248,14 @@ for str in ${_STRING[@]}; do
         if [[ $_verbose ]]; then
             echo "no match: $str"
         fi
-        mismatchFound=true
+        mismatchFound=1
     fi
     shift
 done
 if [[ $_all ]]; then
-    [[ $mismatchFound == "true" ]] && return 1 || return 0
+    [[ $mismatchFound ]] && return 1 || return 0
 else
-    [[ $matchFound == "true" ]] && return 0 || return 1
+    [[ $matchFound ]] && return 0 || return 1
 fi
 ```
 
@@ -287,7 +287,7 @@ aaa
 *Implementation:*
 ```bash
 local spaces="$(printf "%${_COUNT}s" "")"
-echo "${spaces// /${_STRING}}"
+echo "${spaces// /$_STRING}"
 ```
 
 
@@ -315,7 +315,7 @@ abc
 
 *Implementation:*
 ```bash
-echo ${_STRING}
+echo $_STRING
 ```
 
 
@@ -409,7 +409,7 @@ $ -substr-after 00aa11aa22 aa
 
 *Implementation:*
 ```bash
-echo ${_SEARCH_IN#*${_SEARCH_FOR}}
+echo ${_SEARCH_IN#*$_SEARCH_FOR}
 ```
 
 
@@ -439,7 +439,7 @@ $ -substr-after-last 00aa11aa22 aa
 
 *Implementation:*
 ```bash
-echo "${_SEARCH_IN#${_SEARCH_IN%${_SEARCH_FOR}*}${_SEARCH_FOR}}"
+echo "${_SEARCH_IN#${_SEARCH_IN%${_SEARCH_FOR}*}$_SEARCH_FOR}"
 ```
 
 
@@ -531,7 +531,7 @@ $ -substr-between 00aa11aa22aa00 aa aa
 
 *Implementation:*
 ```bash
-local withoutPrefix="${_SEARCH_IN#*${_PREFIX}}"
+local withoutPrefix="${_SEARCH_IN#*$_PREFIX}"
 echo "${withoutPrefix%%${_SUFFIX}*}"
 ```
 

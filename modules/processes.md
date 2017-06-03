@@ -18,7 +18,7 @@ Usage: -get-child-pids [OPTION]... [PARENT_PID]
 Recursively prints all child PIDs of the process with the given PID.
 
 Parameters:
-  PARENT_PID (integer: 0-?)
+  PARENT_PID (default: '$$', integer: 0-?)
       The process ID of the parent process. If not specified the PID of the current Bash process is used.
 
 Options:
@@ -32,7 +32,6 @@ Options:
 
 *Implementation:*
 ```bash
-if [[ ! $_PARENT_PID ]]; then _PARENT_PID=$$; fi
 local CHILD_PIDS # intentional declaration in a separate line, see http://stackoverflow.com/a/42854176
 childPids=$(command ps -o pid --no-headers --ppid $_PARENT_PID 2>/dev/null | sed -e 's!\s!!g'; exit ${PIPESTATUS[0]})
 if [[ $? != 0 ]]; then
@@ -56,7 +55,7 @@ Usage: -get-parent-pid [OPTION]... [CHILD_PID]
 Prints the PID of the parent process of the child process with the given PID.
 
 Parameters:
-  CHILD_PID (integer: 0-?)
+  CHILD_PID (default: '$$', integer: 0-?)
       The process ID of the child process. If not specified the PID of the current Bash process is used.
 
 Options:
@@ -68,7 +67,6 @@ Options:
 
 *Implementation:*
 ```bash
-if [[ ! $_CHILD_PID ]]; then _CHILD_PID=$$; fi
 local parentPid # intentional declaration in a separate line, see http://stackoverflow.com/a/42854176
 parentPid=$(cat /proc/${_CHILD_PID}/stat 2>/dev/null | awk '{print $4}'; exit ${PIPESTATUS[0]})
 if [[ $? != 0 ]]; then
@@ -87,7 +85,7 @@ Usage: -get-toplevel-parent-pid [OPTION]... [CHILD_PID]
 Prints the PID of the top-level parent process of the child process with the given PID.
 
 Parameters:
-  CHILD_PID (integer: 0-?)
+  CHILD_PID (default: '$$', integer: 0-?)
       The process ID of the child process. If not specified the PID of the current Bash process is used.
 
 Options:
@@ -99,7 +97,6 @@ Options:
 
 *Implementation:*
 ```bash
-if [[ $_CHILD_PID ]]; then _CHILD_PID=$$; fi
 local pid=$_CHILD_PID
 while [[ $pid != 0 ]]; do
     pid=$(-get-parent-pid ${pid})
@@ -122,7 +119,7 @@ Sends the given kill signal to all child processes of the process with the given
 Parameters:
   SIGNAL (required, integer: 1-64)
       The kill signal to be send, eg. 9=KILL or 15=TERM.
-  PARENT_PID (integer: 0-?)
+  PARENT_PID (default: '$$', integer: 0-?)
       The process ID of the parent process. If not specified the PID of the current bash process is used.
 
 Options:
@@ -134,7 +131,6 @@ Options:
 
 *Implementation:*
 ```bash
-if [[ ! $_PARENT_PID ]]; then _PARENT_PID=$$; fi
 local childPids=$(-get-child-pids $_PARENT_PID)
 if [[ $? != 0 ]]; then
     echo $childPids

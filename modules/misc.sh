@@ -48,9 +48,10 @@ function -help() {
     return $rc
 }
 function __impl-help() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -147,9 +148,10 @@ function -test-all() {
     return $rc
 }
 function __impl-test-all() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -248,9 +250,10 @@ function -test-misc() {
     return $rc
 }
 function __impl-test-misc() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -348,9 +351,10 @@ function -var-exists() {
     return $rc
 }
 function __impl-var-exists() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _VARIABLE_NAME
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -416,7 +420,7 @@ function __impl-var-exists() {
 
 
             --verbose|-v)
-                _verbose=true
+                local _verbose=1
             ;;
 
             -*)
@@ -451,11 +455,11 @@ function __impl-var-exists() {
 
 
     ######################################################
-if declare -p ${_VARIABLE_NAME} &>/dev/null; then
-    [[ $_verbose ]] && echo "Bash variable '${_VARIABLE_NAME}' exists." || true
+if declare -p $_VARIABLE_NAME &>/dev/null; then
+    [[ $_verbose ]] && echo "Bash variable '$_VARIABLE_NAME' exists." || true
     return 0
 else
-    [[ $_verbose ]] && echo "Bash variable '${_VARIABLE_NAME}' does not exist." || true
+    [[ $_verbose ]] && echo "Bash variable '$_VARIABLE_NAME' does not exist." || true
     return 1
 fi
 }
@@ -499,9 +503,10 @@ function -wait() {
     return $rc
 }
 function __impl-wait() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _SECONDS
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 

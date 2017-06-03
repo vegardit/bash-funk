@@ -48,9 +48,10 @@ function -ascii2hex() {
     return $rc
 }
 function __impl-ascii2hex() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _ASCII_STRING
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -127,7 +128,7 @@ function __impl-ascii2hex() {
 
 
     ######################################################
-printf "${_ASCII_STRING}" | xxd -p | tr "[a-z]" "[A-z]"
+printf "$_ASCII_STRING" | xxd -p | tr "[a-z]" "[A-z]"
 }
 function __complete-ascii2hex() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -169,9 +170,10 @@ function -hex2ascii() {
     return $rc
 }
 function __impl-hex2ascii() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _HEX_STRING
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -248,7 +250,7 @@ function __impl-hex2ascii() {
 
 
     ######################################################
-printf "${_HEX_STRING}" | xxd -r -p
+printf "$_HEX_STRING" | xxd -r -p
 }
 function __complete-hex2ascii() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -290,9 +292,10 @@ function -normalize-path() {
     return $rc
 }
 function __impl-normalize-path() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -418,9 +421,10 @@ function -str-join() {
     return $rc
 }
 function __impl-str-join() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEPARATOR _STRING=()
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -570,9 +574,10 @@ function -str-lower() {
     return $rc
 }
 function __impl-str-lower() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -691,9 +696,10 @@ function -str-matches() {
     return $rc
 }
 function __impl-str-matches() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _all _help _selftest _verbose _REGEX_PATTERN _STRING=()
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -785,13 +791,13 @@ no match: B]."; return 64; fi
               ;;
 
             --all|-a)
-                _all=true
+                local _all=1
             ;;
 
 
 
             --verbose|-v)
-                _verbose=true
+                local _verbose=1
             ;;
 
             -*)
@@ -832,8 +838,8 @@ if [[ ! ${_STRING} ]]; then
     return 0
 fi
 
-local matchFound=false
-local mismatchFound=false
+local matchFound=
+local mismatchFound=
 local str
 for str in ${_STRING[@]}; do
     if [[ $str =~ $_REGEX_PATTERN ]]; then
@@ -842,7 +848,7 @@ for str in ${_STRING[@]}; do
         else
             echo "$str"
         fi
-        matchFound=true
+        matchFound=1
         local i=1
         local n=${#BASH_REMATCH[*]}
         while [[ $i -lt $n ]]
@@ -854,14 +860,14 @@ for str in ${_STRING[@]}; do
         if [[ $_verbose ]]; then
             echo "no match: $str"
         fi
-        mismatchFound=true
+        mismatchFound=1
     fi
     shift
 done
 if [[ $_all ]]; then
-    [[ $mismatchFound == "true" ]] && return 1 || return 0
+    [[ $mismatchFound ]] && return 1 || return 0
 else
-    [[ $matchFound == "true" ]] && return 0 || return 1
+    [[ $matchFound ]] && return 0 || return 1
 fi
 }
 function __complete-str-matches() {
@@ -904,9 +910,10 @@ function -str-repeat() {
     return $rc
 }
 function __impl-str-repeat() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING _COUNT
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -997,7 +1004,7 @@ function __impl-str-repeat() {
 
     ######################################################
 local spaces="$(printf "%${_COUNT}s" "")"
-echo "${spaces// /${_STRING}}"
+echo "${spaces// /$_STRING}"
 }
 function __complete-str-repeat() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -1039,9 +1046,10 @@ function -str-trim() {
     return $rc
 }
 function __impl-str-trim() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -1118,7 +1126,7 @@ function __impl-str-trim() {
 
 
     ######################################################
-echo ${_STRING}
+echo $_STRING
 }
 function __complete-str-trim() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -1160,9 +1168,10 @@ function -str-upper() {
     return $rc
 }
 function __impl-str-upper() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -1281,9 +1290,10 @@ function -strip-ansi() {
     return $rc
 }
 function __impl-strip-ansi() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING=()
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -1410,9 +1420,10 @@ function -substr-after() {
     return $rc
 }
 function __impl-substr-after() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -1500,7 +1511,7 @@ function __impl-substr-after() {
 
 
     ######################################################
-echo ${_SEARCH_IN#*${_SEARCH_FOR}}
+echo ${_SEARCH_IN#*$_SEARCH_FOR}
 }
 function __complete-substr-after() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -1542,9 +1553,10 @@ function -substr-after-last() {
     return $rc
 }
 function __impl-substr-after-last() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -1632,7 +1644,7 @@ function __impl-substr-after-last() {
 
 
     ######################################################
-echo "${_SEARCH_IN#${_SEARCH_IN%${_SEARCH_FOR}*}${_SEARCH_FOR}}"
+echo "${_SEARCH_IN#${_SEARCH_IN%${_SEARCH_FOR}*}$_SEARCH_FOR}"
 }
 function __complete-substr-after-last() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -1674,9 +1686,10 @@ function -substr-before() {
     return $rc
 }
 function __impl-substr-before() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -1806,9 +1819,10 @@ function -substr-before-last() {
     return $rc
 }
 function __impl-substr-before-last() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -1938,9 +1952,10 @@ function -substr-between() {
     return $rc
 }
 function __impl-substr-between() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _PREFIX _SUFFIX
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -2039,7 +2054,7 @@ function __impl-substr-between() {
 
 
     ######################################################
-local withoutPrefix="${_SEARCH_IN#*${_PREFIX}}"
+local withoutPrefix="${_SEARCH_IN#*$_PREFIX}"
 echo "${withoutPrefix%%${_SUFFIX}*}"
 }
 function __complete-substr-between() {
@@ -2082,9 +2097,10 @@ function -test-strings() {
     return $rc
 }
 function __impl-test-strings() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 

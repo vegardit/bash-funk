@@ -50,7 +50,7 @@ Prints a random string of the given length containing the given characters.
 Parameters:
   LENGTH (required, integer: 1-?)
       Length of the string to generate.
-  CHARS 
+  CHARS (default: '[:graph:]')
       String to choose random characters from.
 
 Options:
@@ -72,7 +72,7 @@ $ -random-string 10 [:alnum:][:punct:]
 
 *Implementation:*
 ```bash
-env LC_CTYPE=C tr -dc "${_CHARS:-[:graph:]}" < /dev/urandom | fold -w ${_LENGTH} | head -n 1
+env LC_CTYPE=C tr -dc "$_CHARS" < /dev/urandom | fold -w ${_LENGTH} | head -n 1
 ```
 
 

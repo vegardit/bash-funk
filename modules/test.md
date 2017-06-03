@@ -77,35 +77,35 @@ Options:
 
 Examples:
 $ -test-fn-multi-value-options 
-aa:= bb:= cc:= dd:= ee:= ff:= gg:=
+aa: bb: cc: dd: ee: ff: gg:
 $ -test-fn-multi-value-options --aa
-aa:true= bb:= cc:= dd:= ee:= ff:= gg:=
+aa: bb: cc: dd: ee: ff: gg:
 $ -test-fn-multi-value-options --aa foo
-aa:true=foo bb:= cc:= dd:= ee:= ff:= gg:=
+aa:foo bb: cc: dd: ee: ff: gg:
 $ -test-fn-multi-value-options --aa foo,bar
-aa:true=foo bar bb:= cc:= dd:= ee:= ff:= gg:=
+aa:foo bar bb: cc: dd: ee: ff: gg:
 $ -test-fn-multi-value-options --bb
 Error: For option --bb a list with at least 1 value\(s\) must be specified. Found: 0.
 $ -test-fn-multi-value-options --bb foo,bar
-aa:= bb:true=foo bar cc:= dd:= ee:= ff:= gg:=
+aa: bb:foo bar cc: dd: ee: ff: gg:
 $ -test-fn-multi-value-options --bb foo,bar,fb
 Error: For option --bb a list with no more than 2 values must be specified. Found: 3.
 $ -test-fn-multi-value-options --cc 123,45
-aa:= bb:= cc:true=123 45 dd:= ee:= ff:= gg:=
+aa: bb: cc:123 45 dd: ee: ff: gg:
 $ -test-fn-multi-value-options --cc 123,abc
 Error: Value 'abc' for option --cc is not a numeric value.
 $ -test-fn-multi-value-options --dd 1,3
-aa:= bb:= cc:= dd:true=1 3 ee:= ff:= gg:=
+aa: bb: cc: dd:1 3 ee: ff: gg:
 $ -test-fn-multi-value-options --dd 0,3
 Error: Value '0' for option --dd is too low. Must be >= 1.
 $ -test-fn-multi-value-options --dd 3,6
 Error: Value '6' for option --dd is too high. Must be <= 5.
 $ -test-fn-multi-value-options --ee A,B
-aa:= bb:= cc:= dd:= ee:true=A B ff:= gg:=
+aa: bb: cc: dd: ee:A B ff: gg:
 $ -test-fn-multi-value-options --ee A,F
 Error: Value 'F' for option --ee is not one of the allowed values \[A,B,C\].
 $ -test-fn-multi-value-options --ff foo,bar
-aa:= bb:= cc:= dd:= ee:= ff:true=foo bar gg:=
+aa: bb: cc: dd: ee: ff:foo bar gg:
 $ -test-fn-multi-value-options --ff foo,123
 Error: Value '123' for option --ff does not match required pattern '\[a-z\]\+'.
 $ -test-fn-multi-value-options --gg 123
@@ -114,7 +114,7 @@ Error: Value '123' for option --gg must only contain characters a-z.
 
 *Implementation:*
 ```bash
-echo "aa:$_aa=${_aa_value[@]} bb:$_bb=${_bb_value[@]} cc:$_cc=${_cc_value[@]} dd:$_dd=${_dd_value[@]} ee:$_ee=${_ee_value[@]} ff:$_ff=${_ff_value[@]} gg:$_gg=${_gg_value[@]}"
+echo "aa:${_aa[@]} bb:${_bb[@]} cc:${_cc[@]} dd:${_dd[@]} ee:${_ee[@]} ff:${_ff[@]} gg:${_gg[@]}"
 ```
 
 
@@ -325,7 +325,7 @@ Usage: -test-fn-single-value-options [OPTION]...
 Test function with single value options.
 
 Options:
--a, --aa [v] 
+-a, --aa [v] (default: 'cat')
         Option a.
 -b, --bb v 
         Option b.
@@ -346,31 +346,31 @@ Options:
 
 Examples:
 $ -test-fn-single-value-options 
-aa:= bb:= cc:= dd:= ee:= ff:= gg:=
+aa: bb: cc: dd: ee: ff: gg:
 $ -test-fn-single-value-options --aa
-aa:true= bb:= cc:= dd:= ee:= ff:= gg:=
+aa:cat bb: cc: dd: ee: ff: gg:
 $ -test-fn-single-value-options --aa foo
-aa:true=foo bb:= cc:= dd:= ee:= ff:= gg:=
+aa:foo bb: cc: dd: ee: ff: gg:
 $ -test-fn-single-value-options --bb
 Error: Value v for option --bb must be specified.
 $ -test-fn-single-value-options --bb foo
-aa:= bb:true=foo cc:= dd:= ee:= ff:= gg:=
+aa: bb:foo cc: dd: ee: ff: gg:
 $ -test-fn-single-value-options --cc 12345
-aa:= bb:= cc:true=12345 dd:= ee:= ff:= gg:=
+aa: bb: cc:12345 dd: ee: ff: gg:
 $ -test-fn-single-value-options --cc abc
 Error: Value 'abc' for option --cc is not a numeric value.
 $ -test-fn-single-value-options --dd 3
-aa:= bb:= cc:= dd:true=3 ee:= ff:= gg:=
+aa: bb: cc: dd:3 ee: ff: gg:
 $ -test-fn-single-value-options --dd 0
 Error: Value '0' for option --dd is too low. Must be >= 1.
 $ -test-fn-single-value-options --dd 6
 Error: Value '6' for option --dd is too high. Must be <= 5.
 $ -test-fn-single-value-options --ee A
-aa:= bb:= cc:= dd:= ee:true=A ff:= gg:=
+aa: bb: cc: dd: ee:A ff: gg:
 $ -test-fn-single-value-options --ee F
 Error: Value 'F' for option --ee is not one of the allowed values \[A,B,C\].
 $ -test-fn-single-value-options --ff foo
-aa:= bb:= cc:= dd:= ee:= ff:true=foo gg:=
+aa: bb: cc: dd: ee: ff:foo gg:
 $ -test-fn-single-value-options --ff 123
 Error: Value '123' for option --ff does not match required pattern '\[a-z\]\+'.
 $ -test-fn-single-value-options --gg 123
@@ -379,7 +379,7 @@ Error: Value '123' for option --gg must only contain characters a-z.
 
 *Implementation:*
 ```bash
-echo "aa:$_aa=$_aa_value bb:$_bb=$_bb_value cc:$_cc=$_cc_value dd:$_dd=$_dd_value ee:$_ee=$_ee_value ff:$_ff=$_ff_value gg:$_gg=$_gg_value"
+echo "aa:$_aa bb:$_bb cc:$_cc dd:$_dd ee:$_ee ff:$_ff gg:$_gg"
 ```
 
 
@@ -401,7 +401,7 @@ Parameters:
       Param DD.
   EE (required, pattern: "[a-z]+")
       Param EE.
-  FF (pattern: "[a-z]+")
+  FF (default: 'cat', pattern: "[a-z]+")
       Param FF.
 
 Options:
@@ -432,7 +432,7 @@ Error: Parameter EE must be specified.
 $ -test-fn-single-value-parameters aa 12 5 A 123
 Error: Value '123' for parameter EE does not match required pattern '\[a-z\]\+'.
 $ -test-fn-single-value-parameters aa 12 5 A foo
-AA:aa BB:12 CC:5 DD:A EE:foo FF:
+AA:aa BB:12 CC:5 DD:A EE:foo FF:cat
 $ -test-fn-single-value-parameters aa 12 5 A foo 123
 Error: Value '123' for parameter FF must only contain characters a-z.
 $ -test-fn-single-value-parameters aa 12 5 A foo bar

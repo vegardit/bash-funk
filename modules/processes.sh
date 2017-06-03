@@ -48,9 +48,10 @@ function -get-child-pids() {
     return $rc
 }
 function __impl-get-child-pids() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _printPPID _help _selftest _PARENT_PID
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -60,7 +61,7 @@ function __impl-get-child-pids() {
                 echo "Recursively prints all child PIDs of the process with the given PID."
                 echo
                 echo "Parameters:"
-                echo -e "  \033[1mPARENT_PID\033[22m (integer: 0-?)"
+                echo -e "  \033[1mPARENT_PID\033[22m (default: '$$', integer: 0-?)"
                 echo "      The process ID of the parent process. If not specified the PID of the current Bash process is used."
                 echo
                 echo "Options:"
@@ -85,7 +86,7 @@ function __impl-get-child-pids() {
               ;;
 
             --printPPID)
-                _printPPID=true
+                local _printPPID=1
             ;;
 
 
@@ -113,6 +114,7 @@ function __impl-get-child-pids() {
         return 64
     done
 
+        if [[ ! $_PARENT_PID ]]; then _PARENT_PID="$$"; fi
 
     if [[ $_PARENT_PID ]]; then
         if [[ ! "$_PARENT_PID" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_PARENT_PID' for parameter PARENT_PID is not a numeric value."; return 64; fi
@@ -122,7 +124,6 @@ function __impl-get-child-pids() {
 
 
     ######################################################
-if [[ ! $_PARENT_PID ]]; then _PARENT_PID=$$; fi
 local CHILD_PIDS # intentional declaration in a separate line, see http://stackoverflow.com/a/42854176
 childPids=$(command ps -o pid --no-headers --ppid $_PARENT_PID 2>/dev/null | sed -e 's!\s!!g'; exit ${PIPESTATUS[0]})
 if [[ $? != 0 ]]; then
@@ -176,9 +177,10 @@ function -get-parent-pid() {
     return $rc
 }
 function __impl-get-parent-pid() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _CHILD_PID
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -188,7 +190,7 @@ function __impl-get-parent-pid() {
                 echo "Prints the PID of the parent process of the child process with the given PID."
                 echo
                 echo "Parameters:"
-                echo -e "  \033[1mCHILD_PID\033[22m (integer: 0-?)"
+                echo -e "  \033[1mCHILD_PID\033[22m (default: '$$', integer: 0-?)"
                 echo "      The process ID of the child process. If not specified the PID of the current Bash process is used."
                 echo
                 echo "Options:"
@@ -235,6 +237,7 @@ function __impl-get-parent-pid() {
         return 64
     done
 
+        if [[ ! $_CHILD_PID ]]; then _CHILD_PID="$$"; fi
 
     if [[ $_CHILD_PID ]]; then
         if [[ ! "$_CHILD_PID" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_CHILD_PID' for parameter CHILD_PID is not a numeric value."; return 64; fi
@@ -244,7 +247,6 @@ function __impl-get-parent-pid() {
 
 
     ######################################################
-if [[ ! $_CHILD_PID ]]; then _CHILD_PID=$$; fi
 local parentPid # intentional declaration in a separate line, see http://stackoverflow.com/a/42854176
 parentPid=$(cat /proc/${_CHILD_PID}/stat 2>/dev/null | awk '{print $4}'; exit ${PIPESTATUS[0]})
 if [[ $? != 0 ]]; then
@@ -293,9 +295,10 @@ function -get-toplevel-parent-pid() {
     return $rc
 }
 function __impl-get-toplevel-parent-pid() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _CHILD_PID
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -305,7 +308,7 @@ function __impl-get-toplevel-parent-pid() {
                 echo "Prints the PID of the top-level parent process of the child process with the given PID."
                 echo
                 echo "Parameters:"
-                echo -e "  \033[1mCHILD_PID\033[22m (integer: 0-?)"
+                echo -e "  \033[1mCHILD_PID\033[22m (default: '$$', integer: 0-?)"
                 echo "      The process ID of the child process. If not specified the PID of the current Bash process is used."
                 echo
                 echo "Options:"
@@ -352,6 +355,7 @@ function __impl-get-toplevel-parent-pid() {
         return 64
     done
 
+        if [[ ! $_CHILD_PID ]]; then _CHILD_PID="$$"; fi
 
     if [[ $_CHILD_PID ]]; then
         if [[ ! "$_CHILD_PID" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_CHILD_PID' for parameter CHILD_PID is not a numeric value."; return 64; fi
@@ -361,7 +365,6 @@ function __impl-get-toplevel-parent-pid() {
 
 
     ######################################################
-if [[ $_CHILD_PID ]]; then _CHILD_PID=$$; fi
 local pid=$_CHILD_PID
 while [[ $pid != 0 ]]; do
     pid=$(${BASH_FUNK_PREFIX:--}get-parent-pid ${pid})
@@ -412,9 +415,10 @@ function -kill-childs() {
     return $rc
 }
 function __impl-kill-childs() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _SIGNAL _PARENT_PID
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -426,7 +430,7 @@ function __impl-kill-childs() {
                 echo "Parameters:"
                 echo -e "  \033[1mSIGNAL\033[22m (required, integer: 1-64)"
                 echo "      The kill signal to be send, eg. 9=KILL or 15=TERM."
-                echo -e "  \033[1mPARENT_PID\033[22m (integer: 0-?)"
+                echo -e "  \033[1mPARENT_PID\033[22m (default: '$$', integer: 0-?)"
                 echo "      The process ID of the parent process. If not specified the PID of the current bash process is used."
                 echo
                 echo "Options:"
@@ -477,6 +481,7 @@ function __impl-kill-childs() {
         return 64
     done
 
+        if [[ ! $_PARENT_PID ]]; then _PARENT_PID="$$"; fi
 
     if [[ $_SIGNAL ]]; then
         if [[ ! "$_SIGNAL" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_SIGNAL' for parameter SIGNAL is not a numeric value."; return 64; fi
@@ -494,7 +499,6 @@ function __impl-kill-childs() {
 
 
     ######################################################
-if [[ ! $_PARENT_PID ]]; then _PARENT_PID=$$; fi
 local childPids=$(${BASH_FUNK_PREFIX:--}get-child-pids $_PARENT_PID)
 if [[ $? != 0 ]]; then
     echo $childPids
@@ -545,9 +549,10 @@ function -test-processes() {
     return $rc
 }
 function __impl-test-processes() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 

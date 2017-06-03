@@ -45,7 +45,7 @@ Usage: -abspath [OPTION]... [PATH]
 Prints the normalized path of the given path WITHOUT resolving symbolic links. The path is not required to exist.
 
 Parameters:
-  PATH 
+  PATH (default: '.')
       The path to normalize.
 
 Options:
@@ -60,12 +60,12 @@ Options:
 
 # use realpath if available
 if hash realpath &> /dev/null; then
-    realpath -m ${_PATH:-.}
+    realpath -m $_PATH
 
 # use python as last resort
 else
     python -c "import os
-print os.path.abspath('${_PATH:-.}')"
+print os.path.abspath('$_PATH')"
 fi
 ```
 
@@ -115,7 +115,7 @@ for word in "${_WORD[@]}"; do
     grepCmds="$grepCmds -e $word"
 done
 
-if [[ $_sort_value == "count" ]]; then
+if [[ $_sort == "count" ]]; then
     sed "$sedCmds" "$_FILE" | grep $grepCmds | sort | uniq -c | sort -r
 else
     sed "$sedCmds" "$_FILE" | grep $grepCmds | sort | uniq -c
@@ -181,15 +181,15 @@ if [[ ! -r "$_ARCHIVE" ]]; then
     return 1
 fi
 
-if [[ ! -f "$_FILE" ]]; then
+if [[ ! -f "$_ARCHIVE" ]]; then
     echo "Error: Path [$_ARCHIVE] does not point to a file."
     return 1
 fi
 
-if [[ $_TARGET ]]; then
+if [[ $_TO_DIR ]]; then
     local origPWD="$(pwd)"
-    mkdir "$_TARGET"
-    cd "$_TARGET"
+    mkdir "$_TO_DIR"
+    cd "$_TO_DIR"
 fi
 
 if [[ ! -w "$(pwd)" ]]; then
@@ -212,7 +212,7 @@ case "$_FILE" in
     *) echo "Error: Unsupported archive format '$_ARCHIVE'"; return 1 ;;
 esac
 
-if [[ $_TARGET ]]; then
+if [[ $_TO_DIR ]]; then
     cd "$origPWD"
 fi
 ```
@@ -226,7 +226,7 @@ Usage: -findfiles [OPTION]... [START_PATH] SEARCH_STRING
 Recursively finds all files containing the given string and displays their path.
 
 Parameters:
-  START_PATH 
+  START_PATH (default: '.')
       The path where to search.
   SEARCH_STRING (required)
       The string to search.
@@ -252,9 +252,6 @@ Options:
 
 *Implementation:*
 ```bash
-
-local _START_PATH=${_START_PATH:-.}
-
 if [[ ! -e "$_START_PATH" ]]; then
     echo "Error: Path [$_START_PATH] does not exist."
     return 1
@@ -273,13 +270,13 @@ fi
 
 local findOpts="-type f"
 if [[ $_name ]]; then
-    findOpts="$findOpts -name $_name_value"
+    findOpts="$findOpts -name $_name"
 fi
 if [[ $_maxdepth ]]; then
-    findOpts="$findOpts -maxdepth $_maxdepth_value"
+    findOpts="$findOpts -maxdepth $_maxdepth"
 fi
 if [[ $_mindepth ]]; then
-    findOpts="$findOpts -mindepth $_mindepth_value"
+    findOpts="$findOpts -mindepth $_mindepth"
 fi
 
 # turn off verbose if part of pipe or subshell
@@ -410,7 +407,7 @@ Options:
 ```bash
 local mkdirOpts
 
-[[ $_mode    ]] && mkdirOpts="$mkdirOpts -m $_mode_value" || true
+[[ $_mode    ]] && mkdirOpts="$mkdirOpts -m $_mode" || true
 [[ $_parents ]] && mkdirOpts="$mkdirOpts -p" || true
 [[ $_verbose ]] && mkdirOpts="$mkdirOpts -v" || true
 
@@ -426,7 +423,7 @@ Usage: -modified [OPTION]... [PATH]
 Prints the modification timestamp of the given file or directory.
 
 Parameters:
-  PATH 
+  PATH (default: '.')
       The file or directory to check.
 
 Options:
@@ -438,9 +435,6 @@ Options:
 
 *Implementation:*
 ```bash
-
-local _PATH=${_PATH:-.}
-
 if [[ ! -e "$_PATH" ]]; then
     echo "Error: Path [$_PATH] does not exist."
     return 1
@@ -478,7 +472,7 @@ Usage: -owner [OPTION]... [PATH]
 Prints the owner of the given file or directory.
 
 Parameters:
-  PATH 
+  PATH (default: '.')
       The file or directory to check.
 
 Options:
@@ -490,9 +484,6 @@ Options:
 
 *Implementation:*
 ```bash
-
-local _PATH=${_PATH:-.}
-
 if [[ ! -e "$_PATH" ]]; then
     echo "Error: Path [$_PATH] does not exist."
     return 1
@@ -530,7 +521,7 @@ Usage: -realpath [OPTION]... [PATH]
 Prints the normalized path of the given path resolving any symbolic links. The path is not required to exist.
 
 Parameters:
-  PATH 
+  PATH (default: '.')
       The path to normalize.
 
 Options:
@@ -542,9 +533,6 @@ Options:
 
 *Implementation:*
 ```bash
-
-local _PATH=${_PATH:-.}
-
 # use readlink if available
 if hash readlink &> /dev/null; then
     readlink -m "$_PATH"
@@ -675,7 +663,7 @@ Usage: -up [OPTION]... [LEVEL_OR_DIRECTORY_NAME]
 Navigates to the given level or directory up in the directory tree. Bash completion will auto-complete the names of the parent directories.
 
 Parameters:
-  LEVEL_OR_DIRECTORY_NAME 
+  LEVEL_OR_DIRECTORY_NAME (default: '..')
       The level to navigate up in the directory structure. Numeric value or the name of the directory to go back to.
 
 Options:
@@ -687,7 +675,7 @@ Options:
 
 *Implementation:*
 ```bash
-if [[ ! $_LEVEL_OR_DIRECTORY_NAME ]]; then
+if [[ $_LEVEL_OR_DIRECTORY_NAME == ".." ]]; then
     cd ..
     return 0
 fi

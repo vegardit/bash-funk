@@ -48,9 +48,10 @@ function -alloc-mem() {
     return $rc
 }
 function __impl-alloc-mem() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _MEMORY_IN_MB
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -169,9 +170,10 @@ function -memfree() {
     return $rc
 }
 function __impl-memfree() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _MEMORY_UNIT
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -181,7 +183,7 @@ function __impl-memfree() {
                 echo "Prints the free memory (in KB by default)."
                 echo
                 echo "Parameters:"
-                echo -e "  \033[1mMEMORY_UNIT\033[22m (one of: [KB,MB,GB])"
+                echo -e "  \033[1mMEMORY_UNIT\033[22m (default: 'KB', one of: [KB,MB,GB])"
                 echo "      The memory unit of the printed value."
                 echo
                 echo "Options:"
@@ -257,6 +259,7 @@ function __impl-memfree() {
         return 64
     done
 
+        if [[ ! $_MEMORY_UNIT ]]; then _MEMORY_UNIT="KB"; fi
 
     if [[ $_MEMORY_UNIT ]]; then
         declare -A __allowed=( [KB]=1 [MB]=1 [GB]=1 )
@@ -285,7 +288,7 @@ case ${totalMemUnit} in
         ;;
 esac
 
-case ${_MEMORY_UNIT:-KB} in
+case $_MEMORY_UNIT in
     KB)
         echo $memTotalKB
         ;;
@@ -337,9 +340,10 @@ function -meminfo() {
     return $rc
 }
 function __impl-meminfo() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -445,9 +449,10 @@ function -memtotal() {
     return $rc
 }
 function __impl-memtotal() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _MEMORY_UNIT
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -457,7 +462,7 @@ function __impl-memtotal() {
                 echo "Prints the total memory (in KB by default)."
                 echo
                 echo "Parameters:"
-                echo -e "  \033[1mMEMORY_UNIT\033[22m (one of: [KB,MB,GB])"
+                echo -e "  \033[1mMEMORY_UNIT\033[22m (default: 'KB', one of: [KB,MB,GB])"
                 echo "      The memory unit of the printed value."
                 echo
                 echo "Options:"
@@ -533,6 +538,7 @@ function __impl-memtotal() {
         return 64
     done
 
+        if [[ ! $_MEMORY_UNIT ]]; then _MEMORY_UNIT="KB"; fi
 
     if [[ $_MEMORY_UNIT ]]; then
         declare -A __allowed=( [KB]=1 [MB]=1 [GB]=1 )
@@ -561,7 +567,7 @@ case ${totalMemUnit} in
         ;;
 esac
 
-case ${_MEMORY_UNIT:-KB} in
+case $_MEMORY_UNIT in
     KB)
         echo $memTotalKB
         ;;
@@ -613,9 +619,10 @@ function -test-memory() {
     return $rc
 }
 function __impl-test-memory() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 

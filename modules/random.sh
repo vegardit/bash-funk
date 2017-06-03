@@ -48,9 +48,10 @@ function -random-number() {
     return $rc
 }
 function __impl-random-number() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _RANGE
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -189,9 +190,10 @@ function -random-string() {
     return $rc
 }
 function __impl-random-string() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _LENGTH _CHARS
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -203,7 +205,7 @@ function __impl-random-string() {
                 echo "Parameters:"
                 echo -e "  \033[1mLENGTH\033[22m (required, integer: 1-?)"
                 echo "      Length of the string to generate."
-                echo -e "  \033[1mCHARS\033[22m "
+                echo -e "  \033[1mCHARS\033[22m (default: '[:graph:]')"
                 echo "      String to choose random characters from."
                 echo
                 echo "Options:"
@@ -292,6 +294,7 @@ function __impl-random-string() {
         return 64
     done
 
+        if [[ ! $_CHARS ]]; then _CHARS="[:graph:]"; fi
 
     if [[ $_LENGTH ]]; then
         if [[ ! "$_LENGTH" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_LENGTH' for parameter LENGTH is not a numeric value."; return 64; fi
@@ -306,7 +309,7 @@ function __impl-random-string() {
 
 
     ######################################################
-env LC_CTYPE=C tr -dc "${_CHARS:-[:graph:]}" < /dev/urandom | fold -w ${_LENGTH} | head -n 1
+env LC_CTYPE=C tr -dc "$_CHARS" < /dev/urandom | fold -w ${_LENGTH} | head -n 1
 }
 function __complete-random-string() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -348,9 +351,10 @@ function -test-random() {
     return $rc
 }
 function __impl-test-random() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 

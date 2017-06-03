@@ -48,9 +48,10 @@ function -block-port() {
     return $rc
 }
 function __impl-block-port() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _BIND_ADDRESS _PORT
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -60,7 +61,7 @@ function __impl-block-port() {
                 echo "Binds to the given port and thus block other programs from binding to it."
                 echo
                 echo "Parameters:"
-                echo -e "  \033[1mBIND_ADDRESS\033[22m "
+                echo -e "  \033[1mBIND_ADDRESS\033[22m (default: '0.0.0.0')"
                 echo "      The local bind address. E.g. 127.0.0.1."
                 echo -e "  \033[1mPORT\033[22m (required, integer: 0-65535)"
                 echo "      Number of the port to occupy."
@@ -124,6 +125,7 @@ function __impl-block-port() {
         return 64
     done
 
+        if [[ ! $_BIND_ADDRESS ]]; then _BIND_ADDRESS="0.0.0.0"; fi
 
     if [[ $_BIND_ADDRESS ]]; then
         true
@@ -139,25 +141,17 @@ function __impl-block-port() {
 
 
     ######################################################
-if [[ $_BIND_ADDRESS ]]; then
-    local localAddr=$_BIND_ADDRESS
-    local localPort=$_PORT
-else
-    local localAddr=0.0.0.0
-    local localPort=$_PORT
-fi
-
-echo "Binding to $localAddr:$localPort..."
+echo "Binding to $_BIND_ADDRESS:$_PORT..."
 
 perl << EOF
     use IO::Socket;
     \$server = IO::Socket::INET->new(
-        LocalAddr => '$localAddr',
-        LocalPort => $localPort,
+        LocalAddr => '$_BIND_ADDRESS',
+        LocalPort => $_PORT,
         Type => SOCK_STREAM,
         ReuseAddr => 1,
         Listen => 10
-    ) or die "Couldn't bind to $localAddr:$localPort: \$@\n";
+    ) or die "Couldn't bind to $_BIND_ADDRESS:$_PORT: \$@\n";
     while (\$client = \$server->accept()) { }
     close(\$server);
 EOF
@@ -202,9 +196,10 @@ function -get-ips() {
     return $rc
 }
 function __impl-get-ips() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -299,9 +294,10 @@ function -is-port-open() {
     return $rc
 }
 function __impl-is-port-open() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _HOSTNAME _PORT _CONNECT_TIMEOUT_IN_SECONDS
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -315,7 +311,7 @@ function __impl-is-port-open() {
                 echo "      Target hostname."
                 echo -e "  \033[1mPORT\033[22m (required, integer: 0-65535)"
                 echo "      Target TCP port."
-                echo -e "  \033[1mCONNECT_TIMEOUT_IN_SECONDS\033[22m (integer: ?-?)"
+                echo -e "  \033[1mCONNECT_TIMEOUT_IN_SECONDS\033[22m (default: '5', integer: ?-?)"
                 echo "      Number of seconds to try to connect to the given port. Default is 5 seconds."
                 echo
                 echo "Options:"
@@ -371,7 +367,7 @@ function __impl-is-port-open() {
 
 
             --verbose|-v)
-                _verbose=true
+                local _verbose=1
             ;;
 
             -*)
@@ -405,6 +401,7 @@ function __impl-is-port-open() {
         return 64
     done
 
+        if [[ ! $_CONNECT_TIMEOUT_IN_SECONDS ]]; then _CONNECT_TIMEOUT_IN_SECONDS="5"; fi
 
     if [[ $_HOSTNAME ]]; then
         true
@@ -427,7 +424,7 @@ function __impl-is-port-open() {
 
     ######################################################
 if hash nc &> /dev/null; then
-    if nc -vz -w ${_CONNECT_TIMEOUT_IN_SECONDS:-5} $_HOSTNAME $_PORT; then
+    if nc -vz -w $_CONNECT_TIMEOUT_IN_SECONDS $_HOSTNAME $_PORT; then
         portStatus=open
     else
         portStatus=
@@ -438,7 +435,7 @@ else
         my \$socket=IO::Socket::INET->new(
             PeerAddr => "$_HOSTNAME",
             PeerPort => $_PORT,
-            Timeout => ${_CONNECT_TIMEOUT_IN_SECONDS:-5}
+            Timeout => $_CONNECT_TIMEOUT_IN_SECONDS
         );
 
         if (defined \$socket) {
@@ -469,6 +466,132 @@ function __complete-is-port-open() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}is-port-open -- ${BASH_FUNK_PREFIX:--}is-port-open
 
+function -ssh-trust-host() {
+    local opts=""
+    local opt
+    for opt in a e u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -e
+    set -o pipefail
+
+    local __fn=${FUNCNAME[0]}
+    __impl$__fn "$@" && local rc=0 || local rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]... HOSTNAME [PORT]"
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-ssh-trust-host() {
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
+    for __arg in "$@"; do
+        case $__arg in
+
+            --help)
+                echo "Usage: $__fn [OPTION]... HOSTNAME [PORT]"
+                echo
+                echo "Adds the public key of the given host to the ~/.ssh/known_hosts file."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mHOSTNAME\033[22m (required)"
+                echo "      Remote SSH Hostname."
+                echo -e "  \033[1mPORT\033[22m (default: '22', integer: 0-65535)"
+                echo "      Remote SSH port."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                __stdout=$($__fn --help); __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> [32mOK[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+
+
+            -*)
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        if [[ ! $_HOSTNAME ]]; then
+            _HOSTNAME=$__param
+            continue
+        fi
+        if [[ ! $_PORT ]]; then
+            _PORT=$__param
+            continue
+        fi
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+        if [[ ! $_PORT ]]; then _PORT="22"; fi
+
+    if [[ $_HOSTNAME ]]; then
+        true
+    else
+        echo "$__fn: Error: Parameter HOSTNAME must be specified."; return 64
+    fi
+    if [[ $_PORT ]]; then
+        if [[ ! "$_PORT" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is not a numeric value."; return 64; fi
+        if [[ $_PORT -lt 0 ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is too low. Must be >= 0."; return 64; fi
+        if [[ $_PORT -gt 65535 ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is too high. Must be <= 65535."; return 64; fi
+        true
+    fi
+
+
+    ######################################################
+touch ~/.ssh/known_hosts
+ssh-keyscan -t rsa,dsa -p $_PORT $_HOSTNAME 2>/dev/null | sort -u - ~/.ssh/known_hosts > ~/.ssh/known_hosts.tmp
+mv ~/.ssh/known_hosts.tmp ~/.ssh/known_hosts
+}
+function __complete-ssh-trust-host() {
+    local currentWord=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${currentWord} == -* ]]; then
+        local options=" --help --selftest "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+    else
+        COMPREPLY=($(compgen -o default -- $currentWord))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}ssh-trust-host -- ${BASH_FUNK_PREFIX:--}ssh-trust-host
+
 function -test-network() {
     local opts=""
     local opt
@@ -497,9 +620,10 @@ function -test-network() {
     return $rc
 }
 function __impl-test-network() {
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    local __arg __optionWithValue __params=() __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
     for __arg in "$@"; do
         case $__arg in
 
@@ -555,6 +679,7 @@ function __impl-test-network() {
 ${BASH_FUNK_PREFIX:--}block-port --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}get-ips --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}is-port-open --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}ssh-trust-host --selftest && echo || return 1
 }
 function __complete-test-network() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -573,7 +698,8 @@ function -help-network() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}block-port [BIND_ADDRESS] PORT\033[0m  -  Binds to the given port and thus block other programs from binding to it."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}get-ips\033[0m  -  Prints the IP v4 addresses of this host excluding 127.0.0.1."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}is-port-open HOSTNAME PORT [CONNECT_TIMEOUT_IN_SECONDS]\033[0m  -  Checks if a TCP connection can be established to the given port."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-trust-host HOSTNAME [PORT]\033[0m  -  Adds the public key of the given host to the ~/.ssh/known_hosts file."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-network\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( block-port get-ips is-port-open test-network )
+__BASH_FUNK_FUNCS+=( block-port get-ips is-port-open ssh-trust-host test-network )
