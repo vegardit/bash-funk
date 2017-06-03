@@ -81,15 +81,15 @@ function __impl-ascii2hex() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn XYZ\033[22m"
                 __stdout=$($__fn XYZ); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^58595A$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [58595A]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [58595A]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -199,15 +199,15 @@ function __impl-hex2ascii() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn 58595A\033[22m"
                 __stdout=$($__fn 58595A); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^XYZ$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [XYZ]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [XYZ]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -317,15 +317,15 @@ function __impl-normalize-path() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn a/./b/c/d/../e\033[22m"
                 __stdout=$($__fn a/./b/c/d/../e); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^a/b/c/e$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [a/b/c/e]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [a/b/c/e]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -448,29 +448,29 @@ function __impl-str-join() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn , a b c\033[22m"
                 __stdout=$($__fn , a b c); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^a,b,c$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [a,b,c]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [a,b,c]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn , a \033[22m"
                 __stdout=$($__fn , a ); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^a$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [a]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [a]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn , \033[22m"
                 __stdout=$($__fn , ); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -591,15 +591,15 @@ function __impl-str-lower() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aBcDeF\033[22m"
                 __stdout=$($__fn aBcDeF); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^abcdef$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [abcdef]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [abcdef]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -725,47 +725,47 @@ no match: B"
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn A\033[22m"
                 __stdout=$($__fn A); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn A A B\033[22m"
                 __stdout=$($__fn A A B); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^A$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [A]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [A]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn -v A A B\033[22m"
                 __stdout=$($__fn -v A A B); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^match: A
 no match: B$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [match: A
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [match: A
 no match: B]."; return 64; fi
-                echo "--> [32mOK[0m"
+                echo "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn -a A A B\033[22m"
                 __stdout=$($__fn -a A A B); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 1 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
+                if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
                 __regex="A"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [A]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [A]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn -v -a A A B\033[22m"
                 __stdout=$($__fn -v -a A A B); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 1 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
+                if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
                 __regex="match: A
 no match: B"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [match: A
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [match: A
 no match: B]."; return 64; fi
-                echo "--> [32mOK[0m"
+                echo "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -921,15 +921,15 @@ function __impl-str-repeat() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn a 3\033[22m"
                 __stdout=$($__fn a 3); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^aaa$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [aaa]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [aaa]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -1050,15 +1050,15 @@ function __impl-str-trim() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn "  abc  "\033[22m"
                 __stdout=$($__fn "  abc  "); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^abc$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [abc]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [abc]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -1168,15 +1168,15 @@ function __impl-str-upper() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aBcDeF\033[22m"
                 __stdout=$($__fn aBcDeF); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^ABCDEF$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [ABCDEF]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [ABCDEF]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -1286,15 +1286,15 @@ function __impl-strip-ansi() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn $(echo -e '\033[4mThis is underlined\033[24m')\033[22m"
                 __stdout=$($__fn $(echo -e '\033[4mThis is underlined\033[24m')); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^This is underlined$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [This is underlined]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [This is underlined]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -1413,15 +1413,15 @@ function __impl-substr-after() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn 00aa11aa22 aa\033[22m"
                 __stdout=$($__fn 00aa11aa22 aa); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^11aa22$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [11aa22]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [11aa22]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -1542,15 +1542,15 @@ function __impl-substr-after-last() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn 00aa11aa22 aa\033[22m"
                 __stdout=$($__fn 00aa11aa22 aa); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^22$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [22]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [22]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -1671,15 +1671,15 @@ function __impl-substr-before() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn 00aa11aa22 aa\033[22m"
                 __stdout=$($__fn 00aa11aa22 aa); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^00$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [00]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [00]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -1800,15 +1800,15 @@ function __impl-substr-before-last() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn 00aa11aa00 aa\033[22m"
                 __stdout=$($__fn 00aa11aa00 aa); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^00aa11$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [00aa11]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [00aa11]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -1931,15 +1931,15 @@ function __impl-substr-between() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn 00aa11aa22aa00 aa aa\033[22m"
                 __stdout=$($__fn 00aa11aa22aa00 aa aa); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^11$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [11]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [11]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -2060,8 +2060,8 @@ function __impl-test-strings() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;

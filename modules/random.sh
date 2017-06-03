@@ -85,29 +85,29 @@ function __impl-random-number() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn 1-1\033[22m"
                 __stdout=$($__fn 1-1); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^1$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [1]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [1]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn 1-5\033[22m"
                 __stdout=$($__fn 1-5); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^[1-5]$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [[1-5]]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[1-5]]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn 200-299\033[22m"
                 __stdout=$($__fn 200-299); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^[2-3][0-9][0-9]$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [[2-3][0-9][0-9]]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[2-3][0-9][0-9]]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -226,36 +226,36 @@ function __impl-random-string() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn 12 0-9\033[22m"
                 __stdout=$($__fn 12 0-9); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^[0-9]{12}$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [[0-9]{12}]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[0-9]{12}]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn 8 a-zA-Z\033[22m"
                 __stdout=$($__fn 8 a-zA-Z); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^[a-zA-Z]{8}$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [[a-zA-Z]{8}]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[a-zA-Z]{8}]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn 10 [:alnum:]\033[22m"
                 __stdout=$($__fn 10 [:alnum:]); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^[[:alnum:]]{10}$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [[[:alnum:]]{10}]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[[:alnum:]]{10}]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn 10 [:alnum:][:punct:]\033[22m"
                 __stdout=$($__fn 10 [:alnum:][:punct:]); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^[[:alnum:][:punct:]]{10}$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [[[:alnum:][:punct:]]{10}]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[[:alnum:][:punct:]]{10}]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -364,8 +364,8 @@ function __impl-test-random() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;

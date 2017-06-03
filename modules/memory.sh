@@ -80,8 +80,8 @@ function __impl-alloc-mem() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -203,29 +203,29 @@ function __impl-memfree() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn \033[22m"
                 __stdout=$($__fn ); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^[1-9][0-9]*$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [[1-9][0-9]*]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[1-9][0-9]*]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn MB\033[22m"
                 __stdout=$($__fn MB); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^[1-9][0-9]*$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [[1-9][0-9]*]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[1-9][0-9]*]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn GB\033[22m"
                 __stdout=$($__fn GB); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^[1-9][0-9]*$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [[1-9][0-9]*]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[1-9][0-9]*]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -361,15 +361,15 @@ function __impl-meminfo() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn \033[22m"
                 __stdout=$($__fn ); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^.*MemTotal.*MemFree.*$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [.*MemTotal.*MemFree.*]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [.*MemTotal.*MemFree.*]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -473,29 +473,29 @@ function __impl-memtotal() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn \033[22m"
                 __stdout=$($__fn ); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^[1-9][0-9]*$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [[1-9][0-9]*]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[1-9][0-9]*]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn MB\033[22m"
                 __stdout=$($__fn MB); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^[1-9][0-9]*$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [[1-9][0-9]*]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[1-9][0-9]*]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn GB\033[22m"
                 __stdout=$($__fn GB); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^[1-9][0-9]*$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [[1-9][0-9]*]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[1-9][0-9]*]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -627,8 +627,8 @@ function __impl-test-memory() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;

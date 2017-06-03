@@ -83,15 +83,15 @@ function __impl-block-port() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn 70000\033[22m"
                 __stdout=$($__fn 70000); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 64 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
+                if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value '70000' for parameter PORT is too high. Must be <= 65535."
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [Error: Value '70000' for parameter PORT is too high. Must be <= 65535.]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value '70000' for parameter PORT is too high. Must be <= 65535.]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -214,8 +214,8 @@ function __impl-get-ips() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -325,29 +325,29 @@ function __impl-is-port-open() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn localhost 12345 1\033[22m"
                 __stdout=$($__fn localhost 12345 1); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 1 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
+                if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
                 __regex=""
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn -v localhost 12345 1\033[22m"
                 __stdout=$($__fn -v localhost 12345 1); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 1 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
+                if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
                 __regex="localhost:12345 is not reachable."
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [localhost:12345 is not reachable.]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [localhost:12345 is not reachable.]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn localhost 70000\033[22m"
                 __stdout=$($__fn localhost 70000); __rc=$?
                 echo $__stdout
-                if [[ $__rc != 64 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
+                if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value '70000' for parameter PORT is too high. Must be <= 65535."
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> [31mFAILED[0m - stdout [$__stdout] does not match required pattern [Error: Value '70000' for parameter PORT is too high. Must be <= 65535.]."; return 64; fi
-                echo "--> [32mOK[0m"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value '70000' for parameter PORT is too high. Must be <= 65535.]."; return 64; fi
+                echo "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -508,8 +508,8 @@ function __impl-ssh-trust-host() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -624,8 +624,8 @@ function __impl-test-network() {
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
                 __stdout=$($__fn --help); __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> [31mFAILED[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> [32mOK[0m"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
