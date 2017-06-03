@@ -77,6 +77,10 @@ else
 
         if [[ ${BASH_FUNK_PROMPT:-yes} == "yes" ]]; then
             PROMPT_COMMAND=__${BASH_FUNK_PREFIX}bash-prompt
+
+            # installing a prompt that prints line numbers in debug mode
+            __BASH_FUNK_OLD_PS4="$PS4"
+            PS4='\033[0;35m+ ($0:${LINENO}) \033[0m'
         fi
 
         echo
