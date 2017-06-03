@@ -79,8 +79,6 @@ function __impl-cpu-count() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -99,9 +97,6 @@ function __impl-cpu-count() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 grep processor /proc/cpuinfo | wc -l
@@ -177,8 +172,6 @@ function __impl-cpu-perf() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -197,9 +190,6 @@ function __impl-cpu-perf() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 openssl speed rsa1024 -multi $(cat /proc/cpuinfo | grep processor | wc -l)
@@ -295,8 +285,6 @@ function __impl-scp-perf() {
                 __optionWithValue=identity_file
             ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -332,7 +320,7 @@ function __impl-scp-perf() {
         return 64
     done
 
-        if [[ ! $_SIZE_MB ]]; then _SIZE_MB="10"; fi
+    if [[ ! $_SIZE_MB ]]; then _SIZE_MB="10"; fi
     if declare -p _port &>/dev/null; then
         if [[ ! $_port ]]; then echo "$__fn: Error: Value PORT for option --port must be specified."; return 64; fi
         if [[ ! "$_port" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_port' for option --port is not a numeric value."; return 64; fi
@@ -354,7 +342,6 @@ function __impl-scp-perf() {
         if [[ ! "$_SIZE_MB" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_SIZE_MB' for parameter SIZE_MB is not a numeric value."; return 64; fi
         true
     fi
-
 
     ######################################################
 local dataFile=$(mktemp)
@@ -457,8 +444,6 @@ function __impl-test-performance() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -477,9 +462,6 @@ function __impl-test-performance() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 ${BASH_FUNK_PREFIX:--}cpu-count --selftest && echo || return 1

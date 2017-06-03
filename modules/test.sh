@@ -114,8 +114,6 @@ function __impl-test-fn-flags() {
                 local _myflag=1
             ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -134,9 +132,6 @@ function __impl-test-fn-flags() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 [[ $_myflag ]] && echo "myflag was specified" || echo "myflag was not specified"
@@ -416,8 +411,6 @@ function __impl-test-fn-multi-value-options() {
                 __optionWithValue=gg
             ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -513,8 +506,6 @@ function __impl-test-fn-multi-value-options() {
         done
         true
     fi
-
-
 
     ######################################################
 echo "aa:${_aa[@]} bb:${_bb[@]} cc:${_cc[@]} dd:${_dd[@]} ee:${_ee[@]} ff:${_ff[@]} gg:${_gg[@]}"
@@ -741,8 +732,6 @@ function __impl-test-fn-multi-value-parameters() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -784,7 +773,6 @@ function __impl-test-fn-multi-value-parameters() {
         return 64
     done
 
-
     if [[ ${#_AA[@]} -lt 2 ]]; then echo "$__fn: Error: For parameter AA exactly 2 values must be specified. Found: ${#_AA[@]}."; return 64; fi
     if [[ ${#_BB[@]} -lt 2 ]]; then echo "$__fn: Error: For parameter BB exactly 2 values must be specified. Found: ${#_BB[@]}."; return 64; fi
     if [[ $_BB ]]; then
@@ -824,7 +812,6 @@ function __impl-test-fn-multi-value-parameters() {
             if [[ ! "$__param" =~ $__regex ]]; then echo "$__fn: Error: Value '$__param' for parameter FF must only contain characters a-z."; return 64; fi
         done
     fi
-
 
     ######################################################
 echo "AA:${_AA[@]} BB:${_BB[@]} CC:${_CC[@]} DD:${_DD[@]} EE:${_EE[@]} FF:${_FF[@]}"
@@ -971,8 +958,6 @@ function __impl-test-fn-multi-value-parameters-first-variable() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -1007,7 +992,6 @@ function __impl-test-fn-multi-value-parameters-first-variable() {
         return 64
     done
 
-
     if [[ ${#_AA[@]} -gt 2 ]]; then echo "$__fn: Error: Too many values for parameter AA specified. Maximum number is 2. Found: ${#_AA[@]}."; return 64; fi
     if [[ $_AA ]]; then
         local __param
@@ -1022,7 +1006,6 @@ function __impl-test-fn-multi-value-parameters-first-variable() {
             if [[ ! "$__param" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$__param' for parameter BB is not a numeric value."; return 64; fi
         done
     fi
-
 
     ######################################################
 echo "AA:${_AA[@]} BB:${_BB[@]}"
@@ -1147,8 +1130,6 @@ function __impl-test-fn-noargs() {
                 return 0
               ;;
 
-
-
             --verbose|-v)
                 local _verbose=1
             ;;
@@ -1171,9 +1152,6 @@ function __impl-test-fn-noargs() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 [[ $_verbose ]] && echo "verbose mode" || :
@@ -1265,8 +1243,6 @@ function __impl-test-fn-requires-existing() {
                 return 0
               ;;
 
-
-
             --verbose|-v)
                 local _verbose=1
             ;;
@@ -1289,8 +1265,6 @@ function __impl-test-fn-requires-existing() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
 
     if ! hash "hash" &> /dev/null; then echo "$__fn: Error: Required command 'hash' not found on this system."; return 64; fi
 
@@ -1384,8 +1358,6 @@ function __impl-test-fn-requires-nonexistent() {
                 return 0
               ;;
 
-
-
             --verbose|-v)
                 local _verbose=1
             ;;
@@ -1408,8 +1380,6 @@ function __impl-test-fn-requires-nonexistent() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
 
     if ! hash "some_random_nonexistent_command" &> /dev/null; then echo "$__fn: Error: Required command 'some_random_nonexistent_command' not found on this system."; return 64; fi
 
@@ -1673,8 +1643,6 @@ function __impl-test-fn-single-value-options() {
                 __optionWithValue=gg
             ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -1759,8 +1727,6 @@ function __impl-test-fn-single-value-options() {
         if [[ ! "$_gg" =~ $__regex ]]; then echo "$__fn: Error: Value '$_gg' for option --gg must only contain characters a-z."; return 64; fi
         true
     fi
-
-
 
     ######################################################
 echo "aa:$_aa bb:$_bb cc:$_cc dd:$_dd ee:$_ee ff:$_ff gg:$_gg"
@@ -1969,8 +1935,6 @@ function __impl-test-fn-single-value-parameters() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -2014,7 +1978,7 @@ function __impl-test-fn-single-value-parameters() {
         return 64
     done
 
-        if [[ ! $_FF ]]; then _FF="cat"; fi
+    if [[ ! $_FF ]]; then _FF="cat"; fi
 
     if [[ $_AA ]]; then
         true
@@ -2054,7 +2018,6 @@ function __impl-test-fn-single-value-parameters() {
         if [[ ! "$_FF" =~ $__regex ]]; then echo "$__fn: Error: Value '$_FF' for parameter FF must only contain characters a-z."; return 64; fi
         true
     fi
-
 
     ######################################################
 echo "AA:$_AA BB:$_BB CC:$_CC DD:$_DD EE:$_EE FF:$_FF"
@@ -2183,8 +2146,6 @@ function __impl-test-fn-single-value-parameters-first-optional() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -2212,7 +2173,6 @@ function __impl-test-fn-single-value-parameters-first-optional() {
         return 64
     done
 
-
     if [[ $_AA ]]; then
         if [[ ! "$_AA" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_AA' for parameter AA is not a numeric value."; return 64; fi
         true
@@ -2223,7 +2183,6 @@ function __impl-test-fn-single-value-parameters-first-optional() {
     else
         echo "$__fn: Error: Parameter BB must be specified."; return 64
     fi
-
 
     ######################################################
 echo "AA:$_AA BB:$_BB"
@@ -2299,8 +2258,6 @@ function __impl-test-test() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -2319,9 +2276,6 @@ function __impl-test-test() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 ${BASH_FUNK_PREFIX:--}test-fn-flags --selftest && echo || return 1

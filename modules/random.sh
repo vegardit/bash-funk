@@ -112,8 +112,6 @@ function __impl-random-number() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -137,7 +135,6 @@ function __impl-random-number() {
         return 64
     done
 
-
     if [[ $_RANGE ]]; then
         local __regex="^[1-9][0-9]*-[1-9][0-9]*$"
         if [[ ! "$_RANGE" =~ $__regex ]]; then echo "$__fn: Error: Value '$_RANGE' for parameter RANGE does not match required pattern '[1-9][0-9]*-[1-9][0-9]*'."; return 64; fi
@@ -145,7 +142,6 @@ function __impl-random-number() {
     else
         echo "$__fn: Error: Parameter RANGE must be specified."; return 64
     fi
-
 
     ######################################################
 shuf -i ${_RANGE} -n 1
@@ -265,8 +261,6 @@ function __impl-random-string() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -294,7 +288,7 @@ function __impl-random-string() {
         return 64
     done
 
-        if [[ ! $_CHARS ]]; then _CHARS="[:graph:]"; fi
+    if [[ ! $_CHARS ]]; then _CHARS="[:graph:]"; fi
 
     if [[ $_LENGTH ]]; then
         if [[ ! "$_LENGTH" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_LENGTH' for parameter LENGTH is not a numeric value."; return 64; fi
@@ -303,10 +297,6 @@ function __impl-random-string() {
     else
         echo "$__fn: Error: Parameter LENGTH must be specified."; return 64
     fi
-    if [[ $_CHARS ]]; then
-        true
-    fi
-
 
     ######################################################
 env LC_CTYPE=C tr -dc "$_CHARS" < /dev/urandom | fold -w ${_LENGTH} | head -n 1
@@ -382,8 +372,6 @@ function __impl-test-random() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -402,9 +390,6 @@ function __impl-test-random() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 ${BASH_FUNK_PREFIX:--}random-number --selftest && echo || return 1

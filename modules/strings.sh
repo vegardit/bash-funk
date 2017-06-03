@@ -94,8 +94,6 @@ function __impl-ascii2hex() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -119,13 +117,11 @@ function __impl-ascii2hex() {
         return 64
     done
 
-
     if [[ $_ASCII_STRING ]]; then
         true
     else
         echo "$__fn: Error: Parameter ASCII_STRING must be specified."; return 64
     fi
-
 
     ######################################################
 printf "$_ASCII_STRING" | xxd -p | tr "[a-z]" "[A-z]"
@@ -216,8 +212,6 @@ function __impl-hex2ascii() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -241,13 +235,11 @@ function __impl-hex2ascii() {
         return 64
     done
 
-
     if [[ $_HEX_STRING ]]; then
         true
     else
         echo "$__fn: Error: Parameter HEX_STRING must be specified."; return 64
     fi
-
 
     ######################################################
 printf "$_HEX_STRING" | xxd -r -p
@@ -338,8 +330,6 @@ function __impl-normalize-path() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -363,13 +353,11 @@ function __impl-normalize-path() {
         return 64
     done
 
-
     if [[ $_PATH ]]; then
         true
     else
         echo "$__fn: Error: Parameter PATH must be specified."; return 64
     fi
-
 
     ######################################################
 # Remove all occurrences of "/./"
@@ -487,8 +475,6 @@ function __impl-str-join() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -514,13 +500,11 @@ function __impl-str-join() {
         return 64
     done
 
-
     if [[ $_SEPARATOR ]]; then
         true
     else
         echo "$__fn: Error: Parameter SEPARATOR must be specified."; return 64
     fi
-
 
     ######################################################
 if [[ ${#_STRING[@]} -lt 1 ]]; then
@@ -620,8 +604,6 @@ function __impl-str-lower() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -645,13 +627,11 @@ function __impl-str-lower() {
         return 64
     done
 
-
     if [[ $_STRING ]]; then
         true
     else
         echo "$__fn: Error: Parameter STRING must be specified."; return 64
     fi
-
 
     ######################################################
 echo "${_STRING,,}"
@@ -794,8 +774,6 @@ no match: B]."; return 64; fi
                 local _all=1
             ;;
 
-
-
             --verbose|-v)
                 local _verbose=1
             ;;
@@ -825,13 +803,11 @@ no match: B]."; return 64; fi
         return 64
     done
 
-
     if [[ $_REGEX_PATTERN ]]; then
         true
     else
         echo "$__fn: Error: Parameter REGEX_PATTERN must be specified."; return 64
     fi
-
 
     ######################################################
 if [[ ! ${_STRING} ]]; then
@@ -958,8 +934,6 @@ function __impl-str-repeat() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -987,7 +961,6 @@ function __impl-str-repeat() {
         return 64
     done
 
-
     if [[ $_STRING ]]; then
         true
     else
@@ -1000,7 +973,6 @@ function __impl-str-repeat() {
     else
         echo "$__fn: Error: Parameter COUNT must be specified."; return 64
     fi
-
 
     ######################################################
 local spaces="$(printf "%${_COUNT}s" "")"
@@ -1092,8 +1064,6 @@ function __impl-str-trim() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -1117,13 +1087,11 @@ function __impl-str-trim() {
         return 64
     done
 
-
     if [[ $_STRING ]]; then
         true
     else
         echo "$__fn: Error: Parameter STRING must be specified."; return 64
     fi
-
 
     ######################################################
 echo $_STRING
@@ -1214,8 +1182,6 @@ function __impl-str-upper() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -1239,13 +1205,11 @@ function __impl-str-upper() {
         return 64
     done
 
-
     if [[ $_STRING ]]; then
         true
     else
         echo "$__fn: Error: Parameter STRING must be specified."; return 64
     fi
-
 
     ######################################################
 echo "${1^^}"
@@ -1336,8 +1300,6 @@ function __impl-strip-ansi() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -1365,9 +1327,6 @@ function __impl-strip-ansi() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 local ansiColors="([0-9]{1,2}(;[0-9]{1,2})?(;[0-9]{1,2})?)?[m|K]"
@@ -1468,8 +1427,6 @@ function __impl-substr-after() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -1497,7 +1454,6 @@ function __impl-substr-after() {
         return 64
     done
 
-
     if [[ $_SEARCH_IN ]]; then
         true
     else
@@ -1508,7 +1464,6 @@ function __impl-substr-after() {
     else
         echo "$__fn: Error: Parameter SEARCH_FOR must be specified."; return 64
     fi
-
 
     ######################################################
 echo ${_SEARCH_IN#*$_SEARCH_FOR}
@@ -1601,8 +1556,6 @@ function __impl-substr-after-last() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -1630,7 +1583,6 @@ function __impl-substr-after-last() {
         return 64
     done
 
-
     if [[ $_SEARCH_IN ]]; then
         true
     else
@@ -1641,7 +1593,6 @@ function __impl-substr-after-last() {
     else
         echo "$__fn: Error: Parameter SEARCH_FOR must be specified."; return 64
     fi
-
 
     ######################################################
 echo "${_SEARCH_IN#${_SEARCH_IN%${_SEARCH_FOR}*}$_SEARCH_FOR}"
@@ -1734,8 +1685,6 @@ function __impl-substr-before() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -1763,7 +1712,6 @@ function __impl-substr-before() {
         return 64
     done
 
-
     if [[ $_SEARCH_IN ]]; then
         true
     else
@@ -1774,7 +1722,6 @@ function __impl-substr-before() {
     else
         echo "$__fn: Error: Parameter SEARCH_FOR must be specified."; return 64
     fi
-
 
     ######################################################
 echo "${_SEARCH_IN%%${_SEARCH_FOR}*}"
@@ -1867,8 +1814,6 @@ function __impl-substr-before-last() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -1896,7 +1841,6 @@ function __impl-substr-before-last() {
         return 64
     done
 
-
     if [[ $_SEARCH_IN ]]; then
         true
     else
@@ -1907,7 +1851,6 @@ function __impl-substr-before-last() {
     else
         echo "$__fn: Error: Parameter SEARCH_FOR must be specified."; return 64
     fi
-
 
     ######################################################
 echo "${_SEARCH_IN%${_SEARCH_FOR}*}"
@@ -2002,8 +1945,6 @@ function __impl-substr-between() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -2035,7 +1976,6 @@ function __impl-substr-between() {
         return 64
     done
 
-
     if [[ $_SEARCH_IN ]]; then
         true
     else
@@ -2051,7 +1991,6 @@ function __impl-substr-between() {
     else
         echo "$__fn: Error: Parameter SUFFIX must be specified."; return 64
     fi
-
 
     ######################################################
 local withoutPrefix="${_SEARCH_IN#*$_PREFIX}"
@@ -2128,8 +2067,6 @@ function __impl-test-strings() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -2148,9 +2085,6 @@ function __impl-test-strings() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 ${BASH_FUNK_PREFIX:--}ascii2hex --selftest && echo || return 1

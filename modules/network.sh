@@ -96,8 +96,6 @@ function __impl-block-port() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -125,11 +123,8 @@ function __impl-block-port() {
         return 64
     done
 
-        if [[ ! $_BIND_ADDRESS ]]; then _BIND_ADDRESS="0.0.0.0"; fi
+    if [[ ! $_BIND_ADDRESS ]]; then _BIND_ADDRESS="0.0.0.0"; fi
 
-    if [[ $_BIND_ADDRESS ]]; then
-        true
-    fi
     if [[ $_PORT ]]; then
         if [[ ! "$_PORT" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is not a numeric value."; return 64; fi
         if [[ $_PORT -lt 0 ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is too low. Must be >= 0."; return 64; fi
@@ -138,7 +133,6 @@ function __impl-block-port() {
     else
         echo "$__fn: Error: Parameter PORT must be specified."; return 64
     fi
-
 
     ######################################################
 echo "Binding to $_BIND_ADDRESS:$_PORT..."
@@ -227,8 +221,6 @@ function __impl-get-ips() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -247,9 +239,6 @@ function __impl-get-ips() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
@@ -364,8 +353,6 @@ function __impl-is-port-open() {
                 return 0
               ;;
 
-
-
             --verbose|-v)
                 local _verbose=1
             ;;
@@ -401,7 +388,7 @@ function __impl-is-port-open() {
         return 64
     done
 
-        if [[ ! $_CONNECT_TIMEOUT_IN_SECONDS ]]; then _CONNECT_TIMEOUT_IN_SECONDS="5"; fi
+    if [[ ! $_CONNECT_TIMEOUT_IN_SECONDS ]]; then _CONNECT_TIMEOUT_IN_SECONDS="5"; fi
 
     if [[ $_HOSTNAME ]]; then
         true
@@ -420,7 +407,6 @@ function __impl-is-port-open() {
         if [[ ! "$_CONNECT_TIMEOUT_IN_SECONDS" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_CONNECT_TIMEOUT_IN_SECONDS' for parameter CONNECT_TIMEOUT_IN_SECONDS is not a numeric value."; return 64; fi
         true
     fi
-
 
     ######################################################
 if hash nc &> /dev/null; then
@@ -531,8 +517,6 @@ function __impl-ssh-trust-host() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -560,7 +544,7 @@ function __impl-ssh-trust-host() {
         return 64
     done
 
-        if [[ ! $_PORT ]]; then _PORT="22"; fi
+    if [[ ! $_PORT ]]; then _PORT="22"; fi
 
     if [[ $_HOSTNAME ]]; then
         true
@@ -573,7 +557,6 @@ function __impl-ssh-trust-host() {
         if [[ $_PORT -gt 65535 ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is too high. Must be <= 65535."; return 64; fi
         true
     fi
-
 
     ######################################################
 touch ~/.ssh/known_hosts
@@ -651,8 +634,6 @@ function __impl-test-network() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -671,9 +652,6 @@ function __impl-test-network() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 ${BASH_FUNK_PREFIX:--}block-port --selftest && echo || return 1

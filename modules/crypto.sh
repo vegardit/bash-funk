@@ -83,8 +83,6 @@ function __impl-md5sum() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -108,13 +106,11 @@ function __impl-md5sum() {
         return 64
     done
 
-
     if [[ $_PATH_TO_FILE ]]; then
         true
     else
         echo "$__fn: Error: Parameter PATH_TO_FILE must be specified."; return 64
     fi
-
 
     ######################################################
 
@@ -213,8 +209,6 @@ function __impl-sha256sum() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -238,13 +232,11 @@ function __impl-sha256sum() {
         return 64
     done
 
-
     if [[ $_PATH_TO_FILE ]]; then
         true
     else
         echo "$__fn: Error: Parameter PATH_TO_FILE must be specified."; return 64
     fi
-
 
     ######################################################
 
@@ -339,8 +331,6 @@ function __impl-test-crypto() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -359,9 +349,6 @@ function __impl-test-crypto() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 ${BASH_FUNK_PREFIX:--}md5sum --selftest && echo || return 1

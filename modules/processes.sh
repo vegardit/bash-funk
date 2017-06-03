@@ -89,8 +89,6 @@ function __impl-get-child-pids() {
                 local _printPPID=1
             ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -114,14 +112,13 @@ function __impl-get-child-pids() {
         return 64
     done
 
-        if [[ ! $_PARENT_PID ]]; then _PARENT_PID="$$"; fi
+    if [[ ! $_PARENT_PID ]]; then _PARENT_PID="$$"; fi
 
     if [[ $_PARENT_PID ]]; then
         if [[ ! "$_PARENT_PID" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_PARENT_PID' for parameter PARENT_PID is not a numeric value."; return 64; fi
         if [[ $_PARENT_PID -lt 0 ]]; then echo "$__fn: Error: Value '$_PARENT_PID' for parameter PARENT_PID is too low. Must be >= 0."; return 64; fi
         true
     fi
-
 
     ######################################################
 local CHILD_PIDS # intentional declaration in a separate line, see http://stackoverflow.com/a/42854176
@@ -212,8 +209,6 @@ function __impl-get-parent-pid() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -237,14 +232,13 @@ function __impl-get-parent-pid() {
         return 64
     done
 
-        if [[ ! $_CHILD_PID ]]; then _CHILD_PID="$$"; fi
+    if [[ ! $_CHILD_PID ]]; then _CHILD_PID="$$"; fi
 
     if [[ $_CHILD_PID ]]; then
         if [[ ! "$_CHILD_PID" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_CHILD_PID' for parameter CHILD_PID is not a numeric value."; return 64; fi
         if [[ $_CHILD_PID -lt 0 ]]; then echo "$__fn: Error: Value '$_CHILD_PID' for parameter CHILD_PID is too low. Must be >= 0."; return 64; fi
         true
     fi
-
 
     ######################################################
 local parentPid # intentional declaration in a separate line, see http://stackoverflow.com/a/42854176
@@ -330,8 +324,6 @@ function __impl-get-toplevel-parent-pid() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -355,14 +347,13 @@ function __impl-get-toplevel-parent-pid() {
         return 64
     done
 
-        if [[ ! $_CHILD_PID ]]; then _CHILD_PID="$$"; fi
+    if [[ ! $_CHILD_PID ]]; then _CHILD_PID="$$"; fi
 
     if [[ $_CHILD_PID ]]; then
         if [[ ! "$_CHILD_PID" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_CHILD_PID' for parameter CHILD_PID is not a numeric value."; return 64; fi
         if [[ $_CHILD_PID -lt 0 ]]; then echo "$__fn: Error: Value '$_CHILD_PID' for parameter CHILD_PID is too low. Must be >= 0."; return 64; fi
         true
     fi
-
 
     ######################################################
 local pid=$_CHILD_PID
@@ -452,8 +443,6 @@ function __impl-kill-childs() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -481,7 +470,7 @@ function __impl-kill-childs() {
         return 64
     done
 
-        if [[ ! $_PARENT_PID ]]; then _PARENT_PID="$$"; fi
+    if [[ ! $_PARENT_PID ]]; then _PARENT_PID="$$"; fi
 
     if [[ $_SIGNAL ]]; then
         if [[ ! "$_SIGNAL" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_SIGNAL' for parameter SIGNAL is not a numeric value."; return 64; fi
@@ -496,7 +485,6 @@ function __impl-kill-childs() {
         if [[ $_PARENT_PID -lt 0 ]]; then echo "$__fn: Error: Value '$_PARENT_PID' for parameter PARENT_PID is too low. Must be >= 0."; return 64; fi
         true
     fi
-
 
     ######################################################
 local childPids=$(${BASH_FUNK_PREFIX:--}get-child-pids $_PARENT_PID)
@@ -580,8 +568,6 @@ function __impl-test-processes() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -600,9 +586,6 @@ function __impl-test-processes() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 ${BASH_FUNK_PREFIX:--}get-child-pids --selftest && echo || return 1

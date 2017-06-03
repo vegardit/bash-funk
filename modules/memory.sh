@@ -86,8 +86,6 @@ function __impl-alloc-mem() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -110,7 +108,6 @@ function __impl-alloc-mem() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
 
     if [[ $_MEMORY_IN_MB ]]; then
         if [[ ! "$_MEMORY_IN_MB" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_MEMORY_IN_MB' for parameter MEMORY_IN_MB is not a numeric value."; return 64; fi
@@ -234,8 +231,6 @@ function __impl-memfree() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -259,14 +254,13 @@ function __impl-memfree() {
         return 64
     done
 
-        if [[ ! $_MEMORY_UNIT ]]; then _MEMORY_UNIT="KB"; fi
+    if [[ ! $_MEMORY_UNIT ]]; then _MEMORY_UNIT="KB"; fi
 
     if [[ $_MEMORY_UNIT ]]; then
         declare -A __allowed=( [KB]=1 [MB]=1 [GB]=1 )
         if [[ ! ${__allowed[$_MEMORY_UNIT]} ]]; then echo "$__fn: Error: Value '$_MEMORY_UNIT' for parameter MEMORY_UNIT is not one of the allowed values [KB,MB,GB]."; return 64; fi
         true
     fi
-
 
     ######################################################
 local totalMem=$(awk '/MemFree/ {print $2}' /proc/meminfo)
@@ -382,8 +376,6 @@ function __impl-meminfo() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -402,9 +394,6 @@ function __impl-meminfo() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 cat /proc/meminfo
@@ -513,8 +502,6 @@ function __impl-memtotal() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -538,14 +525,13 @@ function __impl-memtotal() {
         return 64
     done
 
-        if [[ ! $_MEMORY_UNIT ]]; then _MEMORY_UNIT="KB"; fi
+    if [[ ! $_MEMORY_UNIT ]]; then _MEMORY_UNIT="KB"; fi
 
     if [[ $_MEMORY_UNIT ]]; then
         declare -A __allowed=( [KB]=1 [MB]=1 [GB]=1 )
         if [[ ! ${__allowed[$_MEMORY_UNIT]} ]]; then echo "$__fn: Error: Value '$_MEMORY_UNIT' for parameter MEMORY_UNIT is not one of the allowed values [KB,MB,GB]."; return 64; fi
         true
     fi
-
 
     ######################################################
 local totalMem=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
@@ -650,8 +636,6 @@ function __impl-test-memory() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -670,9 +654,6 @@ function __impl-test-memory() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 ${BASH_FUNK_PREFIX:--}alloc-mem --selftest && echo || return 1

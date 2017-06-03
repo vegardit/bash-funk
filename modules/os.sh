@@ -123,8 +123,6 @@ function __impl-command-exists() {
                 return 0
               ;;
 
-
-
             --verbose|-v)
                 local _verbose=1
             ;;
@@ -152,13 +150,11 @@ function __impl-command-exists() {
         return 64
     done
 
-
     if [[ $_COMMAND ]]; then
         true
     else
         echo "$__fn: Error: Parameter COMMAND must be specified."; return 64
     fi
-
 
     ######################################################
 if hash "$_COMMAND" &>/dev/null; then
@@ -246,8 +242,6 @@ function __impl-pkg-installed() {
                 return 0
               ;;
 
-
-
             --verbose|-v)
                 local _verbose=1
             ;;
@@ -275,13 +269,11 @@ function __impl-pkg-installed() {
         return 64
     done
 
-
     if [[ $_PACKAGE_NAME ]]; then
         true
     else
         echo "$__fn: Error: Parameter PACKAGE_NAME must be specified."; return 64
     fi
-
 
     ######################################################
 if hash "yum" &> /dev/null; then
@@ -387,8 +379,6 @@ function __impl-test-os() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -407,9 +397,6 @@ function __impl-test-os() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 ${BASH_FUNK_PREFIX:--}command-exists --selftest && echo || return 1

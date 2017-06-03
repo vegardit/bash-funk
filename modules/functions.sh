@@ -85,8 +85,6 @@ function __impl-fn-copy() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -114,7 +112,6 @@ function __impl-fn-copy() {
         return 64
     done
 
-
     if [[ $_OLD_FUNC_NAME ]]; then
         true
     else
@@ -125,7 +122,6 @@ function __impl-fn-copy() {
     else
         echo "$__fn: Error: Parameter NEW_FUNC_NAME must be specified."; return 64
     fi
-
 
     ######################################################
 if ! declare -F $_OLD_FUNC_NAME > /dev/null; then
@@ -231,8 +227,6 @@ function __impl-fn-exists() {
                 return 0
               ;;
 
-
-
             --verbose|-v)
                 local _verbose=1
             ;;
@@ -260,13 +254,11 @@ function __impl-fn-exists() {
         return 64
     done
 
-
     if [[ $_FUNC_NAME ]]; then
         true
     else
         echo "$__fn: Error: Parameter FUNC_NAME must be specified."; return 64
     fi
-
 
     ######################################################
 if declare -F $_FUNC_NAME> /dev/null; then
@@ -354,8 +346,6 @@ function __impl-fn-rename() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -383,7 +373,6 @@ function __impl-fn-rename() {
         return 64
     done
 
-
     if [[ $_OLD_FUNC_NAME ]]; then
         true
     else
@@ -394,7 +383,6 @@ function __impl-fn-rename() {
     else
         echo "$__fn: Error: Parameter NEW_FUNC_NAME must be specified."; return 64
     fi
-
 
     ######################################################
 if ! declare -F $_OLD_FUNC_NAME > /dev/null; then
@@ -483,8 +471,6 @@ function __impl-fn-unload() {
                 return 0
               ;;
 
-
-
             --verbose|-v)
                 local _verbose=1
             ;;
@@ -512,13 +498,11 @@ function __impl-fn-unload() {
         return 64
     done
 
-
     if [[ $_FUNC_NAME ]]; then
         true
     else
         echo "$__fn: Error: Parameter FUNC_NAME must be specified."; return 64
     fi
-
 
     ######################################################
 if ! declare -F $_FUNC_NAME > /dev/null; then
@@ -599,8 +583,6 @@ function __impl-test-functions() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -619,9 +601,6 @@ function __impl-test-functions() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 ${BASH_FUNK_PREFIX:--}fn-copy --selftest && echo || return 1

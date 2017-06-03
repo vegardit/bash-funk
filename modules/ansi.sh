@@ -95,8 +95,6 @@ function __impl-ansi-bold() {
                 local _off=1
             ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -119,12 +117,6 @@ function __impl-ansi-bold() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-    if [[ $_TEXT ]]; then
-        true
-    fi
-
 
     ######################################################
 if [[ $_TEXT ]]; then
@@ -208,8 +200,6 @@ function __impl-ansi-colors-supported() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -228,9 +218,6 @@ function __impl-ansi-colors-supported() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 if hash tput &>/dev/null; then
@@ -322,8 +309,6 @@ function __impl-ansi-reset() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -342,9 +327,6 @@ function __impl-ansi-reset() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 echo -ne "\033[0m"
@@ -436,8 +418,6 @@ function __impl-ansi-ul() {
                 local _off=1
             ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -460,12 +440,6 @@ function __impl-ansi-ul() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-    if [[ $_TEXT ]]; then
-        true
-    fi
-
 
     ######################################################
 if [[ $_TEXT ]]; then
@@ -549,8 +523,6 @@ function __impl-test-ansi() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -569,9 +541,6 @@ function __impl-test-ansi() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 ${BASH_FUNK_PREFIX:--}ansi-bold --selftest && echo || return 1

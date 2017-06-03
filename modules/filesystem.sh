@@ -83,8 +83,6 @@ function __impl-abspath() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -108,12 +106,7 @@ function __impl-abspath() {
         return 64
     done
 
-        if [[ ! $_PATH ]]; then _PATH="."; fi
-
-    if [[ $_PATH ]]; then
-        true
-    fi
-
+    if [[ ! $_PATH ]]; then _PATH="."; fi
 
     ######################################################
 
@@ -211,8 +204,6 @@ function __impl-count-words() {
                 __optionWithValue=sort
             ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -255,7 +246,6 @@ function __impl-count-words() {
         echo "$__fn: Error: Parameter FILE must be specified."; return 64
     fi
     if [[ ${#_WORD[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter WORD 1 value(s) must be specified. Found: ${#_WORD[@]}."; return 64; fi
-
 
     ######################################################
 if [[ ! -e "$_FILE" ]]; then
@@ -360,8 +350,6 @@ function __impl-du() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -389,9 +377,6 @@ function __impl-du() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 [[ ! $_PATH ]] && _PATH=(.) || true
@@ -475,8 +460,6 @@ function __impl-extract() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -504,16 +487,11 @@ function __impl-extract() {
         return 64
     done
 
-
     if [[ $_ARCHIVE ]]; then
         true
     else
         echo "$__fn: Error: Parameter ARCHIVE must be specified."; return 64
     fi
-    if [[ $_TO_DIR ]]; then
-        true
-    fi
-
 
     ######################################################
 if [[ ! -e "$_ARCHIVE" ]]; then
@@ -673,8 +651,6 @@ function __impl-findfiles() {
                 __optionWithValue=name
             ;;
 
-
-
             --verbose|-v)
                 local _verbose=1
             ;;
@@ -718,7 +694,7 @@ function __impl-findfiles() {
         return 64
     done
 
-        if [[ ! $_START_PATH ]]; then _START_PATH="."; fi
+    if [[ ! $_START_PATH ]]; then _START_PATH="."; fi
     if declare -p _maxdepth &>/dev/null; then
         if [[ ! $_maxdepth ]]; then echo "$__fn: Error: Value levels for option --maxdepth must be specified."; return 64; fi
         if [[ ! "$_maxdepth" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_maxdepth' for option --maxdepth is not a numeric value."; return 64; fi
@@ -734,15 +710,11 @@ function __impl-findfiles() {
         true
     fi
 
-    if [[ $_START_PATH ]]; then
-        true
-    fi
     if [[ $_SEARCH_STRING ]]; then
         true
     else
         echo "$__fn: Error: Parameter SEARCH_STRING must be specified."; return 64
     fi
-
 
     ######################################################
 if [[ ! -e "$_START_PATH" ]]; then
@@ -908,8 +880,6 @@ function __impl-ll() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -937,9 +907,6 @@ function __impl-ll() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 [[ ! $_PATH ]] && _PATH=(.) || true
@@ -1047,8 +1014,6 @@ function __impl-mkcd() {
                 local _parents=1
             ;;
 
-
-
             --verbose|-v)
                 local _verbose=1
             ;;
@@ -1092,7 +1057,6 @@ function __impl-mkcd() {
     else
         echo "$__fn: Error: Parameter PATH must be specified."; return 64
     fi
-
 
     ######################################################
 local mkdirOpts
@@ -1178,8 +1142,6 @@ function __impl-modified() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -1203,12 +1165,7 @@ function __impl-modified() {
         return 64
     done
 
-        if [[ ! $_PATH ]]; then _PATH="."; fi
-
-    if [[ $_PATH ]]; then
-        true
-    fi
-
+    if [[ ! $_PATH ]]; then _PATH="."; fi
 
     ######################################################
 if [[ ! -e "$_PATH" ]]; then
@@ -1313,8 +1270,6 @@ function __impl-owner() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -1338,12 +1293,7 @@ function __impl-owner() {
         return 64
     done
 
-        if [[ ! $_PATH ]]; then _PATH="."; fi
-
-    if [[ $_PATH ]]; then
-        true
-    fi
-
+    if [[ ! $_PATH ]]; then _PATH="."; fi
 
     ######################################################
 if [[ ! -e "$_PATH" ]]; then
@@ -1448,8 +1398,6 @@ function __impl-realpath() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -1473,12 +1421,7 @@ function __impl-realpath() {
         return 64
     done
 
-        if [[ ! $_PATH ]]; then _PATH="."; fi
-
-    if [[ $_PATH ]]; then
-        true
-    fi
-
+    if [[ ! $_PATH ]]; then _PATH="."; fi
 
     ######################################################
 # use readlink if available
@@ -1589,8 +1532,6 @@ function __impl-sudo-append() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -1617,7 +1558,6 @@ function __impl-sudo-append() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
 
     if [[ $_FILE_PATH ]]; then
         true
@@ -1731,8 +1671,6 @@ function __impl-sudo-write() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -1763,7 +1701,6 @@ function __impl-sudo-write() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
 
     if [[ $_FILE_PATH ]]; then
         true
@@ -1861,8 +1798,6 @@ function __impl-test-filesystem() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -1881,9 +1816,6 @@ function __impl-test-filesystem() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 ${BASH_FUNK_PREFIX:--}abspath --selftest && echo || return 1
@@ -1975,8 +1907,6 @@ function __impl-up() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -2000,12 +1930,7 @@ function __impl-up() {
         return 64
     done
 
-        if [[ ! $_LEVEL_OR_DIRECTORY_NAME ]]; then _LEVEL_OR_DIRECTORY_NAME=".."; fi
-
-    if [[ $_LEVEL_OR_DIRECTORY_NAME ]]; then
-        true
-    fi
-
+    if [[ ! $_LEVEL_OR_DIRECTORY_NAME ]]; then _LEVEL_OR_DIRECTORY_NAME=".."; fi
 
     ######################################################
 if [[ $_LEVEL_OR_DIRECTORY_NAME == ".." ]]; then

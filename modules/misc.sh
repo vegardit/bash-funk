@@ -79,8 +79,6 @@ function __impl-help() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -99,9 +97,6 @@ function __impl-help() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 for helpfunc in $(compgen -A function -- ${BASH_FUNK_PREFIX:--}help-); do
@@ -179,8 +174,6 @@ function __impl-test-all() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -199,9 +192,6 @@ function __impl-test-all() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 for testfunc in $(compgen -A function -- ${BASH_FUNK_PREFIX:--}test-); do
@@ -281,8 +271,6 @@ function __impl-test-misc() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -301,9 +289,6 @@ function __impl-test-misc() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
-
-
-
 
     ######################################################
 ${BASH_FUNK_PREFIX:--}help --selftest && echo || return 1
@@ -417,8 +402,6 @@ function __impl-var-exists() {
                 return 0
               ;;
 
-
-
             --verbose|-v)
                 local _verbose=1
             ;;
@@ -446,13 +429,11 @@ function __impl-var-exists() {
         return 64
     done
 
-
     if [[ $_VARIABLE_NAME ]]; then
         true
     else
         echo "$__fn: Error: Parameter VARIABLE_NAME must be specified."; return 64
     fi
-
 
     ######################################################
 if declare -p $_VARIABLE_NAME &>/dev/null; then
@@ -538,8 +519,6 @@ function __impl-wait() {
                 return 0
               ;;
 
-
-
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -563,13 +542,11 @@ function __impl-wait() {
         return 64
     done
 
-
     if [[ $_SECONDS ]]; then
         true
     else
         echo "$__fn: Error: Parameter SECONDS must be specified."; return 64
     fi
-
 
     ######################################################
 local green="\033[1;32m"
