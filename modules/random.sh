@@ -138,7 +138,6 @@ function __impl-random-number() {
     if [[ $_RANGE ]]; then
         local __regex="^[1-9][0-9]*-[1-9][0-9]*$"
         if [[ ! "$_RANGE" =~ $__regex ]]; then echo "$__fn: Error: Value '$_RANGE' for parameter RANGE does not match required pattern '[1-9][0-9]*-[1-9][0-9]*'."; return 64; fi
-        true
     else
         echo "$__fn: Error: Parameter RANGE must be specified."; return 64
     fi
@@ -293,7 +292,6 @@ function __impl-random-string() {
     if [[ $_LENGTH ]]; then
         if [[ ! "$_LENGTH" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_LENGTH' for parameter LENGTH is not a numeric value."; return 64; fi
         if [[ $_LENGTH -lt 1 ]]; then echo "$__fn: Error: Value '$_LENGTH' for parameter LENGTH is too low. Must be >= 1."; return 64; fi
-        true
     else
         echo "$__fn: Error: Parameter LENGTH must be specified."; return 64
     fi

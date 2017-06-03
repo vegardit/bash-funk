@@ -117,7 +117,6 @@ function __impl-get-child-pids() {
     if [[ $_PARENT_PID ]]; then
         if [[ ! "$_PARENT_PID" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_PARENT_PID' for parameter PARENT_PID is not a numeric value."; return 64; fi
         if [[ $_PARENT_PID -lt 0 ]]; then echo "$__fn: Error: Value '$_PARENT_PID' for parameter PARENT_PID is too low. Must be >= 0."; return 64; fi
-        true
     fi
 
     ######################################################
@@ -237,7 +236,6 @@ function __impl-get-parent-pid() {
     if [[ $_CHILD_PID ]]; then
         if [[ ! "$_CHILD_PID" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_CHILD_PID' for parameter CHILD_PID is not a numeric value."; return 64; fi
         if [[ $_CHILD_PID -lt 0 ]]; then echo "$__fn: Error: Value '$_CHILD_PID' for parameter CHILD_PID is too low. Must be >= 0."; return 64; fi
-        true
     fi
 
     ######################################################
@@ -352,7 +350,6 @@ function __impl-get-toplevel-parent-pid() {
     if [[ $_CHILD_PID ]]; then
         if [[ ! "$_CHILD_PID" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_CHILD_PID' for parameter CHILD_PID is not a numeric value."; return 64; fi
         if [[ $_CHILD_PID -lt 0 ]]; then echo "$__fn: Error: Value '$_CHILD_PID' for parameter CHILD_PID is too low. Must be >= 0."; return 64; fi
-        true
     fi
 
     ######################################################
@@ -476,14 +473,12 @@ function __impl-kill-childs() {
         if [[ ! "$_SIGNAL" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_SIGNAL' for parameter SIGNAL is not a numeric value."; return 64; fi
         if [[ $_SIGNAL -lt 1 ]]; then echo "$__fn: Error: Value '$_SIGNAL' for parameter SIGNAL is too low. Must be >= 1."; return 64; fi
         if [[ $_SIGNAL -gt 64 ]]; then echo "$__fn: Error: Value '$_SIGNAL' for parameter SIGNAL is too high. Must be <= 64."; return 64; fi
-        true
     else
         echo "$__fn: Error: Parameter SIGNAL must be specified."; return 64
     fi
     if [[ $_PARENT_PID ]]; then
         if [[ ! "$_PARENT_PID" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_PARENT_PID' for parameter PARENT_PID is not a numeric value."; return 64; fi
         if [[ $_PARENT_PID -lt 0 ]]; then echo "$__fn: Error: Value '$_PARENT_PID' for parameter PARENT_PID is too low. Must be >= 0."; return 64; fi
-        true
     fi
 
     ######################################################

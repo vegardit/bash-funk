@@ -129,7 +129,6 @@ function __impl-block-port() {
         if [[ ! "$_PORT" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is not a numeric value."; return 64; fi
         if [[ $_PORT -lt 0 ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is too low. Must be >= 0."; return 64; fi
         if [[ $_PORT -gt 65535 ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is too high. Must be <= 65535."; return 64; fi
-        true
     else
         echo "$__fn: Error: Parameter PORT must be specified."; return 64
     fi
@@ -399,13 +398,11 @@ function __impl-is-port-open() {
         if [[ ! "$_PORT" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is not a numeric value."; return 64; fi
         if [[ $_PORT -lt 0 ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is too low. Must be >= 0."; return 64; fi
         if [[ $_PORT -gt 65535 ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is too high. Must be <= 65535."; return 64; fi
-        true
     else
         echo "$__fn: Error: Parameter PORT must be specified."; return 64
     fi
     if [[ $_CONNECT_TIMEOUT_IN_SECONDS ]]; then
         if [[ ! "$_CONNECT_TIMEOUT_IN_SECONDS" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_CONNECT_TIMEOUT_IN_SECONDS' for parameter CONNECT_TIMEOUT_IN_SECONDS is not a numeric value."; return 64; fi
-        true
     fi
 
     ######################################################
@@ -555,7 +552,6 @@ function __impl-ssh-trust-host() {
         if [[ ! "$_PORT" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is not a numeric value."; return 64; fi
         if [[ $_PORT -lt 0 ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is too low. Must be >= 0."; return 64; fi
         if [[ $_PORT -gt 65535 ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is too high. Must be <= 65535."; return 64; fi
-        true
     fi
 
     ######################################################

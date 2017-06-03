@@ -340,7 +340,6 @@ function __impl-scp-perf() {
     fi
     if [[ $_SIZE_MB ]]; then
         if [[ ! "$_SIZE_MB" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_SIZE_MB' for parameter SIZE_MB is not a numeric value."; return 64; fi
-        true
     fi
 
     ######################################################

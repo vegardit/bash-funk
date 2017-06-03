@@ -969,7 +969,6 @@ function __impl-str-repeat() {
     if [[ $_COUNT ]]; then
         if [[ ! "$_COUNT" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_COUNT' for parameter COUNT is not a numeric value."; return 64; fi
         if [[ $_COUNT -lt 1 ]]; then echo "$__fn: Error: Value '$_COUNT' for parameter COUNT is too low. Must be >= 1."; return 64; fi
-        true
     else
         echo "$__fn: Error: Parameter COUNT must be specified."; return 64
     fi

@@ -1987,7 +1987,6 @@ function __impl-test-fn-single-value-parameters() {
     fi
     if [[ $_BB ]]; then
         if [[ ! "$_BB" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_BB' for parameter BB is not a numeric value."; return 64; fi
-        true
     else
         echo "$__fn: Error: Parameter BB must be specified."; return 64
     fi
@@ -1995,28 +1994,24 @@ function __impl-test-fn-single-value-parameters() {
         if [[ ! "$_CC" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_CC' for parameter CC is not a numeric value."; return 64; fi
         if [[ $_CC -lt 1 ]]; then echo "$__fn: Error: Value '$_CC' for parameter CC is too low. Must be >= 1."; return 64; fi
         if [[ $_CC -gt 5 ]]; then echo "$__fn: Error: Value '$_CC' for parameter CC is too high. Must be <= 5."; return 64; fi
-        true
     else
         echo "$__fn: Error: Parameter CC must be specified."; return 64
     fi
     if [[ $_DD ]]; then
         declare -A __allowed=( [A]=1 [B]=1 [C]=1 )
         if [[ ! ${__allowed[$_DD]} ]]; then echo "$__fn: Error: Value '$_DD' for parameter DD is not one of the allowed values [A,B,C]."; return 64; fi
-        true
     else
         echo "$__fn: Error: Parameter DD must be specified."; return 64
     fi
     if [[ $_EE ]]; then
         local __regex="^[a-z]+$"
         if [[ ! "$_EE" =~ $__regex ]]; then echo "$__fn: Error: Value '$_EE' for parameter EE does not match required pattern '[a-z]+'."; return 64; fi
-        true
     else
         echo "$__fn: Error: Parameter EE must be specified."; return 64
     fi
     if [[ $_FF ]]; then
         local __regex="^[a-z]+$"
         if [[ ! "$_FF" =~ $__regex ]]; then echo "$__fn: Error: Value '$_FF' for parameter FF must only contain characters a-z."; return 64; fi
-        true
     fi
 
     ######################################################
@@ -2175,11 +2170,9 @@ function __impl-test-fn-single-value-parameters-first-optional() {
 
     if [[ $_AA ]]; then
         if [[ ! "$_AA" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_AA' for parameter AA is not a numeric value."; return 64; fi
-        true
     fi
     if [[ $_BB ]]; then
         if [[ ! "$_BB" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_BB' for parameter BB is not a numeric value."; return 64; fi
-        true
     else
         echo "$__fn: Error: Parameter BB must be specified."; return 64
     fi

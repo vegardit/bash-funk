@@ -112,7 +112,6 @@ function __impl-alloc-mem() {
     if [[ $_MEMORY_IN_MB ]]; then
         if [[ ! "$_MEMORY_IN_MB" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_MEMORY_IN_MB' for parameter MEMORY_IN_MB is not a numeric value."; return 64; fi
         if [[ $_MEMORY_IN_MB -lt 1 ]]; then echo "$__fn: Error: Value '$_MEMORY_IN_MB' for parameter MEMORY_IN_MB is too low. Must be >= 1."; return 64; fi
-        true
     else
         echo "$__fn: Error: Parameter MEMORY_IN_MB must be specified."; return 64
     fi
@@ -259,7 +258,6 @@ function __impl-memfree() {
     if [[ $_MEMORY_UNIT ]]; then
         declare -A __allowed=( [KB]=1 [MB]=1 [GB]=1 )
         if [[ ! ${__allowed[$_MEMORY_UNIT]} ]]; then echo "$__fn: Error: Value '$_MEMORY_UNIT' for parameter MEMORY_UNIT is not one of the allowed values [KB,MB,GB]."; return 64; fi
-        true
     fi
 
     ######################################################
@@ -530,7 +528,6 @@ function __impl-memtotal() {
     if [[ $_MEMORY_UNIT ]]; then
         declare -A __allowed=( [KB]=1 [MB]=1 [GB]=1 )
         if [[ ! ${__allowed[$_MEMORY_UNIT]} ]]; then echo "$__fn: Error: Value '$_MEMORY_UNIT' for parameter MEMORY_UNIT is not one of the allowed values [KB,MB,GB]."; return 64; fi
-        true
     fi
 
     ######################################################
