@@ -91,7 +91,7 @@ function __impl-block-port() {
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value '70000' for parameter PORT is too high. Must be <= 65535."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value '70000' for parameter PORT is too high. Must be <= 65535.]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -133,7 +133,8 @@ function __impl-block-port() {
         echo "$__fn: Error: Parameter PORT must be specified."; return 64
     fi
 
-    ######################################################
+    ######### block-port ######### START
+
 echo "Binding to $_BIND_ADDRESS:$_PORT..."
 
 perl << EOF
@@ -148,6 +149,8 @@ perl << EOF
     while (\$client = \$server->accept()) { }
     close(\$server);
 EOF
+
+    ######### block-port ######### END
 }
 function __complete-block-port() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -239,8 +242,11 @@ function __impl-get-ips() {
         return 64
     done
 
-    ######################################################
+    ######### get-ips ######### START
+
 ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+
+    ######### get-ips ######### END
 }
 function __complete-get-ips() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -333,21 +339,21 @@ function __impl-is-port-open() {
                 if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
                 __regex=""
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn -v localhost 12345 1\033[22m"
                 __stdout=$($__fn -v localhost 12345 1); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
                 __regex="localhost:12345 is not reachable."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [localhost:12345 is not reachable.]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn localhost 70000\033[22m"
                 __stdout=$($__fn localhost 70000); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value '70000' for parameter PORT is too high. Must be <= 65535."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value '70000' for parameter PORT is too high. Must be <= 65535.]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -405,7 +411,8 @@ function __impl-is-port-open() {
         if [[ ! "$_CONNECT_TIMEOUT_IN_SECONDS" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_CONNECT_TIMEOUT_IN_SECONDS' for parameter CONNECT_TIMEOUT_IN_SECONDS is not a numeric value."; return 64; fi
     fi
 
-    ######################################################
+    ######### is-port-open ######### START
+
 if hash nc &> /dev/null; then
     if nc -vz -w $_CONNECT_TIMEOUT_IN_SECONDS $_HOSTNAME $_PORT; then
         portStatus=open
@@ -436,6 +443,8 @@ else
     [[ $_verbose ]] && echo "$_HOSTNAME:$_PORT is not reachable." || true
     return 1
 fi
+
+    ######### is-port-open ######### END
 }
 function __complete-is-port-open() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -448,6 +457,145 @@ function __complete-is-port-open() {
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}is-port-open -- ${BASH_FUNK_PREFIX:--}is-port-open
+
+function -ssh-agent-add-key() {
+    local opts=""
+    local opt
+    for opt in a e u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -e
+    set -o pipefail
+
+    local __fn=${FUNCNAME[0]}
+    __impl$__fn "$@" && local rc=0 || local rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]... KEY_FILE PASSWORD"
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-ssh-agent-add-key() {
+    [ -p /dev/stdout ] && local -r __in_pipe=1 || true
+    [ -t 1 ] || local  -r __in_subshell=1
+    local -r __fn=${FUNCNAME[0]/__impl/}
+    local __arg __optionWithValue __params=()
+    for __arg in "$@"; do
+        case $__arg in
+
+            --help)
+                echo "Usage: $__fn [OPTION]... KEY_FILE PASSWORD"
+                echo
+                echo "Adds the private key to the ssh-agent."
+                echo
+                echo "Requirements:"
+                echo "  + Command 'ssh-add' must be available."
+                echo "  + Command 'ssh-agent' must be available."
+                echo "  + Command 'expect' must be available."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mKEY_FILE\033[22m (required, file)"
+                echo "      Path to the key file."
+                echo -e "  \033[1mPASSWORD\033[22m (required)"
+                echo "      Password to open the key file."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                __stdout=$($__fn --help); __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            -*)
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        if [[ ! $_KEY_FILE ]]; then
+            _KEY_FILE=$__param
+            continue
+        fi
+        if [[ ! $_PASSWORD ]]; then
+            _PASSWORD=$__param
+            continue
+        fi
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if [[ $_KEY_FILE ]]; then
+        if [[ ! -e "$_KEY_FILE" ]]; then echo "$__fn: Error: File '$_KEY_FILE' for parameter KEY_FILE does not exist."; return 64; fi
+        if [[ -e "$_KEY_FILE" && ! -f "$_KEY_FILE" ]]; then echo "$__fn: Error: Path '$_KEY_FILE' for parameter KEY_FILE is not a file."; return 64; fi
+        if [[ ! -r "$_KEY_FILE" ]]; then echo "$__fn: Error: File '$_KEY_FILE' for parameter KEY_FILE is not readable by user '$USER'."; return 64; fi
+    else
+        echo "$__fn: Error: Parameter KEY_FILE must be specified."; return 64
+    fi
+    if [[ $_PASSWORD ]]; then
+        true
+    else
+        echo "$__fn: Error: Parameter PASSWORD must be specified."; return 64
+    fi
+
+    if ! hash "ssh-add" &> /dev/null; then echo "$__fn: Error: Required command 'ssh-add' not found on this system."; return 64; fi
+    if ! hash "ssh-agent" &> /dev/null; then echo "$__fn: Error: Required command 'ssh-agent' not found on this system."; return 64; fi
+    if ! hash "expect" &> /dev/null; then echo "$__fn: Error: Required command 'expect' not found on this system."; return 64; fi
+
+    ######### ssh-agent-add-key ######### START
+
+eval $(ssh-agent)
+
+expect << EOF
+  spawn ssh-add $_KEYFILE
+  expect "Enter passphrase"
+  send "$_PASSWORD\r"
+  expect eof
+EOF
+
+    ######### ssh-agent-add-key ######### END
+}
+function __complete-ssh-agent-add-key() {
+    local currentWord=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${currentWord} == -* ]]; then
+        local options=" --help --selftest "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+    else
+        COMPREPLY=($(compgen -o default -- $currentWord))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}ssh-agent-add-key -- ${BASH_FUNK_PREFIX:--}ssh-agent-add-key
 
 function -ssh-trust-host() {
     local opts=""
@@ -488,6 +636,9 @@ function __impl-ssh-trust-host() {
                 echo "Usage: $__fn [OPTION]... HOSTNAME [PORT]"
                 echo
                 echo "Adds the public key of the given host to the ~/.ssh/known_hosts file."
+                echo
+                echo "Requirements:"
+                echo "  + Command 'ssh-keyscan' must be available."
                 echo
                 echo "Parameters:"
                 echo -e "  \033[1mHOSTNAME\033[22m (required)"
@@ -554,10 +705,15 @@ function __impl-ssh-trust-host() {
         if [[ $_PORT -gt 65535 ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is too high. Must be <= 65535."; return 64; fi
     fi
 
-    ######################################################
+    if ! hash "ssh-keyscan" &> /dev/null; then echo "$__fn: Error: Required command 'ssh-keyscan' not found on this system."; return 64; fi
+
+    ######### ssh-trust-host ######### START
+
 touch ~/.ssh/known_hosts
 ssh-keyscan -t rsa,dsa -p $_PORT $_HOSTNAME 2>/dev/null | sort -u - ~/.ssh/known_hosts > ~/.ssh/known_hosts.tmp
 mv ~/.ssh/known_hosts.tmp ~/.ssh/known_hosts
+
+    ######### ssh-trust-host ######### END
 }
 function __complete-ssh-trust-host() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -649,11 +805,15 @@ function __impl-test-network() {
         return 64
     done
 
-    ######################################################
+    ######### test-network ######### START
+
 ${BASH_FUNK_PREFIX:--}block-port --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}get-ips --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}is-port-open --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}ssh-agent-add-key --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-trust-host --selftest && echo || return 1
+
+    ######### test-network ######### END
 }
 function __complete-test-network() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -672,8 +832,9 @@ function -help-network() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}block-port [BIND_ADDRESS] PORT\033[0m  -  Binds to the given port and thus block other programs from binding to it."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}get-ips\033[0m  -  Prints the IP v4 addresses of this host excluding 127.0.0.1."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}is-port-open HOSTNAME PORT [CONNECT_TIMEOUT_IN_SECONDS]\033[0m  -  Checks if a TCP connection can be established to the given port."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-agent-add-key KEY_FILE PASSWORD\033[0m  -  Adds the private key to the ssh-agent."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-trust-host HOSTNAME [PORT]\033[0m  -  Adds the public key of the given host to the ~/.ssh/known_hosts file."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-network\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( block-port get-ips is-port-open ssh-trust-host test-network )
+__BASH_FUNK_FUNCS+=( block-port get-ips is-port-open ssh-agent-add-key ssh-trust-host test-network )

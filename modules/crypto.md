@@ -16,7 +16,7 @@ Usage: -md5sum [OPTION]... PATH_TO_FILE
 Calculates the MD5 hash of the given file.
 
 Parameters:
-  PATH_TO_FILE (required)
+  PATH_TO_FILE (required, file)
       The file.
 
 Options:
@@ -59,7 +59,7 @@ Usage: -sha256sum [OPTION]... PATH_TO_FILE
 Calculates the SHA256 hash of the given file.
 
 Parameters:
-  PATH_TO_FILE (required)
+  PATH_TO_FILE (required, file)
       The file.
 
 Options:

@@ -118,7 +118,8 @@ function __impl-ansi-bold() {
         return 64
     done
 
-    ######################################################
+    ######### ansi-bold ######### START
+
 if [[ $_TEXT ]]; then
     echo -ne "\033[1m$_TEXT\033[22m"
 fi
@@ -128,6 +129,8 @@ if [[ $_on ]]; then
 elif [[ $_off ]]; then
     echo -ne "\033[22m"
 fi
+
+    ######### ansi-bold ######### END
 }
 function __complete-ansi-bold() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -219,7 +222,8 @@ function __impl-ansi-colors-supported() {
         return 64
     done
 
-    ######################################################
+    ######### ansi-colors-supported ######### START
+
 if hash tput &>/dev/null; then
     ncolors=$(tput colors)
     if [[ $ncolors -ge 8 ]]; then
@@ -237,6 +241,8 @@ elif [[ $TERM == "cygwin" ]]; then
 fi
 
 return 1
+
+    ######### ansi-colors-supported ######### END
 }
 function __complete-ansi-colors-supported() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -328,8 +334,11 @@ function __impl-ansi-reset() {
         return 64
     done
 
-    ######################################################
+    ######### ansi-reset ######### START
+
 echo -ne "\033[0m"
+
+    ######### ansi-reset ######### END
 }
 function __complete-ansi-reset() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -441,7 +450,8 @@ function __impl-ansi-ul() {
         return 64
     done
 
-    ######################################################
+    ######### ansi-ul ######### START
+
 if [[ $_TEXT ]]; then
     echo -ne "\033[4m$_TEXT\033[24m"
 fi
@@ -451,6 +461,8 @@ if [[ $_on ]]; then
 elif [[ $_off ]]; then
     echo -ne "\033[24m"
 fi
+
+    ######### ansi-ul ######### END
 }
 function __complete-ansi-ul() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -542,11 +554,14 @@ function __impl-test-ansi() {
         return 64
     done
 
-    ######################################################
+    ######### test-ansi ######### START
+
 ${BASH_FUNK_PREFIX:--}ansi-bold --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-colors-supported --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-reset --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-ul --selftest && echo || return 1
+
+    ######### test-ansi ######### END
 }
 function __complete-test-ansi() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}

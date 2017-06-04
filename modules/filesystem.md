@@ -157,7 +157,7 @@ Usage: -extract [OPTION]... ARCHIVE [TO_DIR]
 Extracts the given archive using the compatible extractor.
 
 Parameters:
-  ARCHIVE (required)
+  ARCHIVE (required, file)
       The archive to extract.
   TO_DIR 
       The target folder.
@@ -171,21 +171,6 @@ Options:
 
 *Implementation:*
 ```bash
-if [[ ! -e "$_ARCHIVE" ]]; then
-    echo "Error: File [$_ARCHIVE] does not exist."
-    return 1
-fi
-
-if [[ ! -r "$_ARCHIVE" ]]; then
-    echo "Error: File [$_ARCHIVE] is not readable by user '$USER'."
-    return 1
-fi
-
-if [[ ! -f "$_ARCHIVE" ]]; then
-    echo "Error: Path [$_ARCHIVE] does not point to a file."
-    return 1
-fi
-
 if [[ $_TO_DIR ]]; then
     local origPWD="$(pwd)"
     mkdir "$_TO_DIR"
@@ -423,7 +408,7 @@ Usage: -modified [OPTION]... [PATH]
 Prints the modification timestamp of the given file or directory.
 
 Parameters:
-  PATH (default: '.')
+  PATH (default: '.', path)
       The file or directory to check.
 
 Options:
@@ -435,16 +420,6 @@ Options:
 
 *Implementation:*
 ```bash
-if [[ ! -e "$_PATH" ]]; then
-    echo "Error: Path [$_PATH] does not exist."
-    return 1
-fi
-
-if [[ ! -r "$_PATH" ]]; then
-    echo "Error: Path [$_PATH] is not readable by user '$USER'."
-    return 1
-fi
-
 # use stat if available
 if hash stat &> /dev/null; then
     echo $(stat -c %y "$_PATH"})
@@ -472,7 +447,7 @@ Usage: -owner [OPTION]... [PATH]
 Prints the owner of the given file or directory.
 
 Parameters:
-  PATH (default: '.')
+  PATH (default: '.', path)
       The file or directory to check.
 
 Options:
@@ -484,16 +459,6 @@ Options:
 
 *Implementation:*
 ```bash
-if [[ ! -e "$_PATH" ]]; then
-    echo "Error: Path [$_PATH] does not exist."
-    return 1
-fi
-
-if [[ ! -r "$_PATH" ]]; then
-    echo "Error: Path [$_PATH] is not readable by user '$USER'."
-    return 1
-fi
-
 # use stat if available
 if hash stat &> /dev/null; then
     echo $(stat -c %U "$_PATH")
@@ -521,7 +486,7 @@ Usage: -realpath [OPTION]... [PATH]
 Prints the normalized path of the given path resolving any symbolic links. The path is not required to exist.
 
 Parameters:
-  PATH (default: '.')
+  PATH (default: '.', path)
       The path to normalize.
 
 Options:

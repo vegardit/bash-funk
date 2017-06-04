@@ -89,7 +89,7 @@ function __impl-ascii2hex() {
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^58595A$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [58595A]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -123,8 +123,11 @@ function __impl-ascii2hex() {
         echo "$__fn: Error: Parameter ASCII_STRING must be specified."; return 64
     fi
 
-    ######################################################
+    ######### ascii2hex ######### START
+
 printf "$_ASCII_STRING" | xxd -p | tr "[a-z]" "[A-z]"
+
+    ######### ascii2hex ######### END
 }
 function __complete-ascii2hex() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -207,7 +210,7 @@ function __impl-hex2ascii() {
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^XYZ$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [XYZ]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -241,8 +244,11 @@ function __impl-hex2ascii() {
         echo "$__fn: Error: Parameter HEX_STRING must be specified."; return 64
     fi
 
-    ######################################################
+    ######### hex2ascii ######### START
+
 printf "$_HEX_STRING" | xxd -r -p
+
+    ######### hex2ascii ######### END
 }
 function __complete-hex2ascii() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -325,7 +331,7 @@ function __impl-normalize-path() {
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^a/b/c/e$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [a/b/c/e]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -359,7 +365,8 @@ function __impl-normalize-path() {
         echo "$__fn: Error: Parameter PATH must be specified."; return 64
     fi
 
-    ######################################################
+    ######### normalize-path ######### START
+
 # Remove all occurrences of "/./"
 local normalized=${_PATH//\/.\//\/}
 
@@ -368,6 +375,8 @@ while [[ ${normalized} =~ [^\/][^\/]*\/\.\.\/ ]]; do
     normalized=${normalized/${BASH_REMATCH[0]}/}
 done
 echo $normalized
+
+    ######### normalize-path ######### END
 }
 function __complete-normalize-path() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -456,21 +465,21 @@ function __impl-str-join() {
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^a,b,c$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [a,b,c]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn , a \033[22m"
                 __stdout=$($__fn , a ); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^a$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [a]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn , \033[22m"
                 __stdout=$($__fn , ); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -506,7 +515,8 @@ function __impl-str-join() {
         echo "$__fn: Error: Parameter SEPARATOR must be specified."; return 64
     fi
 
-    ######################################################
+    ######### str-join ######### START
+
 if [[ ${#_STRING[@]} -lt 1 ]]; then
     return 0;
 fi
@@ -517,6 +527,8 @@ if [[ ${#_STRING[@]} -lt 2 ]]; then
 fi
 local additionalItems=("${_STRING[@]:1}")
 printf "%s" "$firstItem${additionalItems[@]/#/$_SEPARATOR}"
+
+    ######### str-join ######### END
 }
 function __complete-str-join() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -599,7 +611,7 @@ function __impl-str-lower() {
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^abcdef$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [abcdef]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -633,8 +645,11 @@ function __impl-str-lower() {
         echo "$__fn: Error: Parameter STRING must be specified."; return 64
     fi
 
-    ######################################################
+    ######### str-lower ######### START
+
 echo "${_STRING,,}"
+
+    ######### str-lower ######### END
 }
 function __complete-str-lower() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -733,14 +748,14 @@ no match: B"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn A A B\033[22m"
                 __stdout=$($__fn A A B); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^A$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [A]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn -v A A B\033[22m"
                 __stdout=$($__fn -v A A B); __rc=$?
                 echo $__stdout
@@ -749,14 +764,14 @@ no match: B"
 no match: B$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [match: A
 no match: B]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn -a A A B\033[22m"
                 __stdout=$($__fn -a A A B); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
                 __regex="A"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [A]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn -v -a A A B\033[22m"
                 __stdout=$($__fn -v -a A A B); __rc=$?
                 echo $__stdout
@@ -765,7 +780,7 @@ no match: B]."; return 64; fi
 no match: B"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [match: A
 no match: B]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -809,7 +824,8 @@ no match: B]."; return 64; fi
         echo "$__fn: Error: Parameter REGEX_PATTERN must be specified."; return 64
     fi
 
-    ######################################################
+    ######### str-matches ######### START
+
 if [[ ! ${_STRING} ]]; then
     return 0
 fi
@@ -845,6 +861,8 @@ if [[ $_all ]]; then
 else
     [[ $matchFound ]] && return 0 || return 1
 fi
+
+    ######### str-matches ######### END
 }
 function __complete-str-matches() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -929,7 +947,7 @@ function __impl-str-repeat() {
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^aaa$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [aaa]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -973,9 +991,12 @@ function __impl-str-repeat() {
         echo "$__fn: Error: Parameter COUNT must be specified."; return 64
     fi
 
-    ######################################################
+    ######### str-repeat ######### START
+
 local spaces="$(printf "%${_COUNT}s" "")"
 echo "${spaces// /$_STRING}"
+
+    ######### str-repeat ######### END
 }
 function __complete-str-repeat() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -1058,7 +1079,7 @@ function __impl-str-trim() {
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^abc$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [abc]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -1092,8 +1113,11 @@ function __impl-str-trim() {
         echo "$__fn: Error: Parameter STRING must be specified."; return 64
     fi
 
-    ######################################################
+    ######### str-trim ######### START
+
 echo $_STRING
+
+    ######### str-trim ######### END
 }
 function __complete-str-trim() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -1176,7 +1200,7 @@ function __impl-str-upper() {
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^ABCDEF$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [ABCDEF]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -1210,8 +1234,11 @@ function __impl-str-upper() {
         echo "$__fn: Error: Parameter STRING must be specified."; return 64
     fi
 
-    ######################################################
+    ######### str-upper ######### START
+
 echo "${1^^}"
+
+    ######### str-upper ######### END
 }
 function __complete-str-upper() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -1294,7 +1321,7 @@ function __impl-strip-ansi() {
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^This is underlined$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [This is underlined]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -1327,7 +1354,8 @@ function __impl-strip-ansi() {
         return 64
     done
 
-    ######################################################
+    ######### strip-ansi ######### START
+
 local ansiColors="([0-9]{1,2}(;[0-9]{1,2})?(;[0-9]{1,2})?)?[m|K]"
 local ansiCursors1="[0-9]+[A-D]" # cursor up/down/right/left
 local ansiCursors2="[su]" # save/restore cursor position
@@ -1337,6 +1365,8 @@ if [[ ${_STRING} ]]; then
 else
     sed -u -r "s/${ansiPattern}//g"
 fi
+
+    ######### strip-ansi ######### END
 }
 function __complete-strip-ansi() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -1421,7 +1451,7 @@ function __impl-substr-after() {
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^11aa22$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [11aa22]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -1464,8 +1494,11 @@ function __impl-substr-after() {
         echo "$__fn: Error: Parameter SEARCH_FOR must be specified."; return 64
     fi
 
-    ######################################################
+    ######### substr-after ######### START
+
 echo ${_SEARCH_IN#*$_SEARCH_FOR}
+
+    ######### substr-after ######### END
 }
 function __complete-substr-after() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -1550,7 +1583,7 @@ function __impl-substr-after-last() {
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^22$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [22]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -1593,8 +1626,11 @@ function __impl-substr-after-last() {
         echo "$__fn: Error: Parameter SEARCH_FOR must be specified."; return 64
     fi
 
-    ######################################################
+    ######### substr-after-last ######### START
+
 echo "${_SEARCH_IN#${_SEARCH_IN%${_SEARCH_FOR}*}$_SEARCH_FOR}"
+
+    ######### substr-after-last ######### END
 }
 function __complete-substr-after-last() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -1679,7 +1715,7 @@ function __impl-substr-before() {
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^00$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [00]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -1722,8 +1758,11 @@ function __impl-substr-before() {
         echo "$__fn: Error: Parameter SEARCH_FOR must be specified."; return 64
     fi
 
-    ######################################################
+    ######### substr-before ######### START
+
 echo "${_SEARCH_IN%%${_SEARCH_FOR}*}"
+
+    ######### substr-before ######### END
 }
 function __complete-substr-before() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -1808,7 +1847,7 @@ function __impl-substr-before-last() {
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^00aa11$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [00aa11]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -1851,8 +1890,11 @@ function __impl-substr-before-last() {
         echo "$__fn: Error: Parameter SEARCH_FOR must be specified."; return 64
     fi
 
-    ######################################################
+    ######### substr-before-last ######### START
+
 echo "${_SEARCH_IN%${_SEARCH_FOR}*}"
+
+    ######### substr-before-last ######### END
 }
 function __complete-substr-before-last() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -1939,7 +1981,7 @@ function __impl-substr-between() {
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^11$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [11]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -1991,9 +2033,12 @@ function __impl-substr-between() {
         echo "$__fn: Error: Parameter SUFFIX must be specified."; return 64
     fi
 
-    ######################################################
+    ######### substr-between ######### START
+
 local withoutPrefix="${_SEARCH_IN#*$_PREFIX}"
 echo "${withoutPrefix%%${_SUFFIX}*}"
+
+    ######### substr-between ######### END
 }
 function __complete-substr-between() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -2085,7 +2130,8 @@ function __impl-test-strings() {
         return 64
     done
 
-    ######################################################
+    ######### test-strings ######### START
+
 ${BASH_FUNK_PREFIX:--}ascii2hex --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}hex2ascii --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}normalize-path --selftest && echo || return 1
@@ -2101,6 +2147,8 @@ ${BASH_FUNK_PREFIX:--}substr-after-last --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}substr-before --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}substr-before-last --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}substr-between --selftest && echo || return 1
+
+    ######### test-strings ######### END
 }
 function __complete-test-strings() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}

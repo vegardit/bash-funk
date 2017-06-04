@@ -123,12 +123,15 @@ function __impl-fn-copy() {
         echo "$__fn: Error: Parameter NEW_FUNC_NAME must be specified."; return 64
     fi
 
-    ######################################################
+    ######### fn-copy ######### START
+
 if ! declare -F $_OLD_FUNC_NAME > /dev/null; then
     echo "Error: A function with the name $_OLD_FUNC_NAME does not exist."
     return 1
 fi
 eval "$(echo "$_NEW_FUNC_NAME()"; declare -f $_OLD_FUNC_NAME | tail -n +2)"
+
+    ######### fn-copy ######### END
 }
 function __complete-fn-copy() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -215,14 +218,14 @@ function __impl-fn-exists() {
                 if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
                 __regex=""
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn -v name-of-nonexistant-function\033[22m"
                 __stdout=$($__fn -v name-of-nonexistant-function); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
                 __regex="A function with the name 'name-of-nonexistant-function' does not exist."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [A function with the name 'name-of-nonexistant-function' does not exist.]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -260,7 +263,8 @@ function __impl-fn-exists() {
         echo "$__fn: Error: Parameter FUNC_NAME must be specified."; return 64
     fi
 
-    ######################################################
+    ######### fn-exists ######### START
+
 if declare -F $_FUNC_NAME> /dev/null; then
     [[ $_verbose ]] && echo "A function with the name '$_FUNC_NAME' exists." || :
     return 0
@@ -268,6 +272,8 @@ else
     [[ $_verbose ]] && echo "A function with the name '$_FUNC_NAME' does not exist." || :
     return 1
 fi
+
+    ######### fn-exists ######### END
 }
 function __complete-fn-exists() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -384,7 +390,8 @@ function __impl-fn-rename() {
         echo "$__fn: Error: Parameter NEW_FUNC_NAME must be specified."; return 64
     fi
 
-    ######################################################
+    ######### fn-rename ######### START
+
 if ! declare -F $_OLD_FUNC_NAME > /dev/null; then
     echo "Error: A function with the name $_OLD_FUNC_NAME does not exist."
     return 1
@@ -393,6 +400,8 @@ fi
 eval "$(echo "$_NEW_FUNC_NAME()"; declare -f $_OLD_FUNC_NAME | tail -n +2)"
 
 unset -f $_OLD_FUNC_NAME
+
+    ######### fn-rename ######### END
 }
 function __complete-fn-rename() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -504,13 +513,16 @@ function __impl-fn-unload() {
         echo "$__fn: Error: Parameter FUNC_NAME must be specified."; return 64
     fi
 
-    ######################################################
+    ######### fn-unload ######### START
+
 if ! declare -F $_FUNC_NAME > /dev/null; then
     [[ $_verbose ]] && echo "A function with the name '$_FUNC_NAME' does not exist." || :
     return 0
 fi
 
 unset -f $_FUNC_NAME
+
+    ######### fn-unload ######### END
 }
 function __complete-fn-unload() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -602,11 +614,14 @@ function __impl-test-functions() {
         return 64
     done
 
-    ######################################################
+    ######### test-functions ######### START
+
 ${BASH_FUNK_PREFIX:--}fn-copy --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}fn-exists --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}fn-rename --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}fn-unload --selftest && echo || return 1
+
+    ######### test-functions ######### END
 }
 function __complete-test-functions() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}

@@ -61,7 +61,7 @@ function __impl-md5sum() {
                 echo "Calculates the MD5 hash of the given file."
                 echo
                 echo "Parameters:"
-                echo -e "  \033[1mPATH_TO_FILE\033[22m (required)"
+                echo -e "  \033[1mPATH_TO_FILE\033[22m (required, file)"
                 echo "      The file."
                 echo
                 echo "Options:"
@@ -107,12 +107,15 @@ function __impl-md5sum() {
     done
 
     if [[ $_PATH_TO_FILE ]]; then
-        true
+        if [[ ! -e "$_PATH_TO_FILE" ]]; then echo "$__fn: Error: File '$_PATH_TO_FILE' for parameter PATH_TO_FILE does not exist."; return 64; fi
+        if [[ -e "$_PATH_TO_FILE" && ! -f "$_PATH_TO_FILE" ]]; then echo "$__fn: Error: Path '$_PATH_TO_FILE' for parameter PATH_TO_FILE is not a file."; return 64; fi
+        if [[ ! -r "$_PATH_TO_FILE" ]]; then echo "$__fn: Error: File '$_PATH_TO_FILE' for parameter PATH_TO_FILE is not readable by user '$USER'."; return 64; fi
     else
         echo "$__fn: Error: Parameter PATH_TO_FILE must be specified."; return 64
     fi
 
-    ######################################################
+    ######### md5sum ######### START
+
 
 # use md5sum if available
 if hash md5sum &>/dev/null; then
@@ -133,6 +136,8 @@ else
     python -c "import hashlib
 print hashlib.md5(open('$_PATH_TO_FILE').read()).hexdigest()"
 fi
+
+    ######### md5sum ######### END
 }
 function __complete-md5sum() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -187,7 +192,7 @@ function __impl-sha256sum() {
                 echo "Calculates the SHA256 hash of the given file."
                 echo
                 echo "Parameters:"
-                echo -e "  \033[1mPATH_TO_FILE\033[22m (required)"
+                echo -e "  \033[1mPATH_TO_FILE\033[22m (required, file)"
                 echo "      The file."
                 echo
                 echo "Options:"
@@ -233,12 +238,15 @@ function __impl-sha256sum() {
     done
 
     if [[ $_PATH_TO_FILE ]]; then
-        true
+        if [[ ! -e "$_PATH_TO_FILE" ]]; then echo "$__fn: Error: File '$_PATH_TO_FILE' for parameter PATH_TO_FILE does not exist."; return 64; fi
+        if [[ -e "$_PATH_TO_FILE" && ! -f "$_PATH_TO_FILE" ]]; then echo "$__fn: Error: Path '$_PATH_TO_FILE' for parameter PATH_TO_FILE is not a file."; return 64; fi
+        if [[ ! -r "$_PATH_TO_FILE" ]]; then echo "$__fn: Error: File '$_PATH_TO_FILE' for parameter PATH_TO_FILE is not readable by user '$USER'."; return 64; fi
     else
         echo "$__fn: Error: Parameter PATH_TO_FILE must be specified."; return 64
     fi
 
-    ######################################################
+    ######### sha256sum ######### START
+
 
 # use sha256 if available
 if hash sha256 &>/dev/null; then
@@ -259,6 +267,8 @@ else
     python -c "import hashlib
 print hashlib.sha256(open('$_PATH_TO_FILE').read()).hexdigest()"
 fi
+
+    ######### sha256sum ######### END
 }
 function __complete-sha256sum() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -350,9 +360,12 @@ function __impl-test-crypto() {
         return 64
     done
 
-    ######################################################
+    ######### test-crypto ######### START
+
 ${BASH_FUNK_PREFIX:--}md5sum --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}sha256sum --selftest && echo || return 1
+
+    ######### test-crypto ######### END
 }
 function __complete-test-crypto() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}

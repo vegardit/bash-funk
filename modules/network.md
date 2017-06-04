@@ -7,6 +7,7 @@ The following commands are available when this module is loaded:
 1. [-block-port](#-block-port)
 1. [-get-ips](#-get-ips)
 1. [-is-port-open](#-is-port-open)
+1. [-ssh-agent-add-key](#-ssh-agent-add-key)
 1. [-ssh-trust-host](#-ssh-trust-host)
 1. [-test-network](#-test-network)
 
@@ -140,12 +141,53 @@ fi
 ```
 
 
+## <a name="-ssh-agent-add-key"></a>-ssh-agent-add-key
+
+```
+Usage: -ssh-agent-add-key [OPTION]... KEY_FILE PASSWORD
+
+Adds the private key to the ssh-agent.
+
+Requirements:
+  + Command 'ssh-add' must be available.
+  + Command 'ssh-agent' must be available.
+  + Command 'expect' must be available.
+
+Parameters:
+  KEY_FILE (required, file)
+      Path to the key file.
+  PASSWORD (required)
+      Password to open the key file.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+```
+
+*Implementation:*
+```bash
+eval $(ssh-agent)
+
+expect << EOF
+  spawn ssh-add $_KEYFILE
+  expect "Enter passphrase"
+  send "$_PASSWORD\r"
+  expect eof
+EOF
+```
+
+
 ## <a name="-ssh-trust-host"></a>-ssh-trust-host
 
 ```
 Usage: -ssh-trust-host [OPTION]... HOSTNAME [PORT]
 
 Adds the public key of the given host to the ~/.ssh/known_hosts file.
+
+Requirements:
+  + Command 'ssh-keyscan' must be available.
 
 Parameters:
   HOSTNAME (required)
@@ -187,6 +229,7 @@ Options:
 -block-port --selftest && echo || return 1
 -get-ips --selftest && echo || return 1
 -is-port-open --selftest && echo || return 1
+-ssh-agent-add-key --selftest && echo || return 1
 -ssh-trust-host --selftest && echo || return 1
 ```
 

@@ -97,28 +97,28 @@ function __impl-command-exists() {
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn -v hash\033[22m"
                 __stdout=$($__fn -v hash); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^'hash' is available.$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern ['hash' is available.]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn -v ls\033[22m"
                 __stdout=$($__fn -v ls); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^'ls' is available.$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern ['ls' is available.]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn -v name-of-nonexistant-command\033[22m"
                 __stdout=$($__fn -v name-of-nonexistant-command); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
                 __regex="'name-of-nonexistant-command' not found."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern ['name-of-nonexistant-command' not found.]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -156,7 +156,8 @@ function __impl-command-exists() {
         echo "$__fn: Error: Parameter COMMAND must be specified."; return 64
     fi
 
-    ######################################################
+    ######### command-exists ######### START
+
 if hash "$_COMMAND" &>/dev/null; then
     [[ $_verbose ]] && echo "'${_COMMAND}' is available." || :
     return 0
@@ -164,6 +165,8 @@ else
     [[ $_verbose ]] && echo "'${_COMMAND}' not found." || :
     return 1
 fi
+
+    ######### command-exists ######### END
 }
 function __complete-command-exists() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -275,7 +278,8 @@ function __impl-pkg-installed() {
         echo "$__fn: Error: Parameter PACKAGE_NAME must be specified."; return 64
     fi
 
-    ######################################################
+    ######### pkg-installed ######### START
+
 if hash "yum" &> /dev/null; then
     if yum list installed "${_PACKAGE_NAME}" >/dev/null 2>&1; then
         [[ $_verbose ]] && echo "${_PACKAGE_NAME} is installed." || :
@@ -307,6 +311,8 @@ fi
 
 [[ $_verbose ]] && echo "${_PACKAGE_NAME} is NOT installed." || :
 return 1
+
+    ######### pkg-installed ######### END
 }
 function __complete-pkg-installed() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -398,9 +404,12 @@ function __impl-test-os() {
         return 64
     done
 
-    ######################################################
+    ######### test-os ######### START
+
 ${BASH_FUNK_PREFIX:--}command-exists --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}pkg-installed --selftest && echo || return 1
+
+    ######### test-os ######### END
 }
 function __complete-test-os() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}

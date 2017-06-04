@@ -119,7 +119,8 @@ function __impl-get-child-pids() {
         if [[ $_PARENT_PID -lt 0 ]]; then echo "$__fn: Error: Value '$_PARENT_PID' for parameter PARENT_PID is too low. Must be >= 0."; return 64; fi
     fi
 
-    ######################################################
+    ######### get-child-pids ######### START
+
 local CHILD_PIDS # intentional declaration in a separate line, see http://stackoverflow.com/a/42854176
 childPids=$(command ps -o pid --no-headers --ppid $_PARENT_PID 2>/dev/null | sed -e 's!\s!!g'; exit ${PIPESTATUS[0]})
 if [[ $? != 0 ]]; then
@@ -132,6 +133,8 @@ done
 if [[ $_printPPID ]]; then
     echo $_PARENT_PID
 fi
+
+    ######### get-child-pids ######### END
 }
 function __complete-get-child-pids() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -238,7 +241,8 @@ function __impl-get-parent-pid() {
         if [[ $_CHILD_PID -lt 0 ]]; then echo "$__fn: Error: Value '$_CHILD_PID' for parameter CHILD_PID is too low. Must be >= 0."; return 64; fi
     fi
 
-    ######################################################
+    ######### get-parent-pid ######### START
+
 local parentPid # intentional declaration in a separate line, see http://stackoverflow.com/a/42854176
 parentPid=$(cat /proc/${_CHILD_PID}/stat 2>/dev/null | awk '{print $4}'; exit ${PIPESTATUS[0]})
 if [[ $? != 0 ]]; then
@@ -246,6 +250,8 @@ if [[ $? != 0 ]]; then
     return 1
 fi
 echo $parentPid
+
+    ######### get-parent-pid ######### END
 }
 function __complete-get-parent-pid() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -352,7 +358,8 @@ function __impl-get-toplevel-parent-pid() {
         if [[ $_CHILD_PID -lt 0 ]]; then echo "$__fn: Error: Value '$_CHILD_PID' for parameter CHILD_PID is too low. Must be >= 0."; return 64; fi
     fi
 
-    ######################################################
+    ######### get-toplevel-parent-pid ######### START
+
 local pid=$_CHILD_PID
 while [[ $pid != 0 ]]; do
     pid=$(${BASH_FUNK_PREFIX:--}get-parent-pid ${pid})
@@ -362,6 +369,8 @@ while [[ $pid != 0 ]]; do
     fi
 done
 echo ${pid}
+
+    ######### get-toplevel-parent-pid ######### END
 }
 function __complete-get-toplevel-parent-pid() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -481,7 +490,8 @@ function __impl-kill-childs() {
         if [[ $_PARENT_PID -lt 0 ]]; then echo "$__fn: Error: Value '$_PARENT_PID' for parameter PARENT_PID is too low. Must be >= 0."; return 64; fi
     fi
 
-    ######################################################
+    ######### kill-childs ######### START
+
 local childPids=$(${BASH_FUNK_PREFIX:--}get-child-pids $_PARENT_PID)
 if [[ $? != 0 ]]; then
     echo $childPids
@@ -491,6 +501,8 @@ for childPid in $childPids; do
     echo "Killing process with PID $childPid..."
     kill -s $_SIGNAL $childPid 2> /dev/null || :
 done
+
+    ######### kill-childs ######### END
 }
 function __complete-kill-childs() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -582,11 +594,14 @@ function __impl-test-processes() {
         return 64
     done
 
-    ######################################################
+    ######### test-processes ######### START
+
 ${BASH_FUNK_PREFIX:--}get-child-pids --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}get-parent-pid --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}get-toplevel-parent-pid --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}kill-childs --selftest && echo || return 1
+
+    ######### test-processes ######### END
 }
 function __complete-test-processes() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}

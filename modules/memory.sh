@@ -118,13 +118,16 @@ function __impl-alloc-mem() {
 
     if ! hash "python" &> /dev/null; then echo "$__fn: Error: Required command 'python' not found on this system."; return 64; fi
 
-    ######################################################
+    ######### alloc-mem ######### START
+
 echo -n "Allocating ${_MEMORY_IN_MB} MB of memory (may take a moment)..."
 python -c "
 a='1'*1024*1024*${_MEMORY_IN_MB}
 print 'DONE'
 raw_input('Press enter to exit...')
 "
+
+    ######### alloc-mem ######### END
 }
 function __complete-alloc-mem() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -211,21 +214,21 @@ function __impl-memfree() {
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^[1-9][0-9]*$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[1-9][0-9]*]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn MB\033[22m"
                 __stdout=$($__fn MB); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^[1-9][0-9]*$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[1-9][0-9]*]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn GB\033[22m"
                 __stdout=$($__fn GB); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^[1-9][0-9]*$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[1-9][0-9]*]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -260,7 +263,8 @@ function __impl-memfree() {
         if [[ ! ${__allowed[$_MEMORY_UNIT]} ]]; then echo "$__fn: Error: Value '$_MEMORY_UNIT' for parameter MEMORY_UNIT is not one of the allowed values [KB,MB,GB]."; return 64; fi
     fi
 
-    ######################################################
+    ######### memfree ######### START
+
 local totalMem=$(awk '/MemFree/ {print $2}' /proc/meminfo)
 local totalMemUnit=$(awk '/MemFree/ {print $3}' /proc/meminfo)
 
@@ -291,6 +295,8 @@ case $_MEMORY_UNIT in
         echo $(( memTotalKB / 1024 / 1024 ))
         ;;
 esac
+
+    ######### memfree ######### END
 }
 function __complete-memfree() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -369,7 +375,7 @@ function __impl-meminfo() {
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^.*MemTotal.*MemFree.*$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [.*MemTotal.*MemFree.*]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -393,8 +399,11 @@ function __impl-meminfo() {
         return 64
     done
 
-    ######################################################
+    ######### meminfo ######### START
+
 cat /proc/meminfo
+
+    ######### meminfo ######### END
 }
 function __complete-meminfo() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -481,21 +490,21 @@ function __impl-memtotal() {
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^[1-9][0-9]*$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[1-9][0-9]*]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn MB\033[22m"
                 __stdout=$($__fn MB); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^[1-9][0-9]*$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[1-9][0-9]*]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn GB\033[22m"
                 __stdout=$($__fn GB); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^[1-9][0-9]*$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[1-9][0-9]*]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -530,7 +539,8 @@ function __impl-memtotal() {
         if [[ ! ${__allowed[$_MEMORY_UNIT]} ]]; then echo "$__fn: Error: Value '$_MEMORY_UNIT' for parameter MEMORY_UNIT is not one of the allowed values [KB,MB,GB]."; return 64; fi
     fi
 
-    ######################################################
+    ######### memtotal ######### START
+
 local totalMem=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
 local totalMemUnit=$(awk '/MemTotal/ {print $3}' /proc/meminfo)
 
@@ -561,6 +571,8 @@ case $_MEMORY_UNIT in
         echo $(( memTotalKB / 1024 / 1024 ))
         ;;
 esac
+
+    ######### memtotal ######### END
 }
 function __complete-memtotal() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -652,11 +664,14 @@ function __impl-test-memory() {
         return 64
     done
 
-    ######################################################
+    ######### test-memory ######### START
+
 ${BASH_FUNK_PREFIX:--}alloc-mem --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}memfree --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}meminfo --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}memtotal --selftest && echo || return 1
+
+    ######### test-memory ######### END
 }
 function __complete-test-memory() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}

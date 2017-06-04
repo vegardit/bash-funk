@@ -98,8 +98,11 @@ function __impl-cpu-count() {
         return 64
     done
 
-    ######################################################
+    ######### cpu-count ######### START
+
 grep processor /proc/cpuinfo | wc -l
+
+    ######### cpu-count ######### END
 }
 function __complete-cpu-count() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -191,8 +194,11 @@ function __impl-cpu-perf() {
         return 64
     done
 
-    ######################################################
+    ######### cpu-perf ######### START
+
 openssl speed rsa1024 -multi $(cat /proc/cpuinfo | grep processor | wc -l)
+
+    ######### cpu-perf ######### END
 }
 function __complete-cpu-perf() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -255,7 +261,7 @@ function __impl-scp-perf() {
                 echo "Options:"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
-                echo -e "\033[1m-i, --identity_file PATH\033[22m "
+                echo -e "\033[1m-i, --identity_file PATH\033[22m (file)"
                 echo "        Path to the private key for public key authentication."
                 echo -e "\033[1m-P, --port PORT\033[22m (integer: 0-65535)"
                 echo "        Ssh port."
@@ -330,6 +336,9 @@ function __impl-scp-perf() {
     fi
     if declare -p _identity_file &>/dev/null; then
         if [[ ! $_identity_file ]]; then echo "$__fn: Error: Value PATH for option --identity_file must be specified."; return 64; fi
+        if [[ ! -e "$_identity_file" ]]; then echo "$__fn: Error: File '$_identity_file' for option --identity_file does not exist."; return 64; fi
+        if [[ -e "$_identity_file" && ! -f "$_identity_file" ]]; then echo "$__fn: Error: Path '$_identity_file' for option --identity_file is not a file."; return 64; fi
+        if [[ ! -r "$_identity_file" ]]; then echo "$__fn: Error: File '$_identity_file' for option --identity_file is not readable by user '$USER'."; return 64; fi
         true
     fi
 
@@ -342,7 +351,8 @@ function __impl-scp-perf() {
         if [[ ! "$_SIZE_MB" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_SIZE_MB' for parameter SIZE_MB is not a numeric value."; return 64; fi
     fi
 
-    ######################################################
+    ######### scp-perf ######### START
+
 local dataFile=$(mktemp)
 
 local sshOpts=""
@@ -371,6 +381,8 @@ echo "Removing test data on $_TARGET..."
 ssh $sshOpts "$_TARGET" "rm ${dataFile}-copy"
 echo "Removing local test data..."
 rm $dataFile
+
+    ######### scp-perf ######### END
 }
 function __complete-scp-perf() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -462,10 +474,13 @@ function __impl-test-performance() {
         return 64
     done
 
-    ######################################################
+    ######### test-performance ######### START
+
 ${BASH_FUNK_PREFIX:--}cpu-count --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}cpu-perf --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}scp-perf --selftest && echo || return 1
+
+    ######### test-performance ######### END
 }
 function __complete-test-performance() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}

@@ -98,10 +98,13 @@ function __impl-help() {
         return 64
     done
 
-    ######################################################
+    ######### help ######### START
+
 for helpfunc in $(compgen -A function -- ${BASH_FUNK_PREFIX:--}help-); do
     $helpfunc
 done | sort
+
+    ######### help ######### END
 }
 function __complete-help() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -193,12 +196,15 @@ function __impl-test-all() {
         return 64
     done
 
-    ######################################################
+    ######### test-all ######### START
+
 for testfunc in $(compgen -A function -- ${BASH_FUNK_PREFIX:--}test-); do
     if [[ $testfunc != "${BASH_FUNK_PREFIX:--}test-all" ]]; then
         $testfunc || return 1
     fi
 done
+
+    ######### test-all ######### END
 }
 function __complete-test-all() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -290,11 +296,14 @@ function __impl-test-misc() {
         return 64
     done
 
-    ######################################################
+    ######### test-misc ######### START
+
 ${BASH_FUNK_PREFIX:--}help --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}test-all --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}var-exists --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}wait --selftest && echo || return 1
+
+    ######### test-misc ######### END
 }
 function __complete-test-misc() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -383,21 +392,21 @@ function __impl-var-exists() {
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn -v USER\033[22m"
                 __stdout=$($__fn -v USER); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^Bash variable 'USER' exists.$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Bash variable 'USER' exists.]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn -v NON_EXISTANT_VARIABLE\033[22m"
                 __stdout=$($__fn -v NON_EXISTANT_VARIABLE); __rc=$?
                 echo $__stdout
                 if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
                 __regex="Bash variable 'NON_EXISTANT_VARIABLE' does not exist."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Bash variable 'NON_EXISTANT_VARIABLE' does not exist.]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -435,7 +444,8 @@ function __impl-var-exists() {
         echo "$__fn: Error: Parameter VARIABLE_NAME must be specified."; return 64
     fi
 
-    ######################################################
+    ######### var-exists ######### START
+
 if declare -p $_VARIABLE_NAME &>/dev/null; then
     [[ $_verbose ]] && echo "Bash variable '$_VARIABLE_NAME' exists." || true
     return 0
@@ -443,6 +453,8 @@ else
     [[ $_verbose ]] && echo "Bash variable '$_VARIABLE_NAME' does not exist." || true
     return 1
 fi
+
+    ######### var-exists ######### END
 }
 function __complete-var-exists() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -548,7 +560,8 @@ function __impl-wait() {
         echo "$__fn: Error: Parameter SECONDS must be specified."; return 64
     fi
 
-    ######################################################
+    ######### wait ######### START
+
 local green="\033[1;32m"
 local reset="\033[0m"
 local saveCursor="\033[s"
@@ -570,6 +583,8 @@ for (( i = 0; i < _SECONDS; i++ )); do
     [[ $char == "s" ]] && break
 done
 echo
+
+    ######### wait ######### END
 }
 function __complete-wait() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}

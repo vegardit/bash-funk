@@ -108,7 +108,8 @@ function __impl-abspath() {
 
     if [[ ! $_PATH ]]; then _PATH="."; fi
 
-    ######################################################
+    ######### abspath ######### START
+
 
 # use realpath if available
 if hash realpath &> /dev/null; then
@@ -119,6 +120,8 @@ else
     python -c "import os
 print os.path.abspath('$_PATH')"
 fi
+
+    ######### abspath ######### END
 }
 function __complete-abspath() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -247,7 +250,8 @@ function __impl-count-words() {
     fi
     if [[ ${#_WORD[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter WORD 1 value(s) must be specified. Found: ${#_WORD[@]}."; return 64; fi
 
-    ######################################################
+    ######### count-words ######### START
+
 if [[ ! -e "$_FILE" ]]; then
     echo "Error: File [$_FILE] does not exist."
     return 1
@@ -274,6 +278,8 @@ if [[ $_sort == "count" ]]; then
 else
     sed "$sedCmds" "$_FILE" | grep $grepCmds | sort | uniq -c
 fi
+
+    ######### count-words ######### END
 }
 function __complete-count-words() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -378,10 +384,13 @@ function __impl-du() {
         return 64
     done
 
-    ######################################################
+    ######### du ######### START
+
 [[ ! $_PATH ]] && _PATH=(.) || true
 
 du -s -h "${_PATH[@]}"
+
+    ######### du ######### END
 }
 function __complete-du() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -436,7 +445,7 @@ function __impl-extract() {
                 echo "Extracts the given archive using the compatible extractor."
                 echo
                 echo "Parameters:"
-                echo -e "  \033[1mARCHIVE\033[22m (required)"
+                echo -e "  \033[1mARCHIVE\033[22m (required, file)"
                 echo "      The archive to extract."
                 echo -e "  \033[1mTO_DIR\033[22m "
                 echo "      The target folder."
@@ -488,26 +497,14 @@ function __impl-extract() {
     done
 
     if [[ $_ARCHIVE ]]; then
-        true
+        if [[ ! -e "$_ARCHIVE" ]]; then echo "$__fn: Error: File '$_ARCHIVE' for parameter ARCHIVE does not exist."; return 64; fi
+        if [[ -e "$_ARCHIVE" && ! -f "$_ARCHIVE" ]]; then echo "$__fn: Error: Path '$_ARCHIVE' for parameter ARCHIVE is not a file."; return 64; fi
+        if [[ ! -r "$_ARCHIVE" ]]; then echo "$__fn: Error: File '$_ARCHIVE' for parameter ARCHIVE is not readable by user '$USER'."; return 64; fi
     else
         echo "$__fn: Error: Parameter ARCHIVE must be specified."; return 64
     fi
 
-    ######################################################
-if [[ ! -e "$_ARCHIVE" ]]; then
-    echo "Error: File [$_ARCHIVE] does not exist."
-    return 1
-fi
-
-if [[ ! -r "$_ARCHIVE" ]]; then
-    echo "Error: File [$_ARCHIVE] is not readable by user '$USER'."
-    return 1
-fi
-
-if [[ ! -f "$_ARCHIVE" ]]; then
-    echo "Error: Path [$_ARCHIVE] does not point to a file."
-    return 1
-fi
+    ######### extract ######### START
 
 if [[ $_TO_DIR ]]; then
     local origPWD="$(pwd)"
@@ -538,6 +535,8 @@ esac
 if [[ $_TO_DIR ]]; then
     cd "$origPWD"
 fi
+
+    ######### extract ######### END
 }
 function __complete-extract() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -716,7 +715,8 @@ function __impl-findfiles() {
         echo "$__fn: Error: Parameter SEARCH_STRING must be specified."; return 64
     fi
 
-    ######################################################
+    ######### findfiles ######### START
+
 if [[ ! -e "$_START_PATH" ]]; then
     echo "Error: Path [$_START_PATH] does not exist."
     return 1
@@ -804,6 +804,8 @@ else
         fi
     fi
 fi
+
+    ######### findfiles ######### END
 }
 function __complete-findfiles() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -908,7 +910,8 @@ function __impl-ll() {
         return 64
     done
 
-    ######################################################
+    ######### ll ######### START
+
 [[ ! $_PATH ]] && _PATH=(.) || true
 
 if ls --help | grep -- --group-directories-first >/dev/null; then
@@ -923,6 +926,8 @@ else
         /^l.*[^/]$/ { files = files "\n" $0 };  # capture symlinks to files
         END { print total dirs files }'
 fi
+
+    ######### ll ######### END
 }
 function __complete-ll() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -1047,8 +1052,7 @@ function __impl-mkcd() {
 
     if declare -p _mode &>/dev/null; then
         if [[ ! $_mode ]]; then echo "$__fn: Error: Value MODE for option --mode must be specified."; return 64; fi
-        local __regex="^[0-7]{3}$"
-        if [[ ! "$_mode" =~ $__regex ]]; then echo "$__fn: Error: Value '$_mode' for option --mode does not match required pattern '[0-7]{3}'."; return 64; fi
+        if [[ ! "$_mode" =~ ^[0-7]{3}$ ]]; then echo "$__fn: Error: Value '$_mode' for option --mode does not match required pattern '[0-7]{3}'."; return 64; fi
         true
     fi
 
@@ -1058,7 +1062,8 @@ function __impl-mkcd() {
         echo "$__fn: Error: Parameter PATH must be specified."; return 64
     fi
 
-    ######################################################
+    ######### mkcd ######### START
+
 local mkdirOpts
 
 [[ $_mode    ]] && mkdirOpts="$mkdirOpts -m $_mode" || true
@@ -1066,6 +1071,8 @@ local mkdirOpts
 [[ $_verbose ]] && mkdirOpts="$mkdirOpts -v" || true
 
 mkdir "$_PATH" && cd "$_PATH"
+
+    ######### mkcd ######### END
 }
 function __complete-mkcd() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -1120,7 +1127,7 @@ function __impl-modified() {
                 echo "Prints the modification timestamp of the given file or directory."
                 echo
                 echo "Parameters:"
-                echo -e "  \033[1mPATH\033[22m (default: '.')"
+                echo -e "  \033[1mPATH\033[22m (default: '.', path)"
                 echo "      The file or directory to check."
                 echo
                 echo "Options:"
@@ -1167,16 +1174,12 @@ function __impl-modified() {
 
     if [[ ! $_PATH ]]; then _PATH="."; fi
 
-    ######################################################
-if [[ ! -e "$_PATH" ]]; then
-    echo "Error: Path [$_PATH] does not exist."
-    return 1
-fi
+    if [[ $_PATH ]]; then
+        if [[ ! -e "$_PATH" ]]; then echo "$__fn: Error: Path '$_PATH' for parameter PATH does not exist."; return 64; fi
+        if [[ ! -r "$_PATH" ]]; then echo "$__fn: Error: Path '$_PATH' for parameter PATH is not readable by user '$USER'."; return 64; fi
+    fi
 
-if [[ ! -r "$_PATH" ]]; then
-    echo "Error: Path [$_PATH] is not readable by user '$USER'."
-    return 1
-fi
+    ######### modified ######### START
 
 # use stat if available
 if hash stat &> /dev/null; then
@@ -1194,6 +1197,8 @@ else
     python -c "import os, pwd
 print int(os.path.getmtime('$_PATH'))"
 fi
+
+    ######### modified ######### END
 }
 function __complete-modified() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -1248,7 +1253,7 @@ function __impl-owner() {
                 echo "Prints the owner of the given file or directory."
                 echo
                 echo "Parameters:"
-                echo -e "  \033[1mPATH\033[22m (default: '.')"
+                echo -e "  \033[1mPATH\033[22m (default: '.', path)"
                 echo "      The file or directory to check."
                 echo
                 echo "Options:"
@@ -1295,16 +1300,12 @@ function __impl-owner() {
 
     if [[ ! $_PATH ]]; then _PATH="."; fi
 
-    ######################################################
-if [[ ! -e "$_PATH" ]]; then
-    echo "Error: Path [$_PATH] does not exist."
-    return 1
-fi
+    if [[ $_PATH ]]; then
+        if [[ ! -e "$_PATH" ]]; then echo "$__fn: Error: Path '$_PATH' for parameter PATH does not exist."; return 64; fi
+        if [[ ! -r "$_PATH" ]]; then echo "$__fn: Error: Path '$_PATH' for parameter PATH is not readable by user '$USER'."; return 64; fi
+    fi
 
-if [[ ! -r "$_PATH" ]]; then
-    echo "Error: Path [$_PATH] is not readable by user '$USER'."
-    return 1
-fi
+    ######### owner ######### START
 
 # use stat if available
 if hash stat &> /dev/null; then
@@ -1322,6 +1323,8 @@ else
     python -c "import os, pwd
 print pwd.getpwuid(os.stat('$_PATH').st_uid).pw_name"
 fi
+
+    ######### owner ######### END
 }
 function __complete-owner() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -1376,7 +1379,7 @@ function __impl-realpath() {
                 echo "Prints the normalized path of the given path resolving any symbolic links. The path is not required to exist."
                 echo
                 echo "Parameters:"
-                echo -e "  \033[1mPATH\033[22m (default: '.')"
+                echo -e "  \033[1mPATH\033[22m (default: '.', path)"
                 echo "      The path to normalize."
                 echo
                 echo "Options:"
@@ -1423,7 +1426,11 @@ function __impl-realpath() {
 
     if [[ ! $_PATH ]]; then _PATH="."; fi
 
-    ######################################################
+    if [[ $_PATH ]]; then
+    fi
+
+    ######### realpath ######### START
+
 # use readlink if available
 if hash readlink &> /dev/null; then
     readlink -m "$_PATH"
@@ -1440,6 +1447,8 @@ else
     python -c "import os
 print os.path.realpath('$_PATH')"
 fi
+
+    ######### realpath ######### END
 }
 function __complete-realpath() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -1527,7 +1536,7 @@ function __impl-sudo-append() {
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^Appending to \[/tmp/testfile.cfg\]...$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Appending to \[/tmp/testfile.cfg\]...]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -1573,9 +1582,12 @@ function __impl-sudo-append() {
     if ! hash "sudo" &> /dev/null; then echo "$__fn: Error: Required command 'sudo' not found on this system."; return 64; fi
     if ! sudo -l -- tee --append &> /dev/null; then echo "$__fn: Error: User $USER misses required sudo permission for 'tee --append'"; return 64; fi
 
-    ######################################################
+    ######### sudo-append ######### START
+
 echo "Appending to [$_FILE_PATH]..."
 echo "$_CONTENT" | sudo tee --append "$_FILE_PATH" > /dev/null
+
+    ######### sudo-append ######### END
 }
 function __complete-sudo-append() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -1666,7 +1678,7 @@ function __impl-sudo-write() {
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^Writing \[/tmp/testfile.cfg\]...$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Writing \[/tmp/testfile.cfg\]...]."; return 64; fi
-                echo "--> \033[32mOK\033[0m"
+                echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
@@ -1723,9 +1735,12 @@ function __impl-sudo-write() {
     if ! hash "sudo" &> /dev/null; then echo "$__fn: Error: Required command 'sudo' not found on this system."; return 64; fi
     if ! sudo -l -- sh chown &> /dev/null; then echo "$__fn: Error: User $USER misses required sudo permission for 'sh chown'"; return 64; fi
 
-    ######################################################
+    ######### sudo-write ######### START
+
 echo "Writing [$_FILE_PATH]..."
 sudo sh -c "echo '$_CONTENT' > '$_FILE_PATH'" && sudo chown "$_OWNER" "$_FILE_PATH"
+
+    ######### sudo-write ######### END
 }
 function __complete-sudo-write() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -1817,7 +1832,8 @@ function __impl-test-filesystem() {
         return 64
     done
 
-    ######################################################
+    ######### test-filesystem ######### START
+
 ${BASH_FUNK_PREFIX:--}abspath --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}count-words --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}du --selftest && echo || return 1
@@ -1831,6 +1847,8 @@ ${BASH_FUNK_PREFIX:--}realpath --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}sudo-append --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}sudo-write --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}up --selftest && echo || return 1
+
+    ######### test-filesystem ######### END
 }
 function __complete-test-filesystem() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
@@ -1932,7 +1950,8 @@ function __impl-up() {
 
     if [[ ! $_LEVEL_OR_DIRECTORY_NAME ]]; then _LEVEL_OR_DIRECTORY_NAME=".."; fi
 
-    ######################################################
+    ######### up ######### START
+
 if [[ $_LEVEL_OR_DIRECTORY_NAME == ".." ]]; then
     cd ..
     return 0
@@ -1948,6 +1967,8 @@ else
     local path=$(pwd)
     cd "${path%${_LEVEL_OR_DIRECTORY_NAME}*}${_LEVEL_OR_DIRECTORY_NAME}"
 fi
+
+    ######### up ######### END
 }
 function __complete-up() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
