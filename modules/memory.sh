@@ -114,7 +114,7 @@ function __impl-alloc-mem() {
         echo "$__fn: Error: Parameter MEMORY_IN_MB must be specified."; return 64
     fi
 
-    if ! hash "python" &> /dev/null; then echo "$__fn: Error: Required command 'python' not found on this system."; return 64; fi
+    if ! hash "python" &>/dev/null; then echo "$__fn: Error: Required command 'python' not found on this system."; return 64; fi
 
     ######### alloc-mem ######### START
 

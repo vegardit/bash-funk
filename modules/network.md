@@ -116,7 +116,7 @@ localhost:12345 is not reachable.
 
 *Implementation:*
 ```bash
-if hash nc &> /dev/null; then
+if hash nc &>/dev/null; then
     if nc -vz -w $_CONNECT_TIMEOUT_IN_SECONDS $_HOSTNAME $_PORT; then
         portStatus=open
     else

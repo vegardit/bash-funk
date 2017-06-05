@@ -24,10 +24,11 @@ else
 fi
 
 # change the color of directories in ls
-TMP_LS_COLORS=$(dircolors -b)
-eval "${TMP_LS_COLORS/di=01;34/di=${BASH_FUNK_DIRS_COLOR}}" # replace 01;34 with custom colors
-unset TMP_LS_COLORS
-
+if hash dircolors &>/dev/null; then
+    TMP_LS_COLORS=$(dircolors -b)
+    eval "${TMP_LS_COLORS/di=01;34/di=${BASH_FUNK_DIRS_COLOR}}" # replace 01;34 with custom colors
+    unset TMP_LS_COLORS
+fi
 
 function __-bash-prompt() {
     # Save the return code of last command
@@ -53,64 +54,29 @@ function __-bash-prompt() {
     fi
 
     local C_RESET="\033[0m"
-    local C_FX_BOLD="\033[1m"
-    local C_FX_BOLD_OFF="\033[22m"
-    #local C_FX_ITALIC="\033[3m"
-    #local C_FX_UNDERLINE="\033[4m"
-    #local C_FX_UNDERLINE_DOUBLE="\033[21m"
-    #local C_FX_UNDERLINE_OFF="\033[24m"
-    #local C_FX_BLINK_SLOW="\033[5m"
-    #local C_FX_BLINK_FAST="\033[6m"
-    #local C_FX_BLINK_OFF="\033[25m"
-    #local C_FX_INVERT="\033[7m"
-    #local C_FX_INVERT_OFF="\033[27m"
+    local C_BOLD="\033[1m"
+    local C_BOLD_OFF="\033[22m"
     local C_FG_BLACK="\033[30m"
-    #local C_FG_RED="\033[31m"
-    #local C_FG_GREEN="\033[32m"
-    #local C_FG_YELLOW="\033[33m"
-    #local C_FG_BLUE="\033[34m"
-    #local C_FG_MAGENTA="\033[35m"
-    #local C_FG_CYAN="\033[36m"
-    local C_FG_WHITE="\033[37m"
-    #local C_FG_LIGHT_RED="\033[91m"
-    #local C_FG_LIGHT_GREEN="\033[92m"
-    #local C_FG_LIGHT_YELLOW="\033[93m"
-    #local C_FG_LIGHT_BLUE="\033[94m"
-    #local C_FG_LIGHT_MAGENTA="\033[95m"
-    #local C_FG_LIGHT_CYAN="\033[96m"
-    local C_FG_LIGHT_WHITE="\033[97m"
-    #local C_BG_BLACK="\033[40m"
+    local C_FG_GRAY="\033[37m"
+    local C_FG_WHITE="\033[97m"
     local C_BG_RED="\033[41m"
     local C_BG_GREEN="\033[42m"
-    #local C_BG_YELLOW="\033[43m"
-    #local C_BG_BLUE="\033[44m"
-    #local C_BG_MAGENTA="\033[45m"
-    #local C_BG_CYAN="\033[46m"
-    #local C_BG_WHITE="\033[47m"
-    #local C_BG_LIGHT_BLACK="\033[100m"
-    #local C_BG_LIGHT_RED="\033[101m"
-    #local C_BG_LIGHT_GREEN="\033[102m"
-    #local C_BG_LIGHT_YELLOW="\033[103m"
-    #local C_BG_LIGHT_BLUE="\033[104m"
-    #local C_BG_LIGHT_MAGENTA="\033[105m"
-    #local C_BG_LIGHT_CYAN="\033[106m"
-    #local C_BG_LIGHT_WHITE="\033[107m"
-    local BG="${C_RESET}${C_BG_GREEN}"
+    local background="${C_RESET}${C_BG_GREEN}"
 
     if [[ $lastRC == 0 ]]; then
         lastRC=""
     else
         lastRC="[$lastRC] "
-        BG="${C_RESET}${C_BG_RED}"
+        background="${C_RESET}${C_BG_RED}"
     fi
 
     if [[ $TERM == "cygwin" ]]; then
-        local white="$C_FX_BOLD$C_FG_WHITE"
+        local white="$C_BOLD$C_FG_GRAY"
     else
-        local white="$C_FG_LIGHT_WHITE"
+        local white="$C_FG_WHITE"
     fi
 
-    local LINE1="${BG}$lastRC${white}\u${C_RESET}${BG} ${C_FG_BLACK}| ${white}\h${C_RESET}${BG} ${C_FG_BLACK}| \d \t | \j Jobs | tty #\l ${C_RESET}"
+    local LINE1="${background}$lastRC${white}\u${C_RESET}${background} ${C_FG_BLACK}| ${white}\h${C_RESET}${background} ${C_FG_BLACK}| \d \t | \j Jobs | tty #\l ${C_RESET}"
     local LINE2="[\033[${BASH_FUNK_DIRS_COLOR}m${pwd}${C_RESET}]"
     PS1="\n$LINE1\n$LINE2\n$ "
 }

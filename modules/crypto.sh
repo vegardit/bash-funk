@@ -120,7 +120,7 @@ if hash md5sum &>/dev/null; then
     md5sum $_PATH_TO_FILE | cut -d ' ' -f1
 
 # use perl if available
-elif hash perl &> /dev/null; then
+elif hash perl &>/dev/null; then
     perl << EOF
 use Digest::MD5;
 open(my \$FILE, '$_PATH_TO_FILE');
@@ -249,7 +249,7 @@ if hash sha256 &>/dev/null; then
     sha256 $_PATH_TO_FILE | cut -d ' ' -f1
 
 # use perl if available
-elif hash perl &> /dev/null; then
+elif hash perl &>/dev/null; then
     perl << EOF
 use Digest::SHA;
 open(my \$FILE, '$_PATH_TO_FILE');

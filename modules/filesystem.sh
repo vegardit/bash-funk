@@ -110,7 +110,7 @@ function __impl-abspath() {
 
 
 # use realpath if available
-if hash realpath &> /dev/null; then
+if hash realpath &>/dev/null; then
     realpath -m $_PATH
 
 # use python as last resort
@@ -785,7 +785,7 @@ else
         # to avoid "xargs: environment is too large for exec" on cygwin
         local xargsWorks=1
         if [[ $OSTYPE == cygwin ]]; then
-            if ! echo whoami | xargs &> /dev/null; then
+            if ! echo whoami | xargs &>/dev/null; then
                 local xargsWorks=
             fi
         fi
@@ -1171,11 +1171,11 @@ function __impl-modified() {
     ######### modified ######### START
 
 # use stat if available
-if hash stat &> /dev/null; then
+if hash stat &>/dev/null; then
     echo $(stat -c %y "$_PATH"})
 
 # use perl if available
-elif hash perl &> /dev/null; then
+elif hash perl &>/dev/null; then
     perl << EOF
 use File::stat;
 print stat("$_PATH")->mtime, "\n"
@@ -1296,11 +1296,11 @@ function __impl-owner() {
     ######### owner ######### START
 
 # use stat if available
-if hash stat &> /dev/null; then
+if hash stat &>/dev/null; then
     echo $(stat -c %U "$_PATH")
 
 # use perl if available
-elif hash perl &> /dev/null; then
+elif hash perl &>/dev/null; then
     perl << EOF
 use File::stat;
 print getpwuid(stat("$_PATH")->uid), "\n"
@@ -1419,11 +1419,11 @@ function __impl-realpath() {
     ######### realpath ######### START
 
 # use readlink if available
-if hash readlink &> /dev/null; then
+if hash readlink &>/dev/null; then
     readlink -m "$_PATH"
 
 # use perl if available
-elif hash perl &> /dev/null; then
+elif hash perl &>/dev/null; then
     perl << EOF
 use Cwd 'abs_path';
 print abs_path('$_PATH'), "\n"
@@ -1564,8 +1564,8 @@ function __impl-sudo-append() {
         echo "$__fn: Error: Parameter CONTENT must be specified."; return 64
     fi
 
-    if ! hash "sudo" &> /dev/null; then echo "$__fn: Error: Required command 'sudo' not found on this system."; return 64; fi
-    if ! sudo -l -- tee --append &> /dev/null; then echo "$__fn: Error: User $USER misses required sudo permission for 'tee --append'"; return 64; fi
+    if ! hash "sudo" &>/dev/null; then echo "$__fn: Error: Required command 'sudo' not found on this system."; return 64; fi
+    if ! sudo -l -- tee --append &>/dev/null; then echo "$__fn: Error: User $USER misses required sudo permission for 'tee --append'"; return 64; fi
 
     ######### sudo-append ######### START
 
@@ -1713,10 +1713,10 @@ function __impl-sudo-write() {
         echo "$__fn: Error: Parameter CONTENT must be specified."; return 64
     fi
 
-    if ! hash "sudo" &> /dev/null; then echo "$__fn: Error: Required command 'sudo' not found on this system."; return 64; fi
-    if ! sudo -l -- sh -c &> /dev/null; then echo "$__fn: Error: User $USER misses required sudo permission for 'sh -c'"; return 64; fi
-    if ! hash "sudo" &> /dev/null; then echo "$__fn: Error: Required command 'sudo' not found on this system."; return 64; fi
-    if ! sudo -l -- sh chown &> /dev/null; then echo "$__fn: Error: User $USER misses required sudo permission for 'sh chown'"; return 64; fi
+    if ! hash "sudo" &>/dev/null; then echo "$__fn: Error: Required command 'sudo' not found on this system."; return 64; fi
+    if ! sudo -l -- sh -c &>/dev/null; then echo "$__fn: Error: User $USER misses required sudo permission for 'sh -c'"; return 64; fi
+    if ! hash "sudo" &>/dev/null; then echo "$__fn: Error: Required command 'sudo' not found on this system."; return 64; fi
+    if ! sudo -l -- sh chown &>/dev/null; then echo "$__fn: Error: User $USER misses required sudo permission for 'sh chown'"; return 64; fi
 
     ######### sudo-write ######### START
 

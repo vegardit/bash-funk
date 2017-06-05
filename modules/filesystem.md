@@ -59,7 +59,7 @@ Options:
 ```bash
 
 # use realpath if available
-if hash realpath &> /dev/null; then
+if hash realpath &>/dev/null; then
     realpath -m $_PATH
 
 # use python as last resort
@@ -310,7 +310,7 @@ else
         # to avoid "xargs: environment is too large for exec" on cygwin
         local xargsWorks=1
         if [[ $OSTYPE == cygwin ]]; then
-            if ! echo whoami | xargs &> /dev/null; then
+            if ! echo whoami | xargs &>/dev/null; then
                 local xargsWorks=
             fi
         fi
@@ -421,11 +421,11 @@ Options:
 *Implementation:*
 ```bash
 # use stat if available
-if hash stat &> /dev/null; then
+if hash stat &>/dev/null; then
     echo $(stat -c %y "$_PATH"})
 
 # use perl if available
-elif hash perl &> /dev/null; then
+elif hash perl &>/dev/null; then
     perl << EOF
 use File::stat;
 print stat("$_PATH")->mtime, "\n"
@@ -460,11 +460,11 @@ Options:
 *Implementation:*
 ```bash
 # use stat if available
-if hash stat &> /dev/null; then
+if hash stat &>/dev/null; then
     echo $(stat -c %U "$_PATH")
 
 # use perl if available
-elif hash perl &> /dev/null; then
+elif hash perl &>/dev/null; then
     perl << EOF
 use File::stat;
 print getpwuid(stat("$_PATH")->uid), "\n"
@@ -499,11 +499,11 @@ Options:
 *Implementation:*
 ```bash
 # use readlink if available
-if hash readlink &> /dev/null; then
+if hash readlink &>/dev/null; then
     readlink -m "$_PATH"
 
 # use perl if available
-elif hash perl &> /dev/null; then
+elif hash perl &>/dev/null; then
     perl << EOF
 use Cwd 'abs_path';
 print abs_path('$_PATH'), "\n"

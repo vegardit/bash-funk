@@ -446,7 +446,7 @@ function __impl-is-port-open() {
 
     ######### is-port-open ######### START
 
-if hash nc &> /dev/null; then
+if hash nc &>/dev/null; then
     if nc -vz -w $_CONNECT_TIMEOUT_IN_SECONDS $_HOSTNAME $_PORT; then
         portStatus=open
     else
@@ -599,9 +599,9 @@ function __impl-ssh-agent-add-key() {
         echo "$__fn: Error: Parameter PASSWORD must be specified."; return 64
     fi
 
-    if ! hash "ssh-add" &> /dev/null; then echo "$__fn: Error: Required command 'ssh-add' not found on this system."; return 64; fi
-    if ! hash "ssh-agent" &> /dev/null; then echo "$__fn: Error: Required command 'ssh-agent' not found on this system."; return 64; fi
-    if ! hash "expect" &> /dev/null; then echo "$__fn: Error: Required command 'expect' not found on this system."; return 64; fi
+    if ! hash "ssh-add" &>/dev/null; then echo "$__fn: Error: Required command 'ssh-add' not found on this system."; return 64; fi
+    if ! hash "ssh-agent" &>/dev/null; then echo "$__fn: Error: Required command 'ssh-agent' not found on this system."; return 64; fi
+    if ! hash "expect" &>/dev/null; then echo "$__fn: Error: Required command 'expect' not found on this system."; return 64; fi
 
     ######### ssh-agent-add-key ######### START
 
@@ -734,7 +734,7 @@ function __impl-ssh-trust-host() {
         if [[ $_PORT -gt 65535 ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is too high. Must be <= 65535."; return 64; fi
     fi
 
-    if ! hash "ssh-keyscan" &> /dev/null; then echo "$__fn: Error: Required command 'ssh-keyscan' not found on this system."; return 64; fi
+    if ! hash "ssh-keyscan" &>/dev/null; then echo "$__fn: Error: Required command 'ssh-keyscan' not found on this system."; return 64; fi
 
     ######### ssh-trust-host ######### START
 

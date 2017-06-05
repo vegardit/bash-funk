@@ -1223,7 +1223,7 @@ function __impl-test-fn-requires-existing() {
         return 64
     done
 
-    if ! hash "hash" &> /dev/null; then echo "$__fn: Error: Required command 'hash' not found on this system."; return 64; fi
+    if ! hash "hash" &>/dev/null; then echo "$__fn: Error: Required command 'hash' not found on this system."; return 64; fi
 
     ######### test-fn-requires-existing ######### START
 
@@ -1335,7 +1335,7 @@ function __impl-test-fn-requires-nonexistent() {
         return 64
     done
 
-    if ! hash "some_random_nonexistent_command" &> /dev/null; then echo "$__fn: Error: Required command 'some_random_nonexistent_command' not found on this system."; return 64; fi
+    if ! hash "some_random_nonexistent_command" &>/dev/null; then echo "$__fn: Error: Required command 'some_random_nonexistent_command' not found on this system."; return 64; fi
 
     ######### test-fn-requires-nonexistent ######### START
 
