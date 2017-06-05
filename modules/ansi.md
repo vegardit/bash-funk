@@ -5,6 +5,7 @@
 The following commands are available when this module is loaded:
 
 1. [-ansi-bold](#-ansi-bold)
+1. [-ansi-codes](#-ansi-codes)
 1. [-ansi-colors-supported](#-ansi-colors-supported)
 1. [-ansi-reset](#-ansi-reset)
 1. [-ansi-ul](#-ansi-ul)
@@ -43,6 +44,86 @@ if [[ $_on ]]; then
 elif [[ $_off ]]; then
     echo -ne "\033[22m"
 fi
+```
+
+
+## <a name="-ansi-codes"></a>-ansi-codes
+
+```
+Usage: -ansi-codes [OPTION]... [PREFIX]
+
+Prints commands to set variables with common ANSI codes. When used with the 'echo' command, the -e option is not required.
+
+Parameters:
+  PREFIX (default: 'ANSI_')
+      Prefix to be used for the declared variables.
+
+Options:
+-e, --escape 
+        If specified the escape code will be printed as octal value .
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+```
+
+*Implementation:*
+```bash
+if [[ $_escape ]]; then
+    local ESC="\033";
+else
+    local ESC=$(echo -e "\033");
+fi
+
+echo "
+${_PREFIX}RESET=\"$ESC[0m\"
+${_PREFIX}BOLD=\"$ESC[1m\"
+${_PREFIX}BOLD_OFF=\"$ESC[22m\"
+${_PREFIX}ITALIC=\"$ESC[3m\"
+${_PREFIX}UNDERLINE=\"$ESC[4m\"
+${_PREFIX}UNDERLINE_DOUBLE=\"$ESC[21m\"
+${_PREFIX}UNDERLINE_OFF=\"$ESC[24m\"
+${_PREFIX}BLINK_SLOW=\"$ESC[5m\"
+${_PREFIX}BLINK_FAST=\"$ESC[6m\"
+${_PREFIX}BLINK_OFF=\"$ESC[25m\"
+${_PREFIX}INVERT=\"$ESC[7m\"
+${_PREFIX}INVERT_OFF=\"$ESC[27m\"
+
+${_PREFIX}FG_BLACK=\"$ESC[30m\"
+${_PREFIX}FG_RED=\"$ESC[31m\"
+${_PREFIX}FG_GREEN=\"$ESC[32m\"
+${_PREFIX}FG_YELLOW=\"$ESC[33m\"
+${_PREFIX}FG_BLUE=\"$ESC[34m\"
+${_PREFIX}FG_MAGENTA=\"$ESC[35m\"
+${_PREFIX}FG_CYAN=\"$ESC[36m\"
+${_PREFIX}FG_GRAY=\"$ESC[37m\"
+
+${_PREFIX}FG_LIGHT_RED=\"$ESC[91m\"
+${_PREFIX}FG_LIGHT_GREEN=\"$ESC[92m\"
+${_PREFIX}FG_LIGHT_YELLOW=\"$ESC[93m\"
+${_PREFIX}FG_LIGHT_BLUE=\"$ESC[94m\"
+${_PREFIX}FG_LIGHT_MAGENTA=\"$ESC[95m\"
+${_PREFIX}FG_LIGHT_CYAN=\"$ESC[96m\"
+${_PREFIX}FG_WHITE=\"$ESC[97m\"
+
+${_PREFIX}BG_BLACK=\"$ESC[40m\"
+${_PREFIX}BG_RED=\"$ESC[41m\"
+${_PREFIX}BG_GREEN=\"$ESC[42m\"
+${_PREFIX}BG_YELLOW=\"$ESC[43m\"
+${_PREFIX}BG_BLUE=\"$ESC[44m\"
+${_PREFIX}BG_MAGENTA=\"$ESC[45m\"
+${_PREFIX}BG_CYAN=\"$ESC[46m\"
+${_PREFIX}BG_GRAY=\"$ESC[47m\"
+
+${_PREFIX}BG_LIGHT_BLACK=\"$ESC[100m\"
+${_PREFIX}BG_LIGHT_RED=\"$ESC[101m\"
+${_PREFIX}BG_LIGHT_GREEN=\"$ESC[102m\"
+${_PREFIX}BG_LIGHT_YELLOW=\"$ESC[103m\"
+${_PREFIX}BG_LIGHT_BLUE=\"$ESC[104m\"
+${_PREFIX}BG_LIGHT_MAGENTA=\"$ESC[105m\"
+${_PREFIX}BG_LIGHT_CYAN=\"$ESC[106m\"
+${_PREFIX}BG_WHITE=\"$ESC[107m\"
+"
 ```
 
 
@@ -155,6 +236,7 @@ Options:
 *Implementation:*
 ```bash
 -ansi-bold --selftest && echo || return 1
+-ansi-codes --selftest && echo || return 1
 -ansi-colors-supported --selftest && echo || return 1
 -ansi-reset --selftest && echo || return 1
 -ansi-ul --selftest && echo || return 1

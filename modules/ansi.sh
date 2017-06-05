@@ -142,6 +142,170 @@ function __complete-ansi-bold() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}ansi-bold -- ${BASH_FUNK_PREFIX:--}ansi-bold
 
+function -ansi-codes() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a e u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -e
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]... [PREFIX]"
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-ansi-codes() {
+    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _escape _help _selftest _PREFIX
+    [ -p /dev/stdout ] && __in_pipe=1 || true
+    [ -t 1 ] || __in_subshell=1
+    for __arg in "$@"; do
+        case $__arg in
+
+            --help)
+                echo "Usage: $__fn [OPTION]... [PREFIX]"
+                echo
+                echo "Prints commands to set variables with common ANSI codes. When used with the 'echo' command, the -e option is not required."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mPREFIX\033[22m (default: 'ANSI_')"
+                echo "      Prefix to be used for the declared variables."
+                echo
+                echo "Options:"
+                echo -e "\033[1m-e, --escape\033[22m "
+                echo "        If specified the escape code will be printed as octal value ."
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            --escape|-e)
+                _escape=1
+            ;;
+
+            -*)
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        if [[ ! $_PREFIX && ${#__params[@]} > 0 ]]; then
+            _PREFIX=$__param
+            continue
+        fi
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if [[ ! $_PREFIX ]]; then _PREFIX="ANSI_"; fi
+
+    ######### ansi-codes ######### START
+
+if [[ $_escape ]]; then
+    local ESC="\033";
+else
+    local ESC=$(echo -e "\033");
+fi
+
+echo "
+${_PREFIX}RESET=\"$ESC[0m\"
+${_PREFIX}BOLD=\"$ESC[1m\"
+${_PREFIX}BOLD_OFF=\"$ESC[22m\"
+${_PREFIX}ITALIC=\"$ESC[3m\"
+${_PREFIX}UNDERLINE=\"$ESC[4m\"
+${_PREFIX}UNDERLINE_DOUBLE=\"$ESC[21m\"
+${_PREFIX}UNDERLINE_OFF=\"$ESC[24m\"
+${_PREFIX}BLINK_SLOW=\"$ESC[5m\"
+${_PREFIX}BLINK_FAST=\"$ESC[6m\"
+${_PREFIX}BLINK_OFF=\"$ESC[25m\"
+${_PREFIX}INVERT=\"$ESC[7m\"
+${_PREFIX}INVERT_OFF=\"$ESC[27m\"
+
+${_PREFIX}FG_BLACK=\"$ESC[30m\"
+${_PREFIX}FG_RED=\"$ESC[31m\"
+${_PREFIX}FG_GREEN=\"$ESC[32m\"
+${_PREFIX}FG_YELLOW=\"$ESC[33m\"
+${_PREFIX}FG_BLUE=\"$ESC[34m\"
+${_PREFIX}FG_MAGENTA=\"$ESC[35m\"
+${_PREFIX}FG_CYAN=\"$ESC[36m\"
+${_PREFIX}FG_GRAY=\"$ESC[37m\"
+
+${_PREFIX}FG_LIGHT_RED=\"$ESC[91m\"
+${_PREFIX}FG_LIGHT_GREEN=\"$ESC[92m\"
+${_PREFIX}FG_LIGHT_YELLOW=\"$ESC[93m\"
+${_PREFIX}FG_LIGHT_BLUE=\"$ESC[94m\"
+${_PREFIX}FG_LIGHT_MAGENTA=\"$ESC[95m\"
+${_PREFIX}FG_LIGHT_CYAN=\"$ESC[96m\"
+${_PREFIX}FG_WHITE=\"$ESC[97m\"
+
+${_PREFIX}BG_BLACK=\"$ESC[40m\"
+${_PREFIX}BG_RED=\"$ESC[41m\"
+${_PREFIX}BG_GREEN=\"$ESC[42m\"
+${_PREFIX}BG_YELLOW=\"$ESC[43m\"
+${_PREFIX}BG_BLUE=\"$ESC[44m\"
+${_PREFIX}BG_MAGENTA=\"$ESC[45m\"
+${_PREFIX}BG_CYAN=\"$ESC[46m\"
+${_PREFIX}BG_GRAY=\"$ESC[47m\"
+
+${_PREFIX}BG_LIGHT_BLACK=\"$ESC[100m\"
+${_PREFIX}BG_LIGHT_RED=\"$ESC[101m\"
+${_PREFIX}BG_LIGHT_GREEN=\"$ESC[102m\"
+${_PREFIX}BG_LIGHT_YELLOW=\"$ESC[103m\"
+${_PREFIX}BG_LIGHT_BLUE=\"$ESC[104m\"
+${_PREFIX}BG_LIGHT_MAGENTA=\"$ESC[105m\"
+${_PREFIX}BG_LIGHT_CYAN=\"$ESC[106m\"
+${_PREFIX}BG_WHITE=\"$ESC[107m\"
+"
+
+    ######### ansi-codes ######### END
+}
+function __complete-ansi-codes() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --escape -e --help --selftest "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}ansi-codes -- ${BASH_FUNK_PREFIX:--}ansi-codes
+
 function -ansi-colors-supported() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
     for opt in a e u H t; do
@@ -547,6 +711,7 @@ function __impl-test-ansi() {
     ######### test-ansi ######### START
 
 ${BASH_FUNK_PREFIX:--}ansi-bold --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}ansi-codes --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-colors-supported --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-reset --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-ul --selftest && echo || return 1
@@ -568,10 +733,11 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-ansi -- ${BASH_FUNK_PREFIX:--}t
 
 function -help-ansi() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-bold [TEXT]\033[0m  -  Sets bold mode or prints the given text in bold."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-codes [PREFIX]\033[0m  -  Prints commands to set variables with common ANSI codes. When used with the 'echo' command, the -e option is not required."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-colors-supported\033[0m  -  Determines if ANSI color escape sequences are supported by the current terminal."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-reset\033[0m  -  Prints an ANSI escape sequence that reset all ANSI attributes."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-ul [TEXT]\033[0m  -  Sets underlined mode or prints the given text underlined."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-ansi\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( ansi-bold ansi-colors-supported ansi-reset ansi-ul test-ansi )
+__BASH_FUNK_FUNCS+=( ansi-bold ansi-codes ansi-colors-supported ansi-reset ansi-ul test-ansi )
