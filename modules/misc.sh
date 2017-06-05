@@ -69,7 +69,8 @@ function __impl-help() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
@@ -164,7 +165,8 @@ function __impl-test-all() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
@@ -261,7 +263,8 @@ function __impl-test-misc() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
@@ -371,26 +374,27 @@ function __impl-var-exists() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn USER\033[22m"
-                __stdout=$($__fn USER); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn USER)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn -v USER\033[22m"
-                __stdout=$($__fn -v USER); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn -v USER)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^Bash variable 'USER' exists.$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Bash variable 'USER' exists.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn -v NON_EXISTANT_VARIABLE\033[22m"
-                __stdout=$($__fn -v NON_EXISTANT_VARIABLE); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn -v NON_EXISTANT_VARIABLE)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
                 __regex="Bash variable 'NON_EXISTANT_VARIABLE' does not exist."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Bash variable 'NON_EXISTANT_VARIABLE' does not exist.]."; return 64; fi
@@ -509,7 +513,8 @@ function __impl-wait() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"

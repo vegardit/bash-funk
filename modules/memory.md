@@ -117,7 +117,11 @@ Options:
         Performs a self-test.
 
 Examples:
-$ -meminfo
+$ -meminfo 
+MemTotal:       24689452 kB
+MemFree:        13713796 kB
+MemAvailable:   16143004 kB
+...
 ```
 
 *Implementation:*

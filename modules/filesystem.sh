@@ -73,7 +73,8 @@ function __impl-abspath() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
@@ -189,7 +190,8 @@ function __impl-count-words() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
@@ -339,7 +341,8 @@ function __impl-du() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
@@ -449,7 +452,8 @@ function __impl-extract() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
@@ -604,7 +608,8 @@ function __impl-findfiles() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
@@ -853,7 +858,8 @@ function __impl-ll() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
@@ -978,7 +984,8 @@ function __impl-mkcd() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
@@ -1113,7 +1120,8 @@ function __impl-modified() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
@@ -1237,7 +1245,8 @@ function __impl-owner() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
@@ -1361,7 +1370,8 @@ function __impl-realpath() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
@@ -1492,12 +1502,13 @@ function __impl-sudo-append() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn /tmp/testfile.cfg 'foo=bar'\033[22m"
-                __stdout=$($__fn /tmp/testfile.cfg 'foo=bar'); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn /tmp/testfile.cfg 'foo=bar')"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^Appending to \[/tmp/testfile.cfg\]...$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Appending to \[/tmp/testfile.cfg\]...]."; return 64; fi
@@ -1631,12 +1642,13 @@ function __impl-sudo-write() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn /tmp/testfile.cfg $USER:$USER 'foo=bar'\033[22m"
-                __stdout=$($__fn /tmp/testfile.cfg $USER:$USER 'foo=bar'); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn /tmp/testfile.cfg $USER:$USER 'foo=bar')"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^Writing \[/tmp/testfile.cfg\]...$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Writing \[/tmp/testfile.cfg\]...]."; return 64; fi
@@ -1765,7 +1777,8 @@ function __impl-test-filesystem() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
@@ -1874,7 +1887,8 @@ function __impl-up() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"

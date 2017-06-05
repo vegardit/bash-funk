@@ -75,7 +75,8 @@ function __impl-fn-copy() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
@@ -203,19 +204,20 @@ function __impl-fn-exists() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn name-of-nonexistant-function\033[22m"
-                __stdout=$($__fn name-of-nonexistant-function); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn name-of-nonexistant-function)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
                 __regex=""
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn -v name-of-nonexistant-function\033[22m"
-                __stdout=$($__fn -v name-of-nonexistant-function); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn -v name-of-nonexistant-function)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
                 __regex="A function with the name 'name-of-nonexistant-function' does not exist."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [A function with the name 'name-of-nonexistant-function' does not exist.]."; return 64; fi
@@ -336,7 +338,8 @@ function __impl-fn-rename() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
@@ -461,7 +464,8 @@ function __impl-fn-unload() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
@@ -573,7 +577,8 @@ function __impl-test-functions() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"

@@ -79,26 +79,27 @@ function __impl-test-fn-flags() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn \033[22m"
-                __stdout=$($__fn ); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn )"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^myflag was not specified$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [myflag was not specified]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --myflag\033[22m"
-                __stdout=$($__fn --myflag); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --myflag)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^myflag was specified$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [myflag was specified]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn -m\033[22m"
-                __stdout=$($__fn -m); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn -m)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^myflag was specified$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [myflag was specified]."; return 64; fi
@@ -231,124 +232,125 @@ function __impl-test-fn-multi-value-options() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn \033[22m"
-                __stdout=$($__fn ); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn )"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^aa: bb: cc: dd: ee: ff: gg:$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [aa: bb: cc: dd: ee: ff: gg:]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --aa\033[22m"
-                __stdout=$($__fn --aa); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --aa)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^aa: bb: cc: dd: ee: ff: gg:$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [aa: bb: cc: dd: ee: ff: gg:]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --aa foo\033[22m"
-                __stdout=$($__fn --aa foo); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --aa foo)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^aa:foo bb: cc: dd: ee: ff: gg:$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [aa:foo bb: cc: dd: ee: ff: gg:]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --aa foo,bar\033[22m"
-                __stdout=$($__fn --aa foo,bar); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --aa foo,bar)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^aa:foo bar bb: cc: dd: ee: ff: gg:$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [aa:foo bar bb: cc: dd: ee: ff: gg:]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --bb\033[22m"
-                __stdout=$($__fn --bb); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --bb)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: For option --bb a list with at least 1 value\(s\) must be specified. Found: 0."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: For option --bb a list with at least 1 value\(s\) must be specified. Found: 0.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --bb foo,bar\033[22m"
-                __stdout=$($__fn --bb foo,bar); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --bb foo,bar)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^aa: bb:foo bar cc: dd: ee: ff: gg:$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [aa: bb:foo bar cc: dd: ee: ff: gg:]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --bb foo,bar,fb\033[22m"
-                __stdout=$($__fn --bb foo,bar,fb); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --bb foo,bar,fb)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: For option --bb a list with no more than 2 values must be specified. Found: 3."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: For option --bb a list with no more than 2 values must be specified. Found: 3.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --cc 123,45\033[22m"
-                __stdout=$($__fn --cc 123,45); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --cc 123,45)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^aa: bb: cc:123 45 dd: ee: ff: gg:$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [aa: bb: cc:123 45 dd: ee: ff: gg:]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --cc 123,abc\033[22m"
-                __stdout=$($__fn --cc 123,abc); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --cc 123,abc)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value 'abc' for option --cc is not a numeric value."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value 'abc' for option --cc is not a numeric value.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --dd 1,3\033[22m"
-                __stdout=$($__fn --dd 1,3); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --dd 1,3)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^aa: bb: cc: dd:1 3 ee: ff: gg:$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [aa: bb: cc: dd:1 3 ee: ff: gg:]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --dd 0,3\033[22m"
-                __stdout=$($__fn --dd 0,3); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --dd 0,3)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value '0' for option --dd is too low. Must be >= 1."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value '0' for option --dd is too low. Must be >= 1.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --dd 3,6\033[22m"
-                __stdout=$($__fn --dd 3,6); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --dd 3,6)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value '6' for option --dd is too high. Must be <= 5."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value '6' for option --dd is too high. Must be <= 5.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --ee A,B\033[22m"
-                __stdout=$($__fn --ee A,B); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --ee A,B)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^aa: bb: cc: dd: ee:A B ff: gg:$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [aa: bb: cc: dd: ee:A B ff: gg:]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --ee A,F\033[22m"
-                __stdout=$($__fn --ee A,F); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --ee A,F)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value 'F' for option --ee is not one of the allowed values \[A,B,C\]."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value 'F' for option --ee is not one of the allowed values \[A,B,C\].]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --ff foo,bar\033[22m"
-                __stdout=$($__fn --ff foo,bar); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --ff foo,bar)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^aa: bb: cc: dd: ee: ff:foo bar gg:$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [aa: bb: cc: dd: ee: ff:foo bar gg:]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --ff foo,123\033[22m"
-                __stdout=$($__fn --ff foo,123); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --ff foo,123)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value '123' for option --ff does not match required pattern '\[a-z\]\+'."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value '123' for option --ff does not match required pattern '\[a-z\]\+'.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --gg 123\033[22m"
-                __stdout=$($__fn --gg 123); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --gg 123)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value '123' for option --gg must only contain characters a-z."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value '123' for option --gg must only contain characters a-z.]."; return 64; fi
@@ -580,110 +582,111 @@ function __impl-test-fn-multi-value-parameters() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn \033[22m"
-                __stdout=$($__fn ); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn )"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: For parameter AA exactly 2 values must be specified. Found: 0."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: For parameter AA exactly 2 values must be specified. Found: 0.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa\033[22m"
-                __stdout=$($__fn aa); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: For parameter AA exactly 2 values must be specified. Found: 1."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: For parameter AA exactly 2 values must be specified. Found: 1.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa aa\033[22m"
-                __stdout=$($__fn aa aa); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa aa)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: For parameter BB exactly 2 values must be specified. Found: 0."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: For parameter BB exactly 2 values must be specified. Found: 0.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa aa 12\033[22m"
-                __stdout=$($__fn aa aa 12); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa aa 12)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: For parameter BB exactly 2 values must be specified. Found: 1."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: For parameter BB exactly 2 values must be specified. Found: 1.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa aa 12 bb\033[22m"
-                __stdout=$($__fn aa aa 12 bb); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa aa 12 bb)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value 'bb' for parameter BB is not a numeric value."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value 'bb' for parameter BB is not a numeric value.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa aa 12 34\033[22m"
-                __stdout=$($__fn aa aa 12 34); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa aa 12 34)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: For parameter CC exactly 2 values must be specified. Found: 0."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: For parameter CC exactly 2 values must be specified. Found: 0.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa aa 12 34 0 3\033[22m"
-                __stdout=$($__fn aa aa 12 34 0 3); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa aa 12 34 0 3)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value '0' for parameter CC is too low. Must be >= 1."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value '0' for parameter CC is too low. Must be >= 1.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa aa 12 34 1 6\033[22m"
-                __stdout=$($__fn aa aa 12 34 1 6); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa aa 12 34 1 6)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value '6' for parameter CC is too high. Must be <= 5."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value '6' for parameter CC is too high. Must be <= 5.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa aa 12 34 1 5\033[22m"
-                __stdout=$($__fn aa aa 12 34 1 5); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa aa 12 34 1 5)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: For parameter DD exactly 2 values must be specified. Found: 0."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: For parameter DD exactly 2 values must be specified. Found: 0.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa aa 12 34 1 5 A G\033[22m"
-                __stdout=$($__fn aa aa 12 34 1 5 A G); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa aa 12 34 1 5 A G)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value 'G' for parameter DD is not one of the allowed values \[A,B,C\]."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value 'G' for parameter DD is not one of the allowed values \[A,B,C\].]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa aa 12 34 1 5 A B\033[22m"
-                __stdout=$($__fn aa aa 12 34 1 5 A B); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa aa 12 34 1 5 A B)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: For parameter EE exactly 2 values must be specified. Found: 0."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: For parameter EE exactly 2 values must be specified. Found: 0.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa aa 12 34 1 5 A B foo 123\033[22m"
-                __stdout=$($__fn aa aa 12 34 1 5 A B foo 123); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa aa 12 34 1 5 A B foo 123)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value '123' for parameter EE does not match required pattern '\[a-z\]\+'."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value '123' for parameter EE does not match required pattern '\[a-z\]\+'.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa aa 12 34 1 5 A B foo bar\033[22m"
-                __stdout=$($__fn aa aa 12 34 1 5 A B foo bar); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa aa 12 34 1 5 A B foo bar)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^AA:aa aa BB:12 34 CC:1 5 DD:A B EE:foo bar FF:$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [AA:aa aa BB:12 34 CC:1 5 DD:A B EE:foo bar FF:]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa aa 12 34 1 5 A B foo bar 123\033[22m"
-                __stdout=$($__fn aa aa 12 34 1 5 A B foo bar 123); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa aa 12 34 1 5 A B foo bar 123)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value '123' for parameter FF must only contain characters a-z."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value '123' for parameter FF must only contain characters a-z.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa aa 12 34 1 5 A B foo bar a b c d e f\033[22m"
-                __stdout=$($__fn aa aa 12 34 1 5 A B foo bar a b c d e f); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa aa 12 34 1 5 A B foo bar a b c d e f)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^AA:aa aa BB:12 34 CC:1 5 DD:A B EE:foo bar FF:a b c d e f$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [AA:aa aa BB:12 34 CC:1 5 DD:A B EE:foo bar FF:a b c d e f]."; return 64; fi
@@ -849,54 +852,55 @@ function __impl-test-fn-multi-value-parameters-first-variable() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn \033[22m"
-                __stdout=$($__fn ); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn )"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: For parameter BB exactly 2 values must be specified. Found: 0."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: For parameter BB exactly 2 values must be specified. Found: 0.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn bb\033[22m"
-                __stdout=$($__fn bb); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn bb)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: For parameter BB exactly 2 values must be specified. Found: 1."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: For parameter BB exactly 2 values must be specified. Found: 1.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn 12 bb\033[22m"
-                __stdout=$($__fn 12 bb); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn 12 bb)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value 'bb' for parameter BB is not a numeric value."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value 'bb' for parameter BB is not a numeric value.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn 12 34\033[22m"
-                __stdout=$($__fn 12 34); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn 12 34)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^AA: BB:12 34$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [AA: BB:12 34]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa 12 34\033[22m"
-                __stdout=$($__fn aa 12 34); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa 12 34)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value 'aa' for parameter AA is not a numeric value."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value 'aa' for parameter AA is not a numeric value.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn 00 aa 12 34\033[22m"
-                __stdout=$($__fn 00 aa 12 34); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn 00 aa 12 34)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value 'aa' for parameter AA is not a numeric value."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value 'aa' for parameter AA is not a numeric value.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn 12 34 bb 12 34\033[22m"
-                __stdout=$($__fn 12 34 bb 12 34); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn 12 34 bb 12 34)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: too many parameters: '34'"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: too many parameters: '34']."; return 64; fi
@@ -1029,40 +1033,41 @@ function __impl-test-fn-noargs() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn \033[22m"
-                __stdout=$($__fn ); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn )"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --verbose\033[22m"
-                __stdout=$($__fn --verbose); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --verbose)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^verbose mode$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [verbose mode]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn -f\033[22m"
-                __stdout=$($__fn -f); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn -f)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="invalid option: '-f'"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [invalid option: '-f']."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --foo\033[22m"
-                __stdout=$($__fn --foo); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --foo)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="invalid option: '--foo'"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [invalid option: '--foo']."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn FOO\033[22m"
-                __stdout=$($__fn FOO); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn FOO)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="too many parameters: 'FOO'"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [too many parameters: 'FOO']."; return 64; fi
@@ -1170,12 +1175,13 @@ function __impl-test-fn-requires-existing() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn \033[22m"
-                __stdout=$($__fn ); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn )"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
@@ -1281,12 +1287,13 @@ function __impl-test-fn-requires-nonexistent() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn \033[22m"
-                __stdout=$($__fn ); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn )"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Required command 'some_random_nonexistent_command' not found on this system."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Required command 'some_random_nonexistent_command' not found on this system.]."; return 64; fi
@@ -1419,110 +1426,111 @@ function __impl-test-fn-single-value-options() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn \033[22m"
-                __stdout=$($__fn ); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn )"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^aa: bb: cc: dd: ee: ff: gg:$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [aa: bb: cc: dd: ee: ff: gg:]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --aa\033[22m"
-                __stdout=$($__fn --aa); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --aa)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^aa:cat bb: cc: dd: ee: ff: gg:$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [aa:cat bb: cc: dd: ee: ff: gg:]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --aa foo\033[22m"
-                __stdout=$($__fn --aa foo); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --aa foo)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^aa:foo bb: cc: dd: ee: ff: gg:$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [aa:foo bb: cc: dd: ee: ff: gg:]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --bb\033[22m"
-                __stdout=$($__fn --bb); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --bb)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value v for option --bb must be specified."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value v for option --bb must be specified.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --bb foo\033[22m"
-                __stdout=$($__fn --bb foo); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --bb foo)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^aa: bb:foo cc: dd: ee: ff: gg:$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [aa: bb:foo cc: dd: ee: ff: gg:]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --cc 12345\033[22m"
-                __stdout=$($__fn --cc 12345); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --cc 12345)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^aa: bb: cc:12345 dd: ee: ff: gg:$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [aa: bb: cc:12345 dd: ee: ff: gg:]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --cc abc\033[22m"
-                __stdout=$($__fn --cc abc); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --cc abc)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value 'abc' for option --cc is not a numeric value."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value 'abc' for option --cc is not a numeric value.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --dd 3\033[22m"
-                __stdout=$($__fn --dd 3); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --dd 3)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^aa: bb: cc: dd:3 ee: ff: gg:$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [aa: bb: cc: dd:3 ee: ff: gg:]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --dd 0\033[22m"
-                __stdout=$($__fn --dd 0); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --dd 0)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value '0' for option --dd is too low. Must be >= 1."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value '0' for option --dd is too low. Must be >= 1.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --dd 6\033[22m"
-                __stdout=$($__fn --dd 6); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --dd 6)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value '6' for option --dd is too high. Must be <= 5."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value '6' for option --dd is too high. Must be <= 5.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --ee A\033[22m"
-                __stdout=$($__fn --ee A); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --ee A)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^aa: bb: cc: dd: ee:A ff: gg:$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [aa: bb: cc: dd: ee:A ff: gg:]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --ee F\033[22m"
-                __stdout=$($__fn --ee F); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --ee F)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value 'F' for option --ee is not one of the allowed values \[A,B,C\]."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value 'F' for option --ee is not one of the allowed values \[A,B,C\].]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --ff foo\033[22m"
-                __stdout=$($__fn --ff foo); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --ff foo)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^aa: bb: cc: dd: ee: ff:foo gg:$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [aa: bb: cc: dd: ee: ff:foo gg:]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --ff 123\033[22m"
-                __stdout=$($__fn --ff 123); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --ff 123)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value '123' for option --ff does not match required pattern '\[a-z\]\+'."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value '123' for option --ff does not match required pattern '\[a-z\]\+'.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn --gg 123\033[22m"
-                __stdout=$($__fn --gg 123); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn --gg 123)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value '123' for option --gg must only contain characters a-z."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value '123' for option --gg must only contain characters a-z.]."; return 64; fi
@@ -1727,96 +1735,97 @@ function __impl-test-fn-single-value-parameters() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn \033[22m"
-                __stdout=$($__fn ); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn )"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Parameter AA must be specified."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Parameter AA must be specified.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa\033[22m"
-                __stdout=$($__fn aa); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Parameter BB must be specified."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Parameter BB must be specified.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa bb\033[22m"
-                __stdout=$($__fn aa bb); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa bb)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value 'bb' for parameter BB is not a numeric value."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value 'bb' for parameter BB is not a numeric value.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa 12\033[22m"
-                __stdout=$($__fn aa 12); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa 12)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Parameter CC must be specified."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Parameter CC must be specified.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa 12 0\033[22m"
-                __stdout=$($__fn aa 12 0); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa 12 0)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value '0' for parameter CC is too low. Must be >= 1."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value '0' for parameter CC is too low. Must be >= 1.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa 12 6\033[22m"
-                __stdout=$($__fn aa 12 6); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa 12 6)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value '6' for parameter CC is too high. Must be <= 5."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value '6' for parameter CC is too high. Must be <= 5.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa 12 5\033[22m"
-                __stdout=$($__fn aa 12 5); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa 12 5)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Parameter DD must be specified."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Parameter DD must be specified.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa 12 5 G\033[22m"
-                __stdout=$($__fn aa 12 5 G); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa 12 5 G)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value 'G' for parameter DD is not one of the allowed values \[A,B,C\]."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value 'G' for parameter DD is not one of the allowed values \[A,B,C\].]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa 12 5 A\033[22m"
-                __stdout=$($__fn aa 12 5 A); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa 12 5 A)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Parameter EE must be specified."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Parameter EE must be specified.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa 12 5 A 123\033[22m"
-                __stdout=$($__fn aa 12 5 A 123); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa 12 5 A 123)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value '123' for parameter EE does not match required pattern '\[a-z\]\+'."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value '123' for parameter EE does not match required pattern '\[a-z\]\+'.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa 12 5 A foo\033[22m"
-                __stdout=$($__fn aa 12 5 A foo); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa 12 5 A foo)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^AA:aa BB:12 CC:5 DD:A EE:foo FF:cat$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [AA:aa BB:12 CC:5 DD:A EE:foo FF:cat]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa 12 5 A foo 123\033[22m"
-                __stdout=$($__fn aa 12 5 A foo 123); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa 12 5 A foo 123)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value '123' for parameter FF must only contain characters a-z."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value '123' for parameter FF must only contain characters a-z.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa 12 5 A foo bar\033[22m"
-                __stdout=$($__fn aa 12 5 A foo bar); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa 12 5 A foo bar)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^AA:aa BB:12 CC:5 DD:A EE:foo FF:bar$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [AA:aa BB:12 CC:5 DD:A EE:foo FF:bar]."; return 64; fi
@@ -1981,40 +1990,41 @@ function __impl-test-fn-single-value-parameters-first-optional() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn \033[22m"
-                __stdout=$($__fn ); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn )"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Parameter BB must be specified."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Parameter BB must be specified.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn bb\033[22m"
-                __stdout=$($__fn bb); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn bb)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value 'bb' for parameter BB is not a numeric value."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value 'bb' for parameter BB is not a numeric value.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn 22\033[22m"
-                __stdout=$($__fn 22); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn 22)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^AA: BB:22$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [AA: BB:22]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn aa 22\033[22m"
-                __stdout=$($__fn aa 22); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn aa 22)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value 'aa' for parameter AA is not a numeric value."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value 'aa' for parameter AA is not a numeric value.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn 11 22\033[22m"
-                __stdout=$($__fn 11 22); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn 11 22)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^AA:11 BB:22$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [AA:11 BB:22]."; return 64; fi
@@ -2126,7 +2136,8 @@ function __impl-test-test() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
