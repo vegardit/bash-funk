@@ -559,7 +559,7 @@ function __impl-ssh-agent-add-key() {
 eval $(ssh-agent)
 
 expect << EOF
-  spawn ssh-add $_KEYFILE
+  spawn ssh-add $_KEY_FILE
   expect "Enter passphrase"
   send "$_PASSWORD\r"
   expect eof
