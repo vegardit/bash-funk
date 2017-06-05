@@ -25,15 +25,27 @@ Parameters:
       Number of the port to occupy.
 
 Options:
+-d, --duration SECONDS (integer: ?-?)
+        Duration in seconds to block the port.
     --help 
         Prints this help.
     --selftest 
         Performs a self-test.
+
+Examples:
+$ -block-port --duration 1  12345
+Binding to 0.0.0.0:12345...
+Press [CTRL]+[C] to abort.
+$ -block-port -d 1  127.0.0.1  12345
+Binding to 127.0.0.1:12345...
+Press [CTRL]+[C] to abort.
 ```
 
 *Implementation:*
 ```bash
 echo "Binding to $_BIND_ADDRESS:$_PORT..."
+
+[[ $_duration ]] && local timeout="Timeout => $_duration," || local timeout="";
 
 perl << EOF
     use IO::Socket;
@@ -42,8 +54,10 @@ perl << EOF
         LocalPort => $_PORT,
         Type => SOCK_STREAM,
         ReuseAddr => 1,
+        $timeout
         Listen => 10
     ) or die "Couldn't bind to $_BIND_ADDRESS:$_PORT: \$@\n";
+    print("Press [CTRL]+[C] to abort.\n");
     while (\$client = \$server->accept()) { }
     close(\$server);
 EOF

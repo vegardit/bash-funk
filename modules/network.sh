@@ -46,7 +46,7 @@ function -block-port() {
     return $rc
 }
 function __impl-block-port() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _BIND_ADDRESS _PORT
+    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _duration _help _selftest _BIND_ADDRESS _PORT
     [ -p /dev/stdout ] && __in_pipe=1 || true
     [ -t 1 ] || __in_subshell=1
     for __arg in "$@"; do
@@ -64,10 +64,20 @@ function __impl-block-port() {
                 echo "      Number of the port to occupy."
                 echo
                 echo "Options:"
+                echo -e "\033[1m-d, --duration SECONDS\033[22m (integer: ?-?)"
+                echo "        Duration in seconds to block the port."
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo
+                echo "Examples:"
+                echo -e "$ \033[1m$__fn --duration 1  12345\033[22m"
+                echo "Binding to 0.0.0.0:12345...
+Press [CTRL]+[C] to abort."
+                echo -e "$ \033[1m$__fn -d 1  127.0.0.1  12345\033[22m"
+                echo "Binding to 127.0.0.1:12345...
+Press [CTRL]+[C] to abort."
                 echo
                 return 0
               ;;
@@ -75,12 +85,31 @@ function __impl-block-port() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn --duration 1  12345\033[22m"
+                __stdout="$($__fn --duration 1  12345)"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                __regex="^Binding to 0\.0\.0\.0:12345\.\.\.
+Press \[CTRL]\+\[C] to abort\.$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Binding to 0\.0\.0\.0:12345\.\.\.
+Press \[CTRL]\+\[C] to abort\.]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn -d 1  127.0.0.1  12345\033[22m"
+                __stdout="$($__fn -d 1  127.0.0.1  12345)"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                __regex="^Binding to 127\.0\.0\.1:12345\.\.\.
+Press \[CTRL]\+\[C] to abort\.$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Binding to 127\.0\.0\.1:12345\.\.\.
+Press \[CTRL]\+\[C] to abort\.]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn 70000\033[22m"
-                __stdout=$($__fn 70000); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn 70000)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value '70000' for parameter PORT is too high. Must be <= 65535."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value '70000' for parameter PORT is too high. Must be <= 65535.]."; return 64; fi
@@ -89,6 +118,11 @@ function __impl-block-port() {
                 return 0
               ;;
 
+            --duration|-d)
+                _duration="@@##@@"
+                __optionWithValue=duration
+            ;;
+
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -96,6 +130,10 @@ function __impl-block-port() {
 
             *)
                 case $__optionWithValue in
+                    duration)
+                        _duration=$__arg
+                        __optionWithValue=
+                      ;;
                     *)
                         __params+=("$__arg")
                 esac
@@ -117,6 +155,10 @@ function __impl-block-port() {
     done
 
     if [[ ! $_BIND_ADDRESS ]]; then _BIND_ADDRESS="0.0.0.0"; fi
+    if [[ $_duration ]]; then
+        if [[ $_duration == "@@##@@" ]]; then echo "$__fn: Error: Value SECONDS for option --duration must be specified."; return 64; fi
+        if [[ ! "$_duration" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_duration' for option --duration is not a numeric value."; return 64; fi
+    fi
 
     if [[ $_PORT ]]; then
         if [[ ! "$_PORT" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is not a numeric value."; return 64; fi
@@ -130,6 +172,8 @@ function __impl-block-port() {
 
 echo "Binding to $_BIND_ADDRESS:$_PORT..."
 
+[[ $_duration ]] && local timeout="Timeout => $_duration," || local timeout="";
+
 perl << EOF
     use IO::Socket;
     \$server = IO::Socket::INET->new(
@@ -137,8 +181,10 @@ perl << EOF
         LocalPort => $_PORT,
         Type => SOCK_STREAM,
         ReuseAddr => 1,
+        $timeout
         Listen => 10
     ) or die "Couldn't bind to $_BIND_ADDRESS:$_PORT: \$@\n";
+    print("Press [CTRL]+[C] to abort.\n");
     while (\$client = \$server->accept()) { }
     close(\$server);
 EOF
@@ -148,7 +194,7 @@ EOF
 function __complete-block-port() {
     local currentWord=${COMP_WORDS[COMP_CWORD]}
     if [[ ${currentWord} == -* ]]; then
-        local options=" --help --selftest "
+        local options=" --duration -d --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
     else
@@ -206,7 +252,8 @@ function __impl-get-ips() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
@@ -315,26 +362,27 @@ function __impl-is-port-open() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn localhost 12345 1\033[22m"
-                __stdout=$($__fn localhost 12345 1); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn localhost 12345 1)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
                 __regex=""
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn -v localhost 12345 1\033[22m"
-                __stdout=$($__fn -v localhost 12345 1); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn -v localhost 12345 1)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
                 __regex="localhost:12345 is not reachable."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [localhost:12345 is not reachable.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn localhost 70000\033[22m"
-                __stdout=$($__fn localhost 70000); __rc=$?
-                echo $__stdout
+                __stdout="$($__fn localhost 70000)"; __rc=$?
+                echo "$__stdout"
                 if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
                 __regex="Error: Value '70000' for parameter PORT is too high. Must be <= 65535."
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Value '70000' for parameter PORT is too high. Must be <= 65535.]."; return 64; fi
@@ -503,7 +551,8 @@ function __impl-ssh-agent-add-key() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
@@ -637,7 +686,8 @@ function __impl-ssh-trust-host() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
@@ -755,7 +805,8 @@ function __impl-test-network() {
             --selftest)
                 echo "Testing function [$__fn]..."
                 echo -e "$ \033[1m$__fn --help\033[22m"
-                __stdout=$($__fn --help); __rc=$?
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
