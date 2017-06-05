@@ -29,10 +29,6 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
-
-Examples:
-$ -block-port 70000
-Error: Value '70000' for parameter PORT is too high. Must be <= 65535.
 ```
 
 *Implementation:*
@@ -102,8 +98,6 @@ $ -is-port-open localhost 12345 1
 
 $ -is-port-open -v localhost 12345 1
 localhost:12345 is not reachable.
-$ -is-port-open localhost 70000
-Error: Value '70000' for parameter PORT is too high. Must be <= 65535.
 ```
 
 *Implementation:*
