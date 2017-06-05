@@ -192,13 +192,13 @@ EOF
     ######### block-port ######### END
 }
 function __complete-block-port() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --duration -d --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}block-port -- ${BASH_FUNK_PREFIX:--}block-port
@@ -286,13 +286,13 @@ ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}
     ######### get-ips ######### END
 }
 function __complete-get-ips() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}get-ips -- ${BASH_FUNK_PREFIX:--}get-ips
@@ -480,13 +480,13 @@ fi
     ######### is-port-open ######### END
 }
 function __complete-is-port-open() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest --verbose -v "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}is-port-open -- ${BASH_FUNK_PREFIX:--}is-port-open
@@ -617,13 +617,13 @@ EOF
     ######### ssh-agent-add-key ######### END
 }
 function __complete-ssh-agent-add-key() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}ssh-agent-add-key -- ${BASH_FUNK_PREFIX:--}ssh-agent-add-key
@@ -745,13 +745,13 @@ mv ~/.ssh/known_hosts.tmp ~/.ssh/known_hosts
     ######### ssh-trust-host ######### END
 }
 function __complete-ssh-trust-host() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}ssh-trust-host -- ${BASH_FUNK_PREFIX:--}ssh-trust-host
@@ -843,13 +843,13 @@ ${BASH_FUNK_PREFIX:--}ssh-trust-host --selftest && echo || return 1
     ######### test-network ######### END
 }
 function __complete-test-network() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-network -- ${BASH_FUNK_PREFIX:--}test-network

@@ -122,13 +122,13 @@ fi
     ######### abspath ######### END
 }
 function __complete-abspath() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}abspath -- ${BASH_FUNK_PREFIX:--}abspath
@@ -277,13 +277,22 @@ fi
     ######### count-words ######### END
 }
 function __complete-count-words() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --sort -s --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        local prev="${COMP_WORDS[COMP_CWORD-1]}"
+        case $prev in
+            --sort|-s)
+                COMPREPLY=($(compgen -o default -W "count
+word" -- $curr))
+              ;;
+            *)
+                COMPREPLY=($(compgen -o default -- $curr))
+              ;;
+        esac
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}count-words -- ${BASH_FUNK_PREFIX:--}count-words
@@ -386,13 +395,13 @@ du -s -h "${_PATH[@]}"
     ######### du ######### END
 }
 function __complete-du() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}du -- ${BASH_FUNK_PREFIX:--}du
@@ -530,13 +539,13 @@ fi
     ######### extract ######### END
 }
 function __complete-extract() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}extract -- ${BASH_FUNK_PREFIX:--}extract
@@ -794,13 +803,13 @@ fi
     ######### findfiles ######### END
 }
 function __complete-findfiles() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --lines -l --unpack -u --maxdepth --mindepth --name --help --selftest --verbose -v "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}findfiles -- ${BASH_FUNK_PREFIX:--}findfiles
@@ -914,13 +923,13 @@ fi
     ######### ll ######### END
 }
 function __complete-ll() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}ll -- ${BASH_FUNK_PREFIX:--}ll
@@ -1056,13 +1065,13 @@ mkdir "$_PATH" && cd "$_PATH"
     ######### mkcd ######### END
 }
 function __complete-mkcd() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --mode -m --parents -p --help --selftest --verbose -v "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}mkcd -- ${BASH_FUNK_PREFIX:--}mkcd
@@ -1181,13 +1190,13 @@ fi
     ######### modified ######### END
 }
 function __complete-modified() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}modified -- ${BASH_FUNK_PREFIX:--}modified
@@ -1306,13 +1315,13 @@ fi
     ######### owner ######### END
 }
 function __complete-owner() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}owner -- ${BASH_FUNK_PREFIX:--}owner
@@ -1429,13 +1438,13 @@ fi
     ######### realpath ######### END
 }
 function __complete-realpath() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}realpath -- ${BASH_FUNK_PREFIX:--}realpath
@@ -1566,13 +1575,13 @@ echo "$_CONTENT" | sudo tee --append "$_FILE_PATH" > /dev/null
     ######### sudo-append ######### END
 }
 function __complete-sudo-append() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}sudo-append -- ${BASH_FUNK_PREFIX:--}sudo-append
@@ -1717,13 +1726,13 @@ sudo sh -c "echo '$_CONTENT' > '$_FILE_PATH'" && sudo chown "$_OWNER" "$_FILE_PA
     ######### sudo-write ######### END
 }
 function __complete-sudo-write() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}sudo-write -- ${BASH_FUNK_PREFIX:--}sudo-write
@@ -1823,13 +1832,13 @@ ${BASH_FUNK_PREFIX:--}up --selftest && echo || return 1
     ######### test-filesystem ######### END
 }
 function __complete-test-filesystem() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-filesystem -- ${BASH_FUNK_PREFIX:--}test-filesystem
@@ -1941,13 +1950,13 @@ fi
     ######### up ######### END
 }
 function __complete-up() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        local path="$(pwd)"; COMPREPLY=( $(IFS=$'\n' compgen -o default -W "$( echo -e "${path////\n}" | sed 's/^/\x27/; s/$/\x27/' )" -- "$currentWord") )
+        local path="$(pwd)"; COMPREPLY=($(IFS=$'\n' compgen -o default -W "$( echo -e "${path////\n}" | sed 's/^/\x27/; s/$/\x27/' )" -- "$curr"))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}up -- ${BASH_FUNK_PREFIX:--}up

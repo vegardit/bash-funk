@@ -138,13 +138,13 @@ fi
     ######### md5sum ######### END
 }
 function __complete-md5sum() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}md5sum -- ${BASH_FUNK_PREFIX:--}md5sum
@@ -267,13 +267,13 @@ fi
     ######### sha256sum ######### END
 }
 function __complete-sha256sum() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}sha256sum -- ${BASH_FUNK_PREFIX:--}sha256sum
@@ -362,13 +362,13 @@ ${BASH_FUNK_PREFIX:--}sha256sum --selftest && echo || return 1
     ######### test-crypto ######### END
 }
 function __complete-test-crypto() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-crypto -- ${BASH_FUNK_PREFIX:--}test-crypto

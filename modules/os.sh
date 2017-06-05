@@ -167,13 +167,13 @@ fi
     ######### command-exists ######### END
 }
 function __complete-command-exists() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest --verbose -v "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}command-exists -- ${BASH_FUNK_PREFIX:--}command-exists
@@ -311,13 +311,13 @@ return 1
     ######### pkg-installed ######### END
 }
 function __complete-pkg-installed() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest --verbose -v "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}pkg-installed -- ${BASH_FUNK_PREFIX:--}pkg-installed
@@ -406,13 +406,13 @@ ${BASH_FUNK_PREFIX:--}pkg-installed --selftest && echo || return 1
     ######### test-os ######### END
 }
 function __complete-test-os() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-os -- ${BASH_FUNK_PREFIX:--}test-os

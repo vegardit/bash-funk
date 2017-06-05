@@ -128,13 +128,13 @@ printf "$_ASCII_STRING" | xxd -p | tr "[a-z]" "[A-z]"
     ######### ascii2hex ######### END
 }
 function __complete-ascii2hex() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}ascii2hex -- ${BASH_FUNK_PREFIX:--}ascii2hex
@@ -247,13 +247,13 @@ printf "$_HEX_STRING" | xxd -r -p
     ######### hex2ascii ######### END
 }
 function __complete-hex2ascii() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}hex2ascii -- ${BASH_FUNK_PREFIX:--}hex2ascii
@@ -373,13 +373,13 @@ echo $normalized
     ######### normalize-path ######### END
 }
 function __complete-normalize-path() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}normalize-path -- ${BASH_FUNK_PREFIX:--}normalize-path
@@ -523,13 +523,13 @@ printf "%s" "$firstItem${additionalItems[@]/#/$_SEPARATOR}"
     ######### str-join ######### END
 }
 function __complete-str-join() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}str-join -- ${BASH_FUNK_PREFIX:--}str-join
@@ -642,13 +642,13 @@ echo "${_STRING,,}"
     ######### str-lower ######### END
 }
 function __complete-str-lower() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}str-lower -- ${BASH_FUNK_PREFIX:--}str-lower
@@ -853,13 +853,13 @@ fi
     ######### str-matches ######### END
 }
 function __complete-str-matches() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --all -a --help --selftest --verbose -v "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}str-matches -- ${BASH_FUNK_PREFIX:--}str-matches
@@ -985,13 +985,13 @@ echo "${spaces// /$_STRING}"
     ######### str-repeat ######### END
 }
 function __complete-str-repeat() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}str-repeat -- ${BASH_FUNK_PREFIX:--}str-repeat
@@ -1104,13 +1104,13 @@ echo $_STRING
     ######### str-trim ######### END
 }
 function __complete-str-trim() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}str-trim -- ${BASH_FUNK_PREFIX:--}str-trim
@@ -1223,13 +1223,13 @@ echo "${1^^}"
     ######### str-upper ######### END
 }
 function __complete-str-upper() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}str-upper -- ${BASH_FUNK_PREFIX:--}str-upper
@@ -1349,13 +1349,13 @@ fi
     ######### strip-ansi ######### END
 }
 function __complete-strip-ansi() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}strip-ansi -- ${BASH_FUNK_PREFIX:--}strip-ansi
@@ -1479,13 +1479,13 @@ echo ${_SEARCH_IN#*$_SEARCH_FOR}
     ######### substr-after ######### END
 }
 function __complete-substr-after() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}substr-after -- ${BASH_FUNK_PREFIX:--}substr-after
@@ -1609,13 +1609,13 @@ echo "${_SEARCH_IN#${_SEARCH_IN%${_SEARCH_FOR}*}$_SEARCH_FOR}"
     ######### substr-after-last ######### END
 }
 function __complete-substr-after-last() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}substr-after-last -- ${BASH_FUNK_PREFIX:--}substr-after-last
@@ -1739,13 +1739,13 @@ echo "${_SEARCH_IN%%${_SEARCH_FOR}*}"
     ######### substr-before ######### END
 }
 function __complete-substr-before() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}substr-before -- ${BASH_FUNK_PREFIX:--}substr-before
@@ -1869,13 +1869,13 @@ echo "${_SEARCH_IN%${_SEARCH_FOR}*}"
     ######### substr-before-last ######### END
 }
 function __complete-substr-before-last() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}substr-before-last -- ${BASH_FUNK_PREFIX:--}substr-before-last
@@ -2011,13 +2011,13 @@ echo "${withoutPrefix%%${_SUFFIX}*}"
     ######### substr-between ######### END
 }
 function __complete-substr-between() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}substr-between -- ${BASH_FUNK_PREFIX:--}substr-between
@@ -2119,13 +2119,13 @@ ${BASH_FUNK_PREFIX:--}substr-between --selftest && echo || return 1
     ######### test-strings ######### END
 }
 function __complete-test-strings() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-strings -- ${BASH_FUNK_PREFIX:--}test-strings

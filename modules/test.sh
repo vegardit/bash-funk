@@ -138,13 +138,13 @@ function __impl-test-fn-flags() {
     ######### test-fn-flags ######### END
 }
 function __complete-test-fn-flags() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --myflag -m --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-flags -- ${BASH_FUNK_PREFIX:--}test-fn-flags
@@ -502,13 +502,23 @@ echo "aa:${_aa[@]} bb:${_bb[@]} cc:${_cc[@]} dd:${_dd[@]} ee:${_ee[@]} ff:${_ff[
     ######### test-fn-multi-value-options ######### END
 }
 function __complete-test-fn-multi-value-options() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --aa -a --bb -b --cc -c --dd -d --ee -e --ff -f --gg -g --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        local prev="${COMP_WORDS[COMP_CWORD-1]}"
+        case $prev in
+            --ee|-e)
+                COMPREPLY=($(compgen -o default -W "A
+B
+C" -- $curr))
+              ;;
+            *)
+                COMPREPLY=($(compgen -o default -- $curr))
+              ;;
+        esac
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-multi-value-options -- ${BASH_FUNK_PREFIX:--}test-fn-multi-value-options
@@ -782,13 +792,13 @@ echo "AA:${_AA[@]} BB:${_BB[@]} CC:${_CC[@]} DD:${_DD[@]} EE:${_EE[@]} FF:${_FF[
     ######### test-fn-multi-value-parameters ######### END
 }
 function __complete-test-fn-multi-value-parameters() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-multi-value-parameters -- ${BASH_FUNK_PREFIX:--}test-fn-multi-value-parameters
@@ -965,13 +975,13 @@ echo "AA:${_AA[@]} BB:${_BB[@]}"
     ######### test-fn-multi-value-parameters-first-variable ######### END
 }
 function __complete-test-fn-multi-value-parameters-first-variable() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-multi-value-parameters-first-variable -- ${BASH_FUNK_PREFIX:--}test-fn-multi-value-parameters-first-variable
@@ -1106,13 +1116,13 @@ function __impl-test-fn-noargs() {
     ######### test-fn-noargs ######### END
 }
 function __complete-test-fn-noargs() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest --verbose -v "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-noargs -- ${BASH_FUNK_PREFIX:--}test-fn-noargs
@@ -1222,13 +1232,13 @@ function __impl-test-fn-requires-existing() {
     ######### test-fn-requires-existing ######### END
 }
 function __complete-test-fn-requires-existing() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest --verbose -v "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-requires-existing -- ${BASH_FUNK_PREFIX:--}test-fn-requires-existing
@@ -1334,13 +1344,13 @@ function __impl-test-fn-requires-nonexistent() {
     ######### test-fn-requires-nonexistent ######### END
 }
 function __complete-test-fn-requires-nonexistent() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest --verbose -v "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-requires-nonexistent -- ${BASH_FUNK_PREFIX:--}test-fn-requires-nonexistent
@@ -1655,13 +1665,23 @@ echo "aa:$_aa bb:$_bb cc:$_cc dd:$_dd ee:$_ee ff:$_ff gg:$_gg"
     ######### test-fn-single-value-options ######### END
 }
 function __complete-test-fn-single-value-options() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --aa -a --bb -b --cc -c --dd -d --ee -e --ff -f --gg -g --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        local prev="${COMP_WORDS[COMP_CWORD-1]}"
+        case $prev in
+            --ee|-e)
+                COMPREPLY=($(compgen -o default -W "A
+B
+C" -- $curr))
+              ;;
+            *)
+                COMPREPLY=($(compgen -o default -- $curr))
+              ;;
+        esac
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-single-value-options -- ${BASH_FUNK_PREFIX:--}test-fn-single-value-options
@@ -1918,13 +1938,13 @@ echo "AA:$_AA BB:$_BB CC:$_CC DD:$_DD EE:$_EE FF:$_FF"
     ######### test-fn-single-value-parameters ######### END
 }
 function __complete-test-fn-single-value-parameters() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-single-value-parameters -- ${BASH_FUNK_PREFIX:--}test-fn-single-value-parameters
@@ -2076,13 +2096,13 @@ echo "AA:$_AA BB:$_BB"
     ######### test-fn-single-value-parameters-first-optional ######### END
 }
 function __complete-test-fn-single-value-parameters-first-optional() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-single-value-parameters-first-optional -- ${BASH_FUNK_PREFIX:--}test-fn-single-value-parameters-first-optional
@@ -2179,13 +2199,13 @@ ${BASH_FUNK_PREFIX:--}test-fn-single-value-parameters-first-optional --selftest 
     ######### test-test ######### END
 }
 function __complete-test-test() {
-    local currentWord=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${currentWord} == -* ]]; then
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $currentWord))
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $currentWord))
+        COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-test -- ${BASH_FUNK_PREFIX:--}test-test
