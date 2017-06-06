@@ -933,7 +933,7 @@ function __impl-aws-vpc-cidr-block() {
 
 hash wget &>/dev/null && local get="wget -qO-" || local get="curl -s"
 
-$get http://169.254.169.254/latest/meta-data/network/interfaces/macs/$(curl -s http://169.254.169.254/latest/meta-data/mac)/vpc-ipv4-cidr-block
+$get http://169.254.169.254/latest/meta-data/network/interfaces/macs/$($get http://169.254.169.254/latest/meta-data/mac)/vpc-ipv4-cidr-block
 
     ######### aws-vpc-cidr-block ######### END
 }
@@ -1029,7 +1029,7 @@ function __impl-aws-vpc-id() {
 
 hash wget &>/dev/null && local get="wget -qO-" || local get="curl -s"
 
-$get http://169.254.169.254/latest/meta-data/network/interfaces/macs/$(curl -s http://169.254.169.254/latest/meta-data/mac)/vpc-id
+$get http://169.254.169.254/latest/meta-data/network/interfaces/macs/$($get http://169.254.169.254/latest/meta-data/mac)/vpc-id
 
     ######### aws-vpc-id ######### END
 }
