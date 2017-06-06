@@ -491,6 +491,205 @@ function __complete-is-port-open() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}is-port-open -- ${BASH_FUNK_PREFIX:--}is-port-open
 
+function -run-echo-server() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a e u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -e
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]... [BIND_ADDRESS] PORT"
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-run-echo-server() {
+    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _stop_when _disconnect_when _help _selftest _BIND_ADDRESS _PORT
+    [ -p /dev/stdout ] && __in_pipe=1 || true
+    [ -t 1 ] || __in_subshell=1
+    for __arg in "$@"; do
+        case $__arg in
+
+            --help)
+                echo "Usage: $__fn [OPTION]... [BIND_ADDRESS] PORT"
+                echo
+                echo "Runs a simple single-connection TCP echo server."
+                echo
+                echo "Requirements:"
+                echo "  + Command 'python' must be available."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mBIND_ADDRESS\033[22m (default: '0.0.0.0')"
+                echo "      The local bind address. E.g. 127.0.0.1."
+                echo -e "  \033[1mPORT\033[22m (required, integer: 0-65535)"
+                echo "      Number of the TCP port to be used."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --disconnect_when string\033[22m "
+                echo "        String that can be send to the server to disconnect the current connection."
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo -e "\033[1m    --stop_when string\033[22m "
+                echo "        String that can be send to the server to shut it down."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            --stop_when)
+                _stop_when="@@##@@"
+                __optionWithValue=stop_when
+            ;;
+
+            --disconnect_when)
+                _disconnect_when="@@##@@"
+                __optionWithValue=disconnect_when
+            ;;
+
+            -*)
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    stop_when)
+                        _stop_when=$__arg
+                        __optionWithValue=
+                      ;;
+                    disconnect_when)
+                        _disconnect_when=$__arg
+                        __optionWithValue=
+                      ;;
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        if [[ ! $_BIND_ADDRESS && ${#__params[@]} > 1 ]]; then
+            _BIND_ADDRESS=$__param
+            continue
+        fi
+        if [[ ! $_PORT ]]; then
+            _PORT=$__param
+            continue
+        fi
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if [[ ! $_BIND_ADDRESS ]]; then _BIND_ADDRESS="0.0.0.0"; fi
+    if [[ $_stop_when ]]; then
+        if [[ $_stop_when == "@@##@@" ]]; then echo "$__fn: Error: Value string for option --stop_when must be specified."; return 64; fi
+    fi
+    if [[ $_disconnect_when ]]; then
+        if [[ $_disconnect_when == "@@##@@" ]]; then echo "$__fn: Error: Value string for option --disconnect_when must be specified."; return 64; fi
+    fi
+
+    if [[ $_PORT ]]; then
+        if [[ ! "$_PORT" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is not a numeric value."; return 64; fi
+        if [[ $_PORT -lt 0 ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is too low. Must be >= 0."; return 64; fi
+        if [[ $_PORT -gt 65535 ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is too high. Must be <= 65535."; return 64; fi
+    else
+        echo "$__fn: Error: Parameter PORT must be specified."; return 64
+    fi
+
+    if ! hash "python" &>/dev/null; then echo "$__fn: Error: Required command 'python' not found on this system."; return 64; fi
+
+    ######### run-echo-server ######### START
+
+
+if [[ ! $_stop_when ]]; then
+    local _stop_when=stop
+fi
+
+if [[ ! $_disconnect_when ]]; then
+    local _disconnect_when=quit
+fi
+
+python -c "
+import socket, sys
+
+def run():
+    srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    srv.bind(('$_BIND_ADDRESS', $_PORT))
+    srv.listen(0)
+
+    print_ = sys.stdout.write
+    print_('Running TCP echo server on $_BIND_ADDRESS:$_PORT...\\n')
+
+    while 1:
+        conn, src_addr = srv.accept()
+        print_('[CONNECT] ' + str(src_addr) + '\\n')
+
+        while 1:
+            data, src_addr = conn.recvfrom(256)
+
+            if not data:
+                continue
+
+            if data == '$_stop_when\r\n':
+                print_('[SHUTDOWN] ' + str(src_addr) + '\\n')
+                sys.exit(0)
+
+            if data == '$_disconnect_when\r\n':
+                print_('[DISCONNECT] ' + str(src_addr) + '\\n')
+                conn.shutdown(1)
+                conn.close()
+                break
+
+            conn.sendall(data)
+            print_(data)
+
+try:
+    run()
+except KeyboardInterrupt:
+    pass
+"
+
+    ######### run-echo-server ######### END
+}
+function __complete-run-echo-server() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --stop_when --disconnect_when --help --selftest "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}run-echo-server -- ${BASH_FUNK_PREFIX:--}run-echo-server
+
 function -ssh-agent-add-key() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
     for opt in a e u H t; do
@@ -837,6 +1036,7 @@ function __impl-test-network() {
 ${BASH_FUNK_PREFIX:--}block-port --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}get-ips --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}is-port-open --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}run-echo-server --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-agent-add-key --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-trust-host --selftest && echo || return 1
 
@@ -859,9 +1059,10 @@ function -help-network() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}block-port [BIND_ADDRESS] PORT\033[0m  -  Binds to the given port and thus block other programs from binding to it."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}get-ips\033[0m  -  Prints the IP v4 addresses of this host excluding 127.0.0.1."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}is-port-open HOSTNAME PORT [CONNECT_TIMEOUT_IN_SECONDS]\033[0m  -  Checks if a TCP connection can be established to the given port."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}run-echo-server [BIND_ADDRESS] PORT\033[0m  -  Runs a simple single-connection TCP echo server."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-agent-add-key KEY_FILE PASSWORD\033[0m  -  Adds the private key to the ssh-agent."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-trust-host HOSTNAME [PORT]\033[0m  -  Adds the public key of the given host to the ~/.ssh/known_hosts file."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-network\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( block-port get-ips is-port-open ssh-agent-add-key ssh-trust-host test-network )
+__BASH_FUNK_FUNCS+=( block-port get-ips is-port-open run-echo-server ssh-agent-add-key ssh-trust-host test-network )

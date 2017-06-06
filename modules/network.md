@@ -7,6 +7,7 @@ The following commands are available when this module is loaded:
 1. [-block-port](#-block-port)
 1. [-get-ips](#-get-ips)
 1. [-is-port-open](#-is-port-open)
+1. [-run-echo-server](#-run-echo-server)
 1. [-ssh-agent-add-key](#-ssh-agent-add-key)
 1. [-ssh-trust-host](#-ssh-trust-host)
 1. [-test-network](#-test-network)
@@ -149,6 +150,87 @@ fi
 ```
 
 
+## <a name="-run-echo-server"></a>-run-echo-server
+
+```
+Usage: -run-echo-server [OPTION]... [BIND_ADDRESS] PORT
+
+Runs a simple single-connection TCP echo server.
+
+Requirements:
+  + Command 'python' must be available.
+
+Parameters:
+  BIND_ADDRESS (default: '0.0.0.0')
+      The local bind address. E.g. 127.0.0.1.
+  PORT (required, integer: 0-65535)
+      Number of the TCP port to be used.
+
+Options:
+    --disconnect_when string 
+        String that can be send to the server to disconnect the current connection.
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --stop_when string 
+        String that can be send to the server to shut it down.
+```
+
+*Implementation:*
+```bash
+
+if [[ ! $_stop_when ]]; then
+    local _stop_when=stop
+fi
+
+if [[ ! $_disconnect_when ]]; then
+    local _disconnect_when=quit
+fi
+
+python -c "
+import socket, sys
+
+def run():
+    srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    srv.bind(('$_BIND_ADDRESS', $_PORT))
+    srv.listen(0)
+
+    print_ = sys.stdout.write
+    print_('Running TCP echo server on $_BIND_ADDRESS:$_PORT...\\n')
+
+    while 1:
+        conn, src_addr = srv.accept()
+        print_('[CONNECT] ' + str(src_addr) + '\\n')
+
+        while 1:
+            data, src_addr = conn.recvfrom(256)
+
+            if not data:
+                continue
+
+            if data == '$_stop_when\r\n':
+                print_('[SHUTDOWN] ' + str(src_addr) + '\\n')
+                sys.exit(0)
+
+            if data == '$_disconnect_when\r\n':
+                print_('[DISCONNECT] ' + str(src_addr) + '\\n')
+                conn.shutdown(1)
+                conn.close()
+                break
+
+            conn.sendall(data)
+            print_(data)
+
+try:
+    run()
+except KeyboardInterrupt:
+    pass
+"
+```
+
+
 ## <a name="-ssh-agent-add-key"></a>-ssh-agent-add-key
 
 ```
@@ -237,6 +319,7 @@ Options:
 -block-port --selftest && echo || return 1
 -get-ips --selftest && echo || return 1
 -is-port-open --selftest && echo || return 1
+-run-echo-server --selftest && echo || return 1
 -ssh-agent-add-key --selftest && echo || return 1
 -ssh-trust-host --selftest && echo || return 1
 ```
