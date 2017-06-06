@@ -28,19 +28,27 @@ The command `-help` shows a list of all available commands
 
 ###  Using Git
 
-check-out the master branch
+Execute:
 ```
-$ git clone https://github.com/vegardit/bash-funk --branch master --single-branch ~/bash-funk
+git clone https://github.com/vegardit/bash-funk --branch master --single-branch ~/bash-funk
 ```
 
 
 ###  Using Subversion
 
-check-out the trunk
+Execute:
 ```
-$ svn checkout https://github.com/vegardit/bash-funk/trunk ~/bash-funk
+svn checkout https://github.com/vegardit/bash-funk/trunk ~/bash-funk
 ```
 
+###  Using Curl
+
+Execute:
+```
+mkdir ~/bash-funk && \
+cd ~/bash-funk && \
+curl -#L https://github.com/vegardit/bash-funk/tarball/master | tar -xzv --strip-components 1
+```
 
 ## <a name="usage"></a>Usage
 
