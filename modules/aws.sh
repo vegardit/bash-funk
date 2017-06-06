@@ -22,7 +22,12 @@
 #
 
 function -is-loadable() {
-    @{mod.loadCondition.isNotBlank() ? mod.loadCondition : "return 0"}
+    if hash aws &>/dev/null || [[ -f /sys/hypervisor/uuid && $(head -c 3 /sys/hypervisor/uuid) == "ec2" ]]; then
+    return 0
+else
+    return 1
+fi
+
 }
 
 if ${BASH_FUNK_PREFIX:--}is-loadable; then
