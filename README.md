@@ -16,10 +16,13 @@ An enhanced bash prompt is provided too:
 
 ![console](img/console.png)
 
-All bash-funk functions have with a descriptive online help:
+All bash-funk functions have a descriptive online help:
 
-![command_help](img/function_help.png)
+![function_help](img/function_help.png)
 
+The command `-help` shows a list of all available commands
+
+![help](img/help.png)
 
 ## <a name="install"></a>Installation
 
