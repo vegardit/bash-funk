@@ -1168,4 +1168,4 @@ __BASH_FUNK_FUNCS+=( aws-account-id aws-az aws-describe-stack aws-instance-id aw
 else
     echo "   ... skipped."
 fi
-unset -- ${BASH_FUNK_PREFIX:--}is-loadable
+unset -f -- ${BASH_FUNK_PREFIX:--}is-loadable
