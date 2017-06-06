@@ -43,7 +43,10 @@ else
         echo "                  by Vegard IT GmbH (vegardit.com)"
         echo
 
-        export BASH_FUNK_PREFIX=${BASH_FUNK_PREFIX:--}
+        if ! declare -p BASH_FUNK_PREFIX &>/dev/null; then
+            BASH_FUNK_PREFIX=-
+        fi
+        export BASH_FUNK_PREFIX
 
         __BASH_FUNK_FUNCS=()
 
@@ -75,7 +78,7 @@ else
 
         unset __script_dir
 
-        if [[ ${BASH_FUNK_PROMPT:-yes} == "yes" ]]; then
+        if [[ ! ${BASH_FUNK_NO_PROMPT:-} ]]; then
             PROMPT_COMMAND=__${BASH_FUNK_PREFIX}bash-prompt
 
             # installing a prompt that prints line numbers in debug mode
