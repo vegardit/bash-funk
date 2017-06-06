@@ -241,7 +241,7 @@ Options:
 ```bash
 hash wget &>/dev/null && local get="wget -qO-" || local get="curl -s"
 
-$get http://169.254.169.254/latest/meta-data/network/interfaces/macs/$(curl -s http://169.254.169.254/latest/meta-data/mac)/vpc-ipv4-cidr-block)
+$get http://169.254.169.254/latest/meta-data/network/interfaces/macs/$(curl -s http://169.254.169.254/latest/meta-data/mac)/vpc-ipv4-cidr-block
 ```
 
 
