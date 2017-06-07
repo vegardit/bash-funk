@@ -5,17 +5,18 @@
 The following statements are automatically executed when this module loads:
 
 ```bash
-alias l="ll"
-alias ll="${BASH_FUNK_PREFIX:--}ll"
-alias ..="${BASH_FUNK_PREFIX:--}cd-up"
-alias ++="${BASH_FUNK_PREFIX:--}cd-down"
-alias ...="command cd ../.."
+alias -- l="ll"
+alias -- ll="-ll"
+alias -- ..="-cd-up"
+alias -- ++="-cd-down"
+alias -- --="-cd-hist"
+alias -- ...="command cd ../.."
 
 if [[ $OSTYPE == "cygwin" ]]; then
     for drive in {a..z}; do
         if [[ -e /cygdrive/${drive} ]]; then
-            alias "${drive}:"="cd /cygdrive/${drive}"
-            alias "${drive^^}:"="cd /cygdrive/${drive}"
+            alias -- "${drive}:"="cd /cygdrive/${drive}"
+            alias -- "${drive^^}:"="cd /cygdrive/${drive}"
         fi
     done
 fi
@@ -25,6 +26,7 @@ The following commands are available when this module is loaded:
 
 1. [-abspath](#-abspath)
 1. [-cd-down](#-cd-down)
+1. [-cd-hist](#-cd-hist)
 1. [-cd-up](#-cd-up)
 1. [-count-words](#-count-words)
 1. [-du](#-du)
@@ -94,9 +96,64 @@ Options:
 ```bash
 local path=$(find . -name "$_DIR_NAME" -type d -print -quit 2>/dev/null || true);
 if [[ $path ]]; then
+    echo "$path"
     cd $path
 else
     echo "$__fn: $_DIR_NAME: No such directory"
+    return 1
+fi
+```
+
+
+## <a name="-cd-hist"></a>-cd-hist
+
+```
+Usage: -cd-hist [OPTION]... [STEPS_OR_DIRNAME]
+
+Navigates back in the directory history which can be managed via pushd/popd/dirs and is automatically populated if the Bash Funk bash-prompt is installed.
+
+Parameters:
+  STEPS_OR_DIRNAME 
+      The name of the subdirectory to locate and cd into. If not specified a list of the last 20 entries is displayed.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+```
+
+*Implementation:*
+```bash
+if [[ ! $_STEPS_OR_DIRNAME ]]; then
+    echo "Directory history:"
+    for (( __idx=2; __idx<${#DIRSTACK[*]}; __idx++ )); do
+        echo "$(( __idx - 1 )) cd ${DIRSTACK[$__idx]}"
+        [[ $__idx -eq 22 ]] && break || true
+    done
+    return 0
+fi
+
+if [[ $_STEPS_OR_DIRNAME == "-" ]]; then
+    cd - && return 0 || return 1
+fi
+
+if [[ $_STEPS_OR_DIRNAME =~ ^[0-9]+$ ]]; then
+    local path="${DIRSTACK[@]:$(( _STEPS_OR_DIRNAME + 1 )):1}"
+    echo "$path"
+    cd $path
+else
+    local path
+    for path in "${DIRSTACK[@]}"; do
+        case "${path}" in
+            *"/"$_STEPS_OR_DIRNAME)
+                echo "$path"
+                cd "$path"
+                return 0;
+          ;;
+        esac
+    done
+    echo "$__fn: $_STEPS_OR_DIRNAME: No such directory in history"
     return 1
 fi
 ```
@@ -133,13 +190,14 @@ if [[ $_LEVEL_OR_PATTERN =~ ^[0-9]+$ ]]; then
     for (( i = 0; i < _LEVEL_OR_PATTERN; i++ )); do
         path="../$path"
     done
+    echo "$path"
     cd "$path"
 
 else
     local elem path=()
 
     # read current path elements into array 'path'
-    IFS=/ read -r -a path <<< "$(pwd)"
+    IFS=/ read -r -a path <<< "$PWD"
 
     # iterate reverse through the array and check for matching directory
     for (( idx=${#path[@]}-2; idx>=0; idx-- )); do
@@ -261,17 +319,17 @@ Options:
 *Implementation:*
 ```bash
 if [[ $_TO_DIR ]]; then
-    local origPWD="$(pwd)"
+    local origPWD="$PWD"
     mkdir "$_TO_DIR"
     cd "$_TO_DIR"
 fi
 
-if [[ ! -w "$(pwd)" ]]; then
-    echo "Error: Path [$_pwd] is not writeable."
+if [[ ! -w "$PWD" ]]; then
+    echo "Error: Path [$PWD] is not writeable."
     return 1
 fi
 
-local tmpDir=$(mktemp -d -p "$(pwd)")
+local tmpDir=$(mktemp -d -p "$PWD")
 
 case "$_FILE" in
     *.bz2)            bunzip2    "$_ARCHIVE" ;;
@@ -696,6 +754,7 @@ Options:
 ```bash
 -abspath --selftest && echo || return 1
 -cd-down --selftest && echo || return 1
+-cd-hist --selftest && echo || return 1
 -cd-up --selftest && echo || return 1
 -count-words --selftest && echo || return 1
 -du --selftest && echo || return 1

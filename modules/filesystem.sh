@@ -227,6 +227,7 @@ function __impl-cd-down() {
 
 local path=$(find . -name "$_DIR_NAME" -type d -print -quit 2>/dev/null || true);
 if [[ $path ]]; then
+    echo "$path"
     cd $path
 else
     echo "$__fn: $_DIR_NAME: No such directory"
@@ -246,6 +247,138 @@ function __complete-cd-down() {
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}cd-down -- ${BASH_FUNK_PREFIX:--}cd-down
+
+function -cd-hist() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a e u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -e
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]... [STEPS_OR_DIRNAME]"
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-cd-hist() {
+    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _STEPS_OR_DIRNAME
+    [ -p /dev/stdout ] && __in_pipe=1 || true
+    [ -t 1 ] || __in_subshell=1
+    for __arg in "$@"; do
+        case $__arg in
+
+            --help)
+                echo "Usage: $__fn [OPTION]... [STEPS_OR_DIRNAME]"
+                echo
+                echo "Navigates back in the directory history which can be managed via pushd/popd/dirs and is automatically populated if the Bash Funk bash-prompt is installed."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mSTEPS_OR_DIRNAME\033[22m "
+                echo "      The name of the subdirectory to locate and cd into. If not specified a list of the last 20 entries is displayed."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            -*)
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        if [[ ! $_STEPS_OR_DIRNAME && ${#__params[@]} > 0 ]]; then
+            _STEPS_OR_DIRNAME=$__param
+            continue
+        fi
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    ######### cd-hist ######### START
+
+if [[ ! $_STEPS_OR_DIRNAME ]]; then
+    echo "Directory history:"
+    for (( __idx=2; __idx<${#DIRSTACK[*]}; __idx++ )); do
+        echo "$(( __idx - 1 )) cd ${DIRSTACK[$__idx]}"
+        [[ $__idx -eq 22 ]] && break || true
+    done
+    return 0
+fi
+
+if [[ $_STEPS_OR_DIRNAME == "-" ]]; then
+    cd - && return 0 || return 1
+fi
+
+if [[ $_STEPS_OR_DIRNAME =~ ^[0-9]+$ ]]; then
+    local path="${DIRSTACK[@]:$(( _STEPS_OR_DIRNAME + 1 )):1}"
+    echo "$path"
+    cd $path
+else
+    local path
+    for path in "${DIRSTACK[@]}"; do
+        case "${path}" in
+            *"/"$_STEPS_OR_DIRNAME)
+                echo "$path"
+                cd "$path"
+                return 0;
+          ;;
+        esac
+    done
+    echo "$__fn: $_STEPS_OR_DIRNAME: No such directory in history"
+    return 1
+fi
+
+    ######### cd-hist ######### END
+}
+function __complete-cd-hist() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --help --selftest "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}cd-hist -- ${BASH_FUNK_PREFIX:--}cd-hist
 
 function -cd-up() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
@@ -346,13 +479,14 @@ if [[ $_LEVEL_OR_PATTERN =~ ^[0-9]+$ ]]; then
     for (( i = 0; i < _LEVEL_OR_PATTERN; i++ )); do
         path="../$path"
     done
+    echo "$path"
     cd "$path"
 
 else
     local elem path=()
 
     # read current path elements into array 'path'
-    IFS=/ read -r -a path <<< "$(pwd)"
+    IFS=/ read -r -a path <<< "$PWD"
 
     # iterate reverse through the array and check for matching directory
     for (( idx=${#path[@]}-2; idx>=0; idx-- )); do
@@ -379,7 +513,7 @@ function __complete-cd-up() {
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        local path="$(pwd)"; COMPREPLY=($(IFS=$'\n' compgen -o default -W "$( echo -e "${path////\n}" | sed 's/^/\x27/; s/$/\x27/' )" -- "$curr"))
+        local path="$PWD"; COMPREPLY=($(IFS=$'\n' compgen -o default -W "$( echo -e "${path////\n}" | sed 's/^/\x27/; s/$/\x27/' )" -- "$curr"))
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}cd-up -- ${BASH_FUNK_PREFIX:--}cd-up
@@ -758,17 +892,17 @@ function __impl-extract() {
     ######### extract ######### START
 
 if [[ $_TO_DIR ]]; then
-    local origPWD="$(pwd)"
+    local origPWD="$PWD"
     mkdir "$_TO_DIR"
     cd "$_TO_DIR"
 fi
 
-if [[ ! -w "$(pwd)" ]]; then
-    echo "Error: Path [$_pwd] is not writeable."
+if [[ ! -w "$PWD" ]]; then
+    echo "Error: Path [$PWD] is not writeable."
     return 1
 fi
 
-local tmpDir=$(mktemp -d -p "$(pwd)")
+local tmpDir=$(mktemp -d -p "$PWD")
 
 case "$_FILE" in
     *.bz2)            bunzip2    "$_ARCHIVE" ;;
@@ -2069,6 +2203,7 @@ function __impl-test-filesystem() {
 
 ${BASH_FUNK_PREFIX:--}abspath --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}cd-down --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}cd-hist --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}cd-up --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}count-words --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}du --selftest && echo || return 1
@@ -2100,6 +2235,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-filesystem -- ${BASH_FUNK_PREFI
 function -help-filesystem() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}abspath [PATH]\033[0m  -  Prints the normalized path of the given path WITHOUT resolving symbolic links. The path is not required to exist."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}cd-down DIR_NAME\033[0m  -  Jumps down in the tree of the current directory to the first sub directory found with the given name."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}cd-hist [STEPS_OR_DIRNAME]\033[0m  -  Navigates back in the directory history which can be managed via pushd/popd/dirs and is automatically populated if the Bash Funk bash-prompt is installed."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}cd-up [LEVEL_OR_PATTERN]\033[0m  -  Navigates up in the current directory tree to the first parent directory found with the given namen or the given number of levels. Bash completion will auto-complete the names of the parent directories."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}count-words FILE WORD1[WORD]...\033[0m  -  Counts the number of occurences of the word(s) in the given file."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}du [PATH]...\033[0m  -  Prints disk usage information."
@@ -2115,19 +2251,20 @@ function -help-filesystem() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-filesystem\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( abspath cd-down cd-up count-words du extract findfiles ll mkcd modified owner realpath sudo-append sudo-write test-filesystem )
+__BASH_FUNK_FUNCS+=( abspath cd-down cd-hist cd-up count-words du extract findfiles ll mkcd modified owner realpath sudo-append sudo-write test-filesystem )
 
-alias l="ll"
-alias ll="${BASH_FUNK_PREFIX:--}ll"
-alias ..="${BASH_FUNK_PREFIX:--}cd-up"
-alias ++="${BASH_FUNK_PREFIX:--}cd-down"
-alias ...="command cd ../.."
+alias -- l="ll"
+alias -- ll="${BASH_FUNK_PREFIX:--}ll"
+alias -- ..="${BASH_FUNK_PREFIX:--}cd-up"
+alias -- ++="${BASH_FUNK_PREFIX:--}cd-down"
+alias -- --="${BASH_FUNK_PREFIX:--}cd-hist"
+alias -- ...="command cd ../.."
 
 if [[ $OSTYPE == "cygwin" ]]; then
     for drive in {a..z}; do
         if [[ -e /cygdrive/${drive} ]]; then
-            alias "${drive}:"="cd /cygdrive/${drive}"
-            alias "${drive^^}:"="cd /cygdrive/${drive}"
+            alias -- "${drive}:"="cd /cygdrive/${drive}"
+            alias -- "${drive^^}:"="cd /cygdrive/${drive}"
         fi
     done
 fi
