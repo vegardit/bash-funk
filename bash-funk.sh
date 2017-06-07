@@ -50,16 +50,23 @@ else
 
         __BASH_FUNK_FUNCS=()
 
-        __script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        case "${BASH_SOURCE[0]}" in
+            /*)
+                __BASH_FUNK_ROOT="${BASH_SOURCE[0]%/*}" ;;
+            */*)
+                __BASH_FUNK_ROOT="$PWD/${BASH_SOURCE[0]%/*}" ;;
+            *)
+                __BASH_FUNK_ROOT="$PWD" ;;
+        esac
 
         # load all modules
-        for __module in $(command ls ${__script_dir}/modules/*.sh | sort); do
+        for __module in "${__BASH_FUNK_ROOT}"/modules/*.sh; do
             # don't load the test module automatically
-            if [[ $(basename ${__module}) == "test.sh" ]]; then
+            if [[ $__module == *test.sh ]]; then
                 continue;
             fi
 
-            echo "Loading [modules/$(basename ${__module})]..."
+            echo "* Loading [modules/${__module##*/}]..."
             # rename the functions based on the given BASH_FUNK_PREFIX
             if [[ $BASH_FUNK_PREFIX == "-" ]]; then
                 source "${__module}"
@@ -70,21 +77,19 @@ else
         unset __module
 
         # export all functions
-        echo "Exporting functions..."
+        echo "* Exporting functions..."
         for __fname in ${__BASH_FUNK_FUNCS[@]}; do
             export -f -- ${BASH_FUNK_PREFIX}${__fname}
         done
         unset __fname __fnames
 
-        unset __script_dir
-
         if [[ ! ${BASH_FUNK_NO_TWEAK_BASH:-} ]] && declare -F -- ${BASH_FUNK_PREFIX}tweak-bash &>/dev/null; then
-            echo "Executing '${BASH_FUNK_PREFIX}tweak-bash'..."
+            echo "* Executing '${BASH_FUNK_PREFIX}tweak-bash'..."
             ${BASH_FUNK_PREFIX}tweak-bash
         fi
 
         if [[ ! ${BASH_FUNK_NO_PROMPT:-} ]]; then
-            echo "Setting custom bash prompt..."
+            echo "* Setting custom bash prompt..."
             PROMPT_COMMAND=__${BASH_FUNK_PREFIX}bash-prompt
 
             # installing a prompt that prints line numbers in debug mode
