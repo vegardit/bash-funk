@@ -348,17 +348,18 @@ Options:
 *Implementation:*
 ```bash
 [[ ! $_PATH ]] && _PATH=(.) || true
-
-if ls --help | grep -- --group-directories-first >/dev/null; then
+if command ls --help 2>/dev/null | grep -- --group-directories-first &>/dev/null; then
     command ls -lAph -I lost+found --color=always --group-directories-first "${_PATH[@]}"
 else
-    command ls -lAph -I lost+found --color=always "${_PATH[@]}" | awk '
+    local _lsopts
+    [[ ${OSTYPE} =~ "darwin" ]] && _lsopts=" -G" || _lsopts=" -I lost+found --color=always"
+    command ls -lAph${_lsopts} "${_PATH[@]}" | awk '
         BEGIN { dirs = ""; files = "" }
         /^total/ { total = $0 }                 # capture total line
         /^d/ { dirs = dirs "\n" $0 };           # capture directories
-        /^l.*[/]$/ { dirs = dirs "\n" $0 };     # capture symlinks to directories
+        /^l.*[\/]$/ { dirs = dirs "\n" $0 };     # capture symlinks to directories
         /^-/ { files = files "\n" $0 };         # capture files
-        /^l.*[^/]$/ { files = files "\n" $0 };  # capture symlinks to files
+        /^l.*[^\/]$/ { files = files "\n" $0 };  # capture symlinks to files
         END { print total dirs files }'
 fi
 ```
