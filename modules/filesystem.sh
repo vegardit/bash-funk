@@ -133,6 +133,120 @@ function __complete-abspath() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}abspath -- ${BASH_FUNK_PREFIX:--}abspath
 
+function -cdf() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a e u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -e
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]... DIR_NAME"
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-cdf() {
+    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _DIR_NAME
+    [ -p /dev/stdout ] && __in_pipe=1 || true
+    [ -t 1 ] || __in_subshell=1
+    for __arg in "$@"; do
+        case $__arg in
+
+            --help)
+                echo "Usage: $__fn [OPTION]... DIR_NAME"
+                echo
+                echo "Locates the subdirectory with the given in the current directory and changes into it."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mDIR_NAME\033[22m (required)"
+                echo "      The name of the subdirectory to locate and cd into."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            -*)
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        if [[ ! $_DIR_NAME ]]; then
+            _DIR_NAME=$__param
+            continue
+        fi
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if [[ $_DIR_NAME ]]; then
+        true
+    else
+        echo "$__fn: Error: Parameter DIR_NAME must be specified."; return 64
+    fi
+
+    ######### cdf ######### START
+
+local path=$(find . -name "$_DIR_NAME" -type d -print -quit 2>/dev/null || true);
+if [[ $path ]]; then
+    cd $path
+else
+    echo "$__fn: $_DIR_NAME: No such directory"
+    return 1
+fi
+
+    ######### cdf ######### END
+}
+function __complete-cdf() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --help --selftest "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}cdf -- ${BASH_FUNK_PREFIX:--}cdf
+
 function -count-words() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
     for opt in a e u H t; do
@@ -1817,6 +1931,7 @@ function __impl-test-filesystem() {
     ######### test-filesystem ######### START
 
 ${BASH_FUNK_PREFIX:--}abspath --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}cdf --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}count-words --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}du --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}extract --selftest && echo || return 1
@@ -1965,6 +2080,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}up -- ${BASH_FUNK_PREFIX:--}up
 
 function -help-filesystem() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}abspath [PATH]\033[0m  -  Prints the normalized path of the given path WITHOUT resolving symbolic links. The path is not required to exist."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}cdf DIR_NAME\033[0m  -  Locates the subdirectory with the given in the current directory and changes into it."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}count-words FILE WORD1[WORD]...\033[0m  -  Counts the number of occurences of the word(s) in the given file."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}du [PATH]...\033[0m  -  Prints disk usage information."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}extract ARCHIVE [TO_DIR]\033[0m  -  Extracts the given archive using the compatible extractor."
@@ -1980,7 +2096,7 @@ function -help-filesystem() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}up [LEVEL_OR_DIRECTORY_NAME]\033[0m  -  Navigates to the given level or directory up in the directory tree. Bash completion will auto-complete the names of the parent directories."
 
 }
-__BASH_FUNK_FUNCS+=( abspath count-words du extract findfiles ll mkcd modified owner realpath sudo-append sudo-write test-filesystem up )
+__BASH_FUNK_FUNCS+=( abspath cdf count-words du extract findfiles ll mkcd modified owner realpath sudo-append sudo-write test-filesystem up )
 
 alias l="ll"
 alias ll="${BASH_FUNK_PREFIX:--}ll"

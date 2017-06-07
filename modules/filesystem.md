@@ -23,6 +23,7 @@ fi
 The following commands are available when this module is loaded:
 
 1. [-abspath](#-abspath)
+1. [-cdf](#-cdf)
 1. [-count-words](#-count-words)
 1. [-du](#-du)
 1. [-extract](#-extract)
@@ -66,6 +67,36 @@ if hash realpath &>/dev/null; then
 else
     python -c "import os
 print os.path.abspath('$_PATH')"
+fi
+```
+
+
+## <a name="-cdf"></a>-cdf
+
+```
+Usage: -cdf [OPTION]... DIR_NAME
+
+Locates the subdirectory with the given in the current directory and changes into it.
+
+Parameters:
+  DIR_NAME (required)
+      The name of the subdirectory to locate and cd into.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+```
+
+*Implementation:*
+```bash
+local path=$(find . -name "$_DIR_NAME" -type d -print -quit 2>/dev/null || true);
+if [[ $path ]]; then
+    cd $path
+else
+    echo "$__fn: $_DIR_NAME: No such directory"
+    return 1
 fi
 ```
 
@@ -606,6 +637,7 @@ Options:
 *Implementation:*
 ```bash
 -abspath --selftest && echo || return 1
+-cdf --selftest && echo || return 1
 -count-words --selftest && echo || return 1
 -du --selftest && echo || return 1
 -extract --selftest && echo || return 1
