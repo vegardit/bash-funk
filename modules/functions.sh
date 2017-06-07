@@ -123,7 +123,7 @@ function __impl-fn-copy() {
 
     ######### fn-copy ######### START
 
-if ! declare -F $_OLD_FUNC_NAME > /dev/null; then
+if ! declare -F -- $_OLD_FUNC_NAME > /dev/null; then
     echo "Error: A function with the name $_OLD_FUNC_NAME does not exist."
     return 1
 fi
@@ -261,7 +261,7 @@ function __impl-fn-exists() {
 
     ######### fn-exists ######### START
 
-if declare -F $_FUNC_NAME> /dev/null; then
+if declare -F -- $_FUNC_NAME &>/dev/null; then
     [[ $_verbose ]] && echo "A function with the name '$_FUNC_NAME' exists." || :
     return 0
 else
@@ -386,7 +386,7 @@ function __impl-fn-rename() {
 
     ######### fn-rename ######### START
 
-if ! declare -F $_OLD_FUNC_NAME > /dev/null; then
+if ! declare -F -- $_OLD_FUNC_NAME > /dev/null; then
     echo "Error: A function with the name $_OLD_FUNC_NAME does not exist."
     return 1
 fi
@@ -507,7 +507,7 @@ function __impl-fn-unload() {
 
     ######### fn-unload ######### START
 
-if ! declare -F $_FUNC_NAME > /dev/null; then
+if ! declare -F -- $_FUNC_NAME > /dev/null; then
     [[ $_verbose ]] && echo "A function with the name '$_FUNC_NAME' does not exist." || :
     return 0
 fi

@@ -32,7 +32,7 @@ Options:
 
 *Implementation:*
 ```bash
-if ! declare -F $_OLD_FUNC_NAME > /dev/null; then
+if ! declare -F -- $_OLD_FUNC_NAME > /dev/null; then
     echo "Error: A function with the name $_OLD_FUNC_NAME does not exist."
     return 1
 fi
@@ -68,7 +68,7 @@ A function with the name 'name-of-nonexistant-function' does not exist.
 
 *Implementation:*
 ```bash
-if declare -F $_FUNC_NAME> /dev/null; then
+if declare -F -- $_FUNC_NAME &>/dev/null; then
     [[ $_verbose ]] && echo "A function with the name '$_FUNC_NAME' exists." || :
     return 0
 else
@@ -100,7 +100,7 @@ Options:
 
 *Implementation:*
 ```bash
-if ! declare -F $_OLD_FUNC_NAME > /dev/null; then
+if ! declare -F -- $_OLD_FUNC_NAME > /dev/null; then
     echo "Error: A function with the name $_OLD_FUNC_NAME does not exist."
     return 1
 fi
@@ -133,7 +133,7 @@ Options:
 
 *Implementation:*
 ```bash
-if ! declare -F $_FUNC_NAME > /dev/null; then
+if ! declare -F -- $_FUNC_NAME > /dev/null; then
     [[ $_verbose ]] && echo "A function with the name '$_FUNC_NAME' does not exist." || :
     return 0
 fi
