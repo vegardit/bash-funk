@@ -133,7 +133,7 @@ function __complete-abspath() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}abspath -- ${BASH_FUNK_PREFIX:--}abspath
 
-function -cdf() {
+function -cd-down() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
     for opt in a e u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
@@ -158,7 +158,7 @@ function -cdf() {
 
     return $rc
 }
-function __impl-cdf() {
+function __impl-cd-down() {
     local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _DIR_NAME
     [ -p /dev/stdout ] && __in_pipe=1 || true
     [ -t 1 ] || __in_subshell=1
@@ -168,7 +168,7 @@ function __impl-cdf() {
             --help)
                 echo "Usage: $__fn [OPTION]... DIR_NAME"
                 echo
-                echo "Locates the subdirectory with the given in the current directory and changes into it."
+                echo "Jumps down in the tree of the current directory to the first sub directory found with the given name."
                 echo
                 echo "Parameters:"
                 echo -e "  \033[1mDIR_NAME\033[22m (required)"
@@ -223,7 +223,7 @@ function __impl-cdf() {
         echo "$__fn: Error: Parameter DIR_NAME must be specified."; return 64
     fi
 
-    ######### cdf ######### START
+    ######### cd-down ######### START
 
 local path=$(find . -name "$_DIR_NAME" -type d -print -quit 2>/dev/null || true);
 if [[ $path ]]; then
@@ -233,9 +233,9 @@ else
     return 1
 fi
 
-    ######### cdf ######### END
+    ######### cd-down ######### END
 }
-function __complete-cdf() {
+function __complete-cd-down() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
         local options=" --help --selftest "
@@ -245,7 +245,144 @@ function __complete-cdf() {
         COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
-complete -F __complete${BASH_FUNK_PREFIX:--}cdf -- ${BASH_FUNK_PREFIX:--}cdf
+complete -F __complete${BASH_FUNK_PREFIX:--}cd-down -- ${BASH_FUNK_PREFIX:--}cd-down
+
+function -cd-up() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a e u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -e
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]... [LEVEL_OR_PATTERN]"
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-cd-up() {
+    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _LEVEL_OR_PATTERN
+    [ -p /dev/stdout ] && __in_pipe=1 || true
+    [ -t 1 ] || __in_subshell=1
+    for __arg in "$@"; do
+        case $__arg in
+
+            --help)
+                echo "Usage: $__fn [OPTION]... [LEVEL_OR_PATTERN]"
+                echo
+                echo "Navigates up in the current directory tree to the first parent directory found with the given namen or the given number of levels. Bash completion will auto-complete the names of the parent directories."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mLEVEL_OR_PATTERN\033[22m (default: '..')"
+                echo "      The number of directories to navigate up in the directory tree or the glob pattern to find a matching directory."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            -*)
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        if [[ ! $_LEVEL_OR_PATTERN && ${#__params[@]} > 0 ]]; then
+            _LEVEL_OR_PATTERN=$__param
+            continue
+        fi
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if [[ ! $_LEVEL_OR_PATTERN ]]; then _LEVEL_OR_PATTERN=".."; fi
+
+    ######### cd-up ######### START
+
+if [[ $_LEVEL_OR_PATTERN == ".." ]]; then
+    cd ..
+    return 0
+fi
+
+# check if value is numeric
+if [[ $_LEVEL_OR_PATTERN =~ ^[0-9]+$ ]]; then
+    local path
+    for (( i = 0; i < _LEVEL_OR_PATTERN; i++ )); do
+        path="../$path"
+    done
+    cd "$path"
+
+else
+    local elem path=()
+
+    # read current path elements into array 'path'
+    IFS=/ read -r -a path <<< "$(pwd)"
+
+    # iterate reverse through the array and check for matching directory
+    for (( idx=${#path[@]}-2; idx>=0; idx-- )); do
+        case "${path[idx]}" in
+            $_LEVEL_OR_PATTERN)
+                # join the path
+                IFS="/" eval 'path="${path[*]:0:$((idx+1))}"'
+                echo "$path"
+                cd "$path"
+                return 0;
+          ;;
+        esac
+    done
+    echo "$__fn: $_LEVEL_OR_PATTERN: No such directory"
+    return 1
+fi
+
+    ######### cd-up ######### END
+}
+function __complete-cd-up() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --help --selftest "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        local path="$(pwd)"; COMPREPLY=($(IFS=$'\n' compgen -o default -W "$( echo -e "${path////\n}" | sed 's/^/\x27/; s/$/\x27/' )" -- "$curr"))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}cd-up -- ${BASH_FUNK_PREFIX:--}cd-up
 
 function -count-words() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
@@ -1931,7 +2068,8 @@ function __impl-test-filesystem() {
     ######### test-filesystem ######### START
 
 ${BASH_FUNK_PREFIX:--}abspath --selftest && echo || return 1
-${BASH_FUNK_PREFIX:--}cdf --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}cd-down --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}cd-up --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}count-words --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}du --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}extract --selftest && echo || return 1
@@ -1943,7 +2081,6 @@ ${BASH_FUNK_PREFIX:--}owner --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}realpath --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}sudo-append --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}sudo-write --selftest && echo || return 1
-${BASH_FUNK_PREFIX:--}up --selftest && echo || return 1
 
     ######### test-filesystem ######### END
 }
@@ -1959,128 +2096,11 @@ function __complete-test-filesystem() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-filesystem -- ${BASH_FUNK_PREFIX:--}test-filesystem
 
-function -up() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
-
-    set +auHt
-    set -e
-    set -o pipefail
-
-    __impl$__fn "$@" && rc=0 || rc=$?
-
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... [LEVEL_OR_DIRECTORY_NAME]"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
-
-    eval $opts
-
-    return $rc
-}
-function __impl-up() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _LEVEL_OR_DIRECTORY_NAME
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    for __arg in "$@"; do
-        case $__arg in
-
-            --help)
-                echo "Usage: $__fn [OPTION]... [LEVEL_OR_DIRECTORY_NAME]"
-                echo
-                echo "Navigates to the given level or directory up in the directory tree. Bash completion will auto-complete the names of the parent directories."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mLEVEL_OR_DIRECTORY_NAME\033[22m (default: '..')"
-                echo "      The level to navigate up in the directory structure. Numeric value or the name of the directory to go back to."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo
-                return 0
-              ;;
-
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
-
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
-
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
-
-    for __param in "${__params[@]}"; do
-        if [[ ! $_LEVEL_OR_DIRECTORY_NAME && ${#__params[@]} > 0 ]]; then
-            _LEVEL_OR_DIRECTORY_NAME=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
-
-    if [[ ! $_LEVEL_OR_DIRECTORY_NAME ]]; then _LEVEL_OR_DIRECTORY_NAME=".."; fi
-
-    ######### up ######### START
-
-if [[ $_LEVEL_OR_DIRECTORY_NAME == ".." ]]; then
-    cd ..
-    return 0
-fi
-
-if [[ $_LEVEL_OR_DIRECTORY_NAME =~ ^[0-9]+$ ]]; then
-    local cdArgs
-    for (( i = 0; i < _LEVEL_OR_DIRECTORY_NAME; i++ )); do
-        cdArgs="../$cdArgs"
-    done
-    cd $cdArgs
-else
-    local path=$(pwd)
-    cd "${path%${_LEVEL_OR_DIRECTORY_NAME}*}${_LEVEL_OR_DIRECTORY_NAME}"
-fi
-
-    ######### up ######### END
-}
-function __complete-up() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        local path="$(pwd)"; COMPREPLY=($(IFS=$'\n' compgen -o default -W "$( echo -e "${path////\n}" | sed 's/^/\x27/; s/$/\x27/' )" -- "$curr"))
-    fi
-}
-complete -F __complete${BASH_FUNK_PREFIX:--}up -- ${BASH_FUNK_PREFIX:--}up
-
 
 function -help-filesystem() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}abspath [PATH]\033[0m  -  Prints the normalized path of the given path WITHOUT resolving symbolic links. The path is not required to exist."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}cdf DIR_NAME\033[0m  -  Locates the subdirectory with the given in the current directory and changes into it."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}cd-down DIR_NAME\033[0m  -  Jumps down in the tree of the current directory to the first sub directory found with the given name."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}cd-up [LEVEL_OR_PATTERN]\033[0m  -  Navigates up in the current directory tree to the first parent directory found with the given namen or the given number of levels. Bash completion will auto-complete the names of the parent directories."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}count-words FILE WORD1[WORD]...\033[0m  -  Counts the number of occurences of the word(s) in the given file."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}du [PATH]...\033[0m  -  Prints disk usage information."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}extract ARCHIVE [TO_DIR]\033[0m  -  Extracts the given archive using the compatible extractor."
@@ -2093,14 +2113,14 @@ function -help-filesystem() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}sudo-append FILE_PATH CONTENT\033[0m  -  Creates a file with the given content."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}sudo-write FILE_PATH OWNER CONTENT\033[0m  -  Creates a file with the given content."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-filesystem\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}up [LEVEL_OR_DIRECTORY_NAME]\033[0m  -  Navigates to the given level or directory up in the directory tree. Bash completion will auto-complete the names of the parent directories."
 
 }
-__BASH_FUNK_FUNCS+=( abspath cdf count-words du extract findfiles ll mkcd modified owner realpath sudo-append sudo-write test-filesystem up )
+__BASH_FUNK_FUNCS+=( abspath cd-down cd-up count-words du extract findfiles ll mkcd modified owner realpath sudo-append sudo-write test-filesystem )
 
 alias l="ll"
 alias ll="${BASH_FUNK_PREFIX:--}ll"
-alias ..="${BASH_FUNK_PREFIX:--}up"
+alias ..="${BASH_FUNK_PREFIX:--}cd-up"
+alias ++="${BASH_FUNK_PREFIX:--}cd-down"
 alias ...="command cd ../.."
 
 if [[ $OSTYPE == "cygwin" ]]; then

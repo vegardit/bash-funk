@@ -7,7 +7,8 @@ The following statements are automatically executed when this module loads:
 ```bash
 alias l="ll"
 alias ll="${BASH_FUNK_PREFIX:--}ll"
-alias ..="${BASH_FUNK_PREFIX:--}up"
+alias ..="${BASH_FUNK_PREFIX:--}cd-up"
+alias ++="${BASH_FUNK_PREFIX:--}cd-down"
 alias ...="command cd ../.."
 
 if [[ $OSTYPE == "cygwin" ]]; then
@@ -23,7 +24,8 @@ fi
 The following commands are available when this module is loaded:
 
 1. [-abspath](#-abspath)
-1. [-cdf](#-cdf)
+1. [-cd-down](#-cd-down)
+1. [-cd-up](#-cd-up)
 1. [-count-words](#-count-words)
 1. [-du](#-du)
 1. [-extract](#-extract)
@@ -36,7 +38,6 @@ The following commands are available when this module is loaded:
 1. [-sudo-append](#-sudo-append)
 1. [-sudo-write](#-sudo-write)
 1. [-test-filesystem](#-test-filesystem)
-1. [-up](#-up)
 
 ## <a name="-abspath"></a>-abspath
 
@@ -71,12 +72,12 @@ fi
 ```
 
 
-## <a name="-cdf"></a>-cdf
+## <a name="-cd-down"></a>-cd-down
 
 ```
-Usage: -cdf [OPTION]... DIR_NAME
+Usage: -cd-down [OPTION]... DIR_NAME
 
-Locates the subdirectory with the given in the current directory and changes into it.
+Jumps down in the tree of the current directory to the first sub directory found with the given name.
 
 Parameters:
   DIR_NAME (required)
@@ -96,6 +97,63 @@ if [[ $path ]]; then
     cd $path
 else
     echo "$__fn: $_DIR_NAME: No such directory"
+    return 1
+fi
+```
+
+
+## <a name="-cd-up"></a>-cd-up
+
+```
+Usage: -cd-up [OPTION]... [LEVEL_OR_PATTERN]
+
+Navigates up in the current directory tree to the first parent directory found with the given namen or the given number of levels. Bash completion will auto-complete the names of the parent directories.
+
+Parameters:
+  LEVEL_OR_PATTERN (default: '..')
+      The number of directories to navigate up in the directory tree or the glob pattern to find a matching directory.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+```
+
+*Implementation:*
+```bash
+if [[ $_LEVEL_OR_PATTERN == ".." ]]; then
+    cd ..
+    return 0
+fi
+
+# check if value is numeric
+if [[ $_LEVEL_OR_PATTERN =~ ^[0-9]+$ ]]; then
+    local path
+    for (( i = 0; i < _LEVEL_OR_PATTERN; i++ )); do
+        path="../$path"
+    done
+    cd "$path"
+
+else
+    local elem path=()
+
+    # read current path elements into array 'path'
+    IFS=/ read -r -a path <<< "$(pwd)"
+
+    # iterate reverse through the array and check for matching directory
+    for (( idx=${#path[@]}-2; idx>=0; idx-- )); do
+        case "${path[idx]}" in
+            $_LEVEL_OR_PATTERN)
+                # join the path
+                IFS="/" eval 'path="${path[*]:0:$((idx+1))}"'
+                echo "$path"
+                cd "$path"
+                return 0;
+          ;;
+        esac
+    done
+    echo "$__fn: $_LEVEL_OR_PATTERN: No such directory"
     return 1
 fi
 ```
@@ -637,7 +695,8 @@ Options:
 *Implementation:*
 ```bash
 -abspath --selftest && echo || return 1
--cdf --selftest && echo || return 1
+-cd-down --selftest && echo || return 1
+-cd-up --selftest && echo || return 1
 -count-words --selftest && echo || return 1
 -du --selftest && echo || return 1
 -extract --selftest && echo || return 1
@@ -649,45 +708,6 @@ Options:
 -realpath --selftest && echo || return 1
 -sudo-append --selftest && echo || return 1
 -sudo-write --selftest && echo || return 1
--up --selftest && echo || return 1
-```
-
-
-## <a name="-up"></a>-up
-
-```
-Usage: -up [OPTION]... [LEVEL_OR_DIRECTORY_NAME]
-
-Navigates to the given level or directory up in the directory tree. Bash completion will auto-complete the names of the parent directories.
-
-Parameters:
-  LEVEL_OR_DIRECTORY_NAME (default: '..')
-      The level to navigate up in the directory structure. Numeric value or the name of the directory to go back to.
-
-Options:
-    --help 
-        Prints this help.
-    --selftest 
-        Performs a self-test.
-```
-
-*Implementation:*
-```bash
-if [[ $_LEVEL_OR_DIRECTORY_NAME == ".." ]]; then
-    cd ..
-    return 0
-fi
-
-if [[ $_LEVEL_OR_DIRECTORY_NAME =~ ^[0-9]+$ ]]; then
-    local cdArgs
-    for (( i = 0; i < _LEVEL_OR_DIRECTORY_NAME; i++ )); do
-        cdArgs="../$cdArgs"
-    done
-    cd $cdArgs
-else
-    local path=$(pwd)
-    cd "${path%${_LEVEL_OR_DIRECTORY_NAME}*}${_LEVEL_OR_DIRECTORY_NAME}"
-fi
 ```
 
 
