@@ -45,12 +45,22 @@ function __-bash-prompt() {
     history -a # add last command to history file
     history -n # reload new commands from history file
 
-    if hash tput &>/dev/null; then
-        export COLUMNS=$(tput cols)
-    else
-        export COLUMNS=$(stty size| cut -d' ' -f 2)
-    fi
+    #nohup dirs -l -p > ~/.bash_funk_dirs
 
+    if shopt -q checkwinsize; then
+        # shopt -s checkwinsize under cygwin does not work reliable
+        if [[ $TERM == "cygwin" ]]; then
+            printenv COLUMNS # for some reason this forces updating of the $COLUMNS variable under cygwin
+        fi   
+    else
+        # manually determine the current terminal width
+        if hash tput &>/dev/null; then
+            export COLUMNS=$(tput cols)
+        else
+            export COLUMNS=$(stty size | cut -d' ' -f 2)
+        fi
+    fi
+    
     # Calculate the current path to be displayed in the bash prompt
     local pwd=${PWD/#$HOME/\~}
     local pwdBasename=${pwd##*/}
