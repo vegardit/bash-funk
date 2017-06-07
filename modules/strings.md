@@ -135,6 +135,10 @@ Options:
 Examples:
 $ -str-join , a b c
 a,b,c
+$ -str-join // a b c
+a//b//c
+$ -str-join : a b 'c d'
+a:b:c d
 $ -str-join , a 
 a
 $ -str-join ,

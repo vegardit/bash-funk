@@ -436,6 +436,10 @@ function __impl-str-join() {
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn , a b c\033[22m"
                 echo "a,b,c"
+                echo -e "$ \033[1m$__fn // a b c\033[22m"
+                echo "a//b//c"
+                echo -e "$ \033[1m$__fn : a b 'c d'\033[22m"
+                echo "a:b:c d"
                 echo -e "$ \033[1m$__fn , a \033[22m"
                 echo "a"
                 echo -e "$ \033[1m$__fn , \033[22m"
@@ -457,6 +461,20 @@ function __impl-str-join() {
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^a,b,c$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [a,b,c]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn // a b c\033[22m"
+                __stdout="$($__fn // a b c)"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                __regex="^a//b//c$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [a//b//c]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn : a b 'c d'\033[22m"
+                __stdout="$($__fn : a b 'c d')"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                __regex="^a:b:c d$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [a:b:c d]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn , a \033[22m"
                 __stdout="$($__fn , a )"; __rc=$?
