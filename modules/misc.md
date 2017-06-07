@@ -24,6 +24,7 @@ The following commands are available when this module is loaded:
 1. [-help](#-help)
 1. [-test-all](#-test-all)
 1. [-test-misc](#-test-misc)
+1. [-tweak-bash](#-tweak-bash)
 1. [-var-exists](#-var-exists)
 1. [-wait](#-wait)
 
@@ -91,8 +92,50 @@ Options:
 ```bash
 -help --selftest && echo || return 1
 -test-all --selftest && echo || return 1
+-tweak-bash --selftest && echo || return 1
 -var-exists --selftest && echo || return 1
 -wait --selftest && echo || return 1
+```
+
+
+## <a name="-tweak-bash"></a>-tweak-bash
+
+```
+Usage: -tweak-bash [OPTION]...
+
+Performs some usability configurations of Bash.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+-v, --verbose 
+        Prints additional information during command execution.
+```
+
+*Implementation:*
+```bash
+
+# enable and configure command history
+set -o history
+export HISTFILE=~/.bash_funk_history
+export HISTSIZE=10000
+export HISTFILESIZE=$HISTSIZE
+export HISTCONTROL=ignorespace:ignoredups
+export HISTTIMEFORMAT="%F %T "
+export HISTIGNORE="&:?:??:clear:exit:pwd"
+history -r
+
+# http://wiki.bash-hackers.org/internals/shell_options
+local opt opts=(autocd checkwinsize dirspell direxpand extglob globstar histappend)
+for opt in ${opts[@]}; do
+    if shopt -s $opt &>/dev/null; then
+        [[ $_verbose ]] && echo "shopt -s $opt => ENABLED"
+    else
+        [[ $_verbose ]] && echo "shopt -s $opt => UNSUPPORTED"
+    fi
+done
 ```
 
 

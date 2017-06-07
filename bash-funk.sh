@@ -78,7 +78,13 @@ else
 
         unset __script_dir
 
+        if [[ ! ${BASH_FUNK_NO_TWEAK_BASH:-} ]] && declare -F -- ${BASH_FUNK_PREFIX}tweak-bash &>/dev/null; then
+            echo "Executing '${BASH_FUNK_PREFIX}tweak-bash'..."
+            ${BASH_FUNK_PREFIX}tweak-bash
+        fi
+
         if [[ ! ${BASH_FUNK_NO_PROMPT:-} ]]; then
+            echo "Setting custom bash prompt..."
             PROMPT_COMMAND=__${BASH_FUNK_PREFIX}bash-prompt
 
             # installing a prompt that prints line numbers in debug mode

@@ -41,8 +41,9 @@ function __-bash-prompt() {
     # Save the return code of last command
     local lastRC=$?
 
-    # http://superuser.com/questions/750138/bash-is-losing-history-even-though-shopt-s-histappend-is-set
-    history -a
+    # share command history accross Bash sessions
+    history -a # add last command to history file
+    history -n # reload new commands from history file
 
     if hash tput &>/dev/null; then
         export COLUMNS=$(tput cols)
