@@ -73,7 +73,7 @@ The following environment variables can be set **before** bash-funk is loaded to
 - `BASH_FUNK_NO_PROMPT_GIT`  - if set to any value the Bash prompt will not display GIT branch and modification information.
 - `BASH_FUNK_NO_PROMPT_SVN`  - if set to any value the Bash prompt will not display SVN branch and modification information.
 - `BASH_FUNK_NO_PROMPT_TTY`  - if set to any value the Bash prompt will not display the current tty.
-- `BASH_FUNK_NO_TWEAK_BASH`  - if set to any value bash-funk will not automatically invoke the [-tweak_bash](https://github.com/vegardit/bash-funk/blob/master/modules/misc.md#-tweak_bash) command.
+- `BASH_FUNK_NO_TWEAK_BASH`  - if set to any value bash-funk will not automatically invoke the [-tweak-bash](https://github.com/vegardit/bash-funk/blob/master/modules/misc.md#-tweak-bash) command.
 
 ### Loading single modules
 All modules are self-containing. This means, if you are only interested in the commands provided by one module, you can also directly source that particular module located in the `modules` folder and do not use the `bash-funk.sh` loader script.
