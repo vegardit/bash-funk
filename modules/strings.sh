@@ -657,7 +657,212 @@ function __complete-str-lower() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}str-lower -- ${BASH_FUNK_PREFIX:--}str-lower
 
-function -str-matches() {
+function -str-matches-glob() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a e u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -e
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]... GLOB_PATTERN [STRING]..."
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-str-matches-glob() {
+    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _all _help _selftest _verbose _GLOB_PATTERN _STRING=()
+    [ -p /dev/stdout ] && __in_pipe=1 || true
+    [ -t 1 ] || __in_subshell=1
+    for __arg in "$@"; do
+        case $__arg in
+
+            --help)
+                echo "Usage: $__fn [OPTION]... GLOB_PATTERN [STRING]..."
+                echo
+                echo "Matches the given string(s) against the glob pattern, prints the found matches and returns true if at least one match was found."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mGLOB_PATTERN\033[22m (required)"
+                echo "      The regex pattern to match the string(s) against."
+                echo -e "  \033[1mSTRING\033[22m "
+                echo "      The strings to check."
+                echo
+                echo "Options:"
+                echo -e "\033[1m-a, --all\033[22m "
+                echo "        Specifies that all input strings must match."
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo -e "\033[1m-v, --verbose\033[22m "
+                echo "        Prints additional information during command execution."
+                echo
+                echo "Examples:"
+                echo -e "$ \033[1m$__fn c?t\033[22m"
+                echo
+                echo -e "$ \033[1m$__fn c?t cat hat\033[22m"
+                echo "cat"
+                echo -e "$ \033[1m$__fn -v c?t cat hat\033[22m"
+                echo "match: cat
+no match: hat"
+                echo -e "$ \033[1m$__fn -a c?t cat hat\033[22m"
+                echo "cat"
+                echo -e "$ \033[1m$__fn -v -a c?t cat hat\033[22m"
+                echo "match: cat
+no match: hat"
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn c?t\033[22m"
+                __stdout="$($__fn c?t)"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                __regex="^$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn c?t cat hat\033[22m"
+                __stdout="$($__fn c?t cat hat)"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                __regex="^cat$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [cat]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn -v c?t cat hat\033[22m"
+                __stdout="$($__fn -v c?t cat hat)"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                __regex="^match: cat
+no match: hat$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [match: cat
+no match: hat]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn -a c?t cat hat\033[22m"
+                __stdout="$($__fn -a c?t cat hat)"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
+                __regex="cat"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [cat]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn -v -a c?t cat hat\033[22m"
+                __stdout="$($__fn -v -a c?t cat hat)"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
+                __regex="match: cat
+no match: hat"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [match: cat
+no match: hat]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            --all|-a)
+                _all=1
+            ;;
+
+            --verbose|-v)
+                _verbose=1
+            ;;
+
+            -*)
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        if [[ ! $_GLOB_PATTERN ]]; then
+            _GLOB_PATTERN=$__param
+            continue
+        fi
+        _STRING+=("$__param")
+        continue
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if [[ $_GLOB_PATTERN ]]; then
+        true
+    else
+        echo "$__fn: Error: Parameter GLOB_PATTERN must be specified."; return 64
+    fi
+
+    ######### str-matches-glob ######### START
+
+if [[ ! ${_STRING} ]]; then
+    return 0
+fi
+
+local matchFound mismatchFound str
+for str in ${_STRING[@]}; do
+
+    case "$str" in
+        $_GLOB_PATTERN)
+            matchFound=1
+            if [[ $_verbose ]]; then
+                echo "match: $str"
+            else
+                echo "$str"
+            fi
+          ;;
+
+        *)
+            mismatchFound=1
+            [[ $_verbose ]] && echo "no match: $str" || true
+          ;;
+    esac
+done
+
+if [[ $_all ]]; then
+    [[ $mismatchFound ]] && return 1 || return 0
+else
+    [[ $matchFound ]] && return 0 || return 1
+fi
+
+    ######### str-matches-glob ######### END
+}
+function __complete-str-matches-glob() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --all -a --help --selftest --verbose -v "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}str-matches-glob -- ${BASH_FUNK_PREFIX:--}str-matches-glob
+
+function -str-matches-regex() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
     for opt in a e u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
@@ -682,7 +887,7 @@ function -str-matches() {
 
     return $rc
 }
-function __impl-str-matches() {
+function __impl-str-matches-regex() {
     local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _all _help _selftest _verbose _REGEX_PATTERN _STRING=()
     [ -p /dev/stdout ] && __in_pipe=1 || true
     [ -t 1 ] || __in_subshell=1
@@ -711,18 +916,18 @@ function __impl-str-matches() {
                 echo "        Prints additional information during command execution."
                 echo
                 echo "Examples:"
-                echo -e "$ \033[1m$__fn A\033[22m"
+                echo -e "$ \033[1m$__fn c.t\033[22m"
                 echo
-                echo -e "$ \033[1m$__fn A A B\033[22m"
-                echo "A"
-                echo -e "$ \033[1m$__fn -v A A B\033[22m"
-                echo "match: A
-no match: B"
-                echo -e "$ \033[1m$__fn -a A A B\033[22m"
-                echo "A"
-                echo -e "$ \033[1m$__fn -v -a A A B\033[22m"
-                echo "match: A
-no match: B"
+                echo -e "$ \033[1m$__fn c.t cat hat\033[22m"
+                echo "cat"
+                echo -e "$ \033[1m$__fn -v c.t cat hat\033[22m"
+                echo "match: cat
+no match: hat"
+                echo -e "$ \033[1m$__fn -a c.t cat hat\033[22m"
+                echo "cat"
+                echo -e "$ \033[1m$__fn -v -a c.t cat hat\033[22m"
+                echo "match: cat
+no match: hat"
                 echo
                 return 0
               ;;
@@ -734,44 +939,44 @@ no match: B"
                 __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn A\033[22m"
-                __stdout="$($__fn A)"; __rc=$?
+                echo -e "$ \033[1m$__fn c.t\033[22m"
+                __stdout="$($__fn c.t)"; __rc=$?
                 echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn A A B\033[22m"
-                __stdout="$($__fn A A B)"; __rc=$?
+                echo -e "$ \033[1m$__fn c.t cat hat\033[22m"
+                __stdout="$($__fn c.t cat hat)"; __rc=$?
                 echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^A$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [A]."; return 64; fi
+                __regex="^cat$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [cat]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn -v A A B\033[22m"
-                __stdout="$($__fn -v A A B)"; __rc=$?
+                echo -e "$ \033[1m$__fn -v c.t cat hat\033[22m"
+                __stdout="$($__fn -v c.t cat hat)"; __rc=$?
                 echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^match: A
-no match: B$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [match: A
-no match: B]."; return 64; fi
+                __regex="^match: cat
+no match: hat$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [match: cat
+no match: hat]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn -a A A B\033[22m"
-                __stdout="$($__fn -a A A B)"; __rc=$?
+                echo -e "$ \033[1m$__fn -a c.t cat hat\033[22m"
+                __stdout="$($__fn -a c.t cat hat)"; __rc=$?
                 echo "$__stdout"
                 if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
-                __regex="A"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [A]."; return 64; fi
+                __regex="cat"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [cat]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn -v -a A A B\033[22m"
-                __stdout="$($__fn -v -a A A B)"; __rc=$?
+                echo -e "$ \033[1m$__fn -v -a c.t cat hat\033[22m"
+                __stdout="$($__fn -v -a c.t cat hat)"; __rc=$?
                 echo "$__stdout"
                 if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
-                __regex="match: A
-no match: B"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [match: A
-no match: B]."; return 64; fi
+                __regex="match: cat
+no match: hat"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [match: cat
+no match: hat]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
@@ -816,37 +1021,30 @@ no match: B]."; return 64; fi
         echo "$__fn: Error: Parameter REGEX_PATTERN must be specified."; return 64
     fi
 
-    ######### str-matches ######### START
+    ######### str-matches-regex ######### START
 
 if [[ ! ${_STRING} ]]; then
     return 0
 fi
 
-local matchFound=
-local mismatchFound=
-local str
+local matchFound mismatchFound str
 for str in ${_STRING[@]}; do
     if [[ $str =~ $_REGEX_PATTERN ]]; then
+        matchFound=1
         if [[ $_verbose ]]; then
             echo "match: $str"
+            local i=1 n=${#BASH_REMATCH[*]}
+            while [[ $i -lt $n ]]; do
+                echo "  group($i): ${BASH_REMATCH[$i]}"
+                (( i++ ))
+            done
         else
             echo "$str"
         fi
-        matchFound=1
-        local i=1
-        local n=${#BASH_REMATCH[*]}
-        while [[ $i -lt $n ]]
-        do
-            echo "  capture[$i]: ${BASH_REMATCH[$i]}"
-            let i++
-        done
     else
-        if [[ $_verbose ]]; then
-            echo "no match: $str"
-        fi
         mismatchFound=1
+        [[ $_verbose ]] && echo "no match: $str" || true
     fi
-    shift
 done
 if [[ $_all ]]; then
     [[ $mismatchFound ]] && return 1 || return 0
@@ -854,9 +1052,9 @@ else
     [[ $matchFound ]] && return 0 || return 1
 fi
 
-    ######### str-matches ######### END
+    ######### str-matches-regex ######### END
 }
-function __complete-str-matches() {
+function __complete-str-matches-regex() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
         local options=" --all -a --help --selftest --verbose -v "
@@ -866,7 +1064,7 @@ function __complete-str-matches() {
         COMPREPLY=($(compgen -o default -- $curr))
     fi
 }
-complete -F __complete${BASH_FUNK_PREFIX:--}str-matches -- ${BASH_FUNK_PREFIX:--}str-matches
+complete -F __complete${BASH_FUNK_PREFIX:--}str-matches-regex -- ${BASH_FUNK_PREFIX:--}str-matches-regex
 
 function -str-repeat() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
@@ -2113,7 +2311,8 @@ ${BASH_FUNK_PREFIX:--}hex2ascii --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}normalize-path --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}str-join --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}str-lower --selftest && echo || return 1
-${BASH_FUNK_PREFIX:--}str-matches --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}str-matches-glob --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}str-matches-regex --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}str-repeat --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}str-trim --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}str-upper --selftest && echo || return 1
@@ -2145,7 +2344,8 @@ function -help-strings() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}normalize-path PATH\033[0m  -  Prints the normalized form of the given file path."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-join SEPARATOR [STRING]...\033[0m  -  Prints strings joined with the given separator."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-lower STRING\033[0m  -  Prints the given string in lower cases."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-matches REGEX_PATTERN [STRING]...\033[0m  -  Matches the given string(s) against the regex pattern, prints the found matches and returns true if at least one match was found."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-matches-glob GLOB_PATTERN [STRING]...\033[0m  -  Matches the given string(s) against the glob pattern, prints the found matches and returns true if at least one match was found."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-matches-regex REGEX_PATTERN [STRING]...\033[0m  -  Matches the given string(s) against the regex pattern, prints the found matches and returns true if at least one match was found."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-repeat STRING COUNT\033[0m  -  Prints the given string multiple times."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-trim STRING\033[0m  -  Prints the given string without leading and trailing spaces."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-upper STRING\033[0m  -  Prints the given string in upper cases."
@@ -2158,4 +2358,4 @@ function -help-strings() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-strings\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( ascii2hex hex2ascii normalize-path str-join str-lower str-matches str-repeat str-trim str-upper strip-ansi substr-after substr-after-last substr-before substr-before-last substr-between test-strings )
+__BASH_FUNK_FUNCS+=( ascii2hex hex2ascii normalize-path str-join str-lower str-matches-glob str-matches-regex str-repeat str-trim str-upper strip-ansi substr-after substr-after-last substr-before substr-before-last substr-between test-strings )

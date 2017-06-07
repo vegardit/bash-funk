@@ -9,7 +9,8 @@ The following commands are available when this module is loaded:
 1. [-normalize-path](#-normalize-path)
 1. [-str-join](#-str-join)
 1. [-str-lower](#-str-lower)
-1. [-str-matches](#-str-matches)
+1. [-str-matches-glob](#-str-matches-glob)
+1. [-str-matches-regex](#-str-matches-regex)
 1. [-str-repeat](#-str-repeat)
 1. [-str-trim](#-str-trim)
 1. [-str-upper](#-str-upper)
@@ -186,10 +187,82 @@ fi
 ```
 
 
-## <a name="-str-matches"></a>-str-matches
+## <a name="-str-matches-glob"></a>-str-matches-glob
 
 ```
-Usage: -str-matches [OPTION]... REGEX_PATTERN [STRING]...
+Usage: -str-matches-glob [OPTION]... GLOB_PATTERN [STRING]...
+
+Matches the given string(s) against the glob pattern, prints the found matches and returns true if at least one match was found.
+
+Parameters:
+  GLOB_PATTERN (required)
+      The regex pattern to match the string(s) against.
+  STRING 
+      The strings to check.
+
+Options:
+-a, --all 
+        Specifies that all input strings must match.
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+-v, --verbose 
+        Prints additional information during command execution.
+
+Examples:
+$ -str-matches-glob c?t
+
+$ -str-matches-glob c?t cat hat
+cat
+$ -str-matches-glob -v c?t cat hat
+match: cat
+no match: hat
+$ -str-matches-glob -a c?t cat hat
+cat
+$ -str-matches-glob -v -a c?t cat hat
+match: cat
+no match: hat
+```
+
+*Implementation:*
+```bash
+if [[ ! ${_STRING} ]]; then
+    return 0
+fi
+
+local matchFound mismatchFound str
+for str in ${_STRING[@]}; do
+
+    case "$str" in
+        $_GLOB_PATTERN)
+            matchFound=1
+            if [[ $_verbose ]]; then
+                echo "match: $str"
+            else
+                echo "$str"
+            fi
+          ;;
+
+        *)
+            mismatchFound=1
+            [[ $_verbose ]] && echo "no match: $str" || true
+          ;;
+    esac
+done
+
+if [[ $_all ]]; then
+    [[ $mismatchFound ]] && return 1 || return 0
+else
+    [[ $matchFound ]] && return 0 || return 1
+fi
+```
+
+
+## <a name="-str-matches-regex"></a>-str-matches-regex
+
+```
+Usage: -str-matches-regex [OPTION]... REGEX_PATTERN [STRING]...
 
 Matches the given string(s) against the regex pattern, prints the found matches and returns true if at least one match was found.
 
@@ -210,18 +283,18 @@ Options:
         Prints additional information during command execution.
 
 Examples:
-$ -str-matches A
+$ -str-matches-regex c.t
 
-$ -str-matches A A B
-A
-$ -str-matches -v A A B
-match: A
-no match: B
-$ -str-matches -a A A B
-A
-$ -str-matches -v -a A A B
-match: A
-no match: B
+$ -str-matches-regex c.t cat hat
+cat
+$ -str-matches-regex -v c.t cat hat
+match: cat
+no match: hat
+$ -str-matches-regex -a c.t cat hat
+cat
+$ -str-matches-regex -v -a c.t cat hat
+match: cat
+no match: hat
 ```
 
 *Implementation:*
@@ -230,31 +303,24 @@ if [[ ! ${_STRING} ]]; then
     return 0
 fi
 
-local matchFound=
-local mismatchFound=
-local str
+local matchFound mismatchFound str
 for str in ${_STRING[@]}; do
     if [[ $str =~ $_REGEX_PATTERN ]]; then
+        matchFound=1
         if [[ $_verbose ]]; then
             echo "match: $str"
+            local i=1 n=${#BASH_REMATCH[*]}
+            while [[ $i -lt $n ]]; do
+                echo "  group($i): ${BASH_REMATCH[$i]}"
+                (( i++ ))
+            done
         else
             echo "$str"
         fi
-        matchFound=1
-        local i=1
-        local n=${#BASH_REMATCH[*]}
-        while [[ $i -lt $n ]]
-        do
-            echo "  capture[$i]: ${BASH_REMATCH[$i]}"
-            let i++
-        done
     else
-        if [[ $_verbose ]]; then
-            echo "no match: $str"
-        fi
         mismatchFound=1
+        [[ $_verbose ]] && echo "no match: $str" || true
     fi
-    shift
 done
 if [[ $_all ]]; then
     [[ $mismatchFound ]] && return 1 || return 0
@@ -565,7 +631,8 @@ Options:
 -normalize-path --selftest && echo || return 1
 -str-join --selftest && echo || return 1
 -str-lower --selftest && echo || return 1
--str-matches --selftest && echo || return 1
+-str-matches-glob --selftest && echo || return 1
+-str-matches-regex --selftest && echo || return 1
 -str-repeat --selftest && echo || return 1
 -str-trim --selftest && echo || return 1
 -str-upper --selftest && echo || return 1
