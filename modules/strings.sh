@@ -637,7 +637,11 @@ function __impl-str-lower() {
 
     ######### str-lower ######### START
 
-echo "${_STRING,,}"
+if ((${BASH_VERSION::1} < 4)); then
+    echo "$_STRING" | tr '[:upper:]' '[:lower:]'
+else
+    echo "${_STRING,,}"
+fi
 
     ######### str-lower ######### END
 }
@@ -1218,7 +1222,11 @@ function __impl-str-upper() {
 
     ######### str-upper ######### START
 
-echo "${1^^}"
+if ((${BASH_VERSION::1} < 4)); then
+    echo "$_STRING" | tr '[:lower:]' '[:upper:]'
+else
+    echo "${_STRING^^}"
+fi
 
     ######### str-upper ######### END
 }

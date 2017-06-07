@@ -178,7 +178,11 @@ abcdef
 
 *Implementation:*
 ```bash
-echo "${_STRING,,}"
+if ((${BASH_VERSION::1} < 4)); then
+    echo "$_STRING" | tr '[:upper:]' '[:lower:]'
+else
+    echo "${_STRING,,}"
+fi
 ```
 
 
@@ -343,7 +347,11 @@ ABCDEF
 
 *Implementation:*
 ```bash
-echo "${1^^}"
+if ((${BASH_VERSION::1} < 4)); then
+    echo "$_STRING" | tr '[:lower:]' '[:upper:]'
+else
+    echo "${_STRING^^}"
+fi
 ```
 
 
