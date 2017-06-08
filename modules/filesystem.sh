@@ -2123,6 +2123,136 @@ function __complete-sudo-write() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}sudo-write -- ${BASH_FUNK_PREFIX:--}sudo-write
 
+function -tail-reverse() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a e u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -e
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]... FILE"
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-tail-reverse() {
+    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _lines _help _selftest _FILE
+    [ -p /dev/stdout ] && __in_pipe=1 || true
+    [ -t 1 ] || __in_subshell=1
+    for __arg in "$@"; do
+        case $__arg in
+
+            --help)
+                echo "Usage: $__fn [OPTION]... FILE"
+                echo
+                echo "Prints the last N lines of the given text file in reverse order."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mFILE\033[22m (required, file)"
+                echo "      Path to the file."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m-n, --lines N\033[22m (integer: ?-?)"
+                echo "        The maximum number of lines to output."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            --lines|-n)
+                _lines="@@##@@"
+                __optionWithValue=lines
+            ;;
+
+            -*)
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    lines)
+                        _lines=$__arg
+                        __optionWithValue=
+                      ;;
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        if [[ ! $_FILE ]]; then
+            _FILE=$__param
+            continue
+        fi
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if [[ $_lines ]]; then
+        if [[ $_lines == "@@##@@" ]]; then echo "$__fn: Error: Value N for option --lines must be specified."; return 64; fi
+        if [[ ! "$_lines" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_lines' for option --lines is not a numeric value."; return 64; fi
+    fi
+
+    if [[ $_FILE ]]; then
+        if [[ ! -e "$_FILE" ]]; then echo "$__fn: Error: File '$_FILE' for parameter FILE does not exist."; return 64; fi
+        if [[ -e "$_FILE" && ! -f "$_FILE" ]]; then echo "$__fn: Error: Path '$_FILE' for parameter FILE is not a file."; return 64; fi
+        if [[ ! -r "$_FILE" ]]; then echo "$__fn: Error: File '$_FILE' for parameter FILE is not readable by user '$USER'."; return 64; fi
+    else
+        echo "$__fn: Error: Parameter FILE must be specified."; return 64
+    fi
+
+    ######### tail-reverse ######### START
+
+if [[ $_lines ]]; then
+    awk "{lines[len++]=\$0} END {for(i=len-1;len-i<=$_lines;) print lines[i--]}" $_FILE
+else
+    awk '{lines[len++]=$0} END {for(i=len-1;i>=0;) print lines[i--]}' $_FILE
+fi
+
+    ######### tail-reverse ######### END
+}
+function __complete-tail-reverse() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --lines -n --help --selftest "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}tail-reverse -- ${BASH_FUNK_PREFIX:--}tail-reverse
+
 function -test-filesystem() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
     for opt in a e u H t; do
@@ -2216,6 +2346,7 @@ ${BASH_FUNK_PREFIX:--}owner --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}realpath --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}sudo-append --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}sudo-write --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}tail-reverse --selftest && echo || return 1
 
     ######### test-filesystem ######### END
 }
@@ -2248,16 +2379,17 @@ function -help-filesystem() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}realpath [PATH]\033[0m  -  Prints the normalized path of the given path resolving any symbolic links. The path is not required to exist."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}sudo-append FILE_PATH CONTENT\033[0m  -  Creates a file with the given content."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}sudo-write FILE_PATH OWNER CONTENT\033[0m  -  Creates a file with the given content."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}tail-reverse FILE\033[0m  -  Prints the last N lines of the given text file in reverse order."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-filesystem\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( abspath cd-down cd-hist cd-up count-words du extract findfiles ll mkcd modified owner realpath sudo-append sudo-write test-filesystem )
+__BASH_FUNK_FUNCS+=( abspath cd-down cd-hist cd-up count-words du extract findfiles ll mkcd modified owner realpath sudo-append sudo-write tail-reverse test-filesystem )
 
 alias -- l="ll"
 alias -- ll="${BASH_FUNK_PREFIX:--}ll"
-alias -- ..="${BASH_FUNK_PREFIX:--}cd-up"
 alias -- ++="${BASH_FUNK_PREFIX:--}cd-down"
 alias -- --="${BASH_FUNK_PREFIX:--}cd-hist"
+alias -- ..="${BASH_FUNK_PREFIX:--}cd-up"
 alias -- ...="command cd ../.."
 
 if [[ $OSTYPE == "cygwin" ]]; then

@@ -7,9 +7,9 @@ The following statements are automatically executed when this module loads:
 ```bash
 alias -- l="ll"
 alias -- ll="-ll"
-alias -- ..="-cd-up"
 alias -- ++="-cd-down"
 alias -- --="-cd-hist"
+alias -- ..="-cd-up"
 alias -- ...="command cd ../.."
 
 if [[ $OSTYPE == "cygwin" ]]; then
@@ -39,6 +39,7 @@ The following commands are available when this module is loaded:
 1. [-realpath](#-realpath)
 1. [-sudo-append](#-sudo-append)
 1. [-sudo-write](#-sudo-write)
+1. [-tail-reverse](#-tail-reverse)
 1. [-test-filesystem](#-test-filesystem)
 
 ## <a name="-abspath"></a>-abspath
@@ -736,6 +737,36 @@ sudo sh -c "echo '$_CONTENT' > '$_FILE_PATH'" && sudo chown "$_OWNER" "$_FILE_PA
 ```
 
 
+## <a name="-tail-reverse"></a>-tail-reverse
+
+```
+Usage: -tail-reverse [OPTION]... FILE
+
+Prints the last N lines of the given text file in reverse order.
+
+Parameters:
+  FILE (required, file)
+      Path to the file.
+
+Options:
+    --help 
+        Prints this help.
+-n, --lines N (integer: ?-?)
+        The maximum number of lines to output.
+    --selftest 
+        Performs a self-test.
+```
+
+*Implementation:*
+```bash
+if [[ $_lines ]]; then
+    awk "{lines[len++]=\$0} END {for(i=len-1;len-i<=$_lines;) print lines[i--]}" $_FILE
+else
+    awk '{lines[len++]=$0} END {for(i=len-1;i>=0;) print lines[i--]}' $_FILE
+fi
+```
+
+
 ## <a name="-test-filesystem"></a>-test-filesystem
 
 ```
@@ -767,6 +798,7 @@ Options:
 -realpath --selftest && echo || return 1
 -sudo-append --selftest && echo || return 1
 -sudo-write --selftest && echo || return 1
+-tail-reverse --selftest && echo || return 1
 ```
 
 
