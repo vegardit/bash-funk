@@ -48,7 +48,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
-
 ## <a name="-help"></a>-help
 
 ```
@@ -239,7 +238,17 @@ if [[ -e "${__BASH_FUNK_ROOT}/.git" ]]; then
     return
 fi
 
-( cd "${__BASH_FUNK_ROOT}" && curl -#L https://github.com/vegardit/bash-funk/tarball/master | tar -xzv --strip-components 1 )
+local get
+if hash curl &>/dev/null; then
+    get="curl -#L"
+else
+    if wget --help | grep -- --show-progress &>/dev/null; then
+        get="wget -qO- --show-progress"
+    else
+        get="wget -qO-"
+    fi
+fi
+( cd "${__BASH_FUNK_ROOT}" && $get https://github.com/vegardit/bash-funk/tarball/master | tar -xzv --strip-components 1 )
 return
 ```
 
