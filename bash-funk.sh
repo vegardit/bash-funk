@@ -92,6 +92,26 @@ else
             echo "* Setting custom bash prompt..."
             PROMPT_COMMAND=__${BASH_FUNK_PREFIX}bash-prompt
 
+            # load directory history from ~/.bash_funk_dirs
+            if [[ -s ~/.bash_funk_dirs ]]; then
+
+                # the awk command corresponds to '-tail-reverse -u -n 100 ~/.bash_funk_dirs'
+                IFS=$'\n' read -rd '' -a __dirs <<<"$(awk "{lines[len++]=\$0} END {for(i=len-1;i>=0;i--) if(occurrences[lines[i]]++ == 0) {print lines[i]; count++; if (count>=100) break}}" ~/.bash_funk_dirs)"
+                # $_dirs now contains the latest used directory first
+                if [[ $__dirs ]]; then
+                    echo "* Loading directory history..."
+                    dirs -c
+                    {
+                        for (( __i=${#__dirs[@]}-1 ; __i>=0 ; __i-- )) ; do
+                            pushd -n "${__dirs[__i]}" >/dev/null
+                            echo "${__dirs[__i]}"
+                        done
+                    } >~/.bash_funk_dirs
+                    unset __i
+                fi
+                unset __dirs
+            fi
+
             # installing a prompt that prints line numbers in debug mode
             __BASH_FUNK_OLD_PS4="$PS4"
             PS4='\033[0;35m+ ($0:${LINENO}) \033[0m'
