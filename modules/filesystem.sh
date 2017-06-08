@@ -2149,7 +2149,7 @@ function -tail-reverse() {
     return $rc
 }
 function __impl-tail-reverse() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _lines _help _selftest _FILE
+    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _unique _lines _help _selftest _FILE
     [ -p /dev/stdout ] && __in_pipe=1 || true
     [ -t 1 ] || __in_subshell=1
     for __arg in "$@"; do
@@ -2171,6 +2171,8 @@ function __impl-tail-reverse() {
                 echo "        The maximum number of lines to output."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "\033[1m-u, --unique\033[22m "
+                echo "        Don't print duplicates."
                 echo
                 return 0
               ;;
@@ -2185,6 +2187,10 @@ function __impl-tail-reverse() {
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
+
+            --unique|-u)
+                _unique=1
+            ;;
 
             --lines|-n)
                 _lines="@@##@@"
@@ -2233,10 +2239,18 @@ function __impl-tail-reverse() {
 
     ######### tail-reverse ######### START
 
-if [[ $_lines ]]; then
-    awk "{lines[len++]=\$0} END {for(i=len-1;len-i<=$_lines;) print lines[i--]}" $_FILE
+if [[ $_unique ]]; then
+    if [[ $_lines ]]; then
+        awk "{lines[len++]=\$0} END {for(i=len-1;i>=0;i--) {if (len-i>$_lines) break; if (occurrences[lines[i]]++ == 0) print lines[i]}}" $_FILE
+    else
+        awk "{lines[len++]=\$0} END {for(i=len-1;i>=0;i--) if (occurrences[lines[i]]++ == 0) print lines[i]}" $_FILE
+    fi
 else
-    awk '{lines[len++]=$0} END {for(i=len-1;i>=0;) print lines[i--]}' $_FILE
+    if [[ $_lines ]]; then
+        awk "{lines[len++]=\$0} END {for(i=len-1;len-i<=$_lines;i--) print lines[i]}" $_FILE
+    else
+        awk "{lines[len++]=\$0} END {for(i=len-1;i>=0;i--) print lines[i]}" $_FILE
+    fi
 fi
 
     ######### tail-reverse ######### END
@@ -2244,7 +2258,7 @@ fi
 function __complete-tail-reverse() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --lines -n --help --selftest "
+        local options=" --unique -u --lines -n --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else

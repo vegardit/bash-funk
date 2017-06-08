@@ -755,14 +755,24 @@ Options:
         The maximum number of lines to output.
     --selftest 
         Performs a self-test.
+-u, --unique 
+        Don't print duplicates.
 ```
 
 *Implementation:*
 ```bash
-if [[ $_lines ]]; then
-    awk "{lines[len++]=\$0} END {for(i=len-1;len-i<=$_lines;) print lines[i--]}" $_FILE
+if [[ $_unique ]]; then
+    if [[ $_lines ]]; then
+        awk "{lines[len++]=\$0} END {for(i=len-1;i>=0;i--) {if (len-i>$_lines) break; if (occurrences[lines[i]]++ == 0) print lines[i]}}" $_FILE
+    else
+        awk "{lines[len++]=\$0} END {for(i=len-1;i>=0;i--) if (occurrences[lines[i]]++ == 0) print lines[i]}" $_FILE
+    fi
 else
-    awk '{lines[len++]=$0} END {for(i=len-1;i>=0;) print lines[i--]}' $_FILE
+    if [[ $_lines ]]; then
+        awk "{lines[len++]=\$0} END {for(i=len-1;len-i<=$_lines;i--) print lines[i]}" $_FILE
+    else
+        awk "{lines[len++]=\$0} END {for(i=len-1;i>=0;i--) print lines[i]}" $_FILE
+    fi
 fi
 ```
 
