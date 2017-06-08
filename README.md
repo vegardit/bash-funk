@@ -12,7 +12,7 @@ bash-funk is a collection of useful commands for Bash 3.2 or higher.
 
 See the markdown files of the different [Bash modules](https://github.com/vegardit/bash-funk/tree/master/modules) for detailed information about the provided commands.
 
-An enhanced bash prompt is provided too:
+An adaptive bash prompt is provided too:
 
 ![console](img/console.png)
 
