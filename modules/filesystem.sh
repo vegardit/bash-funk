@@ -2241,7 +2241,7 @@ function __impl-tail-reverse() {
 
 if [[ $_unique ]]; then
     if [[ $_lines ]]; then
-        awk "{lines[len++]=\$0} END {for(i=len-1;i>=0;i--) {if (len-i>$_lines) break; if (occurrences[lines[i]]++ == 0) print lines[i]}}" $_FILE
+        awk "{lines[len++]=\$0} END {for(i=len-1;i>=0;i--) if (occurrences[lines[i]]++ == 0) { print lines[i]; count++; if (count>=$_lines) break}}" $_FILE
     else
         awk "{lines[len++]=\$0} END {for(i=len-1;i>=0;i--) if (occurrences[lines[i]]++ == 0) print lines[i]}" $_FILE
     fi
