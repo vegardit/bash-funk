@@ -94,32 +94,45 @@ function __-bash-prompt() {
     local C_RESET="\033[0m"
     local C_BOLD="\033[1m"
     local C_BOLD_OFF="\033[22m"
-    local C_FG_BLACK="\033[30m"
     local C_FG_YELLOW="\033[30m"
     local C_FG_GRAY="\033[37m"
     local C_FG_WHITE="\033[97m"
     local C_BG_RED="\033[41m"
     local C_BG_GREEN="\033[42m"
+    local C_BG_YELLOW="\033[43m"
 
     if [[ $TERM == "cygwin" ]]; then
+        local C_FG_BLACK="\033[22m\033[30m"
         local C_FG_WHITE="$C_BOLD$C_FG_GRAY"
         local C_FG_LIGHT_YELLOW="$C_BOLD$C_FG_YELLOW"
     else
+        local C_FG_BLACK="\033[30m"
         local C_FG_WHITE="\033[97m"
         local C_FG_LIGHT_YELLOW="\033[93m"
     fi
 
+    local p_lastRC
     if [[ $lastRC == 0 ]]; then
-        lastRC=""
-        local bg="${C_RESET}${C_BG_GREEN}"
+        p_lastRC=""
+        local bg="${C_BG_GREEN}"
     else
-        lastRC="[$lastRC] "
-        local bg="${C_RESET}${C_BG_RED}"
+        p_lastRC="${C_FG_GRAY}[$lastRC] "
+        local bg="${C_BG_RED}"
     fi
 
     [[ ${BASH_FUNK_NO_PROMPT_DATE:-} ]] && local p_date= || local p_date="| \d \t "
     [[ ${BASH_FUNK_NO_PROMPT_JOBS:-} ]] && local p_jobs= || local p_jobs="| \j jobs "
     [[ ${BASH_FUNK_NO_PROMPT_TTY:-}  ]] && local p_tty=  || local  p_tty="| tty #\l "
+
+    local p_user
+    if [[ $EUID -eq 0 ]]; then
+        # highlight root user yellow
+        p_user="${C_FG_BLACK}${C_BG_YELLOW}*${USER}*${bg} "
+    else
+        p_user="${C_FG_WHITE}${USER}${C_FG_BLACK} "
+    fi
+
+    local p_host="| ${C_FG_WHITE}\h${C_FG_BLACK} "
 
     local p_scm
     if [[ ! ${BASH_FUNK_NO_PROMPT_GIT:-} ]]; then
@@ -179,7 +192,7 @@ function __-bash-prompt() {
         esac
     fi
 
-    local LINE1="${bg}$lastRC${C_FG_WHITE}\u${C_RESET}${bg} ${C_FG_BLACK}| ${C_FG_WHITE}\h${C_RESET}${bg} ${C_FG_BLACK}${p_scm}${p_date}${p_jobs}${p_screen}${p_tty}${C_RESET}"
+    local LINE1="${C_RESET}${bg}$p_lastRC${p_user}${p_host}${p_scm}${p_date}${p_jobs}${p_screen}${p_tty}${C_RESET}"
     local LINE2="[\033[${BASH_FUNK_DIRS_COLOR}m${pwd}${C_RESET}]"
     local LINE3="$ "
     PS1="\n$LINE1\n$LINE2\n$LINE3"
