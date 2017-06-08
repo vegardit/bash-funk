@@ -111,6 +111,7 @@ function __-bash-prompt() {
         local C_FG_LIGHT_YELLOW="\033[93m"
     fi
 
+
     local p_lastRC
     if [[ $lastRC == 0 ]]; then
         p_lastRC=""
@@ -120,9 +121,6 @@ function __-bash-prompt() {
         local bg="${C_BG_RED}"
     fi
 
-    [[ ${BASH_FUNK_NO_PROMPT_DATE:-} ]] && local p_date= || local p_date="| \d \t "
-    [[ ${BASH_FUNK_NO_PROMPT_JOBS:-} ]] && local p_jobs= || local p_jobs="| \j jobs "
-    [[ ${BASH_FUNK_NO_PROMPT_TTY:-}  ]] && local p_tty=  || local  p_tty="| tty #\l "
 
     local p_user
     if [[ $EUID -eq 0 ]]; then
@@ -132,7 +130,10 @@ function __-bash-prompt() {
         p_user="${C_FG_WHITE}${USER}${C_FG_BLACK} "
     fi
 
-    local p_host="| ${C_FG_WHITE}\h${C_FG_BLACK} "
+
+    local p_host
+    p_host="| ${C_FG_WHITE}\h${C_FG_BLACK} "
+
 
     local p_scm
     if [[ ! ${BASH_FUNK_NO_PROMPT_GIT:-} ]]; then
@@ -145,7 +146,6 @@ function __-bash-prompt() {
             fi
         fi
     fi
-
     if [[ ! $p_scm && ! ${BASH_FUNK_NO_PROMPT_SVN:-} ]]; then
         # extracting trunk/branch info without relying using sed/grep for higher performance
         if p_scm=$(svn info 2>/dev/null); then
@@ -177,10 +177,31 @@ function __-bash-prompt() {
             fi
         fi
     fi
-
     if [[ $p_scm ]]; then
         p_scm="| ${C_FG_LIGHT_YELLOW}$p_scm${C_FG_BLACK} "
     fi
+
+
+    local p_date
+    if [[ ! ${BASH_FUNK_NO_PROMPT_DATE:-} ]]; then
+        p_date="| \d \t "
+    fi
+
+
+    local p_jobs
+    if [[ ! ${BASH_FUNK_NO_PROMPT_JOBS:-} ]]; then
+        if [[ $OSTYPE == "cygwin" ]]; then
+            p_jobs="| \j jobs "
+        else
+            p_jobs=$(jobs -r | wc -l)
+            case "$p_jobs" in
+                0) p_jobs= ;;
+                1) p_jobs="| ${C_FG_LIGHT_YELLOW}1 job${C_FG_BLACK} " ;;
+                *) p_jobs="| ${C_FG_LIGHT_YELLOW}$p_job jobs${C_FG_BLACK} " ;;
+            esac
+        fi
+    fi
+
 
     local p_screen
     if [[ ! ${BASH_FUNK_NO_PROMPT_SCREEN:-} ]]; then
@@ -191,6 +212,13 @@ function __-bash-prompt() {
             *) p_screen="| ${C_FG_LIGHT_YELLOW}$p_screen screens${C_FG_BLACK} " ;;
         esac
     fi
+
+
+    local p_tty
+    if [[ ! ${BASH_FUNK_NO_PROMPT_TTY:-} ]]; then
+        p_tty="| tty #\l "
+    fi
+
 
     local LINE1="${C_RESET}${bg}$p_lastRC${p_user}${p_host}${p_scm}${p_date}${p_jobs}${p_screen}${p_tty}${C_RESET}"
     local LINE2="[\033[${BASH_FUNK_DIRS_COLOR}m${pwd}${C_RESET}]"
