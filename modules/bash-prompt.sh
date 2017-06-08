@@ -29,6 +29,9 @@ fi
 if ! hash git &>/dev/null; then
     BASH_FUNK_NO_PROMPT_GIT=1
 fi
+if ! hash screen &>/dev/null; then
+    BASH_FUNK_NO_PROMPT_SCREEN=1
+fi
 
 # change the color of directories in ls
 if hash dircolors &>/dev/null; then
@@ -115,7 +118,7 @@ function __-bash-prompt() {
     fi
 
     [[ ${BASH_FUNK_NO_PROMPT_DATE:-} ]] && local p_date= || local p_date="| \d \t "
-    [[ ${BASH_FUNK_NO_PROMPT_JOBS:-} ]] && local p_jobs= || local p_jobs="| \j Jobs "
+    [[ ${BASH_FUNK_NO_PROMPT_JOBS:-} ]] && local p_jobs= || local p_jobs="| \j jobs "
     [[ ${BASH_FUNK_NO_PROMPT_TTY:-}  ]] && local p_tty=  || local  p_tty="| tty #\l "
 
     local p_scm
@@ -166,7 +169,17 @@ function __-bash-prompt() {
         p_scm="| ${C_FG_LIGHT_YELLOW}$p_scm${C_FG_BLACK} "
     fi
 
-    local LINE1="${bg}$lastRC${C_FG_WHITE}\u${C_RESET}${bg} ${C_FG_BLACK}| ${C_FG_WHITE}\h${C_RESET}${bg} ${C_FG_BLACK}${p_scm}${p_date}${p_jobs}${p_tty}${C_RESET}"
+    local p_screen
+    if [[ ! ${BASH_FUNK_NO_PROMPT_SCREEN:-} ]]; then
+        p_screen=$(screen -ls 2>/dev/null | grep "etached)" | wc -l);
+        case "$p_screen" in
+            0) p_screen= ;;
+            1) p_screen="| ${C_FG_LIGHT_YELLOW}1 screen${C_FG_BLACK} " ;;
+            *) p_screen="| ${C_FG_LIGHT_YELLOW}$p_screen screens${C_FG_BLACK} " ;;
+        esac
+    fi
+
+    local LINE1="${bg}$lastRC${C_FG_WHITE}\u${C_RESET}${bg} ${C_FG_BLACK}| ${C_FG_WHITE}\h${C_RESET}${bg} ${C_FG_BLACK}${p_scm}${p_date}${p_jobs}${p_screen}${p_tty}${C_RESET}"
     local LINE2="[\033[${BASH_FUNK_DIRS_COLOR}m${pwd}${C_RESET}]"
     local LINE3="$ "
     PS1="\n$LINE1\n$LINE2\n$LINE3"
