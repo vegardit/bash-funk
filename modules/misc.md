@@ -22,9 +22,11 @@ function -timeout() {
 The following commands are available when this module is loaded:
 
 1. [-help](#-help)
+1. [-reload](#-reload)
 1. [-test-all](#-test-all)
 1. [-test-misc](#-test-misc)
 1. [-tweak-bash](#-tweak-bash)
+1. [-update](#-update)
 1. [-var-exists](#-var-exists)
 1. [-wait](#-wait)
 
@@ -47,6 +49,36 @@ Options:
 for helpfunc in $(compgen -A function -- -help-); do
     $helpfunc
 done | sort
+```
+
+
+## <a name="-reload"></a>-reload
+
+```
+Usage: -reload [OPTION]...
+
+Reloads bash-funk.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+```
+
+*Implementation:*
+```bash
+if [[ ! ${__BASH_FUNK_ROOT} ]]; then
+    echo "$__fn: Error: __BASH_FUNK_ROOT variable is not defined."
+    return 1
+fi
+
+if [[ ! -r ${__BASH_FUNK_ROOT}/bash-funk.sh ]]; then
+    echo "$__fn: Error: File [${__BASH_FUNK_ROOT}/bash-funk.sh] is not readable by user [$USER]."
+    return 1
+fi
+
+source ${__BASH_FUNK_ROOT}/bash-funk.sh
 ```
 
 
@@ -91,8 +123,10 @@ Options:
 *Implementation:*
 ```bash
 -help --selftest && echo || return 1
+-reload --selftest && echo || return 1
 -test-all --selftest && echo || return 1
 -tweak-bash --selftest && echo || return 1
+-update --selftest && echo || return 1
 -var-exists --selftest && echo || return 1
 -wait --selftest && echo || return 1
 ```
@@ -136,6 +170,58 @@ for opt in ${opts[@]}; do
         [[ $_verbose ]] && echo "shopt -s $opt => UNSUPPORTED"
     fi
 done
+```
+
+
+## <a name="-update"></a>-update
+
+```
+Usage: -update [OPTION]...
+
+Updates bash-funk with the latest code from the github repo.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+-y, --yes 
+        Answer interactive prompts with 'yes'.
+```
+
+*Implementation:*
+```bash
+if [[ ! ${__BASH_FUNK_ROOT} ]]; then
+    echo "$__fn: Error: __BASH_FUNK_ROOT variable is not defined."
+    return 1
+fi
+
+if [[ ! -w ${__BASH_FUNK_ROOT} ]]; then
+    echo "$__fn: Error: Directory [${__BASH_FUNK_ROOT}] is not writeable by user [$USER]."
+    return 1
+fi
+
+if [[ ! $_yes ]]; then
+    read -p "Are you sure you want to update bash-funk located in [${__BASH_FUNK_ROOT}]? (y) " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "$__fn: Aborting on user request."
+        return 0
+    fi
+fi
+
+if [[ -e "${__BASH_FUNK_ROOT}/.svn" ]]; then
+    svn update "${__BASH_FUNK_ROOT}"
+    return
+fi
+
+if [[ -e "${__BASH_FUNK_ROOT}/.git" ]]; then
+    ( cd "${__BASH_FUNK_ROOT}" && git merge master )
+    return
+fi
+
+( cd "${__BASH_FUNK_ROOT}" && curl -#L https://github.com/vegardit/bash-funk/tarball/master | tar -xzv --strip-components 1 )
+return
 ```
 
 
