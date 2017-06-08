@@ -6,6 +6,8 @@ The following commands are available when this module is loaded:
 
 1. [-ansi-bold](#-ansi-bold)
 1. [-ansi-codes](#-ansi-codes)
+1. [-ansi-color-table-16](#-ansi-color-table-16)
+1. [-ansi-color-table-256](#-ansi-color-table-256)
 1. [-ansi-colors-supported](#-ansi-colors-supported)
 1. [-ansi-reset](#-ansi-reset)
 1. [-ansi-ul](#-ansi-ul)
@@ -145,39 +147,170 @@ ${_PREFIX}BG_WHITE=\"$ESC[107m\"
 ```
 
 
-## <a name="-ansi-colors-supported"></a>-ansi-colors-supported
+## <a name="-ansi-color-table-16"></a>-ansi-color-table-16
 
 ```
-Usage: -ansi-colors-supported [OPTION]...
+Usage: -ansi-color-table-16 [OPTION]...
 
-Determines if ANSI color escape sequences are supported by the current terminal.
+Prints a table with 8/16 ANSI colors.
 
 Options:
     --help 
         Prints this help.
     --selftest 
         Performs a self-test.
+
+Examples:
+$ -ansi-color-table-16 
+256
+$ -ansi-color-table-16 -v 8
+Terminal 'xterm' supports 8 colors.
 ```
 
 *Implementation:*
 ```bash
-if hash tput &>/dev/null; then
-    ncolors=$(tput colors)
-    if [[ $ncolors -ge 8 ]]; then
-        return 0
-    else
-        return 1
-    fi
 
-elif hash infocmp &>/dev/null; then
-    infocmp $TERM 2>/dev/null | grep "colors#8" >/dev/null
-    return
-
-elif [[ $TERM == "cygwin" ]]; then
-    return 0
+if ! -ansi-colors-supported 8; then
+    echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 8 colors."
+    echo
+elif ! -ansi-colors-supported 16; then
+    echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 16 colors."
+    echo
 fi
 
-return 1
+echo "To set one of the following color combinations use '\033[<BG>;<FG>m'"
+echo
+echo -n "      "
+for fg in {30..37} 39 {90..97}; do
+    printf "  FG %2d" "$fg"
+done
+echo
+for bg in {40..47} 49 {100..107}; do
+    printf "BG %3d " "$bg"
+    for fg in {30..37} 39 {90..97}; do
+        printf "\033[${bg};${fg}m%3d;%2d\033[0m " "$bg" "$fg"
+    done
+    echo
+done
+```
+
+
+## <a name="-ansi-color-table-256"></a>-ansi-color-table-256
+
+```
+Usage: -ansi-color-table-256 [OPTION]...
+
+Prints a table with 256 ANSI colors.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+
+Examples:
+$ -ansi-color-table-256 
+256
+$ -ansi-color-table-256 -v 8
+Terminal 'xterm' supports 8 colors.
+```
+
+*Implementation:*
+```bash
+
+if ! -ansi-colors-supported 256; then
+    echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 256 colors."
+    echo
+fi
+
+local i
+
+echo "To set one of the following foreground colors use '\033[38;5;<NUM>m'"
+echo
+for (( i=0; i <255; i++));do
+
+    printf "\033[38;5;${i}m%3d\033[0m " "$i"
+
+    if (( (i+1) % 16 == 0 )); then
+        echo
+    fi
+
+done
+
+echo
+echo
+echo "To set one of the following background colors use '\033[48;5;<NUM>m'"
+echo
+for (( i=0; i <255; i++));do
+
+    printf "\033[48;5;${i}m%3d\033[0m " "$i"
+
+    if (( (i+1) % 16 == 0 )); then
+        echo
+    fi
+
+done
+
+echo
+```
+
+
+## <a name="-ansi-colors-supported"></a>-ansi-colors-supported
+
+```
+Usage: -ansi-colors-supported [OPTION]... [NUM_COLORS]
+
+Determines if the given number of ANSI colors is supported by the current terminal. If NUM_COLORS is specified, the exit value indicates if the color range is supported. If NUM_COLORS is not specified, the number of supported colors is printed with exit code 0.
+
+Parameters:
+  NUM_COLORS 
+      Number of colors that need to be supported.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+-v, --verbose 
+        Prints additional information during command execution.
+
+Examples:
+$ -ansi-colors-supported 
+256
+$ -ansi-colors-supported -v 8
+Terminal 'xterm' supports 8 colors.
+```
+
+*Implementation:*
+```bash
+local numColors
+if hash tput &>/dev/null; then
+    numColors=$(tput colors)
+elif hash infocmp &>/dev/null; then
+    local termInfo=$(infocmp $TERM || true);
+    if [[ $termInfo =~ colors#([0-9]+), ]]; then
+        local numColors=${BASH_REMATCH[1]}
+    else
+        numColors=-1
+    fi
+elif [[ $TERM == "cygwin" ]]; then
+    numColors=8
+else
+    numColors=-1
+fi
+
+if [[ $_NUM_COLORS ]]; then
+    if [[ $numColors -ge $_NUM_COLORS ]]; then
+        [[ $_verbose ]] && echo "Terminal '$TERM' supports $numColors colors."
+        return 0
+    else
+        [[ $_verbose ]] && echo "Terminal '$TERM' supports only $numColors colors."
+        return 1
+    fi
+else
+    echo $numColors
+    return 0
+fi
 ```
 
 
@@ -255,6 +388,8 @@ Options:
 ```bash
 -ansi-bold --selftest && echo || return 1
 -ansi-codes --selftest && echo || return 1
+-ansi-color-table-16 --selftest && echo || return 1
+-ansi-color-table-256 --selftest && echo || return 1
 -ansi-colors-supported --selftest && echo || return 1
 -ansi-reset --selftest && echo || return 1
 -ansi-ul --selftest && echo || return 1
