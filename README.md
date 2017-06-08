@@ -3,6 +3,7 @@
 1. [What is it?](#what-is-it)
 1. [Installation](#install)
 1. [Usage](#usage)
+1. [Updating](#update)
 1. [License](#license)
 
 
@@ -77,6 +78,16 @@ The following environment variables can be set **before** bash-funk is loaded to
 
 ### Loading single modules
 All modules are self-containing. This means, if you are only interested in the commands provided by one module, you can also directly source that particular module located in the `modules` folder and do not use the `bash-funk.sh` loader script.
+
+
+## <a name="update"></a>Updating
+
+Once loaded, you can easily update bash-funk installation to the latest code base by using the commands `-update` and `-reload`, e.g.:
+
+```Bash
+-update -y && -reload
+```
+
 
 ## <a name="license"></a>License
 
