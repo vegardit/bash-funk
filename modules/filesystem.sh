@@ -1488,7 +1488,7 @@ function -modified() {
     return $rc
 }
 function __impl-modified() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
+    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _format _help _selftest _PATH
     [ -p /dev/stdout ] && __in_pipe=1 || true
     [ -t 1 ] || __in_subshell=1
     for __arg in "$@"; do
@@ -1504,6 +1504,8 @@ function __impl-modified() {
                 echo "      The file or directory to check."
                 echo
                 echo "Options:"
+                echo -e "\033[1m-f, --format FORMAT\033[22m (one of: [iso8601,human])"
+                echo "        Prints the timestamp in the given format."
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
@@ -1523,6 +1525,11 @@ function __impl-modified() {
                 return 0
               ;;
 
+            --format|-f)
+                _format="@@##@@"
+                __optionWithValue=format
+            ;;
+
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -1530,6 +1537,10 @@ function __impl-modified() {
 
             *)
                 case $__optionWithValue in
+                    format)
+                        _format=$__arg
+                        __optionWithValue=
+                      ;;
                     *)
                         __params+=("$__arg")
                 esac
@@ -1547,6 +1558,11 @@ function __impl-modified() {
     done
 
     if [[ ! $_PATH ]]; then _PATH="."; fi
+    if [[ $_format ]]; then
+        if [[ $_format == "@@##@@" ]]; then echo "$__fn: Error: Value FORMAT for option --format must be specified."; return 64; fi
+        declare -A __allowed=( [iso8601]=1 [human]=1 )
+        if [[ ! ${__allowed[$_format]} ]]; then echo "$__fn: Error: Value '$_format' for option --format is not one of the allowed values [iso8601,human]."; return 64; fi
+    fi
 
     if [[ $_PATH ]]; then
         if [[ ! -e "$_PATH" ]]; then echo "$__fn: Error: Path '$_PATH' for parameter PATH does not exist."; return 64; fi
@@ -1556,9 +1572,10 @@ function __impl-modified() {
 
     ######### modified ######### START
 
+local timestamp=$(
 # use stat if available
 if hash stat &>/dev/null; then
-    echo $(stat -c %y "$_PATH")
+    echo $(stat -c %Y "$_PATH")
 
 # use perl if available
 elif hash perl &>/dev/null; then
@@ -1572,17 +1589,33 @@ else
     python -c "import os, pwd
 print int(os.path.getmtime('$_PATH'))"
 fi
+)
+
+case $_format in
+    iso8601) date --iso-8601=seconds -d@$timestamp ;;
+    human)   date "+%Y-%m-%d %H:%M:%S" -d@$timestamp ;;
+    *)   echo $timestamp ;;
+esac
 
     ######### modified ######### END
 }
 function __complete-modified() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
+        local options=" --format -f --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $curr))
+        local prev="${COMP_WORDS[COMP_CWORD-1]}"
+        case $prev in
+            --format|-f)
+                COMPREPLY=($(compgen -o default -W "iso8601
+human" -- $curr))
+              ;;
+            *)
+                COMPREPLY=($(compgen -o default -- $curr))
+              ;;
+        esac
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}modified -- ${BASH_FUNK_PREFIX:--}modified

@@ -579,6 +579,8 @@ Parameters:
       The file or directory to check.
 
 Options:
+-f, --format FORMAT (one of: [iso8601,human])
+        Prints the timestamp in the given format.
     --help 
         Prints this help.
     --selftest 
@@ -587,9 +589,10 @@ Options:
 
 *Implementation:*
 ```bash
+local timestamp=$(
 # use stat if available
 if hash stat &>/dev/null; then
-    echo $(stat -c %y "$_PATH")
+    echo $(stat -c %Y "$_PATH")
 
 # use perl if available
 elif hash perl &>/dev/null; then
@@ -603,6 +606,13 @@ else
     python -c "import os, pwd
 print int(os.path.getmtime('$_PATH'))"
 fi
+)
+
+case $_format in
+    iso8601) date --iso-8601=seconds -d@$timestamp ;;
+    human)   date "+%Y-%m-%d %H:%M:%S" -d@$timestamp ;;
+    *)   echo $timestamp ;;
+esac
 ```
 
 
