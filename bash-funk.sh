@@ -18,12 +18,31 @@
 # @author Sebastian Thomschke, Vegard IT GmbH
 #
 
-# TODO provide way to control which modules are loaded
-
 if [[ $_ == $0 ]]; then
     echo "The bash-funk script must be sourced"'!'" See the 'source' command."
     false
 else
+    if [[ -e ~/.bash_funk_rc ]]; then
+        echo "Sourcing [~/.bash_funk_rc]..."
+        source ~/.bash_funk_rc
+    else
+        cat >~/.bash_funk_rc <<EOL
+#uncomment the settings you want to change:
+#BASH_FUNK_PREFIX=-           # if specified, the names of all bash-funk commands will be prefixed with this value. Must only contain alphanumeric characters a-z, A-Z, 0-9) and underscore _.
+#BASH_FUNK_DIRS_COLOR=94      # ANSI color code to be used by the bash prompt to highlight directories, default is 94 which will be transformed to \e[94m
+#BASH_FUNK_NO_PROMPT=1        # if set to any value bash-funk will not install it's Bash prompt function.
+#BASH_FUNK_NO_PROMPT_DATE=1   # if set to any value the Bash prompt will not display the current date and time.
+#BASH_FUNK_NO_PROMPT_GIT=1    # if set to any value the Bash prompt will not display GIT branch and modification information.
+#BASH_FUNK_NO_PROMPT_JOBS=1   # if set to any value the Bash prompt will not display the number of shell jobs.
+#BASH_FUNK_NO_PROMPT_SCREEN=1 # if set to any value the Bash prompt will not display the number of detached screens
+#BASH_FUNK_NO_PROMPT_SVN=1    # if set to any value the Bash prompt will not display SVN branch and modification information.- BASH_FUNK_NO_PROMPT_TTY - if set to any value the Bash prompt will not display the current tty.
+#BASH_FUNK_NO_TWEAK_BASH=1    # if set to any value bash-funk will not automatically invoke the -tweak-bash command.
+
+#other user settings go here:
+
+EOL
+    fi
+
     # not using a-zA-Z in regex as this seems to match German umlaute too
     if ! [[ ${BASH_FUNK_PREFIX:-} =~ ^[0-9abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-]*$ ]]; then
         echo "The variable BASH_FUNK_PREFIX may only contain ASCII alphanumeric characters (a-z, A-Z, 0-9), dash (-) and underscore (_)"

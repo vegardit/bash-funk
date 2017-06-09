@@ -67,7 +67,7 @@ Bash completion for options is supported by all commands too, simply type a dash
 
 ### Customization
 
-The following environment variables can be set **before** bash-funk is loaded to customize it's behaviour:
+The following environment variables can be set in `~/.bash_funk_rc` to customize bash-funk's behaviour. This file will be sourced automatically.
 
 - `BASH_FUNK_PREFIX` - if specified, the names of all bash-funk commands will be prefixed with this value. Must only contain alphanumeric characters `a-z`, `A-Z`, `0-9`) and underscore `_`.
 - `BASH_FUNK_DIRS_COLOR` - ANSI color code to be used by the bash prompt to highlight directories, default is `94` which will be transformed to `\e[94m`
