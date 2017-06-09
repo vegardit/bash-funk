@@ -1558,7 +1558,7 @@ function __impl-modified() {
 
 # use stat if available
 if hash stat &>/dev/null; then
-    echo $(stat -c %y "$_PATH"})
+    echo $(stat -c %y "$_PATH")
 
 # use perl if available
 elif hash perl &>/dev/null; then
