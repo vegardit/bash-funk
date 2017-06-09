@@ -136,7 +136,7 @@ function __-bash-prompt() {
 
 
     local p_scm
-    if [[ ! ${BASH_FUNK_NO_PROMPT_GIT:-} ]]; then
+    if [[ ! ${BASH_FUNK_PROMPT_NO_GIT:-} ]]; then
         if p_scm=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD 2>/dev/null); then
             local modifications=$(git ls-files -o -m -d --exclude-standard | wc -l)
             if [[ $modifications && $modifications != "0" ]]; then
@@ -146,7 +146,7 @@ function __-bash-prompt() {
             fi
         fi
     fi
-    if [[ ! $p_scm && ! ${BASH_FUNK_NO_PROMPT_SVN:-} ]]; then
+    if [[ ! $p_scm && ! ${BASH_FUNK_PROMPT_NO_SVN:-} ]]; then
         # extracting trunk/branch info without relying using sed/grep for higher performance
         if p_scm=$(svn info 2>/dev/null); then
             if [[ "$p_scm" == *URL:* ]]; then
@@ -183,13 +183,13 @@ function __-bash-prompt() {
 
 
     local p_date
-    if [[ ! ${BASH_FUNK_NO_PROMPT_DATE:-} ]]; then
+    if [[ ! ${BASH_FUNK_PROMPT_NO_DATE:-} ]]; then
         p_date="| \d \t "
     fi
 
 
     local p_jobs
-    if [[ ! ${BASH_FUNK_NO_PROMPT_JOBS:-} ]]; then
+    if [[ ! ${BASH_FUNK_PROMPT_NO_JOBS:-} ]]; then
         if [[ $OSTYPE == "cygwin" ]]; then
             p_jobs="| \j jobs "
         else
@@ -203,24 +203,24 @@ function __-bash-prompt() {
     fi
 
 
-    local p_screen
-    if [[ ! ${BASH_FUNK_NO_PROMPT_SCREEN:-} ]]; then
-        p_screen=$(screen -ls 2>/dev/null | grep "etached)" | wc -l);
-        case "$p_screen" in
-            0) p_screen= ;;
-            1) p_screen="| ${C_FG_LIGHT_YELLOW}1 screen${C_FG_BLACK} " ;;
-            *) p_screen="| ${C_FG_LIGHT_YELLOW}$p_screen screens${C_FG_BLACK} " ;;
+    local p_screens
+    if [[ ! ${BASH_FUNK_PROMPT_NO_SCREENS:-} ]]; then
+        p_screens=$(screen -ls 2>/dev/null | grep "etached)" | wc -l);
+        case "$p_screens" in
+            0) p_screens= ;;
+            1) p_screens="| ${C_FG_LIGHT_YELLOW}1 screen${C_FG_BLACK} " ;;
+            *) p_screens="| ${C_FG_LIGHT_YELLOW}$p_screens screens${C_FG_BLACK} " ;;
         esac
     fi
 
 
     local p_tty
-    if [[ ! ${BASH_FUNK_NO_PROMPT_TTY:-} ]]; then
+    if [[ ! ${BASH_FUNK_PROMPT_NO_TTY:-} ]]; then
         p_tty="| tty #\l "
     fi
 
 
-    local LINE1="${C_RESET}${bg}$p_lastRC${p_user}${p_host}${p_scm}${p_date}${p_jobs}${p_screen}${p_tty}${C_RESET}"
+    local LINE1="${BASH_FUNK_PROMPT_PREFIX:-}${C_RESET}${bg}$p_lastRC${p_user}${p_host}${p_scm}${p_date}${p_jobs}${p_screens}${p_tty}${C_RESET}"
     local LINE2="[\033[${BASH_FUNK_DIRS_COLOR}m${pwd}${C_RESET}]"
     local LINE3="$ "
     PS1="\n$LINE1\n$LINE2\n$LINE3"
