@@ -119,7 +119,7 @@ function __impl-get-child-pids() {
 
     ######### get-child-pids ######### START
 
-local CHILD_PIDS # intentional declaration in a separate line, see http://stackoverflow.com/a/42854176
+local childPids # intentional declaration in a separate line, see http://stackoverflow.com/a/42854176
 childPids=$(command ps -o pid --no-headers --ppid $_PARENT_PID 2>/dev/null | sed -e 's!\s!!g'; exit ${PIPESTATUS[0]})
 if [[ $? != 0 ]]; then
     echo "No process with PID ${1} found"'!'
@@ -395,7 +395,7 @@ function -kill-childs() {
     __impl$__fn "$@" && rc=0 || rc=$?
 
     if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... SIGNAL [PARENT_PID]"
+        echo; echo "Usage: $__fn [OPTION]... [PARENT_PID]"
         echo; echo "Type '$__fn --help' for more details."
     fi
 
@@ -404,20 +404,18 @@ function -kill-childs() {
     return $rc
 }
 function __impl-kill-childs() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _SIGNAL _PARENT_PID
+    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _signal _help _selftest _PARENT_PID
     [ -p /dev/stdout ] && __in_pipe=1 || true
     [ -t 1 ] || __in_subshell=1
     for __arg in "$@"; do
         case $__arg in
 
             --help)
-                echo "Usage: $__fn [OPTION]... SIGNAL [PARENT_PID]"
+                echo "Usage: $__fn [OPTION]... [PARENT_PID]"
                 echo
-                echo "Sends the given kill signal to all child processes of the process with the given PID."
+                echo "Sends the TERM(15) signal to all child processes of the process with the given PID."
                 echo
                 echo "Parameters:"
-                echo -e "  \033[1mSIGNAL\033[22m (required, integer: 1-64)"
-                echo "      The kill signal to be send, eg. 9=KILL or 15=TERM."
                 echo -e "  \033[1mPARENT_PID\033[22m (default: '$$', integer: 0-?)"
                 echo "      The process ID of the parent process. If not specified the PID of the current bash process is used."
                 echo
@@ -426,6 +424,8 @@ function __impl-kill-childs() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "\033[1m-s, --signal VALUE\033[22m (integer: 1-64)"
+                echo "        The signal to be send, eg. 9=KILL or 15=TERM."
                 echo
                 return 0
               ;;
@@ -441,6 +441,11 @@ function __impl-kill-childs() {
                 return 0
               ;;
 
+            --signal|-s)
+                _signal="@@##@@"
+                __optionWithValue=signal
+            ;;
+
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -448,6 +453,10 @@ function __impl-kill-childs() {
 
             *)
                 case $__optionWithValue in
+                    signal)
+                        _signal=$__arg
+                        __optionWithValue=
+                      ;;
                     *)
                         __params+=("$__arg")
                 esac
@@ -456,11 +465,7 @@ function __impl-kill-childs() {
     done
 
     for __param in "${__params[@]}"; do
-        if [[ ! $_SIGNAL ]]; then
-            _SIGNAL=$__param
-            continue
-        fi
-        if [[ ! $_PARENT_PID ]]; then
+        if [[ ! $_PARENT_PID && ${#__params[@]} > 0 ]]; then
             _PARENT_PID=$__param
             continue
         fi
@@ -469,14 +474,13 @@ function __impl-kill-childs() {
     done
 
     if [[ ! $_PARENT_PID ]]; then _PARENT_PID="$$"; fi
-
-    if [[ $_SIGNAL ]]; then
-        if [[ ! "$_SIGNAL" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_SIGNAL' for parameter SIGNAL is not a numeric value."; return 64; fi
-        if [[ $_SIGNAL -lt 1 ]]; then echo "$__fn: Error: Value '$_SIGNAL' for parameter SIGNAL is too low. Must be >= 1."; return 64; fi
-        if [[ $_SIGNAL -gt 64 ]]; then echo "$__fn: Error: Value '$_SIGNAL' for parameter SIGNAL is too high. Must be <= 64."; return 64; fi
-    else
-        echo "$__fn: Error: Parameter SIGNAL must be specified."; return 64
+    if [[ $_signal ]]; then
+        if [[ $_signal == "@@##@@" ]]; then echo "$__fn: Error: Value VALUE for option --signal must be specified."; return 64; fi
+        if [[ ! "$_signal" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_signal' for option --signal is not a numeric value."; return 64; fi
+        if [[ $_signal -lt 1 ]]; then echo "$__fn: Error: Value '$_signal' for option --signal is too low. Must be >= 1."; return 64; fi
+        if [[ $_signal -gt 64 ]]; then echo "$__fn: Error: Value '$_signal' for option --signal is too high. Must be <= 64."; return 64; fi
     fi
+
     if [[ $_PARENT_PID ]]; then
         if [[ ! "$_PARENT_PID" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_PARENT_PID' for parameter PARENT_PID is not a numeric value."; return 64; fi
         if [[ $_PARENT_PID -lt 0 ]]; then echo "$__fn: Error: Value '$_PARENT_PID' for parameter PARENT_PID is too low. Must be >= 0."; return 64; fi
@@ -484,14 +488,18 @@ function __impl-kill-childs() {
 
     ######### kill-childs ######### START
 
-local childPids=$(${BASH_FUNK_PREFIX:--}get-child-pids $_PARENT_PID)
+local signal=${_signal:-15}
+
+local childPids # intentional declaration in a separate line, see http://stackoverflow.com/a/42854176
+childPids=$(${BASH_FUNK_PREFIX:--}get-child-pids $_PARENT_PID)
 if [[ $? != 0 ]]; then
     echo $childPids
     return 1
 fi
+
 for childPid in $childPids; do
     echo "Killing process with PID $childPid..."
-    kill -s $_SIGNAL $childPid 2> /dev/null || :
+    kill -s $signal $childPid 2> /dev/null || :
 done
 
     ######### kill-childs ######### END
@@ -499,7 +507,7 @@ done
 function __complete-kill-childs() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
+        local options=" --signal -s --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -507,6 +515,170 @@ function __complete-kill-childs() {
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}kill-childs -- ${BASH_FUNK_PREFIX:--}kill-childs
+
+function -kill-listener() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a e u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -e
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]... PORT"
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-kill-listener() {
+    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _signal _help _selftest _PORT
+    [ -p /dev/stdout ] && __in_pipe=1 || true
+    [ -t 1 ] || __in_subshell=1
+    for __arg in "$@"; do
+        case $__arg in
+
+            --help)
+                echo "Usage: $__fn [OPTION]... PORT"
+                echo
+                echo "Sends the given kill signal the process listening on the given TCP port."
+                echo
+                echo "Requirements:"
+                echo "  + Command 'netstat' must be available."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mPORT\033[22m (required, integer: 0-65535)"
+                echo "      TCP Port number to check."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo -e "\033[1m-s, --signal VALUE\033[22m (integer: 1-64)"
+                echo "        The signal to be send, eg. 9=KILL or 15=TERM."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            --signal|-s)
+                _signal="@@##@@"
+                __optionWithValue=signal
+            ;;
+
+            -*)
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    signal)
+                        _signal=$__arg
+                        __optionWithValue=
+                      ;;
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        if [[ ! $_PORT ]]; then
+            _PORT=$__param
+            continue
+        fi
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if [[ $_signal ]]; then
+        if [[ $_signal == "@@##@@" ]]; then echo "$__fn: Error: Value VALUE for option --signal must be specified."; return 64; fi
+        if [[ ! "$_signal" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_signal' for option --signal is not a numeric value."; return 64; fi
+        if [[ $_signal -lt 1 ]]; then echo "$__fn: Error: Value '$_signal' for option --signal is too low. Must be >= 1."; return 64; fi
+        if [[ $_signal -gt 64 ]]; then echo "$__fn: Error: Value '$_signal' for option --signal is too high. Must be <= 64."; return 64; fi
+    fi
+
+    if [[ $_PORT ]]; then
+        if [[ ! "$_PORT" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is not a numeric value."; return 64; fi
+        if [[ $_PORT -lt 0 ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is too low. Must be >= 0."; return 64; fi
+        if [[ $_PORT -gt 65535 ]]; then echo "$__fn: Error: Value '$_PORT' for parameter PORT is too high. Must be <= 65535."; return 64; fi
+    else
+        echo "$__fn: Error: Parameter PORT must be specified."; return 64
+    fi
+
+    if ! hash "netstat" &>/dev/null; then echo "$__fn: Error: Required command 'netstat' not found on this system."; return 64; fi
+
+    ######### kill-listener ######### START
+
+local signal=${_signal:-15}
+
+if hash netstat &>/dev/null; then
+    local listener=$(netstat -lantp 2>/dev/null | sed -nr "s/^tcp\s+[0-9]+\s+[0-9]+ .*:$_PORT .* (-|[0-9]+\/[^ ]*)\s+$/\1/p" | uniq || :)
+
+    if [[ $listener == "-" ]]; then
+        echo "$__fn: Could not determine PID of processs listening on TCP port $_PORT. Try using sudo."
+        return 1
+    else
+        echo "$__fn: No listening process on TCP port $_PORT found."
+        return 0
+    fi
+else
+    local listener=$(lsof -iTCP:$_PORT | sed -nr "s/([^ ]+)\s+([0-9]+).*\s+/\2\/\1/p" | uniq || :)
+
+    if [[ ! $listener ]]; then
+        if [[ $EUID -eq 0 ]]; then
+            echo "$__fn: No listening process on TCP port $_PORT found."
+            return 1
+        else
+            echo "$__fn: Could not determine if a processs is listening on TCP port $_PORT. Try using sudo."
+            return 1
+        fi
+    fi
+fi
+
+if [[ $listener ]]; then
+    local pid=${listener%%/*}
+    echo "$__fn: Sending kill signal $signal to process $process..."
+    kill -$signal $pid
+    return
+fi
+
+    ######### kill-listener ######### END
+}
+function __complete-kill-listener() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --signal -s --help --selftest "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}kill-listener -- ${BASH_FUNK_PREFIX:--}kill-listener
 
 function -test-processes() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
@@ -590,6 +762,7 @@ ${BASH_FUNK_PREFIX:--}get-child-pids --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}get-parent-pid --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}get-toplevel-parent-pid --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}kill-childs --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}kill-listener --selftest && echo || return 1
 
     ######### test-processes ######### END
 }
@@ -610,8 +783,9 @@ function -help-processes() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}get-child-pids [PARENT_PID]\033[0m  -  Recursively prints all child PIDs of the process with the given PID."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}get-parent-pid [CHILD_PID]\033[0m  -  Prints the PID of the parent process of the child process with the given PID."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}get-toplevel-parent-pid [CHILD_PID]\033[0m  -  Prints the PID of the top-level parent process of the child process with the given PID."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}kill-childs SIGNAL [PARENT_PID]\033[0m  -  Sends the given kill signal to all child processes of the process with the given PID."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}kill-childs [PARENT_PID]\033[0m  -  Sends the TERM(15) signal to all child processes of the process with the given PID."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}kill-listener PORT\033[0m  -  Sends the given kill signal the process listening on the given TCP port."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-processes\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( get-child-pids get-parent-pid get-toplevel-parent-pid kill-childs test-processes )
+__BASH_FUNK_FUNCS+=( get-child-pids get-parent-pid get-toplevel-parent-pid kill-childs kill-listener test-processes )
