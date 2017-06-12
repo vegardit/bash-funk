@@ -68,12 +68,14 @@ EOL
                 __BASH_FUNK_VERSION="${__BASH_FUNK_VERSION#*$'\n'Last Changed Date: }" # substring after 'Last Changed Date: ' 
                 __BASH_FUNK_VERSION="${__BASH_FUNK_VERSION%% (*}"                  # substring before ' ('
             fi
+        else
+            __BASH_FUNK_VERSION=
         fi
         
         # if no SCM was used, we assume installation via curl/wget, thus we take the last modification date of the oldest file
         if [[ ! $__BASH_FUNK_VERSION ]]; then
-            __BASH_FUNK_VERSION=$(find ${__BASH_FUNK_ROOT} -type f -printf "%TY.%Tm.%Td %TT %TZ\n" | sort | head -n 1)
-            __BASH_FUNK_VERSION="${__BASH_FUNK_VERSION%.*} ${__BASH_FUNK_VERSION#${__BASH_FUNK_VERSION% *} }"  
+            __BASH_FUNK_VERSION=$(find ${__BASH_FUNK_ROOT} -type f -printf "%TY.%Tm.%Td %TT %TZ\n" -not -path '*/\.*' | sort | head -n 1)
+            __BASH_FUNK_VERSION="${__BASH_FUNK_VERSION%.*} ${__BASH_FUNK_VERSION#${__BASH_FUNK_VERSION% *} }"
         fi
 
         if [[ $TERM == "cygwin" ]]; then
