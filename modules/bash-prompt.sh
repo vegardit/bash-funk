@@ -207,6 +207,10 @@ function __-bash-prompt() {
     if [[ ! ${BASH_FUNK_PROMPT_NO_SCREENS:-} ]]; then
         # determine number of attached and detached screens
         p_screens=$(screen -ls 2>/dev/null | grep "tached)" | wc -l);
+        if [[ ${STY:-} ]]; then
+            # don't count the current screen session
+            (( p_screens-- ))
+        fi
         case "$p_screens" in
             0) p_screens= ;;
             1) p_screens="| ${C_FG_LIGHT_YELLOW}1 screen${C_FG_BLACK} " ;;
@@ -230,7 +234,7 @@ function __-bash-prompt() {
     else
         p_prefix="${C_RESET}${p_bg}"
     fi
-    
+
     local LINE1="${p_prefix}${p_lastRC}${p_user}${p_host}${p_scm}${p_date}${p_jobs}${p_screens}${p_tty}${C_RESET}"
     local LINE2="[\033[${BASH_FUNK_DIRS_COLOR}m${pwd}${C_RESET}]"
     local LINE3="$ "
