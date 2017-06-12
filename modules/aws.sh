@@ -1166,6 +1166,6 @@ function -help-aws() {
 __BASH_FUNK_FUNCS+=( aws-account-id aws-az aws-describe-stack aws-instance-id aws-is-ec2 aws-private-ip aws-region aws-stack-name aws-vpc-cidr-block aws-vpc-id test-aws )
 
 else
-    echo "   ... skipped."
+    echo -n "SKIPPED"
 fi
 unset -f -- ${BASH_FUNK_PREFIX:--}is-loadable

@@ -51,6 +51,31 @@ EOL
         echo "The variable BASH_FUNK_PREFIX may only contain ASCII alphanumeric characters (a-z, A-Z, 0-9), dash (-) and underscore (_)"
     else
 
+        case "${BASH_SOURCE[0]}" in
+            /*)
+                __BASH_FUNK_ROOT="${BASH_SOURCE[0]%/*}" ;;
+            */*)
+                __BASH_FUNK_ROOT="$PWD/${BASH_SOURCE[0]%/*}" ;;
+            *)
+                __BASH_FUNK_ROOT="$PWD" ;;
+        esac
+
+        if [[ -f ${__BASH_FUNK_ROOT}/.git ]]; then
+            __BASH_FUNK_VERSION=$(git log -1 --format=%ci 2>/dev/null || true)
+        elif [[ -f ${__BASH_FUNK_ROOT}/.svn ]]; then
+            __BASH_FUNK_VERSION=$(svn info "${__BASH_FUNK_ROOT}" 2>/dev/null || true)
+            if [[ $__BASH_FUNK_VERSION ]]; then
+                __BASH_FUNK_VERSION="${__BASH_FUNK_VERSION#*$'\n'Last Changed Date: }" # substring after 'Last Changed Date: ' 
+                __BASH_FUNK_VERSION="${__BASH_FUNK_VERSION%% (*}"                  # substring before ' ('
+            fi
+        fi
+        
+        # if no SCM was used, we assume installation via curl/wget, thus we take the last modification date of the oldest file
+        if [[ ! $__BASH_FUNK_VERSION ]]; then
+            __BASH_FUNK_VERSION=$(find ${__BASH_FUNK_ROOT} -type f -printf "%TY.%Tm.%Td %TT %TZ\n" | sort | head -n 1)
+            __BASH_FUNK_VERSION="${__BASH_FUNK_VERSION%.*} ${__BASH_FUNK_VERSION#${__BASH_FUNK_VERSION% *} }"  
+        fi
+
         if [[ $TERM == "cygwin" ]]; then
             echo -en "\033[1;34m"
         else
@@ -65,21 +90,15 @@ EOL
         echo "                  by Vegard IT GmbH (vegardit.com)"
         echo
 
+        echo "Local Version: $__BASH_FUNK_VERSION"
+        echo 
+        
         if ! declare -p BASH_FUNK_PREFIX &>/dev/null; then
             BASH_FUNK_PREFIX=-
         fi
         export BASH_FUNK_PREFIX
 
         __BASH_FUNK_FUNCS=()
-
-        case "${BASH_SOURCE[0]}" in
-            /*)
-                __BASH_FUNK_ROOT="${BASH_SOURCE[0]%/*}" ;;
-            */*)
-                __BASH_FUNK_ROOT="$PWD/${BASH_SOURCE[0]%/*}" ;;
-            *)
-                __BASH_FUNK_ROOT="$PWD" ;;
-        esac
 
         # load all modules
         for __module in "${__BASH_FUNK_ROOT}"/modules/*.sh; do
@@ -88,13 +107,14 @@ EOL
                 continue;
             fi
 
-            echo "* Loading [modules/${__module##*/}]..."
+            echo -n "* Loading [modules/${__module##*/}]... "
             # rename the functions based on the given BASH_FUNK_PREFIX
             if [[ $BASH_FUNK_PREFIX == "-" ]]; then
                 source "${__module}"
             else
                 eval "$(sed -r "s/function -/function ${BASH_FUNK_PREFIX}/g; s/function __([^-]*)-/function __\1${BASH_FUNK_PREFIX}/g" ${__module})"
             fi
+            echo
         done
         unset __module
 
@@ -106,7 +126,7 @@ EOL
         unset __fname __fnames
 
         if [[ ! ${BASH_FUNK_NO_TWEAK_BASH:-} ]] && declare -F -- ${BASH_FUNK_PREFIX}tweak-bash &>/dev/null; then
-            echo "* Executing '${BASH_FUNK_PREFIX}tweak-bash'..."
+            echo "* Executing command '${BASH_FUNK_PREFIX}tweak-bash'..."
             ${BASH_FUNK_PREFIX}tweak-bash
         fi
 
