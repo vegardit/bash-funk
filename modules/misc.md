@@ -76,7 +76,7 @@ done | sort
 ```
 Usage: -please [OPTION]...
 
-Re-runs the last command with sudo.
+Re-runs the previously entered command with sudo.
 
 Requirements:
   + Command 'sudo' must be available.
@@ -86,11 +86,15 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+-v, --verbose 
+        Prints additional information during command execution.
 ```
 
 *Implementation:*
 ```bash
-sudo "$BASH" -c "$(fc -ln -1)"
+local cmd=$(fc -ln -1)
+[[ $_verbose ]] && echo "sudo \"$BASH\" -c \"$cmd\"" || true
+sudo "$BASH" -c "$cmd"
 ```
 
 

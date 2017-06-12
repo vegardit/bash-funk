@@ -142,7 +142,7 @@ function -please() {
     return $rc
 }
 function __impl-please() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose
     [ -p /dev/stdout ] && __in_pipe=1 || true
     [ -t 1 ] || __in_subshell=1
     for __arg in "$@"; do
@@ -151,7 +151,7 @@ function __impl-please() {
             --help)
                 echo "Usage: $__fn [OPTION]..."
                 echo
-                echo "Re-runs the last command with sudo."
+                echo "Re-runs the previously entered command with sudo."
                 echo
                 echo "Requirements:"
                 echo "  + Command 'sudo' must be available."
@@ -161,6 +161,8 @@ function __impl-please() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "\033[1m-v, --verbose\033[22m "
+                echo "        Prints additional information during command execution."
                 echo
                 return 0
               ;;
@@ -175,6 +177,10 @@ function __impl-please() {
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
+
+            --verbose|-v)
+                _verbose=1
+            ;;
 
             -*)
                 echo "$__fn: invalid option: '$__arg'"
@@ -199,14 +205,16 @@ function __impl-please() {
 
     ######### please ######### START
 
-sudo "$BASH" -c "$(fc -ln -1)"
+local cmd=$(fc -ln -1)
+[[ $_verbose ]] && echo "sudo \"$BASH\" -c \"$cmd\"" || true
+sudo "$BASH" -c "$cmd"
 
     ######### please ######### END
 }
 function __complete-please() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
+        local options=" --help --selftest --verbose -v "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -1069,7 +1077,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}wait -- ${BASH_FUNK_PREFIX:--}wait
 
 function -help-misc() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}help\033[0m  -  Prints the online help of all bash-funk commands."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}please\033[0m  -  Re-runs the last command with sudo."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}please\033[0m  -  Re-runs the previously entered command with sudo."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}reload\033[0m  -  Reloads bash-funk."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-all\033[0m  -  Executes the selftests of all loaded bash-funk commands."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-misc\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
