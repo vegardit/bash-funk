@@ -112,20 +112,20 @@ function __-bash-prompt() {
     fi
 
 
-    local p_lastRC
+    local p_lastRC p_bg
     if [[ $lastRC == 0 ]]; then
+        p_bg="${C_BG_GREEN}"
         p_lastRC=""
-        local bg="${C_BG_GREEN}"
     else
+        p_bg="${C_BG_RED}"
         p_lastRC="${C_FG_GRAY}[$lastRC] "
-        local bg="${C_BG_RED}"
     fi
 
 
     local p_user
     if [[ $EUID -eq 0 ]]; then
         # highlight root user yellow
-        p_user="${C_FG_BLACK}${C_BG_YELLOW}*${USER}*${bg} "
+        p_user="${C_FG_BLACK}${C_BG_YELLOW}*${USER}*${p_bg} "
     else
         p_user="${C_FG_WHITE}${USER}${C_FG_BLACK} "
     fi
@@ -224,8 +224,14 @@ function __-bash-prompt() {
         fi
     fi
 
-
-    local LINE1="${BASH_FUNK_PROMPT_PREFIX:-}${C_RESET}${bg}$p_lastRC${p_user}${p_host}${p_scm}${p_date}${p_jobs}${p_screens}${p_tty}${C_RESET}"
+    local p_prefix
+    if [[ ${BASH_FUNK_PROMPT_PREFIX:-} ]]; then
+        p_prefix="${C_RESET}${BASH_FUNK_PROMPT_PREFIX:-}${C_RESET}${p_bg} "
+    else
+        p_prefix="${C_RESET}${p_bg}"
+    fi
+    
+    local LINE1="${p_prefix}${p_lastRC}${p_user}${p_host}${p_scm}${p_date}${p_jobs}${p_screens}${p_tty}${C_RESET}"
     local LINE2="[\033[${BASH_FUNK_DIRS_COLOR}m${pwd}${C_RESET}]"
     local LINE3="$ "
     PS1="\n$LINE1\n$LINE2\n$LINE3"
