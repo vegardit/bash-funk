@@ -205,7 +205,8 @@ function __-bash-prompt() {
 
     local p_screens
     if [[ ! ${BASH_FUNK_PROMPT_NO_SCREENS:-} ]]; then
-        p_screens=$(screen -ls 2>/dev/null | grep "etached)" | wc -l);
+        # determine number of attached and detached screens
+        p_screens=$(screen -ls 2>/dev/null | grep "tached)" | wc -l);
         case "$p_screens" in
             0) p_screens= ;;
             1) p_screens="| ${C_FG_LIGHT_YELLOW}1 screen${C_FG_BLACK} " ;;
@@ -216,7 +217,11 @@ function __-bash-prompt() {
 
     local p_tty
     if [[ ! ${BASH_FUNK_PROMPT_NO_TTY:-} ]]; then
-        p_tty="| tty #\l "
+        if [[ ${STY:-} ]]; then
+            p_tty="| tty #\l ${C_FG_LIGHT_YELLOW}(screen) ${C_FG_BLACK} "
+        else
+            p_tty="| tty #\l "
+        fi
     fi
 
 
