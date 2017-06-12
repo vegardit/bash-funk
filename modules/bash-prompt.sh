@@ -218,7 +218,7 @@ function __-bash-prompt() {
     local p_tty
     if [[ ! ${BASH_FUNK_PROMPT_NO_TTY:-} ]]; then
         if [[ ${STY:-} ]]; then
-            p_tty="| tty #\l ${C_FG_LIGHT_YELLOW}(screen) ${C_FG_BLACK} "
+            p_tty="| tty #\l ${C_FG_LIGHT_YELLOW}(screen)${C_FG_BLACK} "
         else
             p_tty="| tty #\l "
         fi
