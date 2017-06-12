@@ -1504,7 +1504,7 @@ function __impl-modified() {
                 echo "      The file or directory to check."
                 echo
                 echo "Options:"
-                echo -e "\033[1m-f, --format FORMAT\033[22m (one of: [iso8601,human])"
+                echo -e "\033[1m-f, --format FORMAT\033[22m (one of: [locale,iso8601,human])"
                 echo "        Prints the timestamp in the given format."
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
@@ -1560,8 +1560,8 @@ function __impl-modified() {
     if [[ ! $_PATH ]]; then _PATH="."; fi
     if [[ $_format ]]; then
         if [[ $_format == "@@##@@" ]]; then echo "$__fn: Error: Value FORMAT for option --format must be specified."; return 64; fi
-        declare -A __allowed=( [iso8601]=1 [human]=1 )
-        if [[ ! ${__allowed[$_format]} ]]; then echo "$__fn: Error: Value '$_format' for option --format is not one of the allowed values [iso8601,human]."; return 64; fi
+        declare -A __allowed=( [locale]=1 [iso8601]=1 [human]=1 )
+        if [[ ! ${__allowed[$_format]} ]]; then echo "$__fn: Error: Value '$_format' for option --format is not one of the allowed values [locale,iso8601,human]."; return 64; fi
     fi
 
     if [[ $_PATH ]]; then
@@ -1571,6 +1571,18 @@ function __impl-modified() {
     fi
 
     ######### modified ######### START
+
+
+case $_format in
+    human)
+        find "$_PATH" -maxdepth 0 -printf "%TY.%Tm.%Td %TT %TZ\n"
+        return
+      ;;
+    locale)
+        find "$_PATH" -maxdepth 0 -printf "%Tc\n"
+        return
+      ;;
+esac
 
 local timestamp=$(
 # use stat if available
@@ -1591,11 +1603,12 @@ print int(os.path.getmtime('$_PATH'))"
 fi
 )
 
-case $_format in
-    iso8601) date --iso-8601=seconds -d@$timestamp ;;
-    human)   date "+%Y-%m-%d %H:%M:%S" -d@$timestamp ;;
-    *)   echo $timestamp ;;
-esac
+if [[ $_format == "iso8601" ]]; then
+    date --iso-8601=seconds -d@$timestamp
+    return
+fi
+
+echo $timestamp
 
     ######### modified ######### END
 }
@@ -1609,7 +1622,8 @@ function __complete-modified() {
         local prev="${COMP_WORDS[COMP_CWORD-1]}"
         case $prev in
             --format|-f)
-                COMPREPLY=($(compgen -o default -W "iso8601
+                COMPREPLY=($(compgen -o default -W "locale
+iso8601
 human" -- $curr))
               ;;
             *)

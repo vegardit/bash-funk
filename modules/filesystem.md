@@ -579,7 +579,7 @@ Parameters:
       The file or directory to check.
 
 Options:
--f, --format FORMAT (one of: [iso8601,human])
+-f, --format FORMAT (one of: [locale,iso8601,human])
         Prints the timestamp in the given format.
     --help 
         Prints this help.
@@ -589,6 +589,18 @@ Options:
 
 *Implementation:*
 ```bash
+
+case $_format in
+    human)
+        find "$_PATH" -maxdepth 0 -printf "%TY.%Tm.%Td %TT %TZ\n"
+        return
+      ;;
+    locale)
+        find "$_PATH" -maxdepth 0 -printf "%Tc\n"
+        return
+      ;;
+esac
+
 local timestamp=$(
 # use stat if available
 if hash stat &>/dev/null; then
@@ -608,11 +620,12 @@ print int(os.path.getmtime('$_PATH'))"
 fi
 )
 
-case $_format in
-    iso8601) date --iso-8601=seconds -d@$timestamp ;;
-    human)   date "+%Y-%m-%d %H:%M:%S" -d@$timestamp ;;
-    *)   echo $timestamp ;;
-esac
+if [[ $_format == "iso8601" ]]; then
+    date --iso-8601=seconds -d@$timestamp
+    return
+fi
+
+echo $timestamp
 ```
 
 
