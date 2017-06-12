@@ -116,6 +116,105 @@ function __complete-help() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}help -- ${BASH_FUNK_PREFIX:--}help
 
+function -please() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a e u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -e
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]..."
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-please() {
+    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -p /dev/stdout ] && __in_pipe=1 || true
+    [ -t 1 ] || __in_subshell=1
+    for __arg in "$@"; do
+        case $__arg in
+
+            --help)
+                echo "Usage: $__fn [OPTION]..."
+                echo
+                echo "Re-runs the last command with sudo."
+                echo
+                echo "Requirements:"
+                echo "  + Command 'sudo' must be available."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            -*)
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if ! hash "sudo" &>/dev/null; then echo "$__fn: Error: Required command 'sudo' not found on this system."; return 64; fi
+
+    ######### please ######### START
+
+sudo "$BASH" -c "$(fc -ln -1)"
+
+    ######### please ######### END
+}
+function __complete-please() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --help --selftest "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}please -- ${BASH_FUNK_PREFIX:--}please
+
 function -reload() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
     for opt in a e u H t; do
@@ -397,6 +496,7 @@ function __impl-test-misc() {
     ######### test-misc ######### START
 
 ${BASH_FUNK_PREFIX:--}help --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}please --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}reload --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}test-all --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}tweak-bash --selftest && echo || return 1
@@ -969,6 +1069,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}wait -- ${BASH_FUNK_PREFIX:--}wait
 
 function -help-misc() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}help\033[0m  -  Prints the online help of all bash-funk commands."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}please\033[0m  -  Re-runs the last command with sudo."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}reload\033[0m  -  Reloads bash-funk."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-all\033[0m  -  Executes the selftests of all loaded bash-funk commands."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-misc\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
@@ -978,7 +1079,7 @@ function -help-misc() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}wait SECONDS\033[0m  -  Waits for the given number of seconds or until the key 's' pressed."
 
 }
-__BASH_FUNK_FUNCS+=( help reload test-all test-misc tweak-bash update var-exists wait )
+__BASH_FUNK_FUNCS+=( help please reload test-all test-misc tweak-bash update var-exists wait )
 
 alias gh='command history|command grep'
 alias grep="command grep --colour=auto"

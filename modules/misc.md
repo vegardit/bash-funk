@@ -22,6 +22,7 @@ function -timeout() {
 The following commands are available when this module is loaded:
 
 1. [-help](#-help)
+1. [-please](#-please)
 1. [-reload](#-reload)
 1. [-test-all](#-test-all)
 1. [-test-misc](#-test-misc)
@@ -67,6 +68,29 @@ Options:
 for helpfunc in $(compgen -A function -- -help-); do
     $helpfunc
 done | sort
+```
+
+
+## <a name="-please"></a>-please
+
+```
+Usage: -please [OPTION]...
+
+Re-runs the last command with sudo.
+
+Requirements:
+  + Command 'sudo' must be available.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+```
+
+*Implementation:*
+```bash
+sudo "$BASH" -c "$(fc -ln -1)"
 ```
 
 
@@ -141,6 +165,7 @@ Options:
 *Implementation:*
 ```bash
 -help --selftest && echo || return 1
+-please --selftest && echo || return 1
 -reload --selftest && echo || return 1
 -test-all --selftest && echo || return 1
 -tweak-bash --selftest && echo || return 1
