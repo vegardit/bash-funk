@@ -6,9 +6,9 @@ The following commands are available when this module is loaded:
 
 1. [-ansi-bold](#-ansi-bold)
 1. [-ansi-codes](#-ansi-codes)
-1. [-ansi-color-table-16](#-ansi-color-table-16)
-1. [-ansi-color-table-256](#-ansi-color-table-256)
 1. [-ansi-colors-supported](#-ansi-colors-supported)
+1. [-ansi-colors16](#-ansi-colors16)
+1. [-ansi-colors256](#-ansi-colors256)
 1. [-ansi-reset](#-ansi-reset)
 1. [-ansi-ul](#-ansi-ul)
 1. [-test-ansi](#-test-ansi)
@@ -147,114 +147,6 @@ ${_PREFIX}BG_WHITE=\"$ESC[107m\"
 ```
 
 
-## <a name="-ansi-color-table-16"></a>-ansi-color-table-16
-
-```
-Usage: -ansi-color-table-16 [OPTION]...
-
-Prints a table with 8/16 ANSI colors.
-
-Options:
-    --help 
-        Prints this help.
-    --selftest 
-        Performs a self-test.
-
-Examples:
-$ -ansi-color-table-16 
-256
-$ -ansi-color-table-16 -v 8
-Terminal 'xterm' supports 8 colors.
-```
-
-*Implementation:*
-```bash
-
-if ! -ansi-colors-supported 8; then
-    echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 8 colors."
-    echo
-elif ! -ansi-colors-supported 16; then
-    echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 16 colors."
-    echo
-fi
-
-echo "To set one of the following color combinations use '\033[<BG>;<FG>m'"
-echo
-echo -n "      "
-for fg in {30..37} 39 {90..97}; do
-    printf "  FG %2d" "$fg"
-done
-echo
-for bg in {40..47} 49 {100..107}; do
-    printf "BG %3d " "$bg"
-    for fg in {30..37} 39 {90..97}; do
-        printf "\033[${bg};${fg}m%3d;%2d\033[0m " "$bg" "$fg"
-    done
-    echo
-done
-```
-
-
-## <a name="-ansi-color-table-256"></a>-ansi-color-table-256
-
-```
-Usage: -ansi-color-table-256 [OPTION]...
-
-Prints a table with 256 ANSI colors.
-
-Options:
-    --help 
-        Prints this help.
-    --selftest 
-        Performs a self-test.
-
-Examples:
-$ -ansi-color-table-256 
-256
-$ -ansi-color-table-256 -v 8
-Terminal 'xterm' supports 8 colors.
-```
-
-*Implementation:*
-```bash
-
-if ! -ansi-colors-supported 256; then
-    echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 256 colors."
-    echo
-fi
-
-local i
-
-echo "To set one of the following foreground colors use '\033[38;5;<NUM>m'"
-echo
-for (( i=0; i <255; i++));do
-
-    printf "\033[38;5;${i}m%3d\033[0m " "$i"
-
-    if (( (i+1) % 16 == 0 )); then
-        echo
-    fi
-
-done
-
-echo
-echo
-echo "To set one of the following background colors use '\033[48;5;<NUM>m'"
-echo
-for (( i=0; i <255; i++));do
-
-    printf "\033[48;5;${i}m%3d\033[0m " "$i"
-
-    if (( (i+1) % 16 == 0 )); then
-        echo
-    fi
-
-done
-
-echo
-```
-
-
 ## <a name="-ansi-colors-supported"></a>-ansi-colors-supported
 
 ```
@@ -311,6 +203,116 @@ else
     echo $numColors
     return 0
 fi
+```
+
+
+## <a name="-ansi-colors16"></a>-ansi-colors16
+
+```
+Usage: -ansi-colors16 [OPTION]...
+
+Prints a table with 8/16 ANSI colors.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+
+Examples:
+$ -ansi-colors16 
+256
+$ -ansi-colors16 -v 8
+Terminal 'xterm' supports 8 colors.
+```
+
+*Implementation:*
+```bash
+
+if ! -ansi-colors-supported 8; then
+    echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 8 colors."
+    echo
+elif ! -ansi-colors-supported 16; then
+    echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 16 colors."
+    echo
+fi
+
+echo "To set one of the following color combinations use '\033[<BG>;<FG>m'"
+echo
+echo -n "      "
+for fg in {30..37} 39 {90..97}; do
+    printf "  FG %2d" "$fg"
+done
+echo
+for bg in {40..47} 49 {100..107}; do
+    printf "BG %3d " "$bg"
+    for fg in {30..37} 39 {90..97}; do
+        printf "\033[${bg};${fg}m%3d;%2d\033[0m " "$bg" "$fg"
+    done
+    echo
+done
+```
+
+
+## <a name="-ansi-colors256"></a>-ansi-colors256
+
+```
+Usage: -ansi-colors256 [OPTION]...
+
+Prints a table with 256 ANSI colors.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+
+Examples:
+$ -ansi-colors256 
+256
+$ -ansi-colors256 -v 8
+Terminal 'xterm' supports 8 colors.
+```
+
+*Implementation:*
+```bash
+
+if ! -ansi-colors-supported 256; then
+    echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 256 colors."
+    echo
+fi
+
+local i width
+
+if [[ $COLUMNS -lt 144 ]]; then
+	width=$(( COLUMNS / 6 ))
+else
+	width=36
+fi
+
+echo "To set one of the following foreground colors use '\033[38;5;<NUM>m'"
+echo
+for (( i=0; i<256; i++));do
+
+    if (( (i-16) % width == 0 )); then
+        echo
+    fi
+    printf "\033[38;5;${i}m%3d\033[0m " "$i"
+done
+
+echo
+echo
+echo "To set one of the following background colors use '\033[48;5;<NUM>m'"
+echo
+for (( i=0; i<256; i++));do
+
+    if (( (i-16) % width == 0 )); then
+        echo
+    fi
+    printf "\033[48;5;${i}m%3d\033[0m " "$i"
+done
+
+echo
 ```
 
 
@@ -388,9 +390,9 @@ Options:
 ```bash
 -ansi-bold --selftest && echo || return 1
 -ansi-codes --selftest && echo || return 1
--ansi-color-table-16 --selftest && echo || return 1
--ansi-color-table-256 --selftest && echo || return 1
 -ansi-colors-supported --selftest && echo || return 1
+-ansi-colors16 --selftest && echo || return 1
+-ansi-colors256 --selftest && echo || return 1
 -ansi-reset --selftest && echo || return 1
 -ansi-ul --selftest && echo || return 1
 ```

@@ -306,290 +306,6 @@ function __complete-ansi-codes() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}ansi-codes -- ${BASH_FUNK_PREFIX:--}ansi-codes
 
-function -ansi-color-table-16() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
-
-    set +auHt
-    set -e
-    set -o pipefail
-
-    __impl$__fn "$@" && rc=0 || rc=$?
-
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]..."
-        echo; echo "Type '$__fn --help' for more details."
-    fi
-
-    eval $opts
-
-    return $rc
-}
-function __impl-ansi-color-table-16() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    for __arg in "$@"; do
-        case $__arg in
-
-            --help)
-                echo "Usage: $__fn [OPTION]..."
-                echo
-                echo "Prints a table with 8/16 ANSI colors."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn \033[22m"
-                echo "256"
-                echo -e "$ \033[1m$__fn -v 8\033[22m"
-                echo "Terminal 'xterm' supports 8 colors."
-                echo
-                return 0
-              ;;
-
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn \033[22m"
-                __stdout="$($__fn )"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^[0-9]+$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[0-9]+]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn -v 8\033[22m"
-                __stdout="$($__fn -v 8)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^Terminal '.*' supports [0-9]+ colors.$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Terminal '.*' supports [0-9]+ colors.]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
-
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
-
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
-
-    for __param in "${__params[@]}"; do
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
-
-    ######### ansi-color-table-16 ######### START
-
-
-if ! ${BASH_FUNK_PREFIX:--}ansi-colors-supported 8; then
-    echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 8 colors."
-    echo
-elif ! ${BASH_FUNK_PREFIX:--}ansi-colors-supported 16; then
-    echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 16 colors."
-    echo
-fi
-
-echo "To set one of the following color combinations use '\033[<BG>;<FG>m'"
-echo
-echo -n "      "
-for fg in {30..37} 39 {90..97}; do
-    printf "  FG %2d" "$fg"
-done
-echo
-for bg in {40..47} 49 {100..107}; do
-    printf "BG %3d " "$bg"
-    for fg in {30..37} 39 {90..97}; do
-        printf "\033[${bg};${fg}m%3d;%2d\033[0m " "$bg" "$fg"
-    done
-    echo
-done
-
-    ######### ansi-color-table-16 ######### END
-}
-function __complete-ansi-color-table-16() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
-}
-complete -F __complete${BASH_FUNK_PREFIX:--}ansi-color-table-16 -- ${BASH_FUNK_PREFIX:--}ansi-color-table-16
-
-function -ansi-color-table-256() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
-
-    set +auHt
-    set -e
-    set -o pipefail
-
-    __impl$__fn "$@" && rc=0 || rc=$?
-
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]..."
-        echo; echo "Type '$__fn --help' for more details."
-    fi
-
-    eval $opts
-
-    return $rc
-}
-function __impl-ansi-color-table-256() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
-    for __arg in "$@"; do
-        case $__arg in
-
-            --help)
-                echo "Usage: $__fn [OPTION]..."
-                echo
-                echo "Prints a table with 256 ANSI colors."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn \033[22m"
-                echo "256"
-                echo -e "$ \033[1m$__fn -v 8\033[22m"
-                echo "Terminal 'xterm' supports 8 colors."
-                echo
-                return 0
-              ;;
-
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn \033[22m"
-                __stdout="$($__fn )"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^[0-9]+$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[0-9]+]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn -v 8\033[22m"
-                __stdout="$($__fn -v 8)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^Terminal '.*' supports [0-9]+ colors.$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Terminal '.*' supports [0-9]+ colors.]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
-
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
-
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
-
-    for __param in "${__params[@]}"; do
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
-
-    ######### ansi-color-table-256 ######### START
-
-
-if ! ${BASH_FUNK_PREFIX:--}ansi-colors-supported 256; then
-    echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 256 colors."
-    echo
-fi
-
-local i
-
-echo "To set one of the following foreground colors use '\033[38;5;<NUM>m'"
-echo
-for (( i=0; i <255; i++));do
-
-    printf "\033[38;5;${i}m%3d\033[0m " "$i"
-
-    if (( (i+1) % 16 == 0 )); then
-        echo
-    fi
-
-done
-
-echo
-echo
-echo "To set one of the following background colors use '\033[48;5;<NUM>m'"
-echo
-for (( i=0; i <255; i++));do
-
-    printf "\033[48;5;${i}m%3d\033[0m " "$i"
-
-    if (( (i+1) % 16 == 0 )); then
-        echo
-    fi
-
-done
-
-echo
-
-    ######### ansi-color-table-256 ######### END
-}
-function __complete-ansi-color-table-256() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
-}
-complete -F __complete${BASH_FUNK_PREFIX:--}ansi-color-table-256 -- ${BASH_FUNK_PREFIX:--}ansi-color-table-256
-
 function -ansi-colors-supported() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
     for opt in a e u H t; do
@@ -744,6 +460,292 @@ function __complete-ansi-colors-supported() {
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}ansi-colors-supported -- ${BASH_FUNK_PREFIX:--}ansi-colors-supported
+
+function -ansi-colors16() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a e u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -e
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]..."
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-ansi-colors16() {
+    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -p /dev/stdout ] && __in_pipe=1 || true
+    [ -t 1 ] || __in_subshell=1
+    for __arg in "$@"; do
+        case $__arg in
+
+            --help)
+                echo "Usage: $__fn [OPTION]..."
+                echo
+                echo "Prints a table with 8/16 ANSI colors."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo
+                echo "Examples:"
+                echo -e "$ \033[1m$__fn \033[22m"
+                echo "256"
+                echo -e "$ \033[1m$__fn -v 8\033[22m"
+                echo "Terminal 'xterm' supports 8 colors."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn \033[22m"
+                __stdout="$($__fn )"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                __regex="^[0-9]+$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[0-9]+]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn -v 8\033[22m"
+                __stdout="$($__fn -v 8)"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                __regex="^Terminal '.*' supports [0-9]+ colors.$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Terminal '.*' supports [0-9]+ colors.]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            -*)
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    ######### ansi-colors16 ######### START
+
+
+if ! ${BASH_FUNK_PREFIX:--}ansi-colors-supported 8; then
+    echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 8 colors."
+    echo
+elif ! ${BASH_FUNK_PREFIX:--}ansi-colors-supported 16; then
+    echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 16 colors."
+    echo
+fi
+
+echo "To set one of the following color combinations use '\033[<BG>;<FG>m'"
+echo
+echo -n "      "
+for fg in {30..37} 39 {90..97}; do
+    printf "  FG %2d" "$fg"
+done
+echo
+for bg in {40..47} 49 {100..107}; do
+    printf "BG %3d " "$bg"
+    for fg in {30..37} 39 {90..97}; do
+        printf "\033[${bg};${fg}m%3d;%2d\033[0m " "$bg" "$fg"
+    done
+    echo
+done
+
+    ######### ansi-colors16 ######### END
+}
+function __complete-ansi-colors16() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --help --selftest "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}ansi-colors16 -- ${BASH_FUNK_PREFIX:--}ansi-colors16
+
+function -ansi-colors256() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a e u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -e
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]..."
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-ansi-colors256() {
+    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -p /dev/stdout ] && __in_pipe=1 || true
+    [ -t 1 ] || __in_subshell=1
+    for __arg in "$@"; do
+        case $__arg in
+
+            --help)
+                echo "Usage: $__fn [OPTION]..."
+                echo
+                echo "Prints a table with 256 ANSI colors."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo
+                echo "Examples:"
+                echo -e "$ \033[1m$__fn \033[22m"
+                echo "256"
+                echo -e "$ \033[1m$__fn -v 8\033[22m"
+                echo "Terminal 'xterm' supports 8 colors."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn \033[22m"
+                __stdout="$($__fn )"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                __regex="^[0-9]+$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[0-9]+]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn -v 8\033[22m"
+                __stdout="$($__fn -v 8)"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                __regex="^Terminal '.*' supports [0-9]+ colors.$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Terminal '.*' supports [0-9]+ colors.]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            -*)
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    ######### ansi-colors256 ######### START
+
+
+if ! ${BASH_FUNK_PREFIX:--}ansi-colors-supported 256; then
+    echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 256 colors."
+    echo
+fi
+
+local i width
+
+if [[ $COLUMNS -lt 144 ]]; then
+	width=$(( COLUMNS / 6 ))
+else
+	width=36
+fi
+
+echo "To set one of the following foreground colors use '\033[38;5;<NUM>m'"
+echo
+for (( i=0; i<256; i++));do
+
+    if (( (i-16) % width == 0 )); then
+        echo
+    fi
+    printf "\033[38;5;${i}m%3d\033[0m " "$i"
+done
+
+echo
+echo
+echo "To set one of the following background colors use '\033[48;5;<NUM>m'"
+echo
+for (( i=0; i<256; i++));do
+
+    if (( (i-16) % width == 0 )); then
+        echo
+    fi
+    printf "\033[48;5;${i}m%3d\033[0m " "$i"
+done
+
+echo
+
+    ######### ansi-colors256 ######### END
+}
+function __complete-ansi-colors256() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --help --selftest "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}ansi-colors256 -- ${BASH_FUNK_PREFIX:--}ansi-colors256
 
 function -ansi-reset() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
@@ -1041,9 +1043,9 @@ function __impl-test-ansi() {
 
 ${BASH_FUNK_PREFIX:--}ansi-bold --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-codes --selftest && echo || return 1
-${BASH_FUNK_PREFIX:--}ansi-color-table-16 --selftest && echo || return 1
-${BASH_FUNK_PREFIX:--}ansi-color-table-256 --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-colors-supported --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}ansi-colors16 --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}ansi-colors256 --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-reset --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-ul --selftest && echo || return 1
 
@@ -1065,12 +1067,12 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-ansi -- ${BASH_FUNK_PREFIX:--}t
 function -help-ansi() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-bold [TEXT]\033[0m  -  Sets bold mode or prints the given text in bold."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-codes [PREFIX]\033[0m  -  Prints commands to set variables with common ANSI codes. When used with the 'echo' command, the -e option is not required."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-color-table-16\033[0m  -  Prints a table with 8/16 ANSI colors."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-color-table-256\033[0m  -  Prints a table with 256 ANSI colors."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-colors-supported [NUM_COLORS]\033[0m  -  Determines if the given number of ANSI colors is supported by the current terminal. If NUM_COLORS is specified, the exit value indicates if the color range is supported. If NUM_COLORS is not specified, the number of supported colors is printed with exit code 0."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-colors16\033[0m  -  Prints a table with 8/16 ANSI colors."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-colors256\033[0m  -  Prints a table with 256 ANSI colors."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-reset\033[0m  -  Prints an ANSI escape sequence that reset all ANSI attributes."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-ul [TEXT]\033[0m  -  Sets underlined mode or prints the given text underlined."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-ansi\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( ansi-bold ansi-codes ansi-color-table-16 ansi-color-table-256 ansi-colors-supported ansi-reset ansi-ul test-ansi )
+__BASH_FUNK_FUNCS+=( ansi-bold ansi-codes ansi-colors-supported ansi-colors16 ansi-colors256 ansi-reset ansi-ul test-ansi )
