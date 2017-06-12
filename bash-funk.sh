@@ -161,8 +161,24 @@ EOL
             PS4='\033[0;35m+ ($0:${LINENO}) \033[0m'
         fi
 
-        echo
-        echo "You are ready to go. Enjoy"'!'
+    fi
 
+    echo
+    echo "You are ready to go. Enjoy"'!'
+    
+    # show information about detached screens
+    if hash screen &>/dev/null; then
+        __screens="$(screen -list | grep "etached)" | sort | sed -rn "s/\s+(.*)\s+.*/  screen -r \1/p")"
+        if [[ $__screens ]]; then
+            echo
+            echo "The following detached screens have been detected:"
+    
+            if [[ $TERM == "cygwin" ]]; then
+                echo -e "\033[1m\033[30m${__screens}\033[0m"
+            else
+                echo -e "\033[93m${__screens}\033[0m"
+            fi
+        fi  
+        unset __screens
     fi
  fi
