@@ -234,7 +234,7 @@ if [[ -e "${__BASH_FUNK_ROOT}/.svn" ]]; then
 fi
 
 if [[ -e "${__BASH_FUNK_ROOT}/.git" ]]; then
-    ( cd "${__BASH_FUNK_ROOT}" && git merge master )
+    ( cd "${__BASH_FUNK_ROOT}" && git fetch && git merge )
     return
 fi
 
