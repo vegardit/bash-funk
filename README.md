@@ -87,7 +87,7 @@ All bash-funk modules are self-containing. This means, if you are only intereste
 
 ## <a name="update"></a>Updating
 
-Once loaded, you can easily update your bash-funk installation to the latest code base by using the command:
+Once loaded, you can easily update your bash-funk installation to the latest code base by using the [-update](https://github.com/vegardit/bash-funk/blob/master/modules/misc.md#-update) command:
 
 ```bash
 -update -y -r
