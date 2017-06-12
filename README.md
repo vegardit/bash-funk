@@ -31,7 +31,7 @@ The command `-help` shows a list of all available commands
 ###  Using Git
 
 Execute:
-```
+```bash
 git clone https://github.com/vegardit/bash-funk --branch master --single-branch ~/bash-funk
 ```
 
@@ -39,14 +39,14 @@ git clone https://github.com/vegardit/bash-funk --branch master --single-branch 
 ###  Using Subversion
 
 Execute:
-```
+```bash
 svn checkout https://github.com/vegardit/bash-funk/trunk ~/bash-funk
 ```
 
 ###  Using Curl
 
 Execute:
-```
+```bash
 mkdir ~/bash-funk && \
 cd ~/bash-funk && \
 curl -#L https://github.com/vegardit/bash-funk/tarball/master | tar -xzv --strip-components 1
@@ -57,7 +57,7 @@ curl -#L https://github.com/vegardit/bash-funk/tarball/master | tar -xzv --strip
 
 Once bash-funk is installed, it can be used by sourcing the `bash-funk.sh` script which will then load all modules.
 
-```
+```bash
 $ source ~/bash-funk/bash-funk.sh
 ```
 
@@ -87,12 +87,11 @@ All bash-funk modules are self-containing. This means, if you are only intereste
 
 ## <a name="update"></a>Updating
 
-Once loaded, you can easily update bash-funk installation to the latest code base by using the commands `-update` and `-reload`, e.g.:
+Once loaded, you can easily update your bash-funk installation to the latest code base by using the command:
 
-```Bash
--update -y && -reload
+```bash
+-update -y -r
 ```
-
 
 ## <a name="license"></a>License
 

@@ -563,7 +563,7 @@ function -update() {
     return $rc
 }
 function __impl-update() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _yes _help _selftest
+    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _yes _reload _help _selftest
     [ -p /dev/stdout ] && __in_pipe=1 || true
     [ -t 1 ] || __in_subshell=1
     for __arg in "$@"; do
@@ -577,6 +577,8 @@ function __impl-update() {
                 echo "Options:"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
+                echo -e "\033[1m-r, --reload\033[22m "
+                echo "        Reloads the bash-funk after updating."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo -e "\033[1m-y, --yes\033[22m "
@@ -598,6 +600,10 @@ function __impl-update() {
 
             --yes|-y)
                 _yes=1
+            ;;
+
+            --reload|-r)
+                _reload=1
             ;;
 
             -*)
@@ -640,16 +646,21 @@ if [[ ! $_yes ]]; then
     fi
 fi
 
+# update via SVN
 if [[ -e "${__BASH_FUNK_ROOT}/.svn" ]]; then
-    svn update "${__BASH_FUNK_ROOT}"
+    svn update "${__BASH_FUNK_ROOT}" || return
+    [[ $_reload ]] && ${__BASH_FUNK_PREFIX:--}reload || true
     return
 fi
 
+# update via Git
 if [[ -e "${__BASH_FUNK_ROOT}/.git" ]]; then
-    ( cd "${__BASH_FUNK_ROOT}" && git fetch && git merge )
+    ( cd "${__BASH_FUNK_ROOT}" && git fetch && git merge ) || return
+    [[ $_reload ]] && ${__BASH_FUNK_PREFIX:--}reload || true
     return
 fi
 
+# update via curl/wget
 local get
 if hash curl &>/dev/null; then
     get="curl -#L"
@@ -660,7 +671,8 @@ else
         get="wget -qO-"
     fi
 fi
-( cd "${__BASH_FUNK_ROOT}" && $get https://github.com/vegardit/bash-funk/tarball/master | tar -xzv --strip-components 1 )
+( cd "${__BASH_FUNK_ROOT}" && $get https://github.com/vegardit/bash-funk/tarball/master | tar -xzv --strip-components 1 ) || return
+[[ $_reload ]] && ${__BASH_FUNK_PREFIX:--}reload || true
 return
 
     ######### update ######### END
@@ -668,7 +680,7 @@ return
 function __complete-update() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --yes -y --help --selftest "
+        local options=" --yes -y --reload -r --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else

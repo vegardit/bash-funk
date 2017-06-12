@@ -201,6 +201,8 @@ Updates bash-funk with the latest code from the github repo.
 Options:
     --help 
         Prints this help.
+-r, --reload 
+        Reloads the bash-funk after updating.
     --selftest 
         Performs a self-test.
 -y, --yes 
@@ -228,16 +230,21 @@ if [[ ! $_yes ]]; then
     fi
 fi
 
+# update via SVN
 if [[ -e "${__BASH_FUNK_ROOT}/.svn" ]]; then
-    svn update "${__BASH_FUNK_ROOT}"
+    svn update "${__BASH_FUNK_ROOT}" || return
+    [[ $_reload ]] && ${__BASH_FUNK_PREFIX:--}reload || true
     return
 fi
 
+# update via Git
 if [[ -e "${__BASH_FUNK_ROOT}/.git" ]]; then
-    ( cd "${__BASH_FUNK_ROOT}" && git fetch && git merge )
+    ( cd "${__BASH_FUNK_ROOT}" && git fetch && git merge ) || return
+    [[ $_reload ]] && ${__BASH_FUNK_PREFIX:--}reload || true
     return
 fi
 
+# update via curl/wget
 local get
 if hash curl &>/dev/null; then
     get="curl -#L"
@@ -248,7 +255,8 @@ else
         get="wget -qO-"
     fi
 fi
-( cd "${__BASH_FUNK_ROOT}" && $get https://github.com/vegardit/bash-funk/tarball/master | tar -xzv --strip-components 1 )
+( cd "${__BASH_FUNK_ROOT}" && $get https://github.com/vegardit/bash-funk/tarball/master | tar -xzv --strip-components 1 ) || return
+[[ $_reload ]] && ${__BASH_FUNK_PREFIX:--}reload || true
 return
 ```
 
