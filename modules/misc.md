@@ -90,7 +90,7 @@ Options:
 
 *Implementation:*
 ```bash
-local cmd=$(fc -ln -1)
+local cmd="$(echo (fc -ln -1))"
 [[ $__interactive ]] && echo "sudo \"$BASH\" -c \"$cmd\"" || true
 sudo "$BASH" -c "$cmd"
 ```
