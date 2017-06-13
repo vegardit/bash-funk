@@ -149,7 +149,7 @@ function -please() {
     return $rc
 }
 function __impl-please() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
     [ -t 1 ] && __interactive=1 || true
     
     for __arg in "$@"; do
@@ -175,8 +175,6 @@ function __impl-please() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\033[1m-v, --verbose\033[22m "
-                echo "        Prints additional information during command execution."
                 echo
                 return 0
               ;;
@@ -191,10 +189,6 @@ function __impl-please() {
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
-
-            --verbose|-v)
-                _verbose=1
-            ;;
 
             -*)
                 echo "$__fn: invalid option: '$__arg'"
@@ -220,7 +214,7 @@ function __impl-please() {
     ######### please ######### START
 
 local cmd=$(fc -ln -1)
-[[ $_verbose ]] && echo "sudo \"$BASH\" -c \"$cmd\"" || true
+[[ $__interactive ]] && echo "sudo \"$BASH\" -c \"$cmd\"" || true
 sudo "$BASH" -c "$cmd"
 
     ######### please ######### END
@@ -228,7 +222,7 @@ sudo "$BASH" -c "$cmd"
 function __complete-please() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest --verbose -v "
+        local options=" --help --selftest "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else

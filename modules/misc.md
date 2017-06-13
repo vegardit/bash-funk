@@ -86,14 +86,12 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
--v, --verbose 
-        Prints additional information during command execution.
 ```
 
 *Implementation:*
 ```bash
 local cmd=$(fc -ln -1)
-[[ $_verbose ]] && echo "sudo \"$BASH\" -c \"$cmd\"" || true
+[[ $__interactive ]] && echo "sudo \"$BASH\" -c \"$cmd\"" || true
 sudo "$BASH" -c "$cmd"
 ```
 
