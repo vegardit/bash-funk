@@ -1288,7 +1288,7 @@ function __impl-ll() {
             --help)
                 echo "Usage: $__fn [OPTION]... [PATH]..."
                 echo
-                echo "Alternative version of 'ls -lt' hat prints directories and symbolic links to directories before files."
+                echo "Alternative version of 'ls -lt' that prints directories (and sym-links to directories) before files and hidden entries before non-hidden entries."
                 echo
                 echo "Parameters:"
                 echo -e "  \033[1mPATH\033[22m "
@@ -1345,20 +1345,22 @@ function __impl-ll() {
     ######### ll ######### START
 
 [[ ! $_PATH ]] && _PATH=(.) || true
-if command ls --help 2>/dev/null | grep -- --group-directories-first &>/dev/null; then
-    command ls -lAph -I lost+found --color=always --group-directories-first "${_PATH[@]}"
-else
-    local _lsopts
-    [[ ${OSTYPE} =~ "darwin" ]] && _lsopts=" -G" || _lsopts=" -I lost+found --color=always"
-    command ls -lAph${_lsopts} "${_PATH[@]}" | awk '
-        BEGIN { dirs = ""; files = "" }
-        /^total/ { total = $0 }                 # capture total line
-        /^d/ { dirs = dirs "\n" $0 };           # capture directories
-        /^l.*[\/]$/ { dirs = dirs "\n" $0 };     # capture symlinks to directories
-        /^-/ { files = files "\n" $0 };         # capture files
-        /^l.*[^\/]$/ { files = files "\n" $0 };  # capture symlinks to files
-        END { print total dirs files }'
-fi
+local _lsopts
+[[ ${OSTYPE} =~ "darwin" ]] && _lsopts=" -G" || _lsopts=" -I lost+found --color=always"
+command ls -lAph${_lsopts} "${_PATH[@]}" | awk '
+    BEGIN { dotDirs = ""; dirs = ""; dotFiles = ""; files = "" }
+    /^total/                                                           { total = $0 }                   # capture total line
+
+    /^d[rwx+-]+ .*[0-9]+:[0-9]+ (\033\[[0-9;]+m)?[.].+/                { dotDirs = dotDirs "\n" $0 };   # capture hidden directories
+    /^d[rwx+-]+ .*[0-9]+:[0-9]+ (\033\[[0-9;]+m[^.]|[^\033^.])/        { dirs = dirs "\n" $0 };         # capture normal directories
+    /^l[rwx+-]+ .*[0-9]+:[0-9]+ (\033\[[0-9;]+m)?[.].+[\/]/            { dotDirs = dotDirs "\n" $0 };   # capture hidden sym-links to directories
+    /^l[rwx+-]+ .*[0-9]+:[0-9]+ (\033\[[0-9;]+m[^.]|[^\033^.]).*[\/]/  { dirs = dirs "\n" $0 };         # capture normal sym-links to directories
+
+    /^-[rwx+-]+ .*[0-9]+:[0-9]+ (\033\[[0-9;]+m)?[.].+/                { dotFiles = dotFiles "\n" $0 }; # capture hidden files
+    /^-[rwx+-]+ .*[0-9]+:[0-9]+ (\033\[[0-9;]+m[^.]|[^\033^.])/        { files = files "\n" $0 };       # capture normal files
+    /^l[rwx+-]+ .*[0-9]+:[0-9]+ (\033\[[0-9;]+m)?[.].+[^\/]/           { dotFiles = dotFiles "\n" $0 }; # capture hidden sym-links to files
+    /^l[rwx+-]+ .*[0-9]+:[0-9]+ (\033\[[0-9;]+m[^.]|[^\033^.]).*[^\/]/ { files = files "\n" $0 };       # capture normal sym-links to files
+    END { print total dotDirs dirs dotFiles files }'
 
     ######### ll ######### END
 }
@@ -2535,7 +2537,7 @@ function -help-filesystem() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}du [PATH]...\033[0m  -  Prints disk usage information."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}extract ARCHIVE [TO_DIR]\033[0m  -  Extracts the given archive using the compatible extractor."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}findfiles [START_PATH] SEARCH_STRING\033[0m  -  Recursively finds all files containing the given string and displays their path."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ll [PATH]...\033[0m  -  Alternative version of 'ls -lt' hat prints directories and symbolic links to directories before files."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ll [PATH]...\033[0m  -  Alternative version of 'ls -lt' that prints directories (and sym-links to directories) before files and hidden entries before non-hidden entries."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}mkcd PATH\033[0m  -  Creates a directory and changes into it."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}modified [PATH]\033[0m  -  Prints the modification timestamp of the given file or directory."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}owner [PATH]\033[0m  -  Prints the owner of the given file or directory."
