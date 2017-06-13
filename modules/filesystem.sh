@@ -46,11 +46,18 @@ function -abspath() {
     return $rc
 }
 function __impl-abspath() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... [PATH]"
@@ -159,11 +166,18 @@ function -cd-down() {
     return $rc
 }
 function __impl-cd-down() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _DIR_NAME
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _DIR_NAME
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... DIR_NAME"
@@ -274,11 +288,18 @@ function -cd-hist() {
     return $rc
 }
 function __impl-cd-hist() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _STEPS_OR_DIRNAME
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STEPS_OR_DIRNAME
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... [STEPS_OR_DIRNAME]"
@@ -406,11 +427,18 @@ function -cd-up() {
     return $rc
 }
 function __impl-cd-up() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _LEVEL_OR_PATTERN
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _LEVEL_OR_PATTERN
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... [LEVEL_OR_PATTERN]"
@@ -544,11 +572,18 @@ function -count-words() {
     return $rc
 }
 function __impl-count-words() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _sort _help _selftest _FILE _WORD=()
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _sort _help _selftest _FILE _WORD=()
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... FILE WORD1[WORD]..."
@@ -708,11 +743,18 @@ function -du() {
     return $rc
 }
 function __impl-du() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH=()
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH=()
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... [PATH]..."
@@ -817,11 +859,18 @@ function -extract() {
     return $rc
 }
 function __impl-extract() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _ARCHIVE _TO_DIR
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _ARCHIVE _TO_DIR
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... ARCHIVE [TO_DIR]"
@@ -961,11 +1010,18 @@ function -findfiles() {
     return $rc
 }
 function __impl-findfiles() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _lines _unpack _maxdepth _mindepth _name _help _selftest _verbose _START_PATH _SEARCH_STRING
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _lines _unpack _maxdepth _mindepth _name _help _selftest _verbose _START_PATH _SEARCH_STRING
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... [START_PATH] SEARCH_STRING"
@@ -1125,7 +1181,7 @@ if [[ $_mindepth ]]; then
 fi
 
 # turn off verbose if part of pipe or subshell
-[[ $__in_pipe || $__in_subshell ]] && _verbose=
+[[ ! $__interactive ]] && _verbose= || true
 
 if [[ $_verbose ]]; then
     if hash tput &>/dev/null; then
@@ -1225,11 +1281,18 @@ function -ll() {
     return $rc
 }
 function __impl-ll() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH=()
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH=()
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... [PATH]..."
@@ -1346,11 +1409,18 @@ function -mkcd() {
     return $rc
 }
 function __impl-mkcd() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _mode _parents _help _selftest _verbose _PATH
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _mode _parents _help _selftest _verbose _PATH
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... PATH"
@@ -1488,11 +1558,18 @@ function -modified() {
     return $rc
 }
 function __impl-modified() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _format _help _selftest _PATH
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _format _help _selftest _PATH
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... [PATH]"
@@ -1660,11 +1737,18 @@ function -owner() {
     return $rc
 }
 function __impl-owner() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... [PATH]"
@@ -1785,11 +1869,18 @@ function -realpath() {
     return $rc
 }
 function __impl-realpath() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... [PATH]"
@@ -1908,11 +1999,18 @@ function -sudo-append() {
     return $rc
 }
 function __impl-sudo-append() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _FILE_PATH _CONTENT
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _FILE_PATH _CONTENT
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... FILE_PATH CONTENT"
@@ -2045,11 +2143,18 @@ function -sudo-write() {
     return $rc
 }
 function __impl-sudo-write() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _FILE_PATH _OWNER _CONTENT
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _FILE_PATH _OWNER _CONTENT
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... FILE_PATH OWNER CONTENT"
@@ -2196,11 +2301,18 @@ function -tail-reverse() {
     return $rc
 }
 function __impl-tail-reverse() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _unique _lines _help _selftest _FILE
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _unique _lines _help _selftest _FILE
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... FILE"
@@ -2340,11 +2452,18 @@ function -test-filesystem() {
     return $rc
 }
 function __impl-test-filesystem() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]..."

@@ -359,11 +359,11 @@ local cursor9Left="\033[9D"
 
 echo -ne "Waiting for [$(date +%T --date=@$(($_SECONDS - 3600)))] until $(date +%T --date=@$(($(date +%s) + $_SECONDS))). Press [s] to skip: $cursor9Right"
 for (( i = 0; i < _SECONDS; i++ )); do
-    if [[ $__in_pipe || $__in_subshell ]]; then
+    if [[ $__interactive ]]; then
+        local newLine=
+    else
         # adding a \n new line character to the end of the line to make the output parseable by sed which is line oriented
         local newLine="$saveCursor\n$restoreCursor"
-    else
-        local newLine
     fi
     echo -ne "$cursor9Left$green$(date +%T --date=@$(($_SECONDS - ${i} - 3600))) $reset$newLine"
     local char=

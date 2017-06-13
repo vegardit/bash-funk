@@ -46,11 +46,18 @@ function -alloc-mem() {
     return $rc
 }
 function __impl-alloc-mem() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _MEMORY_IN_MB
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _MEMORY_IN_MB
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... MEMORY_IN_MB"
@@ -165,11 +172,18 @@ function -memfree() {
     return $rc
 }
 function __impl-memfree() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _MEMORY_UNIT
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _MEMORY_UNIT
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... [MEMORY_UNIT]"
@@ -332,11 +346,18 @@ function -meminfo() {
     return $rc
 }
 function __impl-meminfo() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]..."
@@ -440,11 +461,18 @@ function -memtotal() {
     return $rc
 }
 function __impl-memtotal() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _MEMORY_UNIT
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _MEMORY_UNIT
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... [MEMORY_UNIT]"
@@ -607,11 +635,18 @@ function -test-memory() {
     return $rc
 }
 function __impl-test-memory() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]..."

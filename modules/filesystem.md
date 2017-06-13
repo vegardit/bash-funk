@@ -431,7 +431,7 @@ if [[ $_mindepth ]]; then
 fi
 
 # turn off verbose if part of pipe or subshell
-[[ $__in_pipe || $__in_subshell ]] && _verbose=
+[[ ! $__interactive ]] && _verbose= || true
 
 if [[ $_verbose ]]; then
     if hash tput &>/dev/null; then

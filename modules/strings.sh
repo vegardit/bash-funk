@@ -46,11 +46,18 @@ function -ascii2hex() {
     return $rc
 }
 function __impl-ascii2hex() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _ASCII_STRING
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _ASCII_STRING
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... ASCII_STRING"
@@ -165,11 +172,18 @@ function -hex2ascii() {
     return $rc
 }
 function __impl-hex2ascii() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _HEX_STRING
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _HEX_STRING
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... HEX_STRING"
@@ -284,11 +298,18 @@ function -normalize-path() {
     return $rc
 }
 function __impl-normalize-path() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... PATH"
@@ -410,11 +431,18 @@ function -str-join() {
     return $rc
 }
 function __impl-str-join() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEPARATOR _STRING=()
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEPARATOR _STRING=()
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... SEPARATOR [STRING]..."
@@ -578,11 +606,18 @@ function -str-lower() {
     return $rc
 }
 function __impl-str-lower() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... STRING"
@@ -701,11 +736,18 @@ function -str-matches-glob() {
     return $rc
 }
 function __impl-str-matches-glob() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _all _help _selftest _verbose _GLOB_PATTERN _STRING=()
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _all _help _selftest _verbose _GLOB_PATTERN _STRING=()
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... GLOB_PATTERN [STRING]..."
@@ -906,11 +948,18 @@ function -str-matches-regex() {
     return $rc
 }
 function __impl-str-matches-regex() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _all _help _selftest _verbose _REGEX_PATTERN _STRING=()
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _all _help _selftest _verbose _REGEX_PATTERN _STRING=()
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... REGEX_PATTERN [STRING]..."
@@ -1110,11 +1159,18 @@ function -str-repeat() {
     return $rc
 }
 function __impl-str-repeat() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING _COUNT
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING _COUNT
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... STRING COUNT"
@@ -1242,11 +1298,18 @@ function -str-trim() {
     return $rc
 }
 function __impl-str-trim() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... STRING"
@@ -1361,11 +1424,18 @@ function -str-upper() {
     return $rc
 }
 function __impl-str-upper() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... STRING"
@@ -1484,11 +1554,18 @@ function -strip-ansi() {
     return $rc
 }
 function __impl-strip-ansi() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING=()
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING=()
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... [STRING]..."
@@ -1610,11 +1687,18 @@ function -substr-after() {
     return $rc
 }
 function __impl-substr-after() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... SEARCH_IN SEARCH_FOR"
@@ -1740,11 +1824,18 @@ function -substr-after-last() {
     return $rc
 }
 function __impl-substr-after-last() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... SEARCH_IN SEARCH_FOR"
@@ -1870,11 +1961,18 @@ function -substr-before() {
     return $rc
 }
 function __impl-substr-before() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... SEARCH_IN SEARCH_FOR"
@@ -2000,11 +2098,18 @@ function -substr-before-last() {
     return $rc
 }
 function __impl-substr-before-last() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... SEARCH_IN SEARCH_FOR"
@@ -2130,11 +2235,18 @@ function -substr-between() {
     return $rc
 }
 function __impl-substr-between() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _PREFIX _SUFFIX
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _PREFIX _SUFFIX
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]... SEARCH_IN PREFIX SUFFIX"
@@ -2272,11 +2384,18 @@ function -test-strings() {
     return $rc
 }
 function __impl-test-strings() {
-    local __arg __optionWithValue __params=() __in_subshell __in_pipe __fn=${FUNCNAME[0]/__impl/} _help _selftest
-    [ -p /dev/stdout ] && __in_pipe=1 || true
-    [ -t 1 ] || __in_subshell=1
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -t 1 ] && __interactive=1 || true
+    
     for __arg in "$@"; do
-        case $__arg in
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
 
             --help)
                 echo "Usage: $__fn [OPTION]..."

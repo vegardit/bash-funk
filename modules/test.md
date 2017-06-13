@@ -315,6 +315,8 @@ $ -test-fn-single-value-options --ee A
 aa: bb: cc: dd: ee:A ff: gg:
 $ -test-fn-single-value-options --ff foo
 aa: bb: cc: dd: ee: ff:foo gg:
+$ -test-fn-single-value-options -ab foo
+aa:cat bb:foo cc: dd: ee: ff: gg:
 ```
 
 *Implementation:*
