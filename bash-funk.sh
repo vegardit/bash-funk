@@ -34,7 +34,7 @@ else
 
 # Bash prompt customizations:
 #BASH_FUNK_NO_PROMPT=1         # if set to any value bash-funk will not install it's Bash prompt function.
-#BASH_FUNK_PROMPT_PREFIX=      # text that shall be shown at the beginning of the Bash prompt, e.g. a stage identifier (DEV/TEST/PROD) 
+#BASH_FUNK_PROMPT_PREFIX=      # text that shall be shown at the beginning of the Bash prompt, e.g. a stage identifier (DEV/TEST/PROD)
 #BASH_FUNK_PROMPT_NO_DATE=1    # if set to any value the Bash prompt will not display the current date and time.
 #BASH_FUNK_PROMPT_NO_GIT=1     # if set to any value the Bash prompt will not display GIT branch and modification information.
 #BASH_FUNK_PROMPT_NO_JOBS=1    # if set to any value the Bash prompt will not display the number of shell jobs.
@@ -60,21 +60,21 @@ EOL
                 __BASH_FUNK_ROOT="$PWD" ;;
         esac
 
-        if [[ -f ${__BASH_FUNK_ROOT}/.git ]]; then
+        if [[ -d ${__BASH_FUNK_ROOT}/.git ]]; then
             __BASH_FUNK_VERSION=$(git log -1 --format=%ci 2>/dev/null || true)
-        elif [[ -f ${__BASH_FUNK_ROOT}/.svn ]]; then
+        elif [[ -d ${__BASH_FUNK_ROOT}/.svn ]]; then
             __BASH_FUNK_VERSION=$(svn info "${__BASH_FUNK_ROOT}" 2>/dev/null || true)
             if [[ $__BASH_FUNK_VERSION ]]; then
-                __BASH_FUNK_VERSION="${__BASH_FUNK_VERSION#*$'\n'Last Changed Date: }" # substring after 'Last Changed Date: ' 
+                __BASH_FUNK_VERSION="${__BASH_FUNK_VERSION#*$'\n'Last Changed Date: }" # substring after 'Last Changed Date: '
                 __BASH_FUNK_VERSION="${__BASH_FUNK_VERSION%% (*}"                  # substring before ' ('
             fi
         else
             __BASH_FUNK_VERSION=
         fi
-        
+
         # if no SCM was used, we assume installation via curl/wget, thus we take the last modification date of the oldest file
         if [[ ! $__BASH_FUNK_VERSION ]]; then
-            __BASH_FUNK_VERSION=$(find ${__BASH_FUNK_ROOT} -type f -printf "%TY.%Tm.%Td %TT %TZ\n" -not -path '*/\.*' | sort | head -n 1)
+            __BASH_FUNK_VERSION=$(find ${__BASH_FUNK_ROOT} -not -path '*/\.*' -type f -printf "%TY.%Tm.%Td %TT %TZ\n" | sort | head -n 1)
             __BASH_FUNK_VERSION="${__BASH_FUNK_VERSION%.*} ${__BASH_FUNK_VERSION#${__BASH_FUNK_VERSION% *} }"
         fi
 
@@ -93,8 +93,8 @@ EOL
         echo
 
         echo "Local Version: $__BASH_FUNK_VERSION"
-        echo 
-        
+        echo
+
         if ! declare -p BASH_FUNK_PREFIX &>/dev/null; then
             BASH_FUNK_PREFIX=-
         fi
@@ -165,20 +165,20 @@ EOL
 
     echo
     echo "You are ready to go. Enjoy"'!'
-    
+
     # show information about detached screens
     if hash screen &>/dev/null; then
         __screens="$(screen -list | grep "etached)" | sort | sed -rn "s/\s+(.*)\s+.*/  screen -r \1/p")"
         if [[ $__screens ]]; then
             echo
             echo "The following detached screens have been detected:"
-    
+
             if [[ $TERM == "cygwin" ]]; then
                 echo -e "\033[1m\033[30m${__screens}\033[0m"
             else
                 echo -e "\033[93m${__screens}\033[0m"
             fi
-        fi  
+        fi
         unset __screens
     fi
  fi
