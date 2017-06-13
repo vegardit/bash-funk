@@ -22,7 +22,7 @@
 #
 function -cpu-count() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -31,7 +31,6 @@ function -cpu-count() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -123,7 +122,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}cpu-count -- ${BASH_FUNK_PREFIX:--}c
 
 function -cpu-perf() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -132,7 +131,6 @@ function -cpu-perf() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -224,7 +222,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}cpu-perf -- ${BASH_FUNK_PREFIX:--}cp
 
 function -scp-perf() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -233,7 +231,6 @@ function -scp-perf() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -411,7 +408,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}scp-perf -- ${BASH_FUNK_PREFIX:--}sc
 
 function -test-performance() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -420,7 +417,6 @@ function -test-performance() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?

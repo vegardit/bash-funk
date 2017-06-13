@@ -22,7 +22,7 @@
 #
 function -md5sum() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -31,7 +31,6 @@ function -md5sum() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -158,7 +157,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}md5sum -- ${BASH_FUNK_PREFIX:--}md5s
 
 function -sha256sum() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -167,7 +166,6 @@ function -sha256sum() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -294,7 +292,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}sha256sum -- ${BASH_FUNK_PREFIX:--}s
 
 function -test-crypto() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -303,7 +301,6 @@ function -test-crypto() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?

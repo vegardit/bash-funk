@@ -22,7 +22,7 @@
 #
 function -test-fn-flags() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -31,7 +31,6 @@ function -test-fn-flags() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -158,7 +157,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-flags -- ${BASH_FUNK_PREFIX:
 
 function -test-fn-multi-value-options() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -167,7 +166,6 @@ function -test-fn-multi-value-options() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -539,7 +537,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-multi-value-options -- ${BAS
 
 function -test-fn-multi-value-parameters() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -548,7 +546,6 @@ function -test-fn-multi-value-parameters() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -826,7 +823,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-multi-value-parameters -- ${
 
 function -test-fn-multi-value-parameters-first-variable() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -835,7 +832,6 @@ function -test-fn-multi-value-parameters-first-variable() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -1016,7 +1012,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-multi-value-parameters-first
 
 function -test-fn-noargs() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -1025,7 +1021,6 @@ function -test-fn-noargs() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -1164,7 +1159,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-noargs -- ${BASH_FUNK_PREFIX
 
 function -test-fn-requires-existing() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -1173,7 +1168,6 @@ function -test-fn-requires-existing() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -1287,7 +1281,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-requires-existing -- ${BASH_
 
 function -test-fn-requires-nonexistent() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -1296,7 +1290,6 @@ function -test-fn-requires-nonexistent() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -1406,7 +1399,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-requires-nonexistent -- ${BA
 
 function -test-fn-single-value-options() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -1415,7 +1408,6 @@ function -test-fn-single-value-options() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -1753,7 +1745,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-single-value-options -- ${BA
 
 function -test-fn-single-value-parameters() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -1762,7 +1754,6 @@ function -test-fn-single-value-parameters() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -2023,7 +2014,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-single-value-parameters -- $
 
 function -test-fn-single-value-parameters-first-optional() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -2032,7 +2023,6 @@ function -test-fn-single-value-parameters-first-optional() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -2188,7 +2178,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-single-value-parameters-firs
 
 function -test-test() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -2197,7 +2187,6 @@ function -test-test() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?

@@ -22,7 +22,7 @@
 #
 function -ansi-bold() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -31,7 +31,6 @@ function -ansi-bold() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -151,7 +150,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}ansi-bold -- ${BASH_FUNK_PREFIX:--}a
 
 function -ansi-codes() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -160,7 +159,6 @@ function -ansi-codes() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -322,7 +320,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}ansi-codes -- ${BASH_FUNK_PREFIX:--}
 
 function -ansi-colors-supported() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -331,7 +329,6 @@ function -ansi-colors-supported() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -484,7 +481,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}ansi-colors-supported -- ${BASH_FUNK
 
 function -ansi-colors16() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -493,7 +490,6 @@ function -ansi-colors16() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -627,7 +623,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}ansi-colors16 -- ${BASH_FUNK_PREFIX:
 
 function -ansi-colors256() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -636,7 +632,6 @@ function -ansi-colors256() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -784,7 +779,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}ansi-colors256 -- ${BASH_FUNK_PREFIX
 
 function -ansi-reset() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -793,7 +788,6 @@ function -ansi-reset() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -885,7 +879,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}ansi-reset -- ${BASH_FUNK_PREFIX:--}
 
 function -ansi-ul() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -894,7 +888,6 @@ function -ansi-ul() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -1014,7 +1007,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}ansi-ul -- ${BASH_FUNK_PREFIX:--}ans
 
 function -test-ansi() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -1023,7 +1016,6 @@ function -test-ansi() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?

@@ -22,7 +22,7 @@
 #
 function -help() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -31,7 +31,6 @@ function -help() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -125,7 +124,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}help -- ${BASH_FUNK_PREFIX:--}help
 
 function -please() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -134,7 +133,6 @@ function -please() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -213,7 +211,7 @@ function __impl-please() {
 
     ######### please ######### START
 
-local cmd="$(echo (fc -ln -1))"
+local cmd="$(echo $(fc -ln -1))"
 [[ $__interactive ]] && echo -e "Executing command [\033[35m$cmd\033[0m] with sudo..." || true
 sudo "$BASH" -c "$cmd"
 
@@ -233,7 +231,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}please -- ${BASH_FUNK_PREFIX:--}plea
 
 function -reload() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -242,7 +240,6 @@ function -reload() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -344,7 +341,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}reload -- ${BASH_FUNK_PREFIX:--}relo
 
 function -test-all() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -353,7 +350,6 @@ function -test-all() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -449,7 +445,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-all -- ${BASH_FUNK_PREFIX:--}te
 
 function -test-misc() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -458,7 +454,6 @@ function -test-misc() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -557,7 +552,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-misc -- ${BASH_FUNK_PREFIX:--}t
 
 function -tweak-bash() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -566,7 +561,6 @@ function -tweak-bash() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -683,7 +677,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}tweak-bash -- ${BASH_FUNK_PREFIX:--}
 
 function -update() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -692,7 +686,6 @@ function -update() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -842,7 +835,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}update -- ${BASH_FUNK_PREFIX:--}upda
 
 function -var-exists() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -851,7 +844,6 @@ function -var-exists() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -998,7 +990,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}var-exists -- ${BASH_FUNK_PREFIX:--}
 
 function -wait() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -1007,7 +999,6 @@ function -wait() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?

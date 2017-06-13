@@ -33,7 +33,7 @@ fi
 if ${BASH_FUNK_PREFIX:--}is-loadable; then
 function -aws-account-id() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -42,7 +42,6 @@ function -aws-account-id() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -136,7 +135,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}aws-account-id -- ${BASH_FUNK_PREFIX
 
 function -aws-az() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -145,7 +144,6 @@ function -aws-az() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -239,7 +237,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}aws-az -- ${BASH_FUNK_PREFIX:--}aws-
 
 function -aws-describe-stack() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -248,7 +246,6 @@ function -aws-describe-stack() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -379,7 +376,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}aws-describe-stack -- ${BASH_FUNK_PR
 
 function -aws-instance-id() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -388,7 +385,6 @@ function -aws-instance-id() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -482,7 +478,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}aws-instance-id -- ${BASH_FUNK_PREFI
 
 function -aws-is-ec2() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -491,7 +487,6 @@ function -aws-is-ec2() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -595,7 +590,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}aws-is-ec2 -- ${BASH_FUNK_PREFIX:--}
 
 function -aws-private-ip() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -604,7 +599,6 @@ function -aws-private-ip() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -698,7 +692,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}aws-private-ip -- ${BASH_FUNK_PREFIX
 
 function -aws-region() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -707,7 +701,6 @@ function -aws-region() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -801,7 +794,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}aws-region -- ${BASH_FUNK_PREFIX:--}
 
 function -aws-stack-name() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -810,7 +803,6 @@ function -aws-stack-name() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -911,7 +903,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}aws-stack-name -- ${BASH_FUNK_PREFIX
 
 function -aws-vpc-cidr-block() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -920,7 +912,6 @@ function -aws-vpc-cidr-block() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -1014,7 +1005,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}aws-vpc-cidr-block -- ${BASH_FUNK_PR
 
 function -aws-vpc-id() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -1023,7 +1014,6 @@ function -aws-vpc-id() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
@@ -1117,7 +1107,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}aws-vpc-id -- ${BASH_FUNK_PREFIX:--}
 
 function -test-aws() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a e u H t; do
+    for opt in a u H t; do
         [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
     done
     shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
@@ -1126,7 +1116,6 @@ function -test-aws() {
     done
 
     set +auHt
-    set -e
     set -o pipefail
 
     __impl$__fn "$@" && rc=0 || rc=$?
