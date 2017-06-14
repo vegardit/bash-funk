@@ -91,7 +91,16 @@ Options:
 *Implementation:*
 ```bash
 local cmd="$(echo $(fc -ln -1))"
-[[ $__interactive ]] && echo -e "Executing command [\033[35m$cmd\033[0m] with sudo..." || true
+
+if [[ $cmd == sudo*]]; then
+    echo "$__fn: Last command '$cmd' was already executed with sudo."
+    exit 1
+elif [[ $cmd == -please*]]; then
+    echo "$__fn: Executing last command '$cmd' with sudo has no use."
+    exit 1
+fi
+
+[[ $__interactive ]] && echo -e "Executing last command [\033[35m$cmd\033[0m] with sudo..." || true
 sudo "$BASH" -c "$cmd"
 ```
 
