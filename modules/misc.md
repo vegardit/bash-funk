@@ -92,10 +92,10 @@ Options:
 ```bash
 local cmd="$(echo $(fc -ln -1))"
 
-if [[ $cmd == sudo*]]; then
+if [[ $cmd == sudo* ]]; then
     echo "$__fn: Last command '$cmd' was already executed with sudo."
     exit 1
-elif [[ $cmd == -please*]]; then
+elif [[ $cmd == -please* ]]; then
     echo "$__fn: Executing last command '$cmd' with sudo has no use."
     exit 1
 fi
