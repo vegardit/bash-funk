@@ -90,7 +90,7 @@ Options:
 
 *Implementation:*
 ```bash
-local cmd="$(echo (fc -ln -1))"
+local cmd="$(echo $(fc -ln -1))"
 [[ $__interactive ]] && echo -e "Executing command [\033[35m$cmd\033[0m] with sudo..." || true
 sudo "$BASH" -c "$cmd"
 ```

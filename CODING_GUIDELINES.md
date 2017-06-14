@@ -22,6 +22,7 @@
 ## Portability
 1. Use `#!/usr/bin/env bash` instead of `#!/bin/bash`
 1. Use `\033` as escape sequence instead of `\e` to support MacOS
+1. Use `sed -E` instead of `sed -r` to enable extended regular expressions on Linux and MacOS. See https://www.gnu.org/software/sed/manual/sed.html#Command_002dLine-Options
 
 
 ## References

@@ -194,7 +194,7 @@ Options:
 local signal=${_signal:-15}
 
 if hash netstat &>/dev/null; then
-    local listener=$(netstat -lantp 2>/dev/null | sed -nr "s/^tcp\s+[0-9]+\s+[0-9]+ .*:$_PORT .* (-|[0-9]+\/[^ ]*)\s+$/\1/p" | uniq || :)
+    local listener=$(netstat -lantp 2>/dev/null | sed -En "s/^tcp\s+[0-9]+\s+[0-9]+ .*:$_PORT .* (-|[0-9]+\/[^ ]*)\s+$/\1/p" | uniq || :)
 
     if [[ $listener == "-" ]]; then
         echo "$__fn: Could not determine PID of processs listening on TCP port $_PORT. Try using sudo."
@@ -204,7 +204,7 @@ if hash netstat &>/dev/null; then
         return 0
     fi
 else
-    local listener=$(lsof -iTCP:$_PORT | sed -nr "s/([^ ]+)\s+([0-9]+).*\s+/\2\/\1/p" | uniq || :)
+    local listener=$(lsof -iTCP:$_PORT | sed -En "s/([^ ]+)\s+([0-9]+).*\s+/\2\/\1/p" | uniq || :)
 
     if [[ ! $listener ]]; then
         if [[ $EUID -eq 0 ]]; then

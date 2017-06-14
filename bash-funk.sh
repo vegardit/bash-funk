@@ -114,7 +114,7 @@ EOL
             if [[ $BASH_FUNK_PREFIX == "-" ]]; then
                 source "${__module}"
             else
-                eval "$(sed -r "s/function -/function ${BASH_FUNK_PREFIX}/g; s/function __([^-]*)-/function __\1${BASH_FUNK_PREFIX}/g" ${__module})"
+                eval "$(sed -E "s/function -/function ${BASH_FUNK_PREFIX}/g; s/function __([^-]*)-/function __\1${BASH_FUNK_PREFIX}/g" ${__module})"
             fi
             echo
         done
@@ -168,7 +168,7 @@ EOL
 
     # show information about detached screens
     if hash screen &>/dev/null; then
-        __screens="$(screen -list | grep "etached)" | sort | sed -rn "s/\s+(.*)\s+.*/  screen -r \1/p")"
+        __screens="$(screen -list | grep "etached)" | sort | sed -En "s/\s+(.*)\s+.*/  screen -r \1/p")"
         if [[ $__screens ]]; then
             echo
             echo "The following detached screens have been detected:"

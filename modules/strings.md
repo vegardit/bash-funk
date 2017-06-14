@@ -471,10 +471,11 @@ local ansiColors="([0-9]{1,2}(;[0-9]{1,2})?(;[0-9]{1,2})?)?[m|K]"
 local ansiCursors1="[0-9]+[A-D]" # cursor up/down/right/left
 local ansiCursors2="[su]" # save/restore cursor position
 local ansiPattern="\x1B\[((${ansiColors})|(${ansiCursors1})|(${ansiCursors2}))"
+
 if [[ ${_STRING} ]]; then
-    echo "${_STRING[@]}" | sed -u -r "s/${ansiPattern}//g"
+    echo "${_STRING[@]}" | sed -Eu "s/${ansiPattern}//g"
 else
-    sed -u -r "s/${ansiPattern}//g"
+    sed -Eu "s/${ansiPattern}//g"
 fi
 ```
 
