@@ -2,6 +2,11 @@
 
 1. [What is it?](#what-is-it)
 1. [Installation](#install)
+    1. [Using git](#install-with-git)
+    1. [Using subversion](#install-with-svn)
+    1. [Using curl](#install-with-curl)
+    1. [Using wget](#install-with-wget)
+    1. [Portable on Windows](#install-win-portable)
 1. [Usage](#usage)
 1. [Updating](#update)
 1. [License](#license)
@@ -21,14 +26,14 @@ All bash-funk commands have a descriptive online help:
 
 ![function_help](img/function_help.png)
 
-The command `-help` shows a list of all available commands
+The command [-help](https://github.com/vegardit/bash-funk/blob/master/modules/misc.md#-help) shows a list of all available commands
 
 ![help](img/help.png)
 
 
 ## <a name="install"></a>Installation
 
-###  Using Git
+### <a name="install-with-git"></a>Using Git
 
 Execute:
 ```bash
@@ -36,14 +41,14 @@ git clone https://github.com/vegardit/bash-funk --branch master --single-branch 
 ```
 
 
-###  Using Subversion
+### <a name="install-with-svn"></a>Using Subversion
 
 Execute:
 ```bash
 svn checkout https://github.com/vegardit/bash-funk/trunk ~/bash-funk
 ```
 
-###  Using Curl
+### <a name="install-with-curl"></a>Using Curl
 
 Execute:
 ```bash
@@ -52,6 +57,29 @@ cd ~/bash-funk && \
 curl -#L https://github.com/vegardit/bash-funk/tarball/master | tar -xzv --strip-components 1
 ```
 
+### <a name="install-with-wget"></a>Using wget
+
+Execute:
+```bash
+mkdir ~/bash-funk && \
+cd ~/bash-funk && \
+wget -qO- --show-progress https://github.com/vegardit/bash-funk/tarball/master | tar -xzv --strip-components 1
+```
+
+### <a name="install-win-portable"></a>Portable on Windows
+
+For your convenience we created a bootstrap Windows batch file that sets up a [Cygwin](http://cygwin.org)
+installation pre-configured with bash-funk. The environment is portable and can for example be installed on an USB stick.
+
+1. Create a local empty directory where bash-funk shall be installed, e.g. `C:\apps\bash-funk`
+2. Download the [bash-funk-installer.cmd](https://github.com/vegardit/bash-funk/blob/master/bash-funk-installer.cmd) file into that directory.
+3. Execute the `bash-funk-installer.cmd`. This will:
+    1. Download the 32 or 64bit Cygwin setup.exe depending on your OS.
+    2. Install the Cygwin with the pre-selected set of packages.
+    3. Create init scripts that will keep the installation portable.
+    3. Install the [apt-cyg](https://github.com/transcode-open/apt-cyg) package manager.
+    4. Create a loader script that will install bash-funk on the first launch of the Bash.
+4. Now you can launch your portable bash-funk environment using the newly created `bash-funk.cmd` batch file.
 
 ## <a name="usage"></a>Usage
 
