@@ -660,9 +660,11 @@ export HISTTIMEFORMAT="%F %T "
 export HISTIGNORE="&:?:??:clear:exit:pwd"
 history -r
 
+# make ls colorful by default except on MacOS where it is not supported
+[[ ${OSTYPE} =~ "darwin" ]] || alias -- ls="command ls --color=auto"
+
 alias -- grep="command grep --colour=auto"
 alias -- gh='command history | grep'
-alias -- ls="command ls --color=auto"
 alias -- l="ll"
 alias -- ll="${BASH_FUNK_PREFIX:--}ll"
 alias -- ++="${BASH_FUNK_PREFIX:--}cd-down"
