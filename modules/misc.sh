@@ -688,7 +688,7 @@ if [[ $OSTYPE == "cygwin" ]]; then
         fi
     done
     
-    if ! hash sudo >/dev/null; then
+    if ! hash sudo &>/dev/null; then
         alias -- sudo="cygstart --action=runas"
     fi
 fi
