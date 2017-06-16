@@ -31,6 +31,9 @@ set CYGWIN_PACKAGES=bash-completion,bc,curl,expect,git,git-svn,gnupg,inetutils,m
 :: choose a user name under Cygwin
 set CYGWIN_USERNAME=root
 
+:: add more path if required, but at the cost of runtime performance (e.g. slower forks)
+set CYGWIN_PATH=%%SystemRoot%%\system32;%%SystemRoot%%
+
 :: set proxy if required (unfortunately Cygwin setup.exe does not have commandline options to specify proxy user credentials)
 set PROXY_HOST=
 set PROXY_PORT=8080
@@ -43,7 +46,9 @@ set MINTTY_OPTIONS=--Title bash-funk ^
   -o ClicksPlaceCursor=yes ^
   -o CursorBlinks=yes ^
   -o CursorColour=96,96,255 ^
-  -o CursorType=Line ^
+  -o CursorType=Block ^
+  -o CopyOnSelect=yes ^
+  -o RightClickAction=Paste ^
   -o Font="Courier New" ^
   -o FontHeight=10 ^
   -o FontSmoothing=None ^
@@ -215,7 +220,7 @@ echo Creating [%Start_cmd%]...
     echo set CYGWIN_DRIVE=%%~d0
     echo set CYGWIN_ROOT=%%~dp0cygwin
     echo.
-    echo set PATH=%%PATH%%;%%CYGWIN_ROOT%%\bin
+    echo set PATH=%CYGWIN_PATH%;%%CYGWIN_ROOT%%\bin
     echo set ALLUSERSPROFILE=%%CYGWIN_ROOT%%.ProgramData
     echo set ProgramData=%%ALLUSERSPROFILE%%
     echo set CYGWIN=nodosfilewarning
