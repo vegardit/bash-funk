@@ -40,6 +40,7 @@ set MINTTY_OPTIONS=--Title bash-funk ^
   -o Columns=160 ^
   -o Rows=50 ^
   -o BellType=0 ^
+  -o CursorColour=96,96,255 ^
   -o ClicksPlaceCursor=yes ^
   -o CursorBlinks=no ^
   -o CursorType=Block ^
