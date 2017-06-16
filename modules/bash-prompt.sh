@@ -137,7 +137,7 @@ function __-bash-prompt() {
 
     local p_scm
     if [[ ! ${BASH_FUNK_PROMPT_NO_GIT:-} ]]; then
-        if [[ $OSTYPE != "cygwin" ]] || -find-up --type d .git &>/dev/null; then # performance hack for cygwin
+        if [[ $OSTYPE != "cygwin" ]] || ${BASH_FUNK_PREFIX:--}find-up --type d .git &>/dev/null; then # performance hack for cygwin
             if p_scm=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD 2>/dev/null); then
                 local modifications=$(git ls-files -o -m -d --exclude-standard | wc -l)
                 if [[ $modifications && $modifications != "0" ]]; then
@@ -149,7 +149,7 @@ function __-bash-prompt() {
         fi
     fi
     if [[ ! $p_scm && ! ${BASH_FUNK_PROMPT_NO_SVN:-} ]]; then
-        if [[ $OSTYPE != "cygwin" ]] || -find-up --type d .svn &>/dev/null; then # performance hack for cygwin
+        if [[ $OSTYPE != "cygwin" ]] || ${BASH_FUNK_PREFIX:--}find-up --type d .svn &>/dev/null; then # performance hack for cygwin
             if p_scm=$(svn info 2>/dev/null); then
                 # extracting trunk/branch info without relying using sed/grep for higher performance under cygwin^^
                 if [[ "$p_scm" == *URL:* ]]; then
