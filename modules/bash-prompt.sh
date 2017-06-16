@@ -24,13 +24,13 @@ else
 fi
 
 if ! hash svn &>/dev/null; then
-    BASH_FUNK_NO_PROMPT_SVN=1
+    BASH_FUNK_PROMPT_NO_SVN=1
 fi
 if ! hash git &>/dev/null; then
-    BASH_FUNK_NO_PROMPT_GIT=1
+    BASH_FUNK_PROMPT_NO_GIT=1
 fi
 if ! hash screen &>/dev/null; then
-    BASH_FUNK_NO_PROMPT_SCREEN=1
+    BASH_FUNK_PROMPT_NO_SCREENS=1
 fi
 
 # change the color of directories in ls
