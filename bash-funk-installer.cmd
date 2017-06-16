@@ -32,7 +32,7 @@ set CYGWIN_PACKAGES=bash-completion,bc,curl,expect,git,git-svn,gnupg,inetutils,m
 set CYGWIN_USERNAME=root
 
 :: set proxy if required (unfortunately Cygwin setup.exe does not have commandline options to specify proxy user credentials)
-set PROXY_HOST=surf.proxy.agis.allianz
+set PROXY_HOST=
 set PROXY_PORT=8080
 
 echo.
@@ -42,6 +42,7 @@ echo ###########################################################
 echo.
 
 :: create VB script that can download files
+:: not using PowerShell which may be blocked by group policies
 set DOWNLOADER=%~dp0downloader.vbs
 echo Creating [%DOWNLOADER%] script...
 if "%PROXY_HOST%" == "" (
