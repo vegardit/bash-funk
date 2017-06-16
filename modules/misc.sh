@@ -668,6 +668,7 @@ alias -- ++="${BASH_FUNK_PREFIX:--}cd-down"
 alias -- --="${BASH_FUNK_PREFIX:--}cd-hist"
 alias -- ..="${BASH_FUNK_PREFIX:--}cd-up"
 alias -- ...="command cd ../.."
+alias -- -="command cd -"
 
 # http://wiki.bash-hackers.org/internals/shell_options
 local opt opts=(autocd checkwinsize dirspell direxpand extglob globstar histappend)

@@ -91,25 +91,25 @@ Options:
 *Implementation:*
 ```bash
 if hash "yum" &>/dev/null; then
-    if yum list installed "${_PACKAGE_NAME}" >/dev/null 2>&1; then
+    if yum list installed "${_PACKAGE_NAME}" &>/dev/null; then
         [[ $_verbose ]] && echo "${_PACKAGE_NAME} is installed." || :
         return 0
     fi
 
 elif hash "dpkg-query" &>/dev/null; then
-    if dpkg-query -Wf'${Status}' "${_PACKAGE_NAME}" 2>/dev/null | grep -q "install ok installed" >/dev/null; then
+    if dpkg-query -Wf'${Status}' "${_PACKAGE_NAME}" 2>/dev/null | grep "install ok installed" &>/dev/null; then
         [[ $_verbose ]] && echo "${_PACKAGE_NAME} is installed." || :
         return 0
     fi
 
 elif hash "cygcheck" &>/dev/null; then
-    if cygcheck "${_PACKAGE_NAME}" >/dev/null 2>&1; then
+    if cygcheck "${_PACKAGE_NAME}" &>/dev/null; then
         [[ $_verbose ]] && echo "${_PACKAGE_NAME} is installed." || :
         return 0
     fi
 
 elif hash "rpm" &>/dev/null; then
-    if rpm -q openssh >/dev/null; then
+    if rpm -q openssh &>/dev/null; then
         [[ $_verbose ]] && echo "${_PACKAGE_NAME} is installed." || :
         return 0
     fi
