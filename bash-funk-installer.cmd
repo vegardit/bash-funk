@@ -40,10 +40,10 @@ set MINTTY_OPTIONS=--Title bash-funk ^
   -o Columns=160 ^
   -o Rows=50 ^
   -o BellType=0 ^
-  -o CursorColour=96,96,255 ^
   -o ClicksPlaceCursor=yes ^
-  -o CursorBlinks=no ^
-  -o CursorType=Block ^
+  -o CursorBlinks=yes ^
+  -o CursorColour=96,96,255 ^
+  -o CursorType=Line ^
   -o Font="Courier New" ^
   -o FontHeight=10 ^
   -o FontSmoothing=None ^
@@ -52,7 +52,6 @@ set MINTTY_OPTIONS=--Title bash-funk ^
   -p Term=xterm-256color ^
   -o Charset=UTF-8 ^
   -o Locale=C
-
 
 
 echo.
@@ -135,7 +134,7 @@ echo Running Cygwin setup...
  --upgrade-also ^
  --no-replaceonreboot ^
  --quiet-mode ^
- --packages dos2unix,wget,%CYGWIN_PACKAGES% || goto :fail
+ --packages dos2unix,mintty,wget,%CYGWIN_PACKAGES% || goto :fail
 
 set Cygwin_bat=%CYGWIN_ROOT%\Cygwin.bat
 if exist "%Cygwin_bat%" (

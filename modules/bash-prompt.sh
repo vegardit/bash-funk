@@ -137,46 +137,51 @@ function __-bash-prompt() {
 
     local p_scm
     if [[ ! ${BASH_FUNK_PROMPT_NO_GIT:-} ]]; then
-        if p_scm=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD 2>/dev/null); then
-            local modifications=$(git ls-files -o -m -d --exclude-standard | wc -l)
-            if [[ $modifications && $modifications != "0" ]]; then
-                p_scm="git:$p_scm${C_FG_WHITE}($modifications)"
-            else
-                p_scm="git:$p_scm"
+        if [[ $OSTYPE != "cygwin" ]] || -find-up --type d .git &>/dev/null; then # performance hack for cygwin
+            if p_scm=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD 2>/dev/null); then
+                local modifications=$(git ls-files -o -m -d --exclude-standard | wc -l)
+                if [[ $modifications && $modifications != "0" ]]; then
+                    p_scm="git:$p_scm${C_FG_WHITE}($modifications)"
+                else
+                    p_scm="git:$p_scm"
+                fi
             fi
         fi
     fi
     if [[ ! $p_scm && ! ${BASH_FUNK_PROMPT_NO_SVN:-} ]]; then
-        # extracting trunk/branch info without relying using sed/grep for higher performance
-        if p_scm=$(svn info 2>/dev/null); then
-            if [[ "$p_scm" == *URL:* ]]; then
-                p_scm="${p_scm#*$'\n'URL: }" # substring after URL:
-                p_scm="${p_scm%%$'\n'*}"     # substring before \n
-                case $p_scm in
-                    */trunk|*/trunk/*)
-                        p_scm="trunk"
-                      ;;
-                    */branches/*)
-                        p_scm="${p_scm#*branches/}"
-                        p_scm="${p_scm%%/*}"
-                      ;;
-                    */tags/*)
-                        p_scm="${p_scm#*tags/}"
-                        p_scm="${p_scm%%/*}"
-                      ;;
-                esac
+        if [[ $OSTYPE != "cygwin" ]] || -find-up --type d .svn &>/dev/null; then # performance hack for cygwin
+            if p_scm=$(svn info 2>/dev/null); then
+                # extracting trunk/branch info without relying using sed/grep for higher performance under cygwin^^
+                if [[ "$p_scm" == *URL:* ]]; then
+                    p_scm="${p_scm#*$'\n'URL: }" # substring after URL:
+                    p_scm="${p_scm%%$'\n'*}"     # substring before \n
+                    case $p_scm in
+                        */trunk|*/trunk/*)
+                            p_scm="trunk"
+                          ;;
+                        */branches/*)
+                            p_scm="${p_scm#*branches/}"
+                            p_scm="${p_scm%%/*}"
+                          ;;
+                        */tags/*)
+                            p_scm="${p_scm#*tags/}"
+                            p_scm="${p_scm%%/*}"
+                          ;;
+                    esac
 
-                if [[ $p_scm ]]; then
-                    local modifications=$(svn status | wc -l)
-                    if [[ $modifications && $modifications != "0" ]]; then
-                        p_scm="svn:$p_scm${C_FG_WHITE}($modifications)"
-                    else
-                        p_scm="svn:$p_scm"
+                    if [[ $p_scm ]]; then
+                        local modifications=$(svn status | wc -l)
+                        if [[ $modifications && $modifications != "0" ]]; then
+                            p_scm="svn:$p_scm${C_FG_WHITE}($modifications)"
+                        else
+                            p_scm="svn:$p_scm"
+                        fi
                     fi
                 fi
             fi
         fi
     fi
+
     if [[ $p_scm ]]; then
         p_scm="| ${C_FG_LIGHT_YELLOW}$p_scm${C_FG_BLACK} "
     fi

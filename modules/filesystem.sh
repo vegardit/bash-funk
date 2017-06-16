@@ -977,6 +977,158 @@ function __complete-extract() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}extract -- ${BASH_FUNK_PREFIX:--}extract
 
+function -find-up() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]... FILENAME"
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-find-up() {
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _type _help _selftest _FILENAME
+    [ -t 1 ] && __interactive=1 || true
+    
+    for __arg in "$@"; do
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
+
+            --help)
+                echo "Usage: $__fn [OPTION]... FILENAME"
+                echo
+                echo "Traverses the directory upward to find the given file."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mFILENAME\033[22m (required)"
+                echo "      The file or directory to find."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo -e "\033[1m-t, --type TYPE\033[22m (one of: [d,dir,f,file])"
+                echo "        File type."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            --type|-t)
+                _type="@@##@@"
+                __optionWithValue=type
+            ;;
+
+            -*)
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    type)
+                        _type=$__arg
+                        __optionWithValue=
+                      ;;
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        if [[ ! $_FILENAME ]]; then
+            _FILENAME=$__param
+            continue
+        fi
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if [[ $_type ]]; then
+        if [[ $_type == "@@##@@" ]]; then echo "$__fn: Error: Value TYPE for option --type must be specified."; return 64; fi
+        declare -A __allowed=( [d]=1 [dir]=1 [f]=1 [file]=1 )
+        if [[ ! ${__allowed[$_type]} ]]; then echo "$__fn: Error: Value '$_type' for option --type is not one of the allowed values [d,dir,f,file]."; return 64; fi
+    fi
+
+    if [[ $_FILENAME ]]; then
+        true
+    else
+        echo "$__fn: Error: Parameter FILENAME must be specified."; return 64
+    fi
+
+    ######### find-up ######### START
+
+local path=$PWD
+while [[ $path ]]; do
+    case $_type in
+        d|dir)  if [[ -d "$path/$_FILENAME" ]]; then echo "$path/$_FILENAME"; return; fi ;;                            
+        f|file) if [[ -f "$path/$_FILENAME" ]]; then echo "$path/$_FILENAME"; return; fi ;;
+        *)      if [[ -e "$path/$_FILENAME" ]]; then echo "$path/$_FILENAME"; return; fi ;;                    
+    esac
+    path=${path%/*}
+done
+echo "$__fn: '$_FILENAME': No such file or directory"
+return 1
+
+    ######### find-up ######### END
+}
+function __complete-find-up() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --type -t --help --selftest "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        local prev="${COMP_WORDS[COMP_CWORD-1]}"
+        case $prev in
+            --type|-t)
+                COMPREPLY=($(compgen -o default -W "d
+dir
+f
+file" -- $curr))
+              ;;
+            *)
+                COMPREPLY=($(compgen -o default -- $curr))
+              ;;
+        esac
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}find-up -- ${BASH_FUNK_PREFIX:--}find-up
+
 function -findfiles() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
     for opt in a u H t; do
@@ -2503,6 +2655,7 @@ ${BASH_FUNK_PREFIX:--}cd-up --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}count-words --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}du --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}extract --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}find-up --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}findfiles --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ll --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}mkcd --selftest && echo || return 1
@@ -2536,6 +2689,7 @@ function -help-filesystem() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}count-words FILE WORD1[WORD]...\033[0m  -  Counts the number of occurences of the word(s) in the given file."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}du [PATH]...\033[0m  -  Prints disk usage information."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}extract ARCHIVE [TO_DIR]\033[0m  -  Extracts the given archive using the compatible extractor."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}find-up FILENAME\033[0m  -  Traverses the directory upward to find the given file."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}findfiles [START_PATH] SEARCH_STRING\033[0m  -  Recursively finds all files containing the given string and displays their path."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ll [PATH]...\033[0m  -  Alternative version of 'ls -lt' that prints directories (and sym-links to directories) before files and hidden entries before non-hidden entries."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}mkcd PATH\033[0m  -  Creates a directory and changes into it."
@@ -2548,4 +2702,4 @@ function -help-filesystem() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-filesystem\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( abspath cd-down cd-hist cd-up count-words du extract findfiles ll mkcd modified owner realpath sudo-append sudo-write tail-reverse test-filesystem )
+__BASH_FUNK_FUNCS+=( abspath cd-down cd-hist cd-up count-words du extract find-up findfiles ll mkcd modified owner realpath sudo-append sudo-write tail-reverse test-filesystem )

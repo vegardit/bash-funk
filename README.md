@@ -14,7 +14,7 @@
 
 ## <a name="what-is-it"></a>What is it?
 
-bash-funk is a collection of useful commands for Bash 3.2 or higher.
+bash-funk is a collection of useful commands for Bash 3.2 or higher. Some extra love is given to [Cygwin](http://cygwin.org) performance.
 
 See the markdown files of the different [Bash modules](https://github.com/vegardit/bash-funk/tree/master/modules) for detailed information about the provided commands.
 

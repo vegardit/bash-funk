@@ -11,6 +11,7 @@ The following commands are available when this module is loaded:
 1. [-count-words](#-count-words)
 1. [-du](#-du)
 1. [-extract](#-extract)
+1. [-find-up](#-find-up)
 1. [-findfiles](#-findfiles)
 1. [-ll](#-ll)
 1. [-mkcd](#-mkcd)
@@ -346,6 +347,42 @@ esac
 if [[ $_TO_DIR ]]; then
     cd "$origPWD"
 fi
+```
+
+
+## <a name="-find-up"></a>-find-up
+
+```
+Usage: -find-up [OPTION]... FILENAME
+
+Traverses the directory upward to find the given file.
+
+Parameters:
+  FILENAME (required)
+      The file or directory to find.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+-t, --type TYPE (one of: [d,dir,f,file])
+        File type.
+```
+
+*Implementation:*
+```bash
+local path=$PWD
+while [[ $path ]]; do
+    case $_type in
+        d|dir)  if [[ -d "$path/$_FILENAME" ]]; then echo "$path/$_FILENAME"; return; fi ;;                            
+        f|file) if [[ -f "$path/$_FILENAME" ]]; then echo "$path/$_FILENAME"; return; fi ;;
+        *)      if [[ -e "$path/$_FILENAME" ]]; then echo "$path/$_FILENAME"; return; fi ;;                    
+    esac
+    path=${path%/*}
+done
+echo "$__fn: '$_FILENAME': No such file or directory"
+return 1
 ```
 
 
@@ -823,6 +860,7 @@ Options:
 -count-words --selftest && echo || return 1
 -du --selftest && echo || return 1
 -extract --selftest && echo || return 1
+-find-up --selftest && echo || return 1
 -findfiles --selftest && echo || return 1
 -ll --selftest && echo || return 1
 -mkcd --selftest && echo || return 1
