@@ -32,8 +32,8 @@ set CYGWIN_PACKAGES=bash-completion,bc,curl,expect,git,git-svn,gnupg,inetutils,m
 set CYGWIN_USERNAME=root
 
 :: set proxy if required (unfortunately Cygwin setup.exe does not have commandline options to specify proxy user credentials)
-set PROXY_HOST=
-set PROXY_PORT=
+set PROXY_HOST=surf.proxy.agis.allianz
+set PROXY_PORT=8080
 
 echo.
 echo ###########################################################
@@ -44,7 +44,7 @@ echo.
 :: create VB script that can download files
 set DOWNLOADER=%~dp0downloader.vbs
 echo Creating [%DOWNLOADER%] script...
-if "%PROXY%" == "" (
+if "%PROXY_HOST%" == "" (
     set DOWNLOADER_PROXY=.
 ) else (
     set DOWNLOADER_PROXY= req.SetProxy 2, "%PROXY_HOST%:%PROXY_PORT%", ""
@@ -75,10 +75,21 @@ if "%PROXY%" == "" (
 set CYGWIN_ROOT=%~dp0cygwin
 
 if not exist "%CYGWIN_ROOT%" (
-	md "%CYGWIN_ROOT%"
+    md "%CYGWIN_ROOT%"
 )
-:: download Cygwin setup
-reg Query "HKLM\Hardware\Description\System\CentralProcessor\0" | find /i "x86" > NUL && set CYGWIN_SETUP=setup-x86.exe || set CYGWIN_SETUP=setup-x86_64.exe
+
+:: download Cygwin 32 or 64 setup exe
+
+if "%PROCESSOR_ARCHITEW6432%" == "AMD64" (
+    set CYGWIN_SETUP=setup-x86_64.exe 
+) else (
+    if "%PROCESSOR_ARCHITECTURE%" == "x86" ( 
+        set CYGWIN_SETUP=setup-x86.exe ) 
+    else ( 
+        set CYGWIN_SETUP=setup-x86_64.exe 
+    )
+)
+
 if exist "%CYGWIN_ROOT%\%CYGWIN_SETUP%" (
     del "%CYGWIN_ROOT%\%CYGWIN_SETUP%" || goto :fail
 )
@@ -86,7 +97,7 @@ cscript //Nologo %DOWNLOADER% http://cygwin.org/%CYGWIN_SETUP% "%CYGWIN_ROOT%\%C
 del "%DOWNLOADER%"
 
 :: Cygwin command line options: https://cygwin.com/faq/faq.html#faq.setup.cli
-if "%PROXY%" == "" (
+if "%PROXY_HOST%" == "" (
     set CYGWIN_PROXY=
 ) else (
     set CYGWIN_PROXY=--proxy "%PROXY_HOST%:%PROXY_PORT%"
@@ -138,7 +149,7 @@ echo Creating [%Init_sh%]...
     echo # Installing apt-cyg package manager if required
     echo #
     echo if ! [[ -x /usr/local/bin/apt-cyg ]]; then
-    if not "%PROXY%" == "" (
+    if not "%PROXY_HOST%" == "" (
         echo     # temporary proxy settings during initial installation
         echo     export http_proxy=http://%%PROXY_HOST%%:%%PROXY_PORT%%
         echo     export https_proxy=http://%%PROXY_HOST%%:%%PROXY_PORT%%
@@ -158,7 +169,7 @@ echo Creating [%Init_sh%]...
     echo # Installing bash-funk if required
     echo #
     echo if [[ ! -e /opt/bash-funk/bash-funk.sh ]]; then
-    if not "%PROXY%" == "" (
+    if not "%PROXY_HOST%" == "" (
         echo   # temporary proxy settings during initial installation
         echo   export http_proxy=http://%%PROXY_HOST%%:%%PROXY_PORT%%
         echo   export https_proxy=http://%%PROXY_HOST%%:%%PROXY_PORT%%
@@ -192,9 +203,9 @@ echo Creating [%Start_cmd%]...
     echo.
     echo set USERNAME=%CYGWIN_USERNAME%
     echo set HOME=/home/%%USERNAME%%
-	echo set SHELL=/bin/bash
-	echo set HOMEDRIVE=%%CYGWIN_DRIVE%%
-	echo set HOMEPATH=%%CYGWIN_ROOT%%\home\%%USERNAME%%
+    echo set SHELL=/bin/bash
+    echo set HOMEDRIVE=%%CYGWIN_DRIVE%%
+    echo set HOMEPATH=%%CYGWIN_ROOT%%\home\%%USERNAME%%
     echo set GROUP=None
     echo set GRP=
     echo.
@@ -203,13 +214,13 @@ echo Creating [%Start_cmd%]...
     echo bash "%%CYGWIN_ROOT%%\bash-funk-portable-init.sh"
     echo.
     echo if "%%1" == "" (
-	echo   mintty --option TERM=xterm-256color --size 160,50 --icon %CYGWIN_ROOT%\Cygwin-Terminal.ico -
+    echo   mintty --option TERM=xterm-256color --size 160,50 --icon %CYGWIN_ROOT%\Cygwin-Terminal.ico -
     echo ^) else (
-	echo   if "%%1" == "no-mintty" (
-	echo     bash --login -i
-	echo   ^) else (
+    echo   if "%%1" == "no-mintty" (
+    echo     bash --login -i
+    echo   ^) else (
     echo     bash --login -c %%*
-	echo   ^)
+    echo   ^)
     echo ^)
     echo.
     echo cd "%%cwd%%"
