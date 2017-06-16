@@ -2549,19 +2549,3 @@ function -help-filesystem() {
 
 }
 __BASH_FUNK_FUNCS+=( abspath cd-down cd-hist cd-up count-words du extract findfiles ll mkcd modified owner realpath sudo-append sudo-write tail-reverse test-filesystem )
-
-alias -- l="ll"
-alias -- ll="${BASH_FUNK_PREFIX:--}ll"
-alias -- ++="${BASH_FUNK_PREFIX:--}cd-down"
-alias -- --="${BASH_FUNK_PREFIX:--}cd-hist"
-alias -- ..="${BASH_FUNK_PREFIX:--}cd-up"
-alias -- ...="command cd ../.."
-
-if [[ $OSTYPE == "cygwin" ]]; then
-    for drive in {a..z}; do
-        if [[ -e /cygdrive/${drive} ]]; then
-            alias -- "${drive}:"="cd /cygdrive/${drive}"
-            alias -- "${drive^^}:"="cd /cygdrive/${drive}"
-        fi
-    done
-fi

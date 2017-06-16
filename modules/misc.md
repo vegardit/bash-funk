@@ -5,9 +5,6 @@
 The following statements are automatically executed when this module loads:
 
 ```bash
-alias gh='command history|command grep'
-alias grep="command grep --colour=auto"
-
 function -timeout() {
     if [[ $# < 2 || ${1:-} == "--help" ]]; then
         echo "Usage: ${FUNCNAME[0]} TIMEOUT COMMAND [ARG]..."
@@ -215,6 +212,15 @@ export HISTTIMEFORMAT="%F %T "
 export HISTIGNORE="&:?:??:clear:exit:pwd"
 history -r
 
+alias -- grep="command grep --colour=auto"
+alias -- gh='command history | grep'
+alias -- l="ll"
+alias -- ll="-ll"
+alias -- ++="-cd-down"
+alias -- --="-cd-hist"
+alias -- ..="-cd-up"
+alias -- ...="command cd ../.."
+
 # http://wiki.bash-hackers.org/internals/shell_options
 local opt opts=(autocd checkwinsize dirspell direxpand extglob globstar histappend)
 for opt in ${opts[@]}; do
@@ -224,6 +230,20 @@ for opt in ${opts[@]}; do
         [[ $_verbose ]] && echo "shopt -s $opt => UNSUPPORTED"
     fi
 done
+
+# cygwin tweaks                
+if [[ $OSTYPE == "cygwin" ]]; then
+    for drive in {a..z}; do
+        if [[ -e /cygdrive/${drive} ]]; then
+            alias -- "${drive}:"="cd /cygdrive/${drive}"
+            alias -- "${drive^^}:"="cd /cygdrive/${drive}"
+        fi
+    done
+    
+    if !hash sudo >/dev/null; then
+        alias -- sudo="cygstart --action=runas"
+    fi
+fi
 ```
 
 

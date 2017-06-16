@@ -660,6 +660,15 @@ export HISTTIMEFORMAT="%F %T "
 export HISTIGNORE="&:?:??:clear:exit:pwd"
 history -r
 
+alias -- grep="command grep --colour=auto"
+alias -- gh='command history | grep'
+alias -- l="ll"
+alias -- ll="${BASH_FUNK_PREFIX:--}ll"
+alias -- ++="${BASH_FUNK_PREFIX:--}cd-down"
+alias -- --="${BASH_FUNK_PREFIX:--}cd-hist"
+alias -- ..="${BASH_FUNK_PREFIX:--}cd-up"
+alias -- ...="command cd ../.."
+
 # http://wiki.bash-hackers.org/internals/shell_options
 local opt opts=(autocd checkwinsize dirspell direxpand extglob globstar histappend)
 for opt in ${opts[@]}; do
@@ -669,6 +678,20 @@ for opt in ${opts[@]}; do
         [[ $_verbose ]] && echo "shopt -s $opt => UNSUPPORTED"
     fi
 done
+
+# cygwin tweaks                
+if [[ $OSTYPE == "cygwin" ]]; then
+    for drive in {a..z}; do
+        if [[ -e /cygdrive/${drive} ]]; then
+            alias -- "${drive}:"="cd /cygdrive/${drive}"
+            alias -- "${drive^^}:"="cd /cygdrive/${drive}"
+        fi
+    done
+    
+    if !hash sudo >/dev/null; then
+        alias -- sudo="cygstart --action=runas"
+    fi
+fi
 
     ######### tweak-bash ######### END
 }
@@ -1145,9 +1168,6 @@ function -help-misc() {
 
 }
 __BASH_FUNK_FUNCS+=( help please reload test-all test-misc tweak-bash update var-exists wait )
-
-alias gh='command history|command grep'
-alias grep="command grep --colour=auto"
 
 function -timeout() {
     if [[ $# < 2 || ${1:-} == "--help" ]]; then
