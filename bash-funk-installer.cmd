@@ -20,7 +20,7 @@
 :: installation based on Cygwin (https://cygwin.com/mirrors.html). It also automatically installs the
 :: command-line package manager apt-cyg (https://github.com/transcode-open/apt-cyg).
 ::
-:: You can customize the following three variables to your needs before running the batch file:
+:: You can customize the following variables to your needs before running the batch file:
 
 :: change the URL to the closest mirror https://cygwin.com/mirrors.html
 set CYGWIN_MIRROR=http://ftp.inf.tu-dresden.de/software/windows/cygwin32
@@ -28,8 +28,12 @@ set CYGWIN_MIRROR=http://ftp.inf.tu-dresden.de/software/windows/cygwin32
 :: select the packages to be installed automatically via apt-cyg
 set CYGWIN_PACKAGES=bash-completion,bc,curl,expect,git,git-svn,gnupg,inetutils,mc,nc,openssh,openssl,perl,python,subversion,unzip,vim,zip
 
-:: choose a user name under cygwin
+:: choose a user name under Cygwin
 set CYGWIN_USERNAME=root
+
+:: set proxy if required (unfortunately Cygwin setup.exe does not have commandline options to specify proxy user credentials)
+set PROXY_HOST=
+set PROXY_PORT=
 
 echo.
 echo ###########################################################
@@ -40,11 +44,18 @@ echo.
 :: create VB script that can download files
 set DOWNLOADER=%~dp0downloader.vbs
 echo Creating [%DOWNLOADER%] script...
+if "%PROXY%" == "" (
+    set DOWNLOADER_PROXY=.
+) else (
+    set DOWNLOADER_PROXY= req.SetProxy 2, "%PROXY_HOST%:%PROXY_PORT%", ""
+)
+
 (
     echo url = Wscript.Arguments(0^)
     echo target = Wscript.Arguments(1^)
     echo WScript.Echo "Downloading '" ^& url ^& "' to '" ^& target ^& "'..."
     echo Set req = CreateObject("WinHttp.WinHttpRequest.5.1"^)
+    echo%DOWNLOADER_PROXY%
     echo req.Open "GET", url, False
     echo req.Send
     echo If req.Status ^<^> 200 Then
@@ -61,21 +72,32 @@ echo Creating [%DOWNLOADER%] script...
     echo.
 ) >"%DOWNLOADER%" || goto :fail
 
+set CYGWIN_ROOT=%~dp0cygwin
+
+if not exist "%CYGWIN_ROOT%" (
+	md "%CYGWIN_ROOT%"
+)
 :: download Cygwin setup
 reg Query "HKLM\Hardware\Description\System\CentralProcessor\0" | find /i "x86" > NUL && set CYGWIN_SETUP=setup-x86.exe || set CYGWIN_SETUP=setup-x86_64.exe
-if exist "%~dp0%CYGWIN_SETUP%" (
-    del "%~dp0%CYGWIN_SETUP%" || goto :fail
+if exist "%CYGWIN_ROOT%\%CYGWIN_SETUP%" (
+    del "%CYGWIN_ROOT%\%CYGWIN_SETUP%" || goto :fail
 )
-cscript //Nologo %DOWNLOADER% http://cygwin.org/%CYGWIN_SETUP% "%~dp0%CYGWIN_SETUP%" || goto :fail
+cscript //Nologo %DOWNLOADER% http://cygwin.org/%CYGWIN_SETUP% "%CYGWIN_ROOT%\%CYGWIN_SETUP%" || goto :fail
 del "%DOWNLOADER%"
 
 :: Cygwin command line options: https://cygwin.com/faq/faq.html#faq.setup.cli
+if "%PROXY%" == "" (
+    set CYGWIN_PROXY=
+) else (
+    set CYGWIN_PROXY=--proxy "%PROXY_HOST%:%PROXY_PORT%"
+)
+
 echo Running Cygwin setup...
-"%~dp0setup-x86_64.exe" --no-admin ^
+"%CYGWIN_ROOT%\%CYGWIN_SETUP%" --no-admin ^
  --arch x86_64 ^
- --site http://ftp.inf.tu-dresden.de/software/windows/cygwin32 ^
- --root "%~dp0cygwin" ^
- --local-package-dir "%~dp0cygwin-pkg-cache" ^
+ --site http://ftp.inf.tu-dresden.de/software/windows/cygwin32 %CYGWIN_PROXY% ^
+ --root "%CYGWIN_ROOT%" ^
+ --local-package-dir "%CYGWIN_ROOT%-pkg-cache" ^
  --no-shortcuts ^
  --no-desktop ^
  --delete-orphans ^
@@ -86,7 +108,7 @@ echo Running Cygwin setup...
 
 :configure
 
-set Cygwin_bat=%~dp0cygwin\Cygwin.bat
+set Cygwin_bat=%CYGWIN_ROOT%\Cygwin.bat
 if exist "%Cygwin_bat%" (
     echo Disabling [%Cygwin_bat%]...
     if exist "%Cygwin_bat%.disabled" (
@@ -95,7 +117,7 @@ if exist "%Cygwin_bat%" (
     rename %Cygwin_bat% Cygwin.bat.disabled || goto :fail
 )
 
-set Init_sh=%~dp0cygwin\bash-funk-portable-init.sh
+set Init_sh=%CYGWIN_ROOT%\bash-funk-portable-init.sh
 echo Creating [%Init_sh%]...
 (
     echo #!/usr/bin/env bash
@@ -116,6 +138,11 @@ echo Creating [%Init_sh%]...
     echo # Installing apt-cyg package manager if required
     echo #
     echo if ! [[ -x /usr/local/bin/apt-cyg ]]; then
+    if not "%PROXY%" == "" (
+        echo     # temporary proxy settings during initial installation
+        echo     export http_proxy=http://%%PROXY_HOST%%:%%PROXY_PORT%%
+        echo     export https_proxy=http://%%PROXY_HOST%%:%%PROXY_PORT%%
+    )
     echo     echo "Installing apt-cyg..."
     echo     wget -O /usr/local/bin/apt-cyg https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg
     echo     chmod +x /usr/local/bin/apt-cyg
@@ -126,8 +153,29 @@ echo Creating [%Init_sh%]...
     echo #
     echo sed -i -e "s/cygdrive binary,posix/cygdrive binary,noacl,posix/" /etc/fstab
     echo mount -a
+    echo.
+    echo #
+    echo # Installing bash-funk if required
+    echo #
+    echo if [[ ! -e /opt/bash-funk/bash-funk.sh ]]; then
+    if not "%PROXY%" == "" (
+        echo   # temporary proxy settings during initial installation
+        echo   export http_proxy=http://%%PROXY_HOST%%:%%PROXY_PORT%%
+        echo   export https_proxy=http://%%PROXY_HOST%%:%%PROXY_PORT%%
+    )
+    echo   echo Installing [bash-funk]...
+    echo   if hash git ^&^>/dev/null; then
+    echo     git clone https://github.com/vegardit/bash-funk --branch master --single-branch /opt/bash-funk
+    echo   elif hash svn ^&^>/dev/null; then
+    echo     svn checkout https://github.com/vegardit/bash-funk/trunk /opt/bash-funk
+    echo   else
+    echo     mkdir /opt/bash-funk ^&^& \
+    echo     cd /opt/bash-funk ^&^& \
+    echo     wget -qO- --show-progress https://github.com/vegardit/bash-funk/tarball/master ^| tar -xzv --strip-components 1
+    echo   fi
+    echo fi
 ) >"%Init_sh%" || goto :fail
-"%~dp0cygwin\bin\dos2unix" "%Init_sh%" || goto :fail
+"%CYGWIN_ROOT%\bin\dos2unix" "%Init_sh%" || goto :fail
 
 set Start_cmd=%~dp0bash-funk.cmd
 echo Creating [%Start_cmd%]...
@@ -135,26 +183,33 @@ echo Creating [%Start_cmd%]...
     echo @echo off
     echo set CWD="%%cd%%"
     echo set CYGWIN_DRIVE=%%~d0
-    echo set CYGWIN_ROOT=%%~dp0\cygwin\
+    echo set CYGWIN_ROOT=%%~dp0cygwin
     echo.
-    echo set PATH=%%PATH%%;%%CYGWIN_ROOT%%bin
+    echo set PATH=%%PATH%%;%%CYGWIN_ROOT%%\bin
     echo set ALLUSERSPROFILE=%%CYGWIN_ROOT%%.ProgramData
     echo set ProgramData=%%ALLUSERSPROFILE%%
     echo set CYGWIN=nodosfilewarning
     echo.
     echo set USERNAME=%CYGWIN_USERNAME%
     echo set HOME=/home/%%USERNAME%%
+	echo set SHELL=/bin/bash
+	echo set HOMEDRIVE=%%CYGWIN_DRIVE%%
+	echo set HOMEPATH=%%CYGWIN_ROOT%%\home\%%USERNAME%%
     echo set GROUP=None
     echo set GRP=
     echo.
     echo %%CYGWIN_DRIVE%%
-    echo chdir "%%CYGWIN_ROOT%%bin"
-    echo bash "%%CYGWIN_ROOT%%bash-funk-portable-init.sh"
+    echo chdir "%%CYGWIN_ROOT%%\bin"
+    echo bash "%%CYGWIN_ROOT%%\bash-funk-portable-init.sh"
     echo.
-    echo if [%%1]==[] (
-    echo     bash --login -i
+    echo if "%%1" == "" (
+	echo   mintty --option TERM=xterm-256color --size 160,50 --icon %CYGWIN_ROOT%\Cygwin-Terminal.ico -
     echo ^) else (
+	echo   if "%%1" == "no-mintty" (
+	echo     bash --login -i
+	echo   ^) else (
     echo     bash --login -c %%*
+	echo   ^)
     echo ^)
     echo.
     echo cd "%%cwd%%"
@@ -163,7 +218,7 @@ echo Creating [%Start_cmd%]...
 :: launching bash once to initialize user home dir
 call %Start_cmd% whoami
 
-set BashFunkLoader_sh=%~dp0cygwin\home\%CYGWIN_USERNAME%\.bashfunk_loader
+set BashFunkLoader_sh=%CYGWIN_ROOT%\home\%CYGWIN_USERNAME%\.bashfunk_loader
 echo Creating [%BashFunkLoader_sh%]...
 (
     echo #!/usr/bin/env bash
@@ -181,16 +236,16 @@ echo Creating [%BashFunkLoader_sh%]...
     echo fi
     echo source /opt/bash-funk/bash-funk.sh
 ) >"%BashFunkLoader_sh%" || goto :fail
-"%~dp0cygwin\bin\dos2unix" "%BashFunkLoader_sh%" || goto :fail
+"%CYGWIN_ROOT%\bin\dos2unix" "%BashFunkLoader_sh%" || goto :fail
 
-set Bashrc_sh=%~dp0cygwin\home\%CYGWIN_USERNAME%\.bashrc
+set Bashrc_sh=%CYGWIN_ROOT%\home\%CYGWIN_USERNAME%\.bashrc
 echo Adding bash-funk to [/home/%CYGWIN_USERNAME%/.bashrc]...
-findstr /L bashfunk_loader %Bashrc_sh% >NUL || (
+find "bashfunk_loader" "%Bashrc_sh%" >NUL || (
     (
         echo.
         echo source ~/.bashfunk_loader
     ) >>"%Bashrc_sh%" || goto :fail
-    "%~dp0cygwin\bin\dos2unix" "%Bashrc_sh%" || goto :fail
+    "%CYGWIN_ROOT%\bin\dos2unix" "%Bashrc_sh%" || goto :fail
 )
 echo.
 echo ###########################################################
