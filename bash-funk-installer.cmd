@@ -35,11 +35,35 @@ set CYGWIN_USERNAME=root
 set PROXY_HOST=
 set PROXY_PORT=8080
 
+:: set mintty options, see https://cdn.rawgit.com/mintty/mintty/master/docs/mintty.1.html#CONFIGURATION
+set MINTTY_OPTIONS=--Title bash-funk ^
+  -o Columns=160 ^
+  -o Rows=50 ^
+  -o BellType=0 ^
+  -o ClicksPlaceCursor=yes ^
+  -o CursorBlinks=no ^
+  -o CursorType=Block ^
+  -o Font="Courier New" ^
+  -o FontHeight=10 ^
+  -o FontSmoothing=None ^
+  -o ScrollbackLines=10000 ^
+  -o Transparency=off ^
+  -p Term=xterm-256color ^
+  -o Charset=UTF-8 ^
+  -o Locale=C
+
+
+
 echo.
 echo ###########################################################
 echo # Installing [bash-funk portable]...
 echo ###########################################################
 echo.
+
+set CYGWIN_ROOT=%~dp0cygwin
+if not exist "%CYGWIN_ROOT%" (
+    md "%CYGWIN_ROOT%"
+)
 
 :: create VB script that can download files
 :: not using PowerShell which may be blocked by group policies
@@ -72,12 +96,6 @@ if "%PROXY_HOST%" == "" (
     echo buff.Close
     echo.
 ) >"%DOWNLOADER%" || goto :fail
-
-set CYGWIN_ROOT=%~dp0cygwin
-
-if not exist "%CYGWIN_ROOT%" (
-    md "%CYGWIN_ROOT%"
-)
 
 :: download Cygwin 32 or 64 setup exe
 
@@ -118,8 +136,6 @@ echo Running Cygwin setup...
  --quiet-mode ^
  --packages dos2unix,wget,%CYGWIN_PACKAGES% || goto :fail
 
-:configure
-
 set Cygwin_bat=%CYGWIN_ROOT%\Cygwin.bat
 if exist "%Cygwin_bat%" (
     echo Disabling [%Cygwin_bat%]...
@@ -128,6 +144,8 @@ if exist "%Cygwin_bat%" (
     )
     rename %Cygwin_bat% Cygwin.bat.disabled || goto :fail
 )
+
+:configure
 
 set Init_sh=%CYGWIN_ROOT%\bash-funk-portable-init.sh
 echo Creating [%Init_sh%]...
@@ -153,7 +171,7 @@ echo Creating [%Init_sh%]...
     if not "%PROXY_HOST%" == "" (
         echo     # temporary proxy settings during initial installation
         echo     export http_proxy=http://%PROXY_HOST%:%PROXY_PORT%
-        echo     export https_proxy=http://%PROXY_HOST%:%PROXY_PORT%
+        echo     export https_proxy=$http_proxy
     )
     echo     echo "Installing apt-cyg..."
     echo     wget -O /usr/local/bin/apt-cyg https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg
@@ -173,7 +191,7 @@ echo Creating [%Init_sh%]...
     if not "%PROXY_HOST%" == "" (
         echo   # temporary proxy settings during initial installation
         echo   export http_proxy=http://%PROXY_HOST%:%PROXY_PORT%
-        echo   export https_proxy=http://%PROXY_HOST%:%PROXY_PORT%
+        echo   export https_proxy=$http_proxy
     )
     echo   echo Installing [bash-funk]...
     echo   if hash git ^&^>/dev/null; then
@@ -215,7 +233,7 @@ echo Creating [%Start_cmd%]...
     echo bash "%%CYGWIN_ROOT%%\bash-funk-portable-init.sh"
     echo.
     echo if "%%1" == "" (
-    echo   mintty --option TERM=xterm-256color --size 160,50 --icon %CYGWIN_ROOT%\Cygwin-Terminal.ico -
+    echo   mintty --nopin %MINTTY_OPTIONS% --icon %CYGWIN_ROOT%\Cygwin-Terminal.ico -
     echo ^) else (
     echo   if "%%1" == "no-mintty" (
     echo     bash --login -i
@@ -230,32 +248,23 @@ echo Creating [%Start_cmd%]...
 :: launching bash once to initialize user home dir
 call %Start_cmd% whoami
 
-set BashFunkLoader_sh=%CYGWIN_ROOT%\home\%CYGWIN_USERNAME%\.bashfunk_loader
-echo Creating [%BashFunkLoader_sh%]...
-(
-    echo #!/usr/bin/env bash
-    echo if [[ ! -e /opt/bash-funk/bash-funk.sh ]]; then
-    echo   echo Installing [bash-funk]...
-    echo   if hash git ^&^>/dev/null; then
-    echo     git clone https://github.com/vegardit/bash-funk --branch master --single-branch /opt/bash-funk
-    echo   elif hash svn ^&^>/dev/null; then
-    echo     svn checkout https://github.com/vegardit/bash-funk/trunk /opt/bash-funk
-    echo   else
-    echo     mkdir /opt/bash-funk ^&^& \
-    echo     cd /opt/bash-funk ^&^& \
-    echo     wget -qO- --show-progress https://github.com/vegardit/bash-funk/tarball/master ^| tar -xzv --strip-components 1
-    echo   fi
-    echo fi
-    echo source /opt/bash-funk/bash-funk.sh
-) >"%BashFunkLoader_sh%" || goto :fail
-"%CYGWIN_ROOT%\bin\dos2unix" "%BashFunkLoader_sh%" || goto :fail
-
 set Bashrc_sh=%CYGWIN_ROOT%\home\%CYGWIN_USERNAME%\.bashrc
 echo Adding bash-funk to [/home/%CYGWIN_USERNAME%/.bashrc]...
-find "bashfunk_loader" "%Bashrc_sh%" >NUL || (
+find "bash-funk" "%Bashrc_sh%" >NUL || (
     (
         echo.
-        echo source ~/.bashfunk_loader
+        if not "%PROXY_HOST%" == "" (
+            echo if [[ $HOSTMAME == "%COMPUTERNAME%" ]]; then
+            echo     export http_proxy=http://%PROXY_HOST%:%PROXY_PORT%
+            echo     export https_proxy=$http_proxy
+            echo     export no_proxy="::1,127.0.0.1,localhost,169.254.169.254,%COMPUTERNAME%,*.%USERDNSDOMAIN%"
+            echo     export HTTP_PROXY=$http_proxy
+            echo     export HTTPS_PROXY=$http_proxy
+            echo     export NO_PROXY=$no_proxy
+            echo fi
+        )
+        echo.
+        echo source /opt/bash-funk/bash-funk.sh
     ) >>"%Bashrc_sh%" || goto :fail
     "%CYGWIN_ROOT%\bin\dos2unix" "%Bashrc_sh%" || goto :fail
 )
