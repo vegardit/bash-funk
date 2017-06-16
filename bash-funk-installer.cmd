@@ -152,8 +152,8 @@ echo Creating [%Init_sh%]...
     echo if ! [[ -x /usr/local/bin/apt-cyg ]]; then
     if not "%PROXY_HOST%" == "" (
         echo     # temporary proxy settings during initial installation
-        echo     export http_proxy=http://%%PROXY_HOST%%:%%PROXY_PORT%%
-        echo     export https_proxy=http://%%PROXY_HOST%%:%%PROXY_PORT%%
+        echo     export http_proxy=http://%PROXY_HOST%:%PROXY_PORT%
+        echo     export https_proxy=http://%PROXY_HOST%:%PROXY_PORT%
     )
     echo     echo "Installing apt-cyg..."
     echo     wget -O /usr/local/bin/apt-cyg https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg
@@ -172,8 +172,8 @@ echo Creating [%Init_sh%]...
     echo if [[ ! -e /opt/bash-funk/bash-funk.sh ]]; then
     if not "%PROXY_HOST%" == "" (
         echo   # temporary proxy settings during initial installation
-        echo   export http_proxy=http://%%PROXY_HOST%%:%%PROXY_PORT%%
-        echo   export https_proxy=http://%%PROXY_HOST%%:%%PROXY_PORT%%
+        echo   export http_proxy=http://%PROXY_HOST%:%PROXY_PORT%
+        echo   export https_proxy=http://%PROXY_HOST%:%PROXY_PORT%
     )
     echo   echo Installing [bash-funk]...
     echo   if hash git ^&^>/dev/null; then
