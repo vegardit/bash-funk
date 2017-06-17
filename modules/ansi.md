@@ -218,12 +218,6 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
-
-Examples:
-$ -ansi-colors16 
-256
-$ -ansi-colors16 -v 8
-Terminal 'xterm' supports 8 colors.
 ```
 
 *Implementation:*
@@ -266,12 +260,6 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
-
-Examples:
-$ -ansi-colors256 
-256
-$ -ansi-colors256 -v 8
-Terminal 'xterm' supports 8 colors.
 ```
 
 *Implementation:*
@@ -282,36 +270,100 @@ if ! -ansi-colors-supported 256; then
     echo
 fi
 
-local i width
+# this function is inspired by https://github.com/Evanlec/config/blob/master/bin/256colors2.pl
 
-if [[ $COLUMNS -lt 144 ]]; then
-	width=$(( COLUMNS / 6 ))
-else
-	width=36
-fi
+local i green red blue spacer
 
-echo "To set one of the following foreground colors use '\033[38;5;<NUM>m'"
+printf "To set one of the following \033[1mforeground\033[0m colors use '\\\033[38;5;\033[1m<NUM>\033[0mm'\n"
 echo
-for (( i=0; i<256; i++));do
-
-    if (( (i-16) % width == 0 )); then
-        echo
+echo "System Colors:"
+for (( i=0; i<16; i++));do
+    if (( i == 0 )); then
+        printf "\033[48;5;231m"
+    else
+        printf "\033[48;5;0m"
     fi
-    printf "\033[38;5;${i}m%3d\033[0m " "$i"
+    printf "\033[38;5;${i}m%2d \033[0m" "$i"
 done
-
 echo
 echo
-echo "To set one of the following background colors use '\033[48;5;<NUM>m'"
+echo "Color Cubes 6x6x6:"
+for (( green=0; green<6; green++ )) {
+    for (( red=0; red<6; red++ )) {
+        for (( blue=0; blue<6; blue++ )) {
+            i=$(( 16 + 36*red + 6*green + blue ))
+            if (( (i - 16) % 6 == 0)); then
+                spacer=""
+            else
+                spacer=" "
+            fi
+            if (( i > 87 )); then
+                printf "\033[38;5;${i}m$spacer%3d\033[0m" "$i"
+            else
+                printf "\033[38;5;${i}m$spacer%2d\033[0m" "$i"
+            fi
+        }
+        printf "\033[38;5;8m|\033[0m"
+    }
+    echo
+}
 echo
-for (( i=0; i<256; i++));do
-
-    if (( (i-16) % width == 0 )); then
-        echo
+echo "Grayscale Ramp:"
+for i in 16 {232..255} 231;do
+    if (( i == 16 || i > 231 && i < 234 )); then
+        printf "\033[48;5;236m"
+    else
+        printf "\033[48;5;0m"
     fi
-    printf "\033[48;5;${i}m%3d\033[0m " "$i"
+    printf "\033[38;5;${i}m%3d \033[0m" "$i"
 done
+echo
 
+echo
+echo
+printf "To set one of the following \033[1mbackground\033[0m colors use '\\\033[48;5;\033[1m<NUM>\033[0mm'\n"
+echo
+echo "System Colors:"
+for (( i=0; i<16; i++));do
+    if (( i == 0 )); then
+        printf "\033[48;5;231m"
+    else
+        printf "\033[48;5;0m"
+    fi
+    printf "\033[48;5;${i}m%2d \033[0m" "$i"
+done
+echo
+echo
+echo "Color Cubes 6x6x6:"
+for (( green=0; green<6; green++ )) {
+    for (( red=0; red<6; red++ )) {
+        for (( blue=0; blue<6; blue++ )) {
+            i=$(( 16 + 36*red + 6*green + blue ))
+            if (( (i - 16) % 6 == 0)); then
+                spacer=""
+            else
+                spacer=" "
+            fi
+            if (( i > 87 )); then
+                printf "\033[38;5;235;48;5;${i}m$spacer%3d\033[0m" "$i"
+            else
+                printf "\033[38;5;235;48;5;${i}m$spacer%2d\033[0m" "$i"
+            fi
+        }
+        printf " "
+    }
+    echo
+}
+echo
+echo "Grayscale Ramp:"
+for i in 16 {232..255} 231;do
+    if (( i == 231 )); then
+        printf "\033[38;5;254m"
+    else
+        printf "\033[38;5;15m"
+    fi
+    printf "\033[48;5;${i}m%3d \033[0m" "$i"
+done
 echo
 ```
 

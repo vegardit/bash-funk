@@ -528,12 +528,6 @@ function __impl-ansi-colors16() {
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn \033[22m"
-                echo "256"
-                echo -e "$ \033[1m$__fn -v 8\033[22m"
-                echo "Terminal 'xterm' supports 8 colors."
-                echo
                 return 0
               ;;
 
@@ -543,20 +537,6 @@ function __impl-ansi-colors16() {
                 local __stdout __rc
                 __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn \033[22m"
-                __stdout="$($__fn )"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^[0-9]+$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[0-9]+]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn -v 8\033[22m"
-                __stdout="$($__fn -v 8)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^Terminal '.*' supports [0-9]+ colors.$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Terminal '.*' supports [0-9]+ colors.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
@@ -670,12 +650,6 @@ function __impl-ansi-colors256() {
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn \033[22m"
-                echo "256"
-                echo -e "$ \033[1m$__fn -v 8\033[22m"
-                echo "Terminal 'xterm' supports 8 colors."
-                echo
                 return 0
               ;;
 
@@ -685,20 +659,6 @@ function __impl-ansi-colors256() {
                 local __stdout __rc
                 __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn \033[22m"
-                __stdout="$($__fn )"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^[0-9]+$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[0-9]+]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn -v 8\033[22m"
-                __stdout="$($__fn -v 8)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^Terminal '.*' supports [0-9]+ colors.$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Terminal '.*' supports [0-9]+ colors.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
@@ -731,36 +691,100 @@ if ! ${BASH_FUNK_PREFIX:--}ansi-colors-supported 256; then
     echo
 fi
 
-local i width
+# this function is inspired by https://github.com/Evanlec/config/blob/master/bin/256colors2.pl
 
-if [[ $COLUMNS -lt 144 ]]; then
-	width=$(( COLUMNS / 6 ))
-else
-	width=36
-fi
+local i green red blue spacer
 
-echo "To set one of the following foreground colors use '\033[38;5;<NUM>m'"
+printf "To set one of the following \033[1mforeground\033[0m colors use '\\\033[38;5;\033[1m<NUM>\033[0mm'\n"
 echo
-for (( i=0; i<256; i++));do
-
-    if (( (i-16) % width == 0 )); then
-        echo
+echo "System Colors:"
+for (( i=0; i<16; i++));do
+    if (( i == 0 )); then
+        printf "\033[48;5;231m"
+    else
+        printf "\033[48;5;0m"
     fi
-    printf "\033[38;5;${i}m%3d\033[0m " "$i"
+    printf "\033[38;5;${i}m%2d \033[0m" "$i"
 done
-
 echo
 echo
-echo "To set one of the following background colors use '\033[48;5;<NUM>m'"
+echo "Color Cubes 6x6x6:"
+for (( green=0; green<6; green++ )) {
+    for (( red=0; red<6; red++ )) {
+        for (( blue=0; blue<6; blue++ )) {
+            i=$(( 16 + 36*red + 6*green + blue ))
+            if (( (i - 16) % 6 == 0)); then
+                spacer=""
+            else
+                spacer=" "
+            fi
+            if (( i > 87 )); then
+                printf "\033[38;5;${i}m$spacer%3d\033[0m" "$i"
+            else
+                printf "\033[38;5;${i}m$spacer%2d\033[0m" "$i"
+            fi
+        }
+        printf "\033[38;5;8m|\033[0m"
+    }
+    echo
+}
 echo
-for (( i=0; i<256; i++));do
-
-    if (( (i-16) % width == 0 )); then
-        echo
+echo "Grayscale Ramp:"
+for i in 16 {232..255} 231;do
+    if (( i == 16 || i > 231 && i < 234 )); then
+        printf "\033[48;5;236m"
+    else
+        printf "\033[48;5;0m"
     fi
-    printf "\033[48;5;${i}m%3d\033[0m " "$i"
+    printf "\033[38;5;${i}m%3d \033[0m" "$i"
 done
+echo
 
+echo
+echo
+printf "To set one of the following \033[1mbackground\033[0m colors use '\\\033[48;5;\033[1m<NUM>\033[0mm'\n"
+echo
+echo "System Colors:"
+for (( i=0; i<16; i++));do
+    if (( i == 0 )); then
+        printf "\033[48;5;231m"
+    else
+        printf "\033[48;5;0m"
+    fi
+    printf "\033[48;5;${i}m%2d \033[0m" "$i"
+done
+echo
+echo
+echo "Color Cubes 6x6x6:"
+for (( green=0; green<6; green++ )) {
+    for (( red=0; red<6; red++ )) {
+        for (( blue=0; blue<6; blue++ )) {
+            i=$(( 16 + 36*red + 6*green + blue ))
+            if (( (i - 16) % 6 == 0)); then
+                spacer=""
+            else
+                spacer=" "
+            fi
+            if (( i > 87 )); then
+                printf "\033[38;5;235;48;5;${i}m$spacer%3d\033[0m" "$i"
+            else
+                printf "\033[38;5;235;48;5;${i}m$spacer%2d\033[0m" "$i"
+            fi
+        }
+        printf " "
+    }
+    echo
+}
+echo
+echo "Grayscale Ramp:"
+for i in 16 {232..255} 231;do
+    if (( i == 231 )); then
+        printf "\033[38;5;254m"
+    else
+        printf "\033[38;5;15m"
+    fi
+    printf "\033[48;5;${i}m%3d \033[0m" "$i"
+done
 echo
 
     ######### ansi-colors256 ######### END
