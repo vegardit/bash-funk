@@ -40,7 +40,6 @@ Execute:
 git clone https://github.com/vegardit/bash-funk --branch master --single-branch ~/bash-funk
 ```
 
-
 ### <a name="install-with-svn"></a>Using Subversion
 
 Execute:
@@ -68,18 +67,10 @@ wget -qO- --show-progress https://github.com/vegardit/bash-funk/tarball/master |
 
 ### <a name="install-win-portable"></a>Portable on Windows
 
-For your convenience we created a bootstrap Windows batch file that sets up a [Cygwin](http://cygwin.org)
-installation pre-configured with bash-funk. The environment is portable and can for example be installed on an USB stick.
+For your convenience we created a simple bootstrap Windows batch file that sets up a portable [Cygwin](http://cygwin.org) installation pre-configured with bash-funk.
 
-1. Create a local empty directory where bash-funk shall be installed, e.g. `C:\apps\bash-funk`
-2. Download the [bash-funk-installer.cmd](https://github.com/vegardit/bash-funk/blob/master/bash-funk-installer.cmd) file into that directory.
-3. Execute the `bash-funk-installer.cmd`. This will:
-    1. Download the 32 or 64bit Cygwin setup.exe depending on your OS.
-    2. Install the Cygwin with the pre-selected set of packages.
-    3. Create init scripts that will keep the installation portable.
-    3. Install the [apt-cyg](https://github.com/transcode-open/apt-cyg) package manager.
-    4. Create a loader script that will install bash-funk on the first launch of the Bash.
-4. Now you can launch your portable bash-funk environment using the newly created `bash-funk.cmd` batch file.
+For more details see https://github.com/vegardit/cygwin-portable-installer#install.
+
 
 ## <a name="usage"></a>Usage
 
