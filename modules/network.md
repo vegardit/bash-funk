@@ -5,9 +5,10 @@
 The following commands are available when this module is loaded:
 
 1. [-block-port](#-block-port)
-1. [-get-ips](#-get-ips)
 1. [-is-port-open](#-is-port-open)
+1. [-my-ips](#-my-ips)
 1. [-run-echo-server](#-run-echo-server)
+1. [-set-proxy](#-set-proxy)
 1. [-ssh-agent-add-key](#-ssh-agent-add-key)
 1. [-ssh-trust-host](#-ssh-trust-host)
 1. [-test-network](#-test-network)
@@ -83,26 +84,6 @@ EOF
 ```
 
 
-## <a name="-get-ips"></a>-get-ips
-
-```
-Usage: -get-ips [OPTION]...
-
-Prints the IP v4 addresses of this host excluding 127.0.0.1.
-
-Options:
-    --help 
-        Prints this help.
-    --selftest 
-        Performs a self-test.
-```
-
-*Implementation:*
-```bash
-ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
-```
-
-
 ## <a name="-is-port-open"></a>-is-port-open
 
 ```
@@ -165,6 +146,26 @@ else
     [[ $_verbose ]] && echo "$_HOSTNAME:$_PORT is not reachable." || true
     return 1
 fi
+```
+
+
+## <a name="-my-ips"></a>-my-ips
+
+```
+Usage: -my-ips [OPTION]...
+
+Prints the IP v4 addresses of this host excluding 127.0.0.1.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+```
+
+*Implementation:*
+```bash
+ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
 ```
 
 
@@ -246,6 +247,55 @@ try:
 except KeyboardInterrupt:
     pass
 "
+```
+
+
+## <a name="-set-proxy"></a>-set-proxy
+
+```
+Usage: -set-proxy [OPTION]... PROXY_URL [NO_PROXY]
+
+Sets the proxy environment variables.
+
+Parameters:
+  PROXY_URL (required)
+      The proxy URL to set.
+  NO_PROXY 
+      Proxy exclusions.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+-v, --verbose 
+        Prints additional information during command execution.
+```
+
+*Implementation:*
+```bash
+for varname in all_proxy ALL_PROXY ftp_proxy FTP_PROXY http_proxy HTTP_PROXY https_proxy HTTPS_PROXY; do
+    [[ $_verbose ]] && echo "Setting $varname=$_PROXY_URL"
+    export $varname=$_PROXY_URL
+done
+
+# exclude local IPs from proxy
+if hash ifconfig &>/dev/null; then
+    local my_ips=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*')
+else
+    local my_ips=::1,127.0.0.1
+fi
+no_proxy=localhost,${my_ips//$'\n'/,}
+
+# exclude metadata IP if AWS EC2 server
+if [[ -f /sys/hypervisor/uuid && $(head -c 3 /sys/hypervisor/uuid) == "ec2" ]]; then
+    no_proxy="$no_proxy,169.254.169.254"
+fi
+
+export no_proxy="$no_proxy,$_NO_PROXY"
+[[ $_verbose ]] && echo "Setting no_proxy=$no_proxy"
+[[ $_verbose ]] && echo "Setting NO_PROXY="
+export NO_PROXY=$no_proxy
 ```
 
 
@@ -335,9 +385,10 @@ Options:
 *Implementation:*
 ```bash
 -block-port --selftest && echo || return 1
--get-ips --selftest && echo || return 1
 -is-port-open --selftest && echo || return 1
+-my-ips --selftest && echo || return 1
 -run-echo-server --selftest && echo || return 1
+-set-proxy --selftest && echo || return 1
 -ssh-agent-add-key --selftest && echo || return 1
 -ssh-trust-host --selftest && echo || return 1
 ```

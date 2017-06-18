@@ -209,106 +209,6 @@ function __complete-block-port() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}block-port -- ${BASH_FUNK_PREFIX:--}block-port
 
-function -get-ips() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
-
-    set +auHt
-    set -o pipefail
-
-    __impl$__fn "$@" && rc=0 || rc=$?
-
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]..."
-        echo; echo "Type '$__fn --help' for more details."
-    fi
-
-    eval $opts
-
-    return $rc
-}
-function __impl-get-ips() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
-    [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
-        case "$__arg" in
-            -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        case "$__arg" in
-
-            --help)
-                echo "Usage: $__fn [OPTION]..."
-                echo
-                echo "Prints the IP v4 addresses of this host excluding 127.0.0.1."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo
-                return 0
-              ;;
-
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
-
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
-
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
-
-    for __param in "${__params[@]}"; do
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
-
-    ######### get-ips ######### START
-
-ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
-
-    ######### get-ips ######### END
-}
-function __complete-get-ips() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
-}
-complete -F __complete${BASH_FUNK_PREFIX:--}get-ips -- ${BASH_FUNK_PREFIX:--}get-ips
-
 function -is-port-open() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
     for opt in a u H t; do
@@ -508,6 +408,106 @@ function __complete-is-port-open() {
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}is-port-open -- ${BASH_FUNK_PREFIX:--}is-port-open
+
+function -my-ips() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]..."
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-my-ips() {
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -t 1 ] && __interactive=1 || true
+    
+    for __arg in "$@"; do
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
+
+            --help)
+                echo "Usage: $__fn [OPTION]..."
+                echo
+                echo "Prints the IP v4 addresses of this host excluding 127.0.0.1."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            -*)
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    ######### my-ips ######### START
+
+ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+
+    ######### my-ips ######### END
+}
+function __complete-my-ips() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --help --selftest "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}my-ips -- ${BASH_FUNK_PREFIX:--}my-ips
 
 function -run-echo-server() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
@@ -713,6 +713,153 @@ function __complete-run-echo-server() {
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}run-echo-server -- ${BASH_FUNK_PREFIX:--}run-echo-server
+
+function -set-proxy() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]... PROXY_URL [NO_PROXY]"
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-set-proxy() {
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _PROXY_URL _NO_PROXY
+    [ -t 1 ] && __interactive=1 || true
+    
+    for __arg in "$@"; do
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
+
+            --help)
+                echo "Usage: $__fn [OPTION]... PROXY_URL [NO_PROXY]"
+                echo
+                echo "Sets the proxy environment variables."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mPROXY_URL\033[22m (required)"
+                echo "      The proxy URL to set."
+                echo -e "  \033[1mNO_PROXY\033[22m "
+                echo "      Proxy exclusions."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo -e "\033[1m-v, --verbose\033[22m "
+                echo "        Prints additional information during command execution."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            --verbose|-v)
+                _verbose=1
+            ;;
+
+            -*)
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        if [[ ! $_PROXY_URL ]]; then
+            _PROXY_URL=$__param
+            continue
+        fi
+        if [[ ! $_NO_PROXY ]]; then
+            _NO_PROXY=$__param
+            continue
+        fi
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if [[ $_PROXY_URL ]]; then
+        true
+    else
+        echo "$__fn: Error: Parameter PROXY_URL must be specified."; return 64
+    fi
+
+    ######### set-proxy ######### START
+
+for varname in all_proxy ALL_PROXY ftp_proxy FTP_PROXY http_proxy HTTP_PROXY https_proxy HTTPS_PROXY; do
+    [[ $_verbose ]] && echo "Setting $varname=$_PROXY_URL"
+    export $varname=$_PROXY_URL
+done
+
+# exclude local IPs from proxy
+if hash ifconfig &>/dev/null; then
+    local my_ips=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*')
+else
+    local my_ips=::1,127.0.0.1
+fi
+no_proxy=localhost,${my_ips//$'\n'/,}
+
+# exclude metadata IP if AWS EC2 server
+if [[ -f /sys/hypervisor/uuid && $(head -c 3 /sys/hypervisor/uuid) == "ec2" ]]; then
+    no_proxy="$no_proxy,169.254.169.254"
+fi
+
+export no_proxy="$no_proxy,$_NO_PROXY"
+[[ $_verbose ]] && echo "Setting no_proxy=$no_proxy"
+[[ $_verbose ]] && echo "Setting NO_PROXY="
+export NO_PROXY=$no_proxy
+
+    ######### set-proxy ######### END
+}
+function __complete-set-proxy() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --help --selftest --verbose -v "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}set-proxy -- ${BASH_FUNK_PREFIX:--}set-proxy
 
 function -ssh-agent-add-key() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
@@ -1076,9 +1223,10 @@ function __impl-test-network() {
     ######### test-network ######### START
 
 ${BASH_FUNK_PREFIX:--}block-port --selftest && echo || return 1
-${BASH_FUNK_PREFIX:--}get-ips --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}is-port-open --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}my-ips --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}run-echo-server --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}set-proxy --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-agent-add-key --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-trust-host --selftest && echo || return 1
 
@@ -1099,12 +1247,13 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-network -- ${BASH_FUNK_PREFIX:-
 
 function -help-network() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}block-port [BIND_ADDRESS] PORT\033[0m  -  Binds to the given port and thus block other programs from binding to it."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}get-ips\033[0m  -  Prints the IP v4 addresses of this host excluding 127.0.0.1."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}is-port-open HOSTNAME PORT [CONNECT_TIMEOUT_IN_SECONDS]\033[0m  -  Checks if a TCP connection can be established to the given port."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}my-ips\033[0m  -  Prints the IP v4 addresses of this host excluding 127.0.0.1."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}run-echo-server [BIND_ADDRESS] PORT\033[0m  -  Runs a simple single-connection TCP echo server."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}set-proxy PROXY_URL [NO_PROXY]\033[0m  -  Sets the proxy environment variables."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-agent-add-key KEY_FILE PASSWORD\033[0m  -  Adds the private key to the ssh-agent."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-trust-host HOSTNAME [PORT]\033[0m  -  Adds the public key of the given host to the ~/.ssh/known_hosts file."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-network\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( block-port get-ips is-port-open run-echo-server ssh-agent-add-key ssh-trust-host test-network )
+__BASH_FUNK_FUNCS+=( block-port is-port-open my-ips run-echo-server set-proxy ssh-agent-add-key ssh-trust-host test-network )
