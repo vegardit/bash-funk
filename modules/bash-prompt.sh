@@ -68,7 +68,7 @@ function __-bash-prompt() {
     fi
 
     if shopt -q checkwinsize; then
-        # shopt -s checkwinsize under cygwin does not work reliable
+        # shopt -s checkwinsize under Cygwin with cmd.exe does not work reliable
         if [[ $TERM == "cygwin" ]]; then
             printenv COLUMNS &>/dev/null # for some reason this forces updating of the $COLUMNS variable under cygwin
         fi
