@@ -68,12 +68,13 @@ function __impl-ansi-bold() {
                 echo "      The text to print in bold."
                 echo
                 echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
                 echo -e "\033[1m    --off\033[22m "
                 echo "        Print the ANSI escape sequence that disables sets bold attribute."
                 echo -e "\033[1m    --on\033[22m "
                 echo "        Print the ANSI escape sequence that enables sets bold attribute."
+                echo "    -----------------------------"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo
@@ -139,7 +140,7 @@ fi
 function __complete-ansi-bold() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --on --off --help --selftest "
+        local options=" --on --off --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -198,6 +199,7 @@ function __impl-ansi-codes() {
                 echo "Options:"
                 echo -e "\033[1m-e, --escape\033[22m "
                 echo "        If specified the escape code will be printed as octal value ."
+                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
@@ -309,7 +311,7 @@ ${_PREFIX}BG_WHITE=\"$ESC[107m\"
 function __complete-ansi-codes() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --escape -e --help --selftest "
+        local options=" --escape -e --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -366,12 +368,13 @@ function __impl-ansi-colors-supported() {
                 echo "      Number of colors that need to be supported."
                 echo
                 echo "Options:"
+                echo -e "\033[1m-v, --verbose\033[22m "
+                echo "        Prints additional information during command execution."
+                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\033[1m-v, --verbose\033[22m "
-                echo "        Prints additional information during command execution."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn \033[22m"
@@ -470,7 +473,7 @@ fi
 function __complete-ansi-colors-supported() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest --verbose -v "
+        local options=" --help --verbose -v "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -592,7 +595,7 @@ done
 function __complete-ansi-colors16() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
+        local options=" --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -792,7 +795,7 @@ echo
 function __complete-ansi-colors256() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
+        local options=" --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -892,7 +895,7 @@ echo -ne "\033[0m"
 function __complete-ansi-reset() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
+        local options=" --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -949,12 +952,13 @@ function __impl-ansi-ul() {
                 echo "      The text to print underlined."
                 echo
                 echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
                 echo -e "\033[1m    --off\033[22m "
                 echo "        Print the ANSI escape sequence that disables sets underlined attribute."
                 echo -e "\033[1m    --on\033[22m "
                 echo "        Print the ANSI escape sequence that enables sets underlined attribute."
+                echo "    -----------------------------"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo
@@ -1020,7 +1024,7 @@ fi
 function __complete-ansi-ul() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --on --off --help --selftest "
+        local options=" --on --off --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -1028,6 +1032,254 @@ function __complete-ansi-ul() {
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}ansi-ul -- ${BASH_FUNK_PREFIX:--}ansi-ul
+
+function -cursor-pos() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]..."
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-cursor-pos() {
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _save _restore _up _down _left _right _assign _set _print _help _selftest
+    [ -t 1 ] && __interactive=1 || true
+    
+    for __arg in "$@"; do
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
+
+            --help)
+                echo "Usage: $__fn [OPTION]..."
+                echo
+                echo "Performs ANSI cursor operations."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --assign VARNAME\033[22m "
+                echo "        Assigns the current cursor position to the variable with the given name."
+                echo -e "\033[1m-d, --down [LINES]\033[22m (default: '1', integer: ?-?)"
+                echo "        Moves the cursor n lines down."
+                echo -e "\033[1m-l, --left [COLUMNS]\033[22m (default: '1', integer: ?-?)"
+                echo "        Move the cursor n columns forward."
+                echo -e "\033[1m    --print\033[22m "
+                echo "        Prints the current cursor position."
+                echo -e "\033[1m    --restore\033[22m "
+                echo "        Restores the last saved cursor position."
+                echo -e "\033[1m-r, --right [COLUMNS]\033[22m (default: '1', integer: ?-?)"
+                echo "        Move the cursor n columns backward."
+                echo -e "\033[1m    --save\033[22m "
+                echo "        Saves the current cursor position."
+                echo -e "\033[1m    --set ROW_AND_COL\033[22m "
+                echo "        Sets the cursor position (ROW:COL)."
+                echo -e "\033[1m-u, --up [LINES]\033[22m (default: '1', integer: ?-?)"
+                echo "        Moves the cursor n lines up."
+                echo "    -----------------------------"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            --save)
+                _save=1
+            ;;
+
+            --restore)
+                _restore=1
+            ;;
+
+            --up|-u)
+                _up="1"
+                __optionWithValue=up
+            ;;
+
+            --down|-d)
+                _down="1"
+                __optionWithValue=down
+            ;;
+
+            --left|-l)
+                _left="1"
+                __optionWithValue=left
+            ;;
+
+            --right|-r)
+                _right="1"
+                __optionWithValue=right
+            ;;
+
+            --assign)
+                _assign="@@##@@"
+                __optionWithValue=assign
+            ;;
+
+            --set)
+                _set="@@##@@"
+                __optionWithValue=set
+            ;;
+
+            --print)
+                _print=1
+            ;;
+
+            -*)
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    up)
+                        _up=$__arg
+                        __optionWithValue=
+                      ;;
+                    down)
+                        _down=$__arg
+                        __optionWithValue=
+                      ;;
+                    left)
+                        _left=$__arg
+                        __optionWithValue=
+                      ;;
+                    right)
+                        _right=$__arg
+                        __optionWithValue=
+                      ;;
+                    assign)
+                        _assign=$__arg
+                        __optionWithValue=
+                      ;;
+                    set)
+                        _set=$__arg
+                        __optionWithValue=
+                      ;;
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if [[ $_up ]]; then
+        if [[ $_up == "@@##@@" ]]; then echo "$__fn: Error: Value LINES for option --up must be specified."; return 64; fi
+        if [[ ! "$_up" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_up' for option --up is not a numeric value."; return 64; fi
+    fi
+    if [[ $_down ]]; then
+        if [[ $_down == "@@##@@" ]]; then echo "$__fn: Error: Value LINES for option --down must be specified."; return 64; fi
+        if [[ ! "$_down" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_down' for option --down is not a numeric value."; return 64; fi
+    fi
+    if [[ $_left ]]; then
+        if [[ $_left == "@@##@@" ]]; then echo "$__fn: Error: Value COLUMNS for option --left must be specified."; return 64; fi
+        if [[ ! "$_left" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_left' for option --left is not a numeric value."; return 64; fi
+    fi
+    if [[ $_right ]]; then
+        if [[ $_right == "@@##@@" ]]; then echo "$__fn: Error: Value COLUMNS for option --right must be specified."; return 64; fi
+        if [[ ! "$_right" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_right' for option --right is not a numeric value."; return 64; fi
+    fi
+    if [[ $_assign ]]; then
+        if [[ $_assign == "@@##@@" ]]; then echo "$__fn: Error: Value VARNAME for option --assign must be specified."; return 64; fi
+    fi
+    if [[ $_set ]]; then
+        if [[ $_set == "@@##@@" ]]; then echo "$__fn: Error: Value ROW_AND_COL for option --set must be specified."; return 64; fi
+    fi
+
+    ######### cursor-pos ######### START
+
+
+if [[ $_save ]]; then
+    echo -en "\033[s"
+fi
+
+if [[ $_restore ]]; then
+    echo -en "\033[u"
+fi
+
+if [[ $_up ]]; then
+    echo -en "\033[${_up}A"
+fi
+
+if [[ $_down ]]; then
+    echo -en "\033[${_up}B"
+fi
+
+if [[ $_right ]]; then
+    echo -en "\033[${_right}C"
+fi
+
+if [[ $_left ]]; then
+    echo -en "\033[${_left}D"
+fi
+
+if [[ $_set ]]; then
+    echo -en "\033[${_set//:/;}H"
+fi
+
+if [[ $_print || $_assign ]]; then
+    local pos
+    echo -en "\E[6n" && read -sdR pos
+    pos=${pos#*[}
+    pos=${pos//;/:}
+    if [[ $_print ]]; then
+        echo $pos
+    fi
+    if [[ $_assign ]]; then
+        eval "$_assign=\"$pos\""
+    fi
+fi
+
+    ######### cursor-pos ######### END
+}
+function __complete-cursor-pos() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --save --restore --up -u --down -d --left -l --right -r --assign --set --print --help "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}cursor-pos -- ${BASH_FUNK_PREFIX:--}cursor-pos
 
 function -test-ansi() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
@@ -1120,13 +1372,14 @@ ${BASH_FUNK_PREFIX:--}ansi-colors16 --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-colors256 --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-reset --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-ul --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}cursor-pos --selftest && echo || return 1
 
     ######### test-ansi ######### END
 }
 function __complete-test-ansi() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
+        local options=" --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -1144,7 +1397,8 @@ function -help-ansi() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-colors256\033[0m  -  Prints a table with 256 ANSI colors."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-reset\033[0m  -  Prints an ANSI escape sequence that reset all ANSI attributes."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-ul [TEXT]\033[0m  -  Sets underlined mode or prints the given text underlined."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}cursor-pos\033[0m  -  Performs ANSI cursor operations."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-ansi\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( ansi-bold ansi-codes ansi-colors-supported ansi-colors16 ansi-colors256 ansi-reset ansi-ul test-ansi )
+__BASH_FUNK_FUNCS+=( ansi-bold ansi-codes ansi-colors-supported ansi-colors16 ansi-colors256 ansi-reset ansi-ul cursor-pos test-ansi )

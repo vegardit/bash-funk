@@ -11,6 +11,7 @@ The following commands are available when this module is loaded:
 1. [-ansi-colors256](#-ansi-colors256)
 1. [-ansi-reset](#-ansi-reset)
 1. [-ansi-ul](#-ansi-ul)
+1. [-cursor-pos](#-cursor-pos)
 1. [-test-ansi](#-test-ansi)
 
 
@@ -43,12 +44,13 @@ Parameters:
       The text to print in bold.
 
 Options:
-    --help 
-        Prints this help.
     --off 
         Print the ANSI escape sequence that disables sets bold attribute.
     --on 
         Print the ANSI escape sequence that enables sets bold attribute.
+    -----------------------------
+    --help 
+        Prints this help.
     --selftest 
         Performs a self-test.
 ```
@@ -81,6 +83,7 @@ Parameters:
 Options:
 -e, --escape 
         If specified the escape code will be printed as octal value .
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
@@ -159,12 +162,13 @@ Parameters:
       Number of colors that need to be supported.
 
 Options:
+-v, --verbose 
+        Prints additional information during command execution.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
         Performs a self-test.
--v, --verbose 
-        Prints additional information during command execution.
 
 Examples:
 $ -ansi-colors-supported 
@@ -400,12 +404,13 @@ Parameters:
       The text to print underlined.
 
 Options:
-    --help 
-        Prints this help.
     --off 
         Print the ANSI escape sequence that disables sets underlined attribute.
     --on 
         Print the ANSI escape sequence that enables sets underlined attribute.
+    -----------------------------
+    --help 
+        Prints this help.
     --selftest 
         Performs a self-test.
 ```
@@ -420,6 +425,85 @@ if [[ $_on ]]; then
     echo -ne "\033[4m"
 elif [[ $_off ]]; then
     echo -ne "\033[24m"
+fi
+```
+
+
+## <a name="-cursor-pos"></a>-cursor-pos
+
+```
+Usage: -cursor-pos [OPTION]...
+
+Performs ANSI cursor operations.
+
+Options:
+    --assign VARNAME 
+        Assigns the current cursor position to the variable with the given name.
+-d, --down [LINES] (default: '1', integer: ?-?)
+        Moves the cursor n lines down.
+-l, --left [COLUMNS] (default: '1', integer: ?-?)
+        Move the cursor n columns forward.
+    --print 
+        Prints the current cursor position.
+    --restore 
+        Restores the last saved cursor position.
+-r, --right [COLUMNS] (default: '1', integer: ?-?)
+        Move the cursor n columns backward.
+    --save 
+        Saves the current cursor position.
+    --set ROW_AND_COL 
+        Sets the cursor position (ROW:COL).
+-u, --up [LINES] (default: '1', integer: ?-?)
+        Moves the cursor n lines up.
+    -----------------------------
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+```
+
+*Implementation:*
+```bash
+
+if [[ $_save ]]; then
+    echo -en "\033[s"
+fi
+
+if [[ $_restore ]]; then
+    echo -en "\033[u"
+fi
+
+if [[ $_up ]]; then
+    echo -en "\033[${_up}A"
+fi
+
+if [[ $_down ]]; then
+    echo -en "\033[${_up}B"
+fi
+
+if [[ $_right ]]; then
+    echo -en "\033[${_right}C"
+fi
+
+if [[ $_left ]]; then
+    echo -en "\033[${_left}D"
+fi
+
+if [[ $_set ]]; then
+    echo -en "\033[${_set//:/;}H"
+fi
+
+if [[ $_print || $_assign ]]; then
+    local pos
+    echo -en "\E[6n" && read -sdR pos
+    pos=${pos#*[}
+    pos=${pos//;/:}
+    if [[ $_print ]]; then
+        echo $pos
+    fi
+    if [[ $_assign ]]; then
+        eval "$_assign=\"$pos\""
+    fi
 fi
 ```
 
@@ -447,4 +531,5 @@ Options:
 -ansi-colors256 --selftest && echo || return 1
 -ansi-reset --selftest && echo || return 1
 -ansi-ul --selftest && echo || return 1
+-cursor-pos --selftest && echo || return 1
 ```
