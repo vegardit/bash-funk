@@ -109,6 +109,7 @@ EOL
                 continue;
             fi
 
+            echo -en "\033[K" # clear current line
             echo -n "* Loading [modules/${__module##*/}]... "
             # rename the functions based on the given BASH_FUNK_PREFIX
             if [[ $BASH_FUNK_PREFIX == "-" ]]; then
@@ -117,8 +118,10 @@ EOL
                 eval "$(sed -E "s/function -/function ${BASH_FUNK_PREFIX}/g; s/function __([^-]*)-/function __\1${BASH_FUNK_PREFIX}/g" ${__module})"
             fi
             echo
+            echo -en "\033[1A" # cursor up
         done
         unset __module
+        echo "* Finished loading applicable modules."
 
         # export all functions
         echo "* Exporting functions..."
