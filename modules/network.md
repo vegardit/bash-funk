@@ -10,6 +10,7 @@ The following commands are available when this module is loaded:
 1. [-run-echo-server](#-run-echo-server)
 1. [-set-proxy](#-set-proxy)
 1. [-ssh-agent-add-key](#-ssh-agent-add-key)
+1. [-ssh-reconnect](#-ssh-reconnect)
 1. [-ssh-trust-host](#-ssh-trust-host)
 1. [-test-network](#-test-network)
 
@@ -341,6 +342,48 @@ EOF
 ```
 
 
+## <a name="-ssh-reconnect"></a>-ssh-reconnect
+
+```
+Usage: -ssh-reconnect [OPTION]... [GREP_PATTERN]...
+
+Dialog that displays the last 10 issued SSH commands to execute one of them.
+
+Parameters:
+  GREP_PATTERN 
+      Only show SSH commands that contain the given patterns.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+```
+
+*Implementation:*
+```bash
+local filter=
+if [[ ${_GREP_PATTERN:-} ]]; then
+    local p
+    for p in "${_GREP_PATTERN[@]}"; do
+        filter="$filter | grep \"$p\""
+    done
+fi
+ssh_hist="$(eval -- "-tail-reverse "$HISTFILE" -u | grep \"^ssh \" $filter | head -10")"
+ssh_hist="${ssh_hist//\"/\\\"}"
+local ssh_cmd
+echo Please select the SSH command to execute and press [ENTER]. Press [ESC] or [CTRL]+[C] to abort:
+echo
+eval -- ${BASH_FUNK_PREFIX:-}choose --assign ssh_cmd "\"${ssh_hist//$'\n'/\" \"}\""
+echo
+echo "Press Enter when ready. [CTRL]+[C] to abort."
+read -e -p "$ " -i "$ssh_cmd" ssh_cmd
+echo -e "Executing command [\033[35m$ssh_cmd\033[0m]..."
+history -s -- "$ssh_cmd"
+eval -- $ssh_cmd
+```
+
+
 ## <a name="-ssh-trust-host"></a>-ssh-trust-host
 
 ```
@@ -394,5 +437,6 @@ Options:
 -run-echo-server --selftest && echo || return 1
 -set-proxy --selftest && echo || return 1
 -ssh-agent-add-key --selftest && echo || return 1
+-ssh-reconnect --selftest && echo || return 1
 -ssh-trust-host --selftest && echo || return 1
 ```

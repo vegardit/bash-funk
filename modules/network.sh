@@ -1008,6 +1008,130 @@ function __complete-ssh-agent-add-key() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}ssh-agent-add-key -- ${BASH_FUNK_PREFIX:--}ssh-agent-add-key
 
+function -ssh-reconnect() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]... [GREP_PATTERN]..."
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-ssh-reconnect() {
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _GREP_PATTERN=()
+    [ -t 1 ] && __interactive=1 || true
+    
+    for __arg in "$@"; do
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
+
+            --help)
+                echo "Usage: $__fn [OPTION]... [GREP_PATTERN]..."
+                echo
+                echo "Dialog that displays the last 10 issued SSH commands to execute one of them."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mGREP_PATTERN\033[22m "
+                echo "      Only show SSH commands that contain the given patterns."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            -*)
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        _GREP_PATTERN+=("$__param")
+        continue
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    ######### ssh-reconnect ######### START
+
+local filter=
+if [[ ${_GREP_PATTERN:-} ]]; then
+    local p
+    for p in "${_GREP_PATTERN[@]}"; do
+        filter="$filter | grep \"$p\""
+    done
+fi
+ssh_hist="$(eval -- "-tail-reverse "$HISTFILE" -u | grep \"^ssh \" $filter | head -10")"
+ssh_hist="${ssh_hist//\"/\\\"}"
+local ssh_cmd
+echo Please select the SSH command to execute and press [ENTER]. Press [ESC] or [CTRL]+[C] to abort:
+echo
+eval -- ${BASH_FUNK_PREFIX:-}choose --assign ssh_cmd "\"${ssh_hist//$'\n'/\" \"}\""
+echo
+echo "Press Enter when ready. [CTRL]+[C] to abort."
+read -e -p "$ " -i "$ssh_cmd" ssh_cmd
+echo -e "Executing command [\033[35m$ssh_cmd\033[0m]..."
+history -s -- "$ssh_cmd"
+eval -- $ssh_cmd
+
+    ######### ssh-reconnect ######### END
+}
+function __complete-ssh-reconnect() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --help "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}ssh-reconnect -- ${BASH_FUNK_PREFIX:--}ssh-reconnect
+
 function -ssh-trust-host() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
     for opt in a u H t; do
@@ -1232,6 +1356,7 @@ ${BASH_FUNK_PREFIX:--}my-ips --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}run-echo-server --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}set-proxy --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-agent-add-key --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}ssh-reconnect --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-trust-host --selftest && echo || return 1
 
     ######### test-network ######### END
@@ -1256,8 +1381,9 @@ function -help-network() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}run-echo-server [BIND_ADDRESS] PORT\033[0m  -  Runs a simple single-connection TCP echo server."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}set-proxy PROXY_URL [NO_PROXY]\033[0m  -  Sets the proxy environment variables."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-agent-add-key KEY_FILE PASSWORD\033[0m  -  Adds the private key to the ssh-agent."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-reconnect [GREP_PATTERN]...\033[0m  -  Dialog that displays the last 10 issued SSH commands to execute one of them."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-trust-host HOSTNAME [PORT]\033[0m  -  Adds the public key of the given host to the ~/.ssh/known_hosts file."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-network\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( block-port is-port-open my-ips run-echo-server set-proxy ssh-agent-add-key ssh-trust-host test-network )
+__BASH_FUNK_FUNCS+=( block-port is-port-open my-ips run-echo-server set-proxy ssh-agent-add-key ssh-reconnect ssh-trust-host test-network )

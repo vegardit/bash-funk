@@ -220,7 +220,7 @@ fi
 ## <a name="-count-words"></a>-count-words
 
 ```
-Usage: -count-words [OPTION]... FILE WORD1[WORD]...
+Usage: -count-words [OPTION]... FILE WORD1 [WORD]...
 
 Counts the number of occurences of the word(s) in the given file.
 

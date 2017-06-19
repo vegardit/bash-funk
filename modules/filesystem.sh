@@ -558,7 +558,7 @@ function -count-words() {
     __impl$__fn "$@" && rc=0 || rc=$?
 
     if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... FILE WORD1[WORD]..."
+        echo; echo "Usage: $__fn [OPTION]... FILE WORD1 [WORD]..."
         echo; echo "Type '$__fn --help' for more details."
     fi
 
@@ -581,7 +581,7 @@ function __impl-count-words() {
         case "$__arg" in
 
             --help)
-                echo "Usage: $__fn [OPTION]... FILE WORD1[WORD]..."
+                echo "Usage: $__fn [OPTION]... FILE WORD1 [WORD]..."
                 echo
                 echo "Counts the number of occurences of the word(s) in the given file."
                 echo
@@ -2678,7 +2678,7 @@ function -help-filesystem() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}cd-down DIR_NAME\033[0m  -  Jumps down in the tree of the current directory to the first sub directory found with the given name."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}cd-hist [STEPS_OR_DIRNAME]\033[0m  -  Navigates back in the directory history which can be managed via pushd/popd/dirs and is automatically populated if the Bash Funk bash-prompt is installed."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}cd-up [LEVEL_OR_PATTERN]\033[0m  -  Navigates up in the current directory tree to the first parent directory found with the given namen or the given number of levels. Bash completion will auto-complete the names of the parent directories."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}count-words FILE WORD1[WORD]...\033[0m  -  Counts the number of occurences of the word(s) in the given file."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}count-words FILE WORD1 [WORD]...\033[0m  -  Counts the number of occurences of the word(s) in the given file."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}du [PATH]...\033[0m  -  Prints disk usage information."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}extract ARCHIVE [TO_DIR]\033[0m  -  Extracts the given archive using the compatible extractor."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}find-up FILENAME\033[0m  -  Traverses the directory upward to find the given file."

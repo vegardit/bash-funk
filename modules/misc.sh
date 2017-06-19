@@ -36,7 +36,7 @@ function -choose() {
     __impl$__fn "$@" && rc=0 || rc=$?
 
     if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... OPTION1[OPTION]..."
+        echo; echo "Usage: $__fn [OPTION]... OPTION1 [OPTION]..."
         echo; echo "Type '$__fn --help' for more details."
     fi
 
@@ -59,7 +59,7 @@ function __impl-choose() {
         case "$__arg" in
 
             --help)
-                echo "Usage: $__fn [OPTION]... OPTION1[OPTION]..."
+                echo "Usage: $__fn [OPTION]... OPTION1 [OPTION]..."
                 echo
                 echo "Prompts the user to choose one entry of the given list of options."
                 echo
@@ -142,7 +142,7 @@ function __impl-choose() {
 
     ######### choose ######### START
 
-local selectedIndex=0 ESC=$(echo -e "\033") redraw=1 index dialogFD
+local selectedIndex=0 ESC=$(echo -e "\033") redraw=1 index dialogFD option
 
 # when in a subshell use stderr to render the dialog, so capturing stdout will only contain the selected value
 [ -t 1 ] && dialogFD=1 || dialogFD=2
@@ -156,13 +156,16 @@ if [[ ${_default:-} ]]; then
     done
 fi
 
-while 1; do
+while true; do
     if [[ $redraw ]]; then
         for index in "${!_OPTION[@]}"; do
+            option="${_OPTION[$index]}"
+            option="${option//$'\n'/\\n}"
+            option="${option:0:$(( COLUMNS - 6 ))}"
             if (( index == selectedIndex )); then
-                >&$dialogFD echo -e " \033[1m* ${_OPTION[$index]}\033[22m"
+                >&$dialogFD echo -e " \033[1m* $option\033[22m"
             else
-                >&$dialogFD echo "   ${_OPTION[$index]}"
+                >&$dialogFD echo "   $option"
             fi
         done
     fi
@@ -188,7 +191,7 @@ while 1; do
           ;;
         $'\n')
             if [[ $_assign ]]; then
-                eval "$_assign=\"${_OPTION[$selectedIndex]}\""
+                eval "$_assign=\"${_OPTION[$selectedIndex]//\"/\\\"}\""
             else
                 echo "${_OPTION[$selectedIndex]}";
             fi
@@ -196,7 +199,7 @@ while 1; do
           ;;
         $ESC)
             echo
-            echo "$__fn: Aborting on user request"
+            echo "Aborting on user request"
             return 1
           ;;
         *) redraw=
@@ -1365,7 +1368,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}wait -- ${BASH_FUNK_PREFIX:--}wait
 
 
 function -help-misc() {
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}choose OPTION1[OPTION]...\033[0m  -  Prompts the user to choose one entry of the given list of options."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}choose OPTION1 [OPTION]...\033[0m  -  Prompts the user to choose one entry of the given list of options."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}help\033[0m  -  Prints the online help of all bash-funk commands."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}please\033[0m  -  Re-runs the previously entered command with sudo."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}reload\033[0m  -  Reloads bash-funk."
