@@ -302,7 +302,9 @@ Options:
 *Implementation:*
 ```bash
 
+#
 # enable and configure command history
+#
 set -o history
 export HISTFILE=~/.bash_funk_history
 export HISTSIZE=10000
@@ -312,9 +314,24 @@ export HISTTIMEFORMAT="%F %T "
 export HISTIGNORE="&:?:??:clear:exit:pwd"
 history -r
 
+
+#
+# Readline productivity tweaks, see https://www.gnu.org/software/bash/manual/html_node/Readline-Init-File-Syntax.html
+#
+bind '"\e[A": history-search-backward' # enable history searching backward using arrow-up
+bind '"\e[B": history-search-forward'  # enable history searching forward using arrow-down
+set show-all-if-ambiguous on    # show words which have more than one possible completion immediately instead of ringing the bell
+set show-all-if-unmodified on   # show words which have more than one possible completion without any possible partial completion immediately instead of ringing the bell.
+set completion-ignore-case on   # perform case-insensitive filename matching and completion
+set enable-keypad on            # try to enable the application keypad
+
 # make ls colorful by default except on MacOS where it is not supported
 [[ ${OSTYPE} =~ "darwin" ]] || alias -- ls="command ls --color=auto"
 
+
+#
+# aliases
+#
 alias -- grep="command grep --colour=auto"
 alias -- gh='command history | grep'
 alias -- l="ll"
@@ -325,7 +342,10 @@ alias -- ..="-cd-up"
 alias -- ...="command cd ../.."
 alias -- -="command cd -"
 
-# http://wiki.bash-hackers.org/internals/shell_options
+
+#
+# Bash productivity options, see http://wiki.bash-hackers.org/internals/shell_options
+#
 local opt opts=(autocd checkwinsize dirspell direxpand extglob globstar histappend)
 for opt in ${opts[@]}; do
     if shopt -s $opt &>/dev/null; then
@@ -335,7 +355,10 @@ for opt in ${opts[@]}; do
     fi
 done
 
-# cygwin tweaks
+
+#
+# Cygwin tweaks
+#
 if [[ $OSTYPE == "cygwin" ]]; then
     for drive in {a..z}; do
         if [[ -e /cygdrive/${drive} ]]; then
