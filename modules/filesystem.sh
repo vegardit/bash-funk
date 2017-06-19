@@ -795,15 +795,8 @@ function __impl-du() {
     done
 
     for __param in "${__params[@]}"; do
-        if [[ ${#_PATH[@]} -lt 0 ]]; then
-            _PATH+=("$__param")
-            continue
-        fi
-        local __leftoverParams=$(( ${#__params[@]} - 0 - ${#_PATH[@]} ))
-        if [[ $__leftoverParams -gt 0 ]]; then
-            _PATH+=("$__param")
-            continue
-        fi
+        _PATH+=("$__param")
+        continue
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
@@ -1484,15 +1477,8 @@ function __impl-ll() {
     done
 
     for __param in "${__params[@]}"; do
-        if [[ ${#_PATH[@]} -lt 0 ]]; then
-            _PATH+=("$__param")
-            continue
-        fi
-        local __leftoverParams=$(( ${#__params[@]} - 0 - ${#_PATH[@]} ))
-        if [[ $__leftoverParams -gt 0 ]]; then
-            _PATH+=("$__param")
-            continue
-        fi
+        _PATH+=("$__param")
+        continue
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done

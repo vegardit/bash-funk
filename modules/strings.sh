@@ -1613,15 +1613,8 @@ function __impl-strip-ansi() {
     done
 
     for __param in "${__params[@]}"; do
-        if [[ ${#_STRING[@]} -lt 0 ]]; then
-            _STRING+=("$__param")
-            continue
-        fi
-        local __leftoverParams=$(( ${#__params[@]} - 0 - ${#_STRING[@]} ))
-        if [[ $__leftoverParams -gt 0 ]]; then
-            _STRING+=("$__param")
-            continue
-        fi
+        _STRING+=("$__param")
+        continue
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
