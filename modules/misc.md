@@ -18,6 +18,7 @@ function -timeout() {
 
 The following commands are available when this module is loaded:
 
+1. [-choose](#-choose)
 1. [-help](#-help)
 1. [-please](#-please)
 1. [-reload](#-reload)
@@ -44,6 +45,98 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+
+## <a name="-choose"></a>-choose
+
+```
+Usage: -choose [OPTION]... OPTION1[OPTION]...
+
+Prompts the user to choose one entry of the given list of options.
+
+Parameters:
+  OPTION (1 or more required)
+      Allowed options to choose from.
+
+Options:
+    --assign VARNAME 
+        Assigns the selected value to the variable with the given name instead of printing to stdout.
+    --default OPTION 
+        The option to pre-selected.
+    -----------------------------
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+```
+
+*Implementation:*
+```bash
+local selectedIndex=0 ESC=$(echo -e "\033") redraw=1 index dialogFD
+
+# when in a subshell use stderr to render the dialog, so capturing stdout will only contain the selected value
+[ -t 1 ] && dialogFD=1 || dialogFD=2
+
+# pre-select if default value was given
+if [[ ${_default:-} ]]; then
+    for index in "${!_OPTION[@]}"; do
+        if [[ $_default == ${_OPTION[$index]} ]]; then
+            selectedIndex=$index
+        fi
+    done
+fi
+
+while 1; do
+    if [[ $redraw ]]; then
+        for index in "${!_OPTION[@]}"; do
+            if (( index == selectedIndex )); then
+                >&$dialogFD echo -e " \033[1m* ${_OPTION[$index]}\033[22m"
+            else
+                >&$dialogFD echo "   ${_OPTION[$index]}"
+            fi
+        done
+    fi
+    local key= key2= key3= key4=
+    read -sN1 key && \
+    read -sN1 -t 0.001 key2 && \
+    read -sN1 -t 0.001 key3 && \
+    read -sN1 -t 0.001 key4 || true
+    key=${key}${key2}${key3}${key4}
+
+    case $key in
+        ${ESC}*A)
+            if (( selectedIndex > 0 )); then
+                (( selectedIndex-- ))
+                redraw=1
+            fi
+          ;;
+        ${ESC}*B)
+            if [[ $(( selectedIndex + 1 )) -lt ${#_OPTION[@]} ]]; then
+                (( selectedIndex++ ))
+                redraw=1
+            fi
+          ;;
+        $'\n')
+            if [[ $_assign ]]; then
+                eval "$_assign=\"${_OPTION[$selectedIndex]}\""
+            else
+                echo "${_OPTION[$selectedIndex]}";
+            fi
+            return 0
+          ;;
+        $ESC)
+            echo
+            echo "$__fn: Aborting on user request"
+            return 1
+          ;;
+        *) redraw=
+    esac
+
+    if [[ $redraw ]]; then
+        -cursor-pos --fd $dialogFD --up "$(( ${#_OPTION[@]} ))"
+    fi
+done
+```
 
 
 ## <a name="-help"></a>-help
@@ -172,6 +265,7 @@ Options:
 
 *Implementation:*
 ```bash
+-choose --selftest && echo || return 1
 -help --selftest && echo || return 1
 -please --selftest && echo || return 1
 -reload --selftest && echo || return 1
@@ -191,12 +285,13 @@ Usage: -tweak-bash [OPTION]...
 Performs some usability configurations of Bash.
 
 Options:
+-v, --verbose 
+        Prints additional information during command execution.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
         Performs a self-test.
--v, --verbose 
-        Prints additional information during command execution.
 ```
 
 *Implementation:*
@@ -235,7 +330,7 @@ for opt in ${opts[@]}; do
     fi
 done
 
-# cygwin tweaks                
+# cygwin tweaks
 if [[ $OSTYPE == "cygwin" ]]; then
     for drive in {a..z}; do
         if [[ -e /cygdrive/${drive} ]]; then
@@ -243,7 +338,7 @@ if [[ $OSTYPE == "cygwin" ]]; then
             alias -- "${drive^^}:"="cd /cygdrive/${drive}"
         fi
     done
-    
+
     if ! hash sudo &>/dev/null; then
         alias -- sudo="cygstart --action=runas"
     fi
@@ -259,14 +354,15 @@ Usage: -update [OPTION]...
 Updates bash-funk with the latest code from the github repo.
 
 Options:
-    --help 
-        Prints this help.
 -r, --reload 
         Reloads the bash-funk after updating.
-    --selftest 
-        Performs a self-test.
 -y, --yes 
         Answer interactive prompts with 'yes'.
+    -----------------------------
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
 ```
 
 *Implementation:*
@@ -333,12 +429,13 @@ Parameters:
       Name of the Bash variable to check.
 
 Options:
+-v, --verbose 
+        Prints additional information during command execution.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
         Performs a self-test.
--v, --verbose 
-        Prints additional information during command execution.
 
 Examples:
 $ -var-exists USER
