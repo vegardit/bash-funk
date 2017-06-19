@@ -77,11 +77,13 @@ fi
 ## <a name="-cd-down"></a>-cd-down
 
 ```
-Usage: -cd-down [OPTION]... DIR_NAME
+Usage: -cd-down [OPTION]... [START_AT] DIR_NAME
 
 Jumps down in the tree of the current directory to the first sub directory found with the given name.
 
 Parameters:
+  START_AT (default: '.')
+      The start directory.
   DIR_NAME (required)
       The name of the subdirectory to locate and cd into.
 
@@ -94,7 +96,7 @@ Options:
 
 *Implementation:*
 ```bash
-local path=$(find . -name "$_DIR_NAME" -type d -print -quit 2>/dev/null || true);
+local path=$(find $_START_AT -name "$_DIR_NAME" -type d -print -quit 2>/dev/null || true);
 if [[ $path ]]; then
     echo "$path"
     cd $path
@@ -377,9 +379,9 @@ Options:
 local path=$PWD
 while [[ $path ]]; do
     case $_type in
-        d|dir)  if [[ -d "$path/$_FILENAME" ]]; then echo "$path/$_FILENAME"; return; fi ;;                            
+        d|dir)  if [[ -d "$path/$_FILENAME" ]]; then echo "$path/$_FILENAME"; return; fi ;;
         f|file) if [[ -f "$path/$_FILENAME" ]]; then echo "$path/$_FILENAME"; return; fi ;;
-        *)      if [[ -e "$path/$_FILENAME" ]]; then echo "$path/$_FILENAME"; return; fi ;;                    
+        *)      if [[ -e "$path/$_FILENAME" ]]; then echo "$path/$_FILENAME"; return; fi ;;
     esac
     path=${path%/*}
 done

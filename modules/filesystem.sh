@@ -155,7 +155,7 @@ function -cd-down() {
     __impl$__fn "$@" && rc=0 || rc=$?
 
     if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... DIR_NAME"
+        echo; echo "Usage: $__fn [OPTION]... [START_AT] DIR_NAME"
         echo; echo "Type '$__fn --help' for more details."
     fi
 
@@ -164,7 +164,7 @@ function -cd-down() {
     return $rc
 }
 function __impl-cd-down() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _DIR_NAME
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _START_AT _DIR_NAME
     [ -t 1 ] && __interactive=1 || true
     
     for __arg in "$@"; do
@@ -178,11 +178,13 @@ function __impl-cd-down() {
         case "$__arg" in
 
             --help)
-                echo "Usage: $__fn [OPTION]... DIR_NAME"
+                echo "Usage: $__fn [OPTION]... [START_AT] DIR_NAME"
                 echo
                 echo "Jumps down in the tree of the current directory to the first sub directory found with the given name."
                 echo
                 echo "Parameters:"
+                echo -e "  \033[1mSTART_AT\033[22m (default: '.')"
+                echo "      The start directory."
                 echo -e "  \033[1mDIR_NAME\033[22m (required)"
                 echo "      The name of the subdirectory to locate and cd into."
                 echo
@@ -221,6 +223,10 @@ function __impl-cd-down() {
     done
 
     for __param in "${__params[@]}"; do
+        if [[ ! $_START_AT && ${#__params[@]} > 1 ]]; then
+            _START_AT=$__param
+            continue
+        fi
         if [[ ! $_DIR_NAME ]]; then
             _DIR_NAME=$__param
             continue
@@ -228,6 +234,8 @@ function __impl-cd-down() {
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
+
+    if [[ ! $_START_AT ]]; then _START_AT="."; fi
 
     if [[ $_DIR_NAME ]]; then
         true
@@ -237,7 +245,7 @@ function __impl-cd-down() {
 
     ######### cd-down ######### START
 
-local path=$(find . -name "$_DIR_NAME" -type d -print -quit 2>/dev/null || true);
+local path=$(find $_START_AT -name "$_DIR_NAME" -type d -print -quit 2>/dev/null || true);
 if [[ $path ]]; then
     echo "$path"
     cd $path
@@ -1090,9 +1098,9 @@ function __impl-find-up() {
 local path=$PWD
 while [[ $path ]]; do
     case $_type in
-        d|dir)  if [[ -d "$path/$_FILENAME" ]]; then echo "$path/$_FILENAME"; return; fi ;;                            
+        d|dir)  if [[ -d "$path/$_FILENAME" ]]; then echo "$path/$_FILENAME"; return; fi ;;
         f|file) if [[ -f "$path/$_FILENAME" ]]; then echo "$path/$_FILENAME"; return; fi ;;
-        *)      if [[ -e "$path/$_FILENAME" ]]; then echo "$path/$_FILENAME"; return; fi ;;                    
+        *)      if [[ -e "$path/$_FILENAME" ]]; then echo "$path/$_FILENAME"; return; fi ;;
     esac
     path=${path%/*}
 done
@@ -2675,7 +2683,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-filesystem -- ${BASH_FUNK_PREFI
 
 function -help-filesystem() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}abspath [PATH]\033[0m  -  Prints the normalized path of the given path WITHOUT resolving symbolic links. The path is not required to exist."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}cd-down DIR_NAME\033[0m  -  Jumps down in the tree of the current directory to the first sub directory found with the given name."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}cd-down [START_AT] DIR_NAME\033[0m  -  Jumps down in the tree of the current directory to the first sub directory found with the given name."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}cd-hist [STEPS_OR_DIRNAME]\033[0m  -  Navigates back in the directory history which can be managed via pushd/popd/dirs and is automatically populated if the Bash Funk bash-prompt is installed."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}cd-up [LEVEL_OR_PATTERN]\033[0m  -  Navigates up in the current directory tree to the first parent directory found with the given namen or the given number of levels. Bash completion will auto-complete the names of the parent directories."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}count-words FILE WORD1 [WORD]...\033[0m  -  Counts the number of occurences of the word(s) in the given file."
