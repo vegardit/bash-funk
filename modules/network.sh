@@ -1110,7 +1110,7 @@ ssh_hist="${ssh_hist//\"/\\\"}"
 local ssh_cmd
 echo Please select the SSH command to execute and press [ENTER]. Press [ESC] or [CTRL]+[C] to abort:
 echo
-eval -- ${BASH_FUNK_PREFIX:-}choose --assign ssh_cmd "\"${ssh_hist//$'\n'/\" \"}\""
+eval -- ${BASH_FUNK_PREFIX:-}choose --assign ssh_cmd "\"${ssh_hist//$'\n'/\" \"}\"" || return 1
 echo
 echo "Press Enter when ready. [CTRL]+[C] to abort."
 read -e -p "$ " -i "$ssh_cmd" ssh_cmd

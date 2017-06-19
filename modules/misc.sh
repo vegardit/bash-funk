@@ -189,20 +189,22 @@ while true; do
                 redraw=1
             fi
           ;;
-        $'\n')
-            if [[ $_assign ]]; then
-                eval "$_assign=\"${_OPTION[$selectedIndex]//\"/\\\"}\""
-            else
-                echo "${_OPTION[$selectedIndex]}";
-            fi
-            return 0
-          ;;
         $ESC)
             echo
             echo "Aborting on user request"
             return 1
           ;;
-        *) redraw=
+        *)
+            if [[ $key == "" || $key == $'\n' ]]; then
+                if [[ $_assign ]]; then
+                    eval "$_assign=\"${_OPTION[$selectedIndex]//\"/\\\"}\""
+                else
+                    echo "${_OPTION[$selectedIndex]}";
+                fi
+                return 0
+            fi
+            redraw=
+          ;;
     esac
 
     if [[ $redraw ]]; then
