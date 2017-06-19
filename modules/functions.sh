@@ -140,7 +140,7 @@ eval "$(echo "$_NEW_FUNC_NAME()"; declare -f $_OLD_FUNC_NAME | tail -n +2)"
 function __complete-fn-copy() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
+        local options=" --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -287,7 +287,7 @@ fi
 function __complete-fn-exists() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest --verbose -v "
+        local options=" --help --verbose -v "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -419,7 +419,7 @@ unset -f $_OLD_FUNC_NAME
 function __complete-fn-rename() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
+        local options=" --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -545,7 +545,7 @@ unset -f $_FUNC_NAME
 function __complete-fn-unload() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest --verbose -v "
+        local options=" --help --verbose -v "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -648,7 +648,7 @@ ${BASH_FUNK_PREFIX:--}fn-unload --selftest && echo || return 1
 function __complete-test-functions() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
+        local options=" --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else

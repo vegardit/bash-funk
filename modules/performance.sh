@@ -111,7 +111,7 @@ grep processor /proc/cpuinfo | wc -l
 function __complete-cpu-count() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
+        local options=" --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -211,7 +211,7 @@ openssl speed rsa1024 -multi $(cat /proc/cpuinfo | grep processor | wc -l)
 function __complete-cpu-perf() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
+        local options=" --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -398,7 +398,7 @@ rm $dataFile
 function __complete-scp-perf() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --port -P --identity_file -i --help --selftest "
+        local options=" --port -P --identity_file -i --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -500,7 +500,7 @@ ${BASH_FUNK_PREFIX:--}scp-perf --selftest && echo || return 1
 function __complete-test-performance() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
+        local options=" --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else

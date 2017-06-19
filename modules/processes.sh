@@ -144,7 +144,7 @@ fi
 function __complete-get-child-pids() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --printPPID --help --selftest "
+        local options=" --printPPID --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -265,7 +265,7 @@ echo $parentPid
 function __complete-get-parent-pid() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
+        local options=" --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -388,7 +388,7 @@ echo ${pid}
 function __complete-get-toplevel-parent-pid() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
+        local options=" --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -533,7 +533,7 @@ done
 function __complete-kill-childs() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --signal -s --help --selftest "
+        local options=" --signal -s --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -704,7 +704,7 @@ fi
 function __complete-kill-listener() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --signal -s --help --selftest "
+        local options=" --signal -s --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -808,7 +808,7 @@ ${BASH_FUNK_PREFIX:--}kill-listener --selftest && echo || return 1
 function __complete-test-processes() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
+        local options=" --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else

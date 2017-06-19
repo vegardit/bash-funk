@@ -147,7 +147,7 @@ function __impl-test-fn-flags() {
 function __complete-test-fn-flags() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --myflag -m --help --selftest "
+        local options=" --myflag -m --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -518,7 +518,7 @@ echo "aa:${_aa[@]} bb:${_bb[@]} cc:${_cc[@]} dd:${_dd[@]} ee:${_ee[@]} ff:${_ff[
 function __complete-test-fn-multi-value-options() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --aa -a --bb -b --cc -c --dd -d --ee -e --ff -f --gg -g --help --selftest "
+        local options=" --aa -a --bb -b --cc -c --dd -d --ee -e --ff -f --gg -g --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -814,7 +814,7 @@ echo "AA:${_AA[@]} BB:${_BB[@]} CC:${_CC[@]} DD:${_DD[@]} EE:${_EE[@]} FF:${_FF[
 function __complete-test-fn-multi-value-parameters() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
+        local options=" --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -1003,7 +1003,7 @@ echo "AA:${_AA[@]} BB:${_BB[@]}"
 function __complete-test-fn-multi-value-parameters-first-variable() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
+        local options=" --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -1151,7 +1151,7 @@ function __impl-test-fn-noargs() {
 function __complete-test-fn-noargs() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest --verbose -v "
+        local options=" --help --verbose -v "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -1274,7 +1274,7 @@ function __impl-test-fn-requires-existing() {
 function __complete-test-fn-requires-existing() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest --verbose -v "
+        local options=" --help --verbose -v "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -1393,7 +1393,7 @@ function __impl-test-fn-requires-nonexistent() {
 function __complete-test-fn-requires-nonexistent() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest --verbose -v "
+        local options=" --help --verbose -v "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -1730,7 +1730,7 @@ echo "aa:$_aa bb:$_bb cc:$_cc dd:$_dd ee:$_ee ff:$_ff gg:$_gg"
 function __complete-test-fn-single-value-options() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --aa -a --bb -b --cc -c --dd -d --ee -e --ff -f --gg -g --help --selftest "
+        local options=" --aa -a --bb -b --cc -c --dd -d --ee -e --ff -f --gg -g --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -2009,7 +2009,7 @@ echo "AA:$_AA BB:$_BB CC:$_CC DD:$_DD EE:$_EE FF:$_FF"
 function __complete-test-fn-single-value-parameters() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
+        local options=" --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -2173,7 +2173,7 @@ echo "AA:$_AA BB:$_BB"
 function __complete-test-fn-single-value-parameters-first-optional() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
+        local options=" --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -2282,7 +2282,7 @@ ${BASH_FUNK_PREFIX:--}test-fn-single-value-parameters-first-optional --selftest 
 function __complete-test-test() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --selftest "
+        local options=" --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
