@@ -68,10 +68,11 @@ function __impl-get-child-pids() {
                 echo "      The process ID of the parent process. If not specified the PID of the current Bash process is used."
                 echo
                 echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
                 echo -e "\033[1m    --printPPID\033[22m "
                 echo "        Specifies to also print the PID of the parent process."
+                echo "    -----------------------------"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo
@@ -444,12 +445,13 @@ function __impl-kill-childs() {
                 echo "      The process ID of the parent process. If not specified the PID of the current bash process is used."
                 echo
                 echo "Options:"
+                echo -e "\033[1m-s, --signal VALUE\033[22m (integer: 1-64)"
+                echo "        The signal to be send, eg. 9=KILL or 15=TERM."
+                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\033[1m-s, --signal VALUE\033[22m (integer: 1-64)"
-                echo "        The signal to be send, eg. 9=KILL or 15=TERM."
                 echo
                 return 0
               ;;
@@ -591,12 +593,13 @@ function __impl-kill-listener() {
                 echo "      TCP Port number to check."
                 echo
                 echo "Options:"
+                echo -e "\033[1m-s, --signal VALUE\033[22m (integer: 1-64)"
+                echo "        The signal to be send, eg. 9=KILL or 15=TERM."
+                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\033[1m-s, --signal VALUE\033[22m (integer: 1-64)"
-                echo "        The signal to be send, eg. 9=KILL or 15=TERM."
                 echo
                 return 0
               ;;

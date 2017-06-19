@@ -225,12 +225,13 @@ Parameters:
 Options:
 -a, --all 
         Specifies that all input strings must match.
+-v, --verbose 
+        Prints additional information during command execution.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
         Performs a self-test.
--v, --verbose 
-        Prints additional information during command execution.
 
 Examples:
 $ -str-matches-glob c?t
@@ -297,12 +298,13 @@ Parameters:
 Options:
 -a, --all 
         Specifies that all input strings must match.
+-v, --verbose 
+        Prints additional information during command execution.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
         Performs a self-test.
--v, --verbose 
-        Prints additional information during command execution.
 
 Examples:
 $ -str-matches-regex c.t

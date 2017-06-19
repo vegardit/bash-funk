@@ -95,10 +95,11 @@ Parameters:
       Name of the stack to describe.
 
 Options:
-    --help 
-        Prints this help.
     --region ID 
         AWS region.
+    -----------------------------
+    --help 
+        Prints this help.
     --selftest 
         Performs a self-test.
 ```
@@ -150,12 +151,13 @@ Usage: -aws-is-ec2 [OPTION]...
 Determins if this server is an EC2 instance.
 
 Options:
+-v, --verbose 
+        Prints additional information during command execution.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
         Performs a self-test.
--v, --verbose 
-        Prints additional information during command execution.
 ```
 
 *Implementation:*

@@ -286,10 +286,11 @@ function __impl-aws-describe-stack() {
                 echo "      Name of the stack to describe."
                 echo
                 echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
                 echo -e "\033[1m    --region ID\033[22m "
                 echo "        AWS region."
+                echo "    -----------------------------"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo
@@ -520,12 +521,13 @@ function __impl-aws-is-ec2() {
                 echo "Determins if this server is an EC2 instance."
                 echo
                 echo "Options:"
+                echo -e "\033[1m-v, --verbose\033[22m "
+                echo "        Prints additional information during command execution."
+                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\033[1m-v, --verbose\033[22m "
-                echo "        Prints additional information during command execution."
                 echo
                 return 0
               ;;

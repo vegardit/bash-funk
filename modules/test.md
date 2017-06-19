@@ -44,10 +44,11 @@ Usage: -test-fn-flags [OPTION]...
 Test function with custom flags.
 
 Options:
-    --help 
-        Prints this help.
 -m, --myflag 
         My flag.
+    -----------------------------
+    --help 
+        Prints this help.
     --selftest 
         Performs a self-test.
 
@@ -88,6 +89,7 @@ Options:
         Option f.
 -g, --gg [...] (pattern: "[a-z]+")
         Option g.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
@@ -198,12 +200,13 @@ Usage: -test-fn-noargs [OPTION]...
 Test function with no arguments.
 
 Options:
+-v, --verbose 
+        Prints additional information during command execution.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
         Performs a self-test.
--v, --verbose 
-        Prints additional information during command execution.
 
 Examples:
 $ -test-fn-noargs 
@@ -229,12 +232,13 @@ Requirements:
   + Command 'hash' must be available.
 
 Options:
+-v, --verbose 
+        Prints additional information during command execution.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
         Performs a self-test.
--v, --verbose 
-        Prints additional information during command execution.
 
 Examples:
 $ -test-fn-requires-existing
@@ -257,12 +261,13 @@ Requirements:
   + Command 'some_random_nonexistent_command' must be available.
 
 Options:
+-v, --verbose 
+        Prints additional information during command execution.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
         Performs a self-test.
--v, --verbose 
-        Prints additional information during command execution.
 ```
 
 *Implementation:*
@@ -293,6 +298,7 @@ Options:
         Option f.
 -g, --gg v (pattern: "[a-z]+")
         Option g.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 

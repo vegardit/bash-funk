@@ -72,6 +72,7 @@ function __impl-block-port() {
                 echo "Options:"
                 echo -e "\033[1m-d, --duration SECONDS\033[22m (integer: ?-?)"
                 echo "        Duration in seconds to block the port."
+                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
@@ -261,12 +262,13 @@ function __impl-is-port-open() {
                 echo "      Number of seconds to try to connect to the given port. Default is 5 seconds."
                 echo
                 echo "Options:"
+                echo -e "\033[1m-v, --verbose\033[22m "
+                echo "        Prints additional information during command execution."
+                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\033[1m-v, --verbose\033[22m "
-                echo "        Prints additional information during command execution."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn localhost 12345 1\033[22m"
@@ -564,12 +566,13 @@ function __impl-run-echo-server() {
                 echo "Options:"
                 echo -e "\033[1m    --disconnect_when string\033[22m "
                 echo "        String that can be send to the server to disconnect the current connection."
+                echo -e "\033[1m    --stop_when string\033[22m "
+                echo "        String that can be send to the server to shut it down."
+                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\033[1m    --stop_when string\033[22m "
-                echo "        String that can be send to the server to shut it down."
                 echo
                 return 0
               ;;
@@ -764,12 +767,13 @@ function __impl-set-proxy() {
                 echo "      Proxy exclusions."
                 echo
                 echo "Options:"
+                echo -e "\033[1m-v, --verbose\033[22m "
+                echo "        Prints additional information during command execution."
+                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\033[1m-v, --verbose\033[22m "
-                echo "        Prints additional information during command execution."
                 echo
                 return 0
               ;;

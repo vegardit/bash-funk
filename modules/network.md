@@ -47,6 +47,7 @@ Parameters:
 Options:
 -d, --duration SECONDS (integer: ?-?)
         Duration in seconds to block the port.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
@@ -100,12 +101,13 @@ Parameters:
       Number of seconds to try to connect to the given port. Default is 5 seconds.
 
 Options:
+-v, --verbose 
+        Prints additional information during command execution.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
         Performs a self-test.
--v, --verbose 
-        Prints additional information during command execution.
 
 Examples:
 $ -is-port-open localhost 12345 1
@@ -188,12 +190,13 @@ Parameters:
 Options:
     --disconnect_when string 
         String that can be send to the server to disconnect the current connection.
+    --stop_when string 
+        String that can be send to the server to shut it down.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
         Performs a self-test.
-    --stop_when string 
-        String that can be send to the server to shut it down.
 ```
 
 *Implementation:*
@@ -264,12 +267,13 @@ Parameters:
       Proxy exclusions.
 
 Options:
+-v, --verbose 
+        Prints additional information during command execution.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
         Performs a self-test.
--v, --verbose 
-        Prints additional information during command execution.
 ```
 
 *Implementation:*

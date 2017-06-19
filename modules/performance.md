@@ -81,12 +81,13 @@ Parameters:
       Test file size in MB.
 
 Options:
-    --help 
-        Prints this help.
 -i, --identity_file PATH (file)
         Path to the private key for public key authentication.
 -P, --port PORT (integer: 0-65535)
         Ssh port.
+    -----------------------------
+    --help 
+        Prints this help.
     --selftest 
         Performs a self-test.
 ```

@@ -592,12 +592,13 @@ function __impl-count-words() {
                 echo "      The word to count."
                 echo
                 echo "Options:"
+                echo -e "\033[1m-s, --sort MODE\033[22m (one of: [count,word])"
+                echo "        Specifies how to sort the output."
+                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\033[1m-s, --sort MODE\033[22m (one of: [count,word])"
-                echo "        Specifies how to sort the output."
                 echo
                 return 0
               ;;
@@ -1025,12 +1026,13 @@ function __impl-find-up() {
                 echo "      The file or directory to find."
                 echo
                 echo "Options:"
+                echo -e "\033[1m-t, --type TYPE\033[22m (one of: [d,dir,f,file])"
+                echo "        File type."
+                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\033[1m-t, --type TYPE\033[22m (one of: [d,dir,f,file])"
-                echo "        File type."
                 echo
                 return 0
               ;;
@@ -1179,8 +1181,6 @@ function __impl-findfiles() {
                 echo "      The string to search."
                 echo
                 echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
                 echo -e "\033[1m-l, --lines\033[22m "
                 echo "        Show matching lines of the files that contain the given string."
                 echo -e "\033[1m    --maxdepth levels\033[22m (integer: ?-?)"
@@ -1189,12 +1189,15 @@ function __impl-findfiles() {
                 echo "        The level of directory tree below the starting-point where to start the search."
                 echo -e "\033[1m    --name pattern\033[22m "
                 echo "        Name pattern."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
                 echo -e "\033[1m-u, --unpack\033[22m "
                 echo "        Unpack supported archives (.zip, .jar, .war, .ear)."
                 echo -e "\033[1m-v, --verbose\033[22m "
                 echo "        Prints additional information during command execution."
+                echo "    -----------------------------"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
                 echo
                 return 0
               ;;
@@ -1576,16 +1579,17 @@ function __impl-mkcd() {
                 echo "      The path to create."
                 echo
                 echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
                 echo -e "\033[1m-m, --mode MODE\033[22m (pattern: \"[0-7]{3}\")"
                 echo "        The file mode for the new directory."
                 echo -e "\033[1m-p, --parents\033[22m "
                 echo "        Automatically create missing parent directories."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
                 echo -e "\033[1m-v, --verbose\033[22m "
                 echo "        Prints additional information during command execution."
+                echo "    -----------------------------"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
                 echo
                 return 0
               ;;
@@ -1726,6 +1730,7 @@ function __impl-modified() {
                 echo "Options:"
                 echo -e "\033[1m-f, --format FORMAT\033[22m (one of: [locale,iso8601,human])"
                 echo "        Prints the timestamp in the given format."
+                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
@@ -2462,14 +2467,15 @@ function __impl-tail-reverse() {
                 echo "      Path to the file."
                 echo
                 echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
                 echo -e "\033[1m-n, --lines N\033[22m (integer: ?-?)"
                 echo "        The maximum number of lines to output."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
                 echo -e "\033[1m-u, --unique\033[22m "
                 echo "        Don't print duplicates."
+                echo "    -----------------------------"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
                 echo
                 return 0
               ;;

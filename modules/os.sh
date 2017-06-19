@@ -68,12 +68,13 @@ function __impl-command-exists() {
                 echo "      Name of the program or function."
                 echo
                 echo "Options:"
+                echo -e "\033[1m-v, --verbose\033[22m "
+                echo "        Prints additional information during command execution."
+                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\033[1m-v, --verbose\033[22m "
-                echo "        Prints additional information during command execution."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn hash\033[22m"
@@ -232,12 +233,13 @@ function __impl-pkg-installed() {
                 echo "      Name of the package."
                 echo
                 echo "Options:"
+                echo -e "\033[1m-v, --verbose\033[22m "
+                echo "        Prints additional information during command execution."
+                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\033[1m-v, --verbose\033[22m "
-                echo "        Prints additional information during command execution."
                 echo
                 return 0
               ;;

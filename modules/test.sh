@@ -64,10 +64,11 @@ function __impl-test-fn-flags() {
                 echo "Test function with custom flags."
                 echo
                 echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
                 echo -e "\033[1m-m, --myflag\033[22m "
                 echo "        My flag."
+                echo "    -----------------------------"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo
@@ -213,6 +214,7 @@ function __impl-test-fn-multi-value-options() {
                 echo "        Option f."
                 echo -e "\033[1m-g, --gg [...]\033[22m (pattern: \"[a-z]+\")"
                 echo "        Option g."
+                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
@@ -1054,12 +1056,13 @@ function __impl-test-fn-noargs() {
                 echo "Test function with no arguments."
                 echo
                 echo "Options:"
+                echo -e "\033[1m-v, --verbose\033[22m "
+                echo "        Prints additional information during command execution."
+                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\033[1m-v, --verbose\033[22m "
-                echo "        Prints additional information during command execution."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn \033[22m"
@@ -1204,12 +1207,13 @@ function __impl-test-fn-requires-existing() {
                 echo "  + Command 'hash' must be available."
                 echo
                 echo "Options:"
+                echo -e "\033[1m-v, --verbose\033[22m "
+                echo "        Prints additional information during command execution."
+                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\033[1m-v, --verbose\033[22m "
-                echo "        Prints additional information during command execution."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn \033[22m"
@@ -1326,12 +1330,13 @@ function __impl-test-fn-requires-nonexistent() {
                 echo "  + Command 'some_random_nonexistent_command' must be available."
                 echo
                 echo "Options:"
+                echo -e "\033[1m-v, --verbose\033[22m "
+                echo "        Prints additional information during command execution."
+                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
-                echo -e "\033[1m-v, --verbose\033[22m "
-                echo "        Prints additional information during command execution."
                 echo
                 return 0
               ;;
@@ -1455,6 +1460,7 @@ function __impl-test-fn-single-value-options() {
                 echo "        Option f."
                 echo -e "\033[1m-g, --gg v\033[22m (pattern: \"[a-z]+\")"
                 echo "        Option g."
+                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "

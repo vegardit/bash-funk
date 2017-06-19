@@ -41,10 +41,11 @@ Parameters:
       The process ID of the parent process. If not specified the PID of the current Bash process is used.
 
 Options:
-    --help 
-        Prints this help.
     --printPPID 
         Specifies to also print the PID of the parent process.
+    -----------------------------
+    --help 
+        Prints this help.
     --selftest 
         Performs a self-test.
 ```
@@ -140,12 +141,13 @@ Parameters:
       The process ID of the parent process. If not specified the PID of the current bash process is used.
 
 Options:
+-s, --signal VALUE (integer: 1-64)
+        The signal to be send, eg. 9=KILL or 15=TERM.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
         Performs a self-test.
--s, --signal VALUE (integer: 1-64)
-        The signal to be send, eg. 9=KILL or 15=TERM.
 ```
 
 *Implementation:*
@@ -181,12 +183,13 @@ Parameters:
       TCP Port number to check.
 
 Options:
+-s, --signal VALUE (integer: 1-64)
+        The signal to be send, eg. 9=KILL or 15=TERM.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
         Performs a self-test.
--s, --signal VALUE (integer: 1-64)
-        The signal to be send, eg. 9=KILL or 15=TERM.
 ```
 
 *Implementation:*

@@ -231,12 +231,13 @@ Parameters:
       The word to count.
 
 Options:
+-s, --sort MODE (one of: [count,word])
+        Specifies how to sort the output.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
         Performs a self-test.
--s, --sort MODE (one of: [count,word])
-        Specifies how to sort the output.
 ```
 
 *Implementation:*
@@ -362,12 +363,13 @@ Parameters:
       The file or directory to find.
 
 Options:
+-t, --type TYPE (one of: [d,dir,f,file])
+        File type.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
         Performs a self-test.
--t, --type TYPE (one of: [d,dir,f,file])
-        File type.
 ```
 
 *Implementation:*
@@ -400,8 +402,6 @@ Parameters:
       The string to search.
 
 Options:
-    --help 
-        Prints this help.
 -l, --lines 
         Show matching lines of the files that contain the given string.
     --maxdepth levels (integer: ?-?)
@@ -410,12 +410,15 @@ Options:
         The level of directory tree below the starting-point where to start the search.
     --name pattern 
         Name pattern.
-    --selftest 
-        Performs a self-test.
 -u, --unpack 
         Unpack supported archives (.zip, .jar, .war, .ear).
 -v, --verbose 
         Prints additional information during command execution.
+    -----------------------------
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
 ```
 
 *Implementation:*
@@ -562,16 +565,17 @@ Parameters:
       The path to create.
 
 Options:
-    --help 
-        Prints this help.
 -m, --mode MODE (pattern: "[0-7]{3}")
         The file mode for the new directory.
 -p, --parents 
         Automatically create missing parent directories.
-    --selftest 
-        Performs a self-test.
 -v, --verbose 
         Prints additional information during command execution.
+    -----------------------------
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
 ```
 
 *Implementation:*
@@ -600,6 +604,7 @@ Parameters:
 Options:
 -f, --format FORMAT (one of: [locale,iso8601,human])
         Prints the timestamp in the given format.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
@@ -809,14 +814,15 @@ Parameters:
       Path to the file.
 
 Options:
-    --help 
-        Prints this help.
 -n, --lines N (integer: ?-?)
         The maximum number of lines to output.
-    --selftest 
-        Performs a self-test.
 -u, --unique 
         Don't print duplicates.
+    -----------------------------
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
 ```
 
 *Implementation:*

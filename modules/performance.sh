@@ -270,12 +270,13 @@ function __impl-scp-perf() {
                 echo "      Test file size in MB."
                 echo
                 echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
                 echo -e "\033[1m-i, --identity_file PATH\033[22m (file)"
                 echo "        Path to the private key for public key authentication."
                 echo -e "\033[1m-P, --port PORT\033[22m (integer: 0-65535)"
                 echo "        Ssh port."
+                echo "    -----------------------------"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
                 echo
