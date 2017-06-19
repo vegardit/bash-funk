@@ -8,8 +8,9 @@ The following commands are available when this module is loaded:
 
 1. [-test-fn-flags](#-test-fn-flags)
 1. [-test-fn-multi-value-options](#-test-fn-multi-value-options)
+1. [-test-fn-multi-value-parameter-zero-or-more](#-test-fn-multi-value-parameter-zero-or-more)
 1. [-test-fn-multi-value-parameters](#-test-fn-multi-value-parameters)
-1. [-test-fn-multi-value-parameters-first-variable](#-test-fn-multi-value-parameters-first-variable)
+1. [-test-fn-multi-value-parameters-variable-length](#-test-fn-multi-value-parameters-variable-length)
 1. [-test-fn-noargs](#-test-fn-noargs)
 1. [-test-fn-requires-existing](#-test-fn-requires-existing)
 1. [-test-fn-requires-nonexistent](#-test-fn-requires-nonexistent)
@@ -122,12 +123,44 @@ echo "aa:${_aa[@]} bb:${_bb[@]} cc:${_cc[@]} dd:${_dd[@]} ee:${_ee[@]} ff:${_ff[
 ```
 
 
+## <a name="-test-fn-multi-value-parameter-zero-or-more"></a>-test-fn-multi-value-parameter-zero-or-more
+
+```
+Usage: -test-fn-multi-value-parameter-zero-or-more [OPTION]... [AA]...
+
+Test function with multi value parameters.
+
+Parameters:
+  AA (integer: ?-?)
+      Param AA.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+
+Examples:
+$ -test-fn-multi-value-parameter-zero-or-more 
+AA:
+$ -test-fn-multi-value-parameter-zero-or-more 12
+AA:12
+$ -test-fn-multi-value-parameter-zero-or-more 12 34
+AA:12 34
+```
+
+*Implementation:*
+```bash
+echo "AA:${_AA[@]}"
+```
+
+
 ## <a name="-test-fn-multi-value-parameters"></a>-test-fn-multi-value-parameters
 
 ```
 Usage: -test-fn-multi-value-parameters [OPTION]... AA1 AA2 BB1 BB2 CC1 CC2 DD1 DD2 EE1 EE2 [FF]...
 
-Test function with single value parameters.
+Test function with multi value parameters.
 
 Parameters:
   AA (2 required)
@@ -162,12 +195,12 @@ echo "AA:${_AA[@]} BB:${_BB[@]} CC:${_CC[@]} DD:${_DD[@]} EE:${_EE[@]} FF:${_FF[
 ```
 
 
-## <a name="-test-fn-multi-value-parameters-first-variable"></a>-test-fn-multi-value-parameters-first-variable
+## <a name="-test-fn-multi-value-parameters-variable-length"></a>-test-fn-multi-value-parameters-variable-length
 
 ```
-Usage: -test-fn-multi-value-parameters-first-variable [OPTION]... [AA1..2] BB1 BB2
+Usage: -test-fn-multi-value-parameters-variable-length [OPTION]... [AA1..2] BB1 BB2
 
-Test function with single value parameters.
+Test function with multi value parameters.
 
 Parameters:
   AA (0 to 2 required, integer: ?-?)
@@ -182,7 +215,7 @@ Options:
         Performs a self-test.
 
 Examples:
-$ -test-fn-multi-value-parameters-first-variable 12 34
+$ -test-fn-multi-value-parameters-variable-length 12 34
 AA: BB:12 34
 ```
 
@@ -421,8 +454,9 @@ Options:
 ```bash
 -test-fn-flags --selftest && echo || return 1
 -test-fn-multi-value-options --selftest && echo || return 1
+-test-fn-multi-value-parameter-zero-or-more --selftest && echo || return 1
 -test-fn-multi-value-parameters --selftest && echo || return 1
--test-fn-multi-value-parameters-first-variable --selftest && echo || return 1
+-test-fn-multi-value-parameters-variable-length --selftest && echo || return 1
 -test-fn-noargs --selftest && echo || return 1
 -test-fn-requires-existing --selftest && echo || return 1
 -test-fn-requires-nonexistent --selftest && echo || return 1
