@@ -125,34 +125,34 @@ function __-bash-prompt() {
     local p_user
     if [[ $EUID -eq 0 ]]; then
         # highlight root user yellow
-        p_user="${C_FG_BLACK}${C_BG_YELLOW}*${USER}*${p_bg} "
+        p_user="${C_FG_BLACK}${C_BG_YELLOW}*\u*${p_bg}"
     else
-        p_user="${C_FG_WHITE}${USER}${C_FG_BLACK} "
+        p_user="${C_FG_WHITE}\u${C_FG_BLACK}"
     fi
 
 
     local p_host
-    p_host="| ${C_FG_WHITE}\h${C_FG_BLACK} "
+    p_host="@${C_FG_WHITE}\h${C_FG_BLACK} "
 
 
     local p_scm scm_info
-	if [[ ! ${BASH_FUNK_PROMPT_NO_GIT:-} ]] && ${BASH_FUNK_PREFIX:--}find-up --type d .git &>/dev/null; then
-		# sub-shells, pipes and external programs are avoided as much as possible to significantly improve performance under Cygwin
-		if scm_info=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD 2>/dev/null && echo "-----" && git ls-files -o -m -d --exclude-standard); then
+    if [[ ! ${BASH_FUNK_PROMPT_NO_GIT:-} ]] && ${BASH_FUNK_PREFIX:--}find-up --type d .git &>/dev/null; then
+        # sub-shells, pipes and external programs are avoided as much as possible to significantly improve performance under Cygwin
+        if scm_info=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD 2>/dev/null && echo "-----" && git ls-files -o -m -d --exclude-standard); then
             p_scm="${scm_info%%$'\n'-----*}"     # substring before '\n-----'
 
-			local modifications="${scm_info#*$'\n'-----$'\n'}" # substring after '-----'
-			modifications=( ${modifications// /} )
-        	if [[ ${#modifications[@]} != "0" ]]; then
-            	p_scm="git:$p_scm${C_FG_WHITE}(${#modifications[@]})"
+            local modifications="${scm_info#*$'\n'-----$'\n'}" # substring after '-----'
+            modifications=( ${modifications// /} )
+            if [[ ${#modifications[@]} != "0" ]]; then
+                p_scm="git:$p_scm${C_FG_WHITE}(${#modifications[@]})"
             else
                 p_scm="git:$p_scm"
             fi
-		fi
+        fi
     fi
-	if [[ ! $p_scm && ! ${BASH_FUNK_PROMPT_NO_SVN:-} ]] && ${BASH_FUNK_PREFIX:--}find-up --type d .svn &>/dev/null; then
-		# sub-shells, pipes and external programs are avoided as much as possible to significantly improve performance under Cygwin
-		if scm_info=$(svn info 2>/dev/null && echo "-----" && svn status); then
+    if [[ ! $p_scm && ! ${BASH_FUNK_PROMPT_NO_SVN:-} ]] && ${BASH_FUNK_PREFIX:--}find-up --type d .svn &>/dev/null; then
+        # sub-shells, pipes and external programs are avoided as much as possible to significantly improve performance under Cygwin
+        if scm_info=$(svn info 2>/dev/null && echo "-----" && svn status); then
             if [[ "$scm_info" == *URL:* ]]; then
                 p_scm="${scm_info#*$'\n'URL: }" # substring after 'URL: '
                 p_scm="${p_scm%%$'\n'*}"     # substring before \n
@@ -171,16 +171,16 @@ function __-bash-prompt() {
                 esac
 
                 if [[ $p_scm ]]; then
-					local modifications="${scm_info#*$'\n'-----$'\n'}" # substring after '-----'
-					modifications=( ${modifications// /} )
-                	if [[ ${#modifications[@]} != "0" ]]; then
-                    	p_scm="svn:$p_scm${C_FG_WHITE}(${#modifications[@]})"
+                    local modifications="${scm_info#*$'\n'-----$'\n'}" # substring after '-----'
+                    modifications=( ${modifications// /} )
+                    if [[ ${#modifications[@]} != "0" ]]; then
+                        p_scm="svn:$p_scm${C_FG_WHITE}(${#modifications[@]})"
                     else
                         p_scm="svn:$p_scm"
                     fi
                 fi
             fi
-		fi
+        fi
     fi
     if [[ $p_scm ]]; then
         p_scm="| ${C_FG_LIGHT_YELLOW}$p_scm${C_FG_BLACK} "
@@ -188,8 +188,10 @@ function __-bash-prompt() {
 
 
     local p_date
-    if [[ ! ${BASH_FUNK_PROMPT_NO_DATE:-} ]]; then
-        p_date="| \d \t "
+    if [[ ${BASH_FUNK_PROMPT_DATE:-} ]]; then
+        p_date="| ${BASH_FUNK_PROMPT_DATE:-} "
+    else
+        p_date="| \t "
     fi
 
 
@@ -240,7 +242,7 @@ function __-bash-prompt() {
         p_prefix="${C_RESET}${p_bg}"
     fi
 
-    local LINE1="${p_prefix}${p_lastRC}${p_user}${p_host}${p_scm}${p_date}${p_jobs}${p_screens}${p_tty}${C_RESET}"
+    local LINE1="${p_prefix}${p_lastRC}${p_user}${p_host}${p_date}${p_scm}${p_jobs}${p_screens}${p_tty}${C_RESET}"
     local LINE2="[\033[${BASH_FUNK_DIRS_COLOR}m${pwd}${C_RESET}]"
     local LINE3="$ "
     PS1="\n$LINE1\n$LINE2\n$LINE3"

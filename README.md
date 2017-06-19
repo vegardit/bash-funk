@@ -14,7 +14,7 @@
 
 ## <a name="what-is-it"></a>What is it?
 
-bash-funk is a collection of useful commands for Bash 3.2 or higher. Some extra love is given to [Cygwin](http://cygwin.org) performance.
+bash-funk is a collection of useful commands for Bash 3.2 or higher.
 
 See the markdown files of the different [Bash modules](https://github.com/vegardit/bash-funk/tree/master/modules) for detailed information about the provided commands.
 
@@ -93,7 +93,7 @@ The following environment variables can be set in `~/.bash_funk_rc` to customize
 - `BASH_FUNK_NO_TWEAK_BASH`     - if set to any value bash-funk will not automatically invoke the [-tweak-bash](https://github.com/vegardit/bash-funk/blob/master/modules/misc.md#-tweak-bash) command when loading.
 - `BASH_FUNK_NO_PROMPT`         - if set to any value bash-funk will not install it's Bash prompt function.
 - `BASH_FUNK_PROMPT_PREFIX`     - text that shall be shown at the beginning of the Bash prompt, e.g. a stage identifier (DEV/TEST/PROD)
-- `BASH_FUNK_PROMPT_NO_DATE`    - if set to any value the Bash prompt will not display the current date and time.
+- `BASH_FUNK_PROMPT_DATE`       - prompt escape sequence for the date section, default is "\t", which displays current time. See http://tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
 - `BASH_FUNK_PROMPT_NO_GIT`     - if set to any value the Bash prompt will not display GIT branch and modification information.
 - `BASH_FUNK_PROMPT_NO_JOBS`    - if set to any value the Bash prompt will not display the number of shell jobs.
 - `BASH_FUNK_PROMPT_NO_SCREENS` - if set to any value the Bash prompt will not display the number of detached screens
