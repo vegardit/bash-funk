@@ -90,7 +90,12 @@ $ -random-string 10 [:alnum:][:punct:]
 
 *Implementation:*
 ```bash
+local rc
 env LC_CTYPE=C tr -dc "$_CHARS" < /dev/urandom | fold -w ${_LENGTH} | head -n 1
+
+# https://stackoverflow.com/questions/19120263/why-exit-code-141-with-grep-q
+rc=$?
+(( rc == 141 )) && return 0 || return $rc
 ```
 
 
