@@ -141,7 +141,7 @@ function __-bash-prompt() {
         if scm_info=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD 2>/dev/null && echo "-----" && git ls-files -o -m -d --exclude-standard); then
             p_scm="${scm_info%%$'\n'-----*}"     # substring before '\n-----'
 
-            local modifications="${scm_info#*$'\n'-----$'\n'}" # substring after '-----'
+            local modifications="${scm_info#*$'\n'-----}" # substring after '-----'
             modifications=( ${modifications// /} )
             if [[ ${#modifications[@]} != "0" ]]; then
                 p_scm="git:$p_scm${C_FG_WHITE}(${#modifications[@]})"
