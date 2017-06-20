@@ -22,6 +22,11 @@ if [[ $_ == $0 ]]; then
     echo "The bash-funk script must be sourced"'!'" See the 'source' command."
     false
 else
+    if [[ $- != *i* ]]; then
+        # if non-interactive suppress stdout during bash-funk initialization
+        exec 8>&1 >/dev/null
+    fi
+
     if [[ -e ~/.bash_funk_rc ]]; then
         echo "Sourcing [~/.bash_funk_rc]..."
         source ~/.bash_funk_rc
@@ -135,7 +140,7 @@ EOL
             ${BASH_FUNK_PREFIX}tweak-bash
         fi
 
-        if [[ ! ${BASH_FUNK_NO_PROMPT:-} ]]; then
+        if [[ $- == *i* ]] && [[ ! ${BASH_FUNK_NO_PROMPT:-} ]]; then
             echo "* Setting custom bash prompt..."
             PROMPT_COMMAND=__${BASH_FUNK_PREFIX}bash-prompt
 
@@ -166,22 +171,27 @@ EOL
 
     fi
 
-    echo
-    echo "You are ready to go. Enjoy"'!'
+    if [[ $- == *i* ]]; then
+        echo
+        echo "You are ready to go. Enjoy"'!'
 
-    # show information about detached screens
-    if hash screen &>/dev/null; then
-        __screens="$(screen -list | grep "etached)" | sort | sed -En "s/\s+(.*)\s+.*/  screen -r \1/p")"
-        if [[ $__screens ]]; then
-            echo
-            echo "The following detached screens have been detected:"
+        # show information about detached screens
+        if hash screen &>/dev/null; then
+            __screens="$(screen -list | grep "etached)" | sort | sed -En "s/\s+(.*)\s+.*/  screen -r \1/p")"
+            if [[ $__screens ]]; then
+                echo
+                echo "The following detached screens have been detected:"
 
-            if [[ $TERM == "cygwin" ]]; then
-                echo -e "\033[1m\033[30m${__screens}\033[0m"
-            else
-                echo -e "\033[93m${__screens}\033[0m"
+                if [[ $TERM == "cygwin" ]]; then
+                    echo -e "\033[1m\033[30m${__screens}\033[0m"
+                else
+                    echo -e "\033[93m${__screens}\033[0m"
+                fi
             fi
+            unset __screens
         fi
-        unset __screens
+    else
+        # restoring stdout handle
+        exec 1>&8
     fi
  fi
