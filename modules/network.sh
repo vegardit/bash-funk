@@ -671,12 +671,11 @@ def run():
     srv.bind(('$_BIND_ADDRESS', $_PORT))
     srv.listen(0)
 
-    print_ = sys.stdout.write
-    print_('Running TCP echo server on $_BIND_ADDRESS:$_PORT...\\n')
+    print('Running TCP echo server on $_BIND_ADDRESS:$_PORT...')
 
     while 1:
         conn, src_addr = srv.accept()
-        print_('[CONNECT] ' + str(src_addr) + '\\n')
+        print('[CONNECT] %s' % src_addr)
 
         while 1:
             data, src_addr = conn.recvfrom(256)
@@ -685,17 +684,18 @@ def run():
                 continue
 
             if data == '$_stop_when\r\n':
-                print_('[SHUTDOWN] ' + str(src_addr) + '\\n')
+                print('[SHUTDOWN] %s' % src_addr)
                 sys.exit(0)
 
             if data == '$_disconnect_when\r\n':
-                print_('[DISCONNECT] ' + str(src_addr) + '\\n')
+                print('[DISCONNECT] %s' % src_addr)
                 conn.shutdown(1)
                 conn.close()
                 break
 
             conn.sendall(data)
-            print_(data)
+            sys.stdout.write(data)
+            sys.stdout.flush()
 
 try:
     run()

@@ -127,7 +127,7 @@ function __impl-alloc-mem() {
 echo -n "Allocating ${_MEMORY_IN_MB} MB of memory (may take a moment)..."
 python -c "
 a='1'*1024*1024*${_MEMORY_IN_MB}
-print 'DONE'
+print('DONE')
 raw_input('Press enter to exit...')
 "
 

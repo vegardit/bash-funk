@@ -138,7 +138,7 @@ EOF
 # use python as last resort
 else
     python -c "import hashlib
-print hashlib.md5(open('$_PATH_TO_FILE').read()).hexdigest()"
+print(hashlib.md5(open('$_PATH_TO_FILE').read()).hexdigest())"
 fi
 
     ######### md5sum ######### END
@@ -273,7 +273,7 @@ EOF
 # use python as last resort
 else
     python -c "import hashlib
-print hashlib.sha256(open('$_PATH_TO_FILE').read()).hexdigest()"
+print(hashlib.sha256(open('$_PATH_TO_FILE').read()).hexdigest())"
 fi
 
     ######### sha256sum ######### END

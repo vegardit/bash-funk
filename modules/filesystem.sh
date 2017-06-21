@@ -122,7 +122,7 @@ if hash realpath &>/dev/null; then
 # use python as last resort
 else
     python -c "import os
-print os.path.abspath('$_PATH')"
+print(os.path.abspath('$_PATH'))"
 fi
 
     ######### abspath ######### END
@@ -1791,43 +1791,52 @@ function __impl-modified() {
 
     ######### modified ######### START
 
+local _format=${_format:-timestamp}
 
 case $_format in
-    human)
-        find "$_PATH" -maxdepth 0 -printf "%TY.%Tm.%Td %TT %TZ\n"
-        return
-      ;;
-    locale)
-        find "$_PATH" -maxdepth 0 -printf "%Tc\n"
-        return
-      ;;
-esac
+    human)  find "$_PATH" -maxdepth 0 -printf "%TY.%Tm.%Td %TT %TZ\n" ;;
+    locale) find "$_PATH" -maxdepth 0 -printf "%Tc\n" ;;
+    timestamp)
+        # use stat if available
+        if hash stat &>/dev/null; then
+            stat -c %Y "$_PATH"
 
-local timestamp=$(
-# use stat if available
-if hash stat &>/dev/null; then
-    echo $(stat -c %Y "$_PATH")
-
-# use perl if available
-elif hash perl &>/dev/null; then
-    perl << EOF
+        # use perl if available
+        elif hash perl &>/dev/null; then
+            perl << EOF
 use File::stat;
 print stat("$_PATH")->mtime, "\n"
 EOF
 
-# use python as last resort
-else
-    python -c "import os, pwd
-print int(os.path.getmtime('$_PATH'))"
-fi
-)
+        # use python as last resort
+        else
+            python -c "import os, pwd
+print(str(int(os.path.getmtime('$_PATH'))))"
+        fi
+      ;;
+    iso8601)
 
-if [[ $_format == "iso8601" ]]; then
-    date --iso-8601=seconds -d@$timestamp
-    return
-fi
+        # use stat if available
+        if hash stat &>/dev/null; then
+            local timestamp=$(stat -c %Y "$_PATH")
+            date --iso-8601=seconds -d@$timestamp
 
-echo $timestamp
+        # use perl if available
+        elif hash perl &>/dev/null; then
+            local timestamp=$(perl << EOF
+use File::stat;
+print stat("$_PATH")->mtime, "\n"
+EOF
+        )
+            date --iso-8601=seconds -d@$timestamp
+
+        # use python as last resort
+        else
+            python -c "import os, pwd, datetime, time
+print(datetime.datetime.fromtimestamp(int(os.path.getmtime('$_PATH'))).isoformat() + time.strftime('%z'))"
+        fi
+      ;;
+esac
 
     ######### modified ######### END
 }
@@ -1967,7 +1976,7 @@ EOF
 # use python as last resort
 else
     python -c "import os, pwd
-print pwd.getpwuid(os.stat('$_PATH').st_uid).pw_name"
+print(pwd.getpwuid(os.stat('$_PATH').st_uid).pw_name)"
 fi
 
     ######### owner ######### END
@@ -2096,7 +2105,7 @@ EOF
 # use python as last resort
 else
     python -c "import os
-print os.path.realpath('$_PATH')"
+print(os.path.realpath('$_PATH'))"
 fi
 
     ######### realpath ######### END
