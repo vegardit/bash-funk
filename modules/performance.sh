@@ -225,9 +225,9 @@ function __impl-cpu-perf() {
 local $_mode=${_mode:-openssl-rsa1024}
 
 case $_mode in
-    openssl-aes*)    openssl speed -multi $(grep processor /proc/cpuinfo | wc -l) aes-${_mode*#aes}-cbc
-    openssl-rsa*)    openssl speed -multi $(grep processor /proc/cpuinfo | wc -l) ${_mode#*-}
-    cryptsetup-aes*) cryptsetup benchmark --cipher aes-cbc --key-size ${_mode*#aes}
+    openssl-aes*)    openssl speed -multi $(grep processor /proc/cpuinfo | wc -l) aes-${_mode*#aes}-cbc ;;
+    openssl-rsa*)    openssl speed -multi $(grep processor /proc/cpuinfo | wc -l) ${_mode#*-} ;;
+    cryptsetup-aes*) cryptsetup benchmark --cipher aes-cbc --key-size ${_mode*#aes} ;;
 esac
 
     ######### cpu-perf ######### END
