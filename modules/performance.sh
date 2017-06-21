@@ -145,7 +145,7 @@ function -cpu-perf() {
     return $rc
 }
 function __impl-cpu-perf() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _mode _help _selftest
     [ -t 1 ] && __interactive=1 || true
     
     for __arg in "$@"; do
@@ -161,9 +161,12 @@ function __impl-cpu-perf() {
             --help)
                 echo "Usage: $__fn [OPTION]..."
                 echo
-                echo "Performs a CPU speed test using openssl utilizing all available processors."
+                echo "Performs a CPU speed test using 'openssl speed' utilizing all available processors or 'cryptsetup benchmark'."
                 echo
                 echo "Options:"
+                echo -e "\033[1m-m, --mode MODE\033[22m (one of: [openssl-aes128,openssl-aes256,openssl-rsa1024,openssl-rsa2048,openssl-rsa4096,cryptsetup-aes128,cryptsetup-aes256])"
+                echo "        Select the benchmark mode."
+                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
@@ -183,6 +186,11 @@ function __impl-cpu-perf() {
                 return 0
               ;;
 
+            --mode|-m)
+                _mode="@@##@@"
+                __optionWithValue=mode
+            ;;
+
             -*)
                 echo "$__fn: invalid option: '$__arg'"
                 return 64
@@ -190,6 +198,10 @@ function __impl-cpu-perf() {
 
             *)
                 case $__optionWithValue in
+                    mode)
+                        _mode=$__arg
+                        __optionWithValue=
+                      ;;
                     *)
                         __params+=("$__arg")
                 esac
@@ -202,20 +214,46 @@ function __impl-cpu-perf() {
         return 64
     done
 
+    if [[ $_mode ]]; then
+        if [[ $_mode == "@@##@@" ]]; then echo "$__fn: Error: Value MODE for option --mode must be specified."; return 64; fi
+        declare -A __allowed=( [openssl-aes128]=1 [openssl-aes256]=1 [openssl-rsa1024]=1 [openssl-rsa2048]=1 [openssl-rsa4096]=1 [cryptsetup-aes128]=1 [cryptsetup-aes256]=1 )
+        if [[ ! ${__allowed[$_mode]} ]]; then echo "$__fn: Error: Value '$_mode' for option --mode is not one of the allowed values [openssl-aes128,openssl-aes256,openssl-rsa1024,openssl-rsa2048,openssl-rsa4096,cryptsetup-aes128,cryptsetup-aes256]."; return 64; fi
+    fi
+
     ######### cpu-perf ######### START
 
-openssl speed rsa1024 -multi $(cat /proc/cpuinfo | grep processor | wc -l)
+local $_mode=${_mode:-openssl-rsa1024}
+
+case $_mode in
+    openssl-aes*)    openssl speed -multi $(grep processor /proc/cpuinfo | wc -l) aes-${_mode*#aes}-cbc
+    openssl-rsa*)    openssl speed -multi $(grep processor /proc/cpuinfo | wc -l) ${_mode#*-}
+    cryptsetup-aes*) cryptsetup benchmark --cipher aes-cbc --key-size ${_mode*#aes}
+esac
 
     ######### cpu-perf ######### END
 }
 function __complete-cpu-perf() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help "
+        local options=" --mode -m --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
-        COMPREPLY=($(compgen -o default -- $curr))
+        local prev="${COMP_WORDS[COMP_CWORD-1]}"
+        case $prev in
+            --mode|-m)
+                COMPREPLY=($(compgen -o default -W "openssl-aes128
+openssl-aes256
+openssl-rsa1024
+openssl-rsa2048
+openssl-rsa4096
+cryptsetup-aes128
+cryptsetup-aes256" -- $curr))
+              ;;
+            *)
+                COMPREPLY=($(compgen -o default -- $curr))
+              ;;
+        esac
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}cpu-perf -- ${BASH_FUNK_PREFIX:--}cpu-perf
@@ -512,7 +550,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-performance -- ${BASH_FUNK_PREF
 
 function -help-performance() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}cpu-count\033[0m  -  Prints the number of processors."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}cpu-perf\033[0m  -  Performs a CPU speed test using openssl utilizing all available processors."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}cpu-perf\033[0m  -  Performs a CPU speed test using 'openssl speed' utilizing all available processors or 'cryptsetup benchmark'."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}scp-perf TARGET [SIZE_MB]\033[0m  -  Performs an SCP speed test."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-performance\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 

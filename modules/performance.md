@@ -52,9 +52,12 @@ grep processor /proc/cpuinfo | wc -l
 ```
 Usage: -cpu-perf [OPTION]...
 
-Performs a CPU speed test using openssl utilizing all available processors.
+Performs a CPU speed test using 'openssl speed' utilizing all available processors or 'cryptsetup benchmark'.
 
 Options:
+-m, --mode MODE (one of: [openssl-aes128,openssl-aes256,openssl-rsa1024,openssl-rsa2048,openssl-rsa4096,cryptsetup-aes128,cryptsetup-aes256])
+        Select the benchmark mode.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
@@ -63,7 +66,13 @@ Options:
 
 *Implementation:*
 ```bash
-openssl speed rsa1024 -multi $(cat /proc/cpuinfo | grep processor | wc -l)
+local $_mode=${_mode:-openssl-rsa1024}
+
+case $_mode in
+    openssl-aes*)    openssl speed -multi $(grep processor /proc/cpuinfo | wc -l) aes-${_mode*#aes}-cbc
+    openssl-rsa*)    openssl speed -multi $(grep processor /proc/cpuinfo | wc -l) ${_mode#*-}
+    cryptsetup-aes*) cryptsetup benchmark --cipher aes-cbc --key-size ${_mode*#aes}
+esac
 ```
 
 
