@@ -36,7 +36,7 @@ function -calc() {
     __impl$__fn "$@" && rc=0 || rc=$?
 
     if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... FORMULA"
+        echo; echo "Usage: $__fn [OPTION]... [FORMULA]..."
         echo; echo "Type '$__fn --help' for more details."
     fi
 
@@ -45,6 +45,374 @@ function -calc() {
     return $rc
 }
 function __impl-calc() {
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _round _help _selftest _FORMULA=()
+    [ -t 1 ] && __interactive=1 || true
+    
+    for __arg in "$@"; do
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
+
+            --help)
+                echo "Usage: $__fn [OPTION]... [FORMULA]..."
+                echo
+                echo "Performs calculations using awk. See https://www.gnu.org/software/gawk/manual/html_node/Arithmetic-Ops.html."
+                echo
+                echo "Requirements:"
+                echo "  + Command 'awk' must be available."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mFORMULA\033[22m "
+                echo "      The formula to calculate."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --round PRECISION\033[22m (integer: 0-?)"
+                echo "        Rounds the value with the given precision."
+                echo "    -----------------------------"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo
+                echo "Examples:"
+                echo -e "$ \033[1m$__fn 1.103+1.203\033[22m"
+                echo "2.306"
+                echo -e "$ \033[1m$__fn 1.103+1.203 --round 2\033[22m"
+                echo "2.31"
+                echo -e "$ \033[1m$__fn 1.109-0.8 --round 2\033[22m"
+                echo "0.31"
+                echo -e "$ \033[1m$__fn 1.109-0.8 --round 1\033[22m"
+                echo "0.3"
+                echo -e "$ \033[1m$__fn 1.109-0.8 --round 0\033[22m"
+                echo "0"
+                echo -e "$ \033[1m$__fn 2^1.2 --round 1\033[22m"
+                echo "2.3"
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn 1.103+1.203\033[22m"
+                __stdout="$($__fn 1.103+1.203)"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                __regex="^2.306$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [2.306]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn 1.103+1.203 --round 2\033[22m"
+                __stdout="$($__fn 1.103+1.203 --round 2)"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                __regex="^2.31$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [2.31]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn 1.109-0.8 --round 2\033[22m"
+                __stdout="$($__fn 1.109-0.8 --round 2)"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                __regex="^0.31$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [0.31]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn 1.109-0.8 --round 1\033[22m"
+                __stdout="$($__fn 1.109-0.8 --round 1)"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                __regex="^0.3$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [0.3]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn 1.109-0.8 --round 0\033[22m"
+                __stdout="$($__fn 1.109-0.8 --round 0)"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                __regex="^0$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn 2^1.2 --round 1\033[22m"
+                __stdout="$($__fn 2^1.2 --round 1)"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                __regex="^2.3$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [2.3]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            --round)
+                _round="@@##@@"
+                __optionWithValue=round
+            ;;
+
+            --)
+                __optionWithValue=--
+              ;;
+            -*)
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    round)
+                        _round=$__arg
+                        __optionWithValue=
+                      ;;
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        _FORMULA+=("$__param")
+        continue
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if [[ $_round ]]; then
+        if [[ $_round == "@@##@@" ]]; then echo "$__fn: Error: Value PRECISION for option --round must be specified."; return 64; fi
+        if [[ ! "$_round" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_round' for option --round is not a numeric value."; return 64; fi
+        if [[ $_round -lt 0 ]]; then echo "$__fn: Error: Value '$_round' for option --round is too low. Must be >= 0."; return 64; fi
+    fi
+
+    if ! hash "awk" &>/dev/null; then echo "$__fn: Error: Required command 'awk' not found on this system."; return 64; fi
+
+    ######### calc ######### START
+
+if [[ ! ${_FORMULA:-} ]]; then
+    "$__fn: Formula is missing."
+    return 1
+fi
+
+local formula=""
+for part in "${_FORMULA[@]}"; do
+    formula="$formula $part"
+done
+
+if [[ ${_round:-} ]]; then
+    LC_ALL=C awk "BEGIN{printf \"%.${_round}f\n\", ($formula)}"
+else
+    LC_ALL=C awk "BEGIN{print ($formula)}"
+fi
+
+    ######### calc ######### END
+}
+function __complete-calc() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --round --help "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}calc -- ${BASH_FUNK_PREFIX:--}calc
+
+function -round() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]... VALUE PRECISION"
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-round() {
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _VALUE _PRECISION
+    [ -t 1 ] && __interactive=1 || true
+    
+    for __arg in "$@"; do
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
+
+            --help)
+                echo "Usage: $__fn [OPTION]... VALUE PRECISION"
+                echo
+                echo "Rounds the given decimal value using 'printf' builtin.."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mVALUE\033[22m (required, pattern: \"[-+]?[0-9]*\.?[0-9]+\")"
+                echo "      The first number."
+                echo -e "  \033[1mPRECISION\033[22m (required, integer: 0-?)"
+                echo "      Number of decimal digits."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo
+                echo "Examples:"
+                echo -e "$ \033[1m$__fn 1.903 3\033[22m"
+                echo "1.903"
+                echo -e "$ \033[1m$__fn 1.903 2\033[22m"
+                echo "1.90"
+                echo -e "$ \033[1m$__fn 1.903 0\033[22m"
+                echo "2"
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn 1.903 3\033[22m"
+                __stdout="$($__fn 1.903 3)"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                __regex="^1.903$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [1.903]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn 1.903 2\033[22m"
+                __stdout="$($__fn 1.903 2)"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                __regex="^1.90$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [1.90]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn 1.903 0\033[22m"
+                __stdout="$($__fn 1.903 0)"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                __regex="^2$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [2]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            --)
+                __optionWithValue=--
+              ;;
+            -*)
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        if [[ ! $_VALUE ]]; then
+            _VALUE=$__param
+            continue
+        fi
+        if [[ ! $_PRECISION ]]; then
+            _PRECISION=$__param
+            continue
+        fi
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if [[ $_VALUE ]]; then
+        if [[ ! "$_VALUE" =~ ^[-+]?[0-9]*\.?[0-9]+$ ]]; then echo "$__fn: Error: Value '$_VALUE' for parameter VALUE does not match required pattern '[-+]?[0-9]*\.?[0-9]+'."; return 64; fi
+    else
+        echo "$__fn: Error: Parameter VALUE must be specified."; return 64
+    fi
+    if [[ $_PRECISION ]]; then
+        if [[ ! "$_PRECISION" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_PRECISION' for parameter PRECISION is not a numeric value."; return 64; fi
+        if [[ $_PRECISION -lt 0 ]]; then echo "$__fn: Error: Value '$_PRECISION' for parameter PRECISION is too low. Must be >= 0."; return 64; fi
+    else
+        echo "$__fn: Error: Parameter PRECISION must be specified."; return 64
+    fi
+
+    ######### round ######### START
+
+LC_ALL=C builtin printf "%.*f\n" $_PRECISION $_VALUE
+
+    ######### round ######### END
+}
+function __complete-round() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --help "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}round -- ${BASH_FUNK_PREFIX:--}round
+
+function -simple-calc() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]... FORMULA"
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-simple-calc() {
     local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _round _using _help _selftest _FORMULA
     [ -t 1 ] && __interactive=1 || true
     
@@ -61,7 +429,7 @@ function __impl-calc() {
             --help)
                 echo "Usage: $__fn [OPTION]... FORMULA"
                 echo
-                echo "Performs simple floating point operations using awk, perl, python or bc depending on which command is available."
+                echo "Performs simple floating point operations using awk, perl, python or bc - depending on which command is available."
                 echo
                 echo "Parameters:"
                 echo -e "  \033[1mFORMULA\033[22m (required, pattern: \"[+-]?[0-9]*\.?[0-9]+[/*+-^][0-9]*\.?[0-9]+\")"
@@ -326,9 +694,16 @@ function __impl-calc() {
                 __optionWithValue=using
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -364,8 +739,7 @@ function __impl-calc() {
     fi
     if [[ $_using ]]; then
         if [[ $_using == "@@##@@" ]]; then echo "$__fn: Error: Value COMMAND for option --using must be specified."; return 64; fi
-        declare -A __allowed=( ['awk']=1 ['bc']=1 ['perl']=1 ['python']=1 )
-        if [[ ! ${__allowed[$_using]} ]]; then echo "$__fn: Error: Value '$_using' for option --using is not one of the allowed values [awk,bc,perl,python]."; return 64; fi
+        if [[ $_using!='awk' || $_using!='bc' || $_using!='perl' || $_using!='python' ]]; then echo "$__fn: Error: Value '$_using' for option --using is not one of the allowed values [awk,bc,perl,python]."; return 64; fi
     fi
 
     if [[ $_FORMULA ]]; then
@@ -374,7 +748,7 @@ function __impl-calc() {
         echo "$__fn: Error: Parameter FORMULA must be specified."; return 64
     fi
 
-    ######### calc ######### START
+    ######### simple-calc ######### START
 
 if [[ $_FORMULA =~ ^([+-]?[0-9]*\.?[0-9]+)([/*+-^])([0-9]*\.?[0-9]+)$ ]]; then
     local leftNumber=${BASH_REMATCH[1]}
@@ -466,9 +840,9 @@ print(result)
 
 esac
 
-    ######### calc ######### END
+    ######### simple-calc ######### END
 }
-function __complete-calc() {
+function __complete-simple-calc() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
         local options=" --round --using --help "
@@ -489,162 +863,7 @@ python" -- $curr))
         esac
     fi
 }
-complete -F __complete${BASH_FUNK_PREFIX:--}calc -- ${BASH_FUNK_PREFIX:--}calc
-
-function -round() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
-
-    set +auHt
-    set -o pipefail
-
-    __impl$__fn "$@" && rc=0 || rc=$?
-
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... VALUE PRECISION"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
-
-    eval $opts
-
-    return $rc
-}
-function __impl-round() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _VALUE _PRECISION
-    [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
-        case "$__arg" in
-            -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        case "$__arg" in
-
-            --help)
-                echo "Usage: $__fn [OPTION]... VALUE PRECISION"
-                echo
-                echo "Rounds the given decimal value using 'printf' builtin.."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mVALUE\033[22m (required, pattern: \"[-+]?[0-9]*\.?[0-9]+\")"
-                echo "      The first number."
-                echo -e "  \033[1mPRECISION\033[22m (required, integer: 0-?)"
-                echo "      Number of decimal digits."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn 1.903 3\033[22m"
-                echo "1.903"
-                echo -e "$ \033[1m$__fn 1.903 2\033[22m"
-                echo "1.90"
-                echo -e "$ \033[1m$__fn 1.903 0\033[22m"
-                echo "2"
-                echo
-                return 0
-              ;;
-
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn 1.903 3\033[22m"
-                __stdout="$($__fn 1.903 3)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^1.903$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [1.903]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn 1.903 2\033[22m"
-                __stdout="$($__fn 1.903 2)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^1.90$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [1.90]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn 1.903 0\033[22m"
-                __stdout="$($__fn 1.903 0)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^2$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [2]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
-
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
-
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
-
-    for __param in "${__params[@]}"; do
-        if [[ ! $_VALUE ]]; then
-            _VALUE=$__param
-            continue
-        fi
-        if [[ ! $_PRECISION ]]; then
-            _PRECISION=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
-
-    if [[ $_VALUE ]]; then
-        if [[ ! "$_VALUE" =~ ^[-+]?[0-9]*\.?[0-9]+$ ]]; then echo "$__fn: Error: Value '$_VALUE' for parameter VALUE does not match required pattern '[-+]?[0-9]*\.?[0-9]+'."; return 64; fi
-    else
-        echo "$__fn: Error: Parameter VALUE must be specified."; return 64
-    fi
-    if [[ $_PRECISION ]]; then
-        if [[ ! "$_PRECISION" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_PRECISION' for parameter PRECISION is not a numeric value."; return 64; fi
-        if [[ $_PRECISION -lt 0 ]]; then echo "$__fn: Error: Value '$_PRECISION' for parameter PRECISION is too low. Must be >= 0."; return 64; fi
-    else
-        echo "$__fn: Error: Parameter PRECISION must be specified."; return 64
-    fi
-
-    ######### round ######### START
-
-LC_ALL=C builtin printf "%.*f\n" $_PRECISION $_VALUE
-
-    ######### round ######### END
-}
-function __complete-round() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
-}
-complete -F __complete${BASH_FUNK_PREFIX:--}round -- ${BASH_FUNK_PREFIX:--}round
+complete -F __complete${BASH_FUNK_PREFIX:--}simple-calc -- ${BASH_FUNK_PREFIX:--}simple-calc
 
 function -test-math() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
@@ -709,9 +928,16 @@ function __impl-test-math() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -732,6 +958,7 @@ function __impl-test-math() {
 
 ${BASH_FUNK_PREFIX:--}calc --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}round --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}simple-calc --selftest && echo || return 1
 
     ######### test-math ######### END
 }
@@ -749,9 +976,10 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-math -- ${BASH_FUNK_PREFIX:--}t
 
 
 function -help-math() {
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}calc FORMULA\033[0m  -  Performs simple floating point operations using awk, perl, python or bc depending on which command is available."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}calc [FORMULA]...\033[0m  -  Performs calculations using awk. See https://www.gnu.org/software/gawk/manual/html_node/Arithmetic-Ops.html."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}round VALUE PRECISION\033[0m  -  Rounds the given decimal value using 'printf' builtin.."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}simple-calc FORMULA\033[0m  -  Performs simple floating point operations using awk, perl, python or bc - depending on which command is available."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-math\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( calc round test-math )
+__BASH_FUNK_FUNCS+=( calc round simple-calc test-math )

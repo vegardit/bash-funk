@@ -6,6 +6,7 @@ The following commands are available when this module is loaded:
 
 1. [-calc](#-calc)
 1. [-round](#-round)
+1. [-simple-calc](#-simple-calc)
 1. [-test-math](#-test-math)
 
 
@@ -29,19 +30,20 @@ limitations under the License.
 ## <a name="-calc"></a>-calc
 
 ```
-Usage: -calc [OPTION]... FORMULA
+Usage: -calc [OPTION]... [FORMULA]...
 
-Performs simple floating point operations using awk, perl, python or bc depending on which command is available.
+Performs calculations using awk. See https://www.gnu.org/software/gawk/manual/html_node/Arithmetic-Ops.html.
+
+Requirements:
+  + Command 'awk' must be available.
 
 Parameters:
-  FORMULA (required, pattern: "[+-]?[0-9]*\.?[0-9]+[/*+-^][0-9]*\.?[0-9]+")
-      The formula in the form of <NUM><OPERATOR><NUM>.
+  FORMULA 
+      The formula to calculate.
 
 Options:
     --round PRECISION (integer: 0-?)
         Rounds the value with the given precision.
-    --using COMMAND (one of: [awk,bc,perl,python])
-        Specifies which command to use for calculation.
     -----------------------------
     --help 
         Prints this help.
@@ -60,6 +62,97 @@ $ -calc 1.109-0.8 --round 1
 $ -calc 1.109-0.8 --round 0
 0
 $ -calc 2^1.2 --round 1
+2.3
+```
+
+*Implementation:*
+```bash
+if [[ ! ${_FORMULA:-} ]]; then
+    "$__fn: Formula is missing."
+    return 1
+fi
+
+local formula=""
+for part in "${_FORMULA[@]}"; do
+    formula="$formula $part"
+done
+
+if [[ ${_round:-} ]]; then
+    LC_ALL=C awk "BEGIN{printf \"%.${_round}f\n\", ($formula)}"
+else
+    LC_ALL=C awk "BEGIN{print ($formula)}"
+fi
+```
+
+
+## <a name="-round"></a>-round
+
+```
+Usage: -round [OPTION]... VALUE PRECISION
+
+Rounds the given decimal value using 'printf' builtin..
+
+Parameters:
+  VALUE (required, pattern: "[-+]?[0-9]*\.?[0-9]+")
+      The first number.
+  PRECISION (required, integer: 0-?)
+      Number of decimal digits.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+
+Examples:
+$ -round 1.903 3
+1.903
+$ -round 1.903 2
+1.90
+$ -round 1.903 0
+2
+```
+
+*Implementation:*
+```bash
+LC_ALL=C builtin printf "%.*f\n" $_PRECISION $_VALUE
+```
+
+
+## <a name="-simple-calc"></a>-simple-calc
+
+```
+Usage: -simple-calc [OPTION]... FORMULA
+
+Performs simple floating point operations using awk, perl, python or bc - depending on which command is available.
+
+Parameters:
+  FORMULA (required, pattern: "[+-]?[0-9]*\.?[0-9]+[/*+-^][0-9]*\.?[0-9]+")
+      The formula in the form of <NUM><OPERATOR><NUM>.
+
+Options:
+    --round PRECISION (integer: 0-?)
+        Rounds the value with the given precision.
+    --using COMMAND (one of: [awk,bc,perl,python])
+        Specifies which command to use for calculation.
+    -----------------------------
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+
+Examples:
+$ -simple-calc 1.103+1.203
+2.306
+$ -simple-calc 1.103+1.203 --round 2
+2.31
+$ -simple-calc 1.109-0.8 --round 2
+0.31
+$ -simple-calc 1.109-0.8 --round 1
+0.3
+$ -simple-calc 1.109-0.8 --round 0
+0
+$ -simple-calc 2^1.2 --round 1
 2.3
 ```
 
@@ -157,40 +250,6 @@ esac
 ```
 
 
-## <a name="-round"></a>-round
-
-```
-Usage: -round [OPTION]... VALUE PRECISION
-
-Rounds the given decimal value using 'printf' builtin..
-
-Parameters:
-  VALUE (required, pattern: "[-+]?[0-9]*\.?[0-9]+")
-      The first number.
-  PRECISION (required, integer: 0-?)
-      Number of decimal digits.
-
-Options:
-    --help 
-        Prints this help.
-    --selftest 
-        Performs a self-test.
-
-Examples:
-$ -round 1.903 3
-1.903
-$ -round 1.903 2
-1.90
-$ -round 1.903 0
-2
-```
-
-*Implementation:*
-```bash
-LC_ALL=C builtin printf "%.*f\n" $_PRECISION $_VALUE
-```
-
-
 ## <a name="-test-math"></a>-test-math
 
 ```
@@ -209,4 +268,5 @@ Options:
 ```bash
 -calc --selftest && echo || return 1
 -round --selftest && echo || return 1
+-simple-calc --selftest && echo || return 1
 ```
