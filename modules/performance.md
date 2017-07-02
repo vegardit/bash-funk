@@ -6,6 +6,8 @@ The following commands are available when this module is loaded:
 
 1. [-cpu-count](#-cpu-count)
 1. [-cpu-perf](#-cpu-perf)
+1. [-disk-latency](#-disk-latency)
+1. [-disk-perf](#-disk-perf)
 1. [-scp-perf](#-scp-perf)
 1. [-test-performance](#-test-performance)
 
@@ -39,6 +41,12 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
+
+Examples:
+$ -cpu-count 
+4
 ```
 
 *Implementation:*
@@ -52,16 +60,22 @@ grep processor /proc/cpuinfo | wc -l
 ```
 Usage: -cpu-perf [OPTION]...
 
-Performs a CPU speed test using 'openssl speed' utilizing all available processors or 'cryptsetup benchmark'.
+Performs a CPU speed test using 'openssl speed' utilizing all available processors or 'cryptsetup benchmark' / 'dd' for single threaded tests.
 
 Options:
--m, --mode MODE (one of: [openssl-aes128,openssl-aes256,openssl-rsa1024,openssl-rsa2048,openssl-rsa4096,cryptsetup-aes128,cryptsetup-aes256])
+-m, --mode MODE (one of: [openssl-aes128,openssl-aes256,openssl-rsa1024,openssl-rsa2048,openssl-rsa4096,cryptsetup-aes128,cryptsetup-aes256,dd-md5sum,dd-sha256sum,dd-sha512sum])
         Select the benchmark mode.
     -----------------------------
     --help 
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
+
+Examples:
+$ -cpu-perf --mode dd-md5sum
+1073741824 bytes (1.1 GB, 1.0 GiB) copied, 2.04484 s, 525 MB/s
 ```
 
 *Implementation:*
@@ -69,9 +83,127 @@ Options:
 local _mode=${_mode:-openssl-rsa1024}
 
 case $_mode in
-    openssl-aes*)    openssl speed -multi $(grep processor /proc/cpuinfo | wc -l) aes-${_mode*#aes}-cbc ;;
-    openssl-rsa*)    openssl speed -multi $(grep processor /proc/cpuinfo | wc -l) ${_mode#*-} ;;
-    cryptsetup-aes*) cryptsetup benchmark --cipher aes-cbc --key-size ${_mode*#aes} ;;
+    openssl-aes*) openssl speed -multi $(grep processor /proc/cpuinfo | wc -l) aes-${_mode#*aes}-cbc ;;
+    openssl-rsa*) openssl speed -multi $(grep processor /proc/cpuinfo | wc -l) ${_mode#*-} ;;
+    cryptsetup-*) cryptsetup benchmark --cipher aes-cbc --key-size ${_mode#cryptsetup-} ;;
+    dd-*)         dd if=/dev/zero bs=1M count=1024 2> >(head -3 | tail -1) > >(${_mode#dd-} >/dev/null) ;;
+esac
+```
+
+
+## <a name="-disk-latency"></a>-disk-latency
+
+```
+Usage: -disk-latency [OPTION]... [PATH]
+
+Determines disk latency in milliseconds using 'dd'.
+
+Requirements:
+  + Command 'dd' must be available.
+
+Parameters:
+  PATH (default: '.', directory)
+      Path where to create the test files.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+
+Examples:
+$ -disk-latency 
+2.34362 ms disk latency on device /dev/xvda2
+$ -disk-latency /tmp
+1.46379 ms disk latency on device /dev/xvda1
+```
+
+*Implementation:*
+```bash
+local testFile="$(mktemp "--tmpdir=$_PATH")"
+local ddResult
+if ddResult=$(set -o pipefail; dd if=/dev/zero "of=$testFile" bs=512 count=1000 oflag=dsync 2>&1 | tail -1 | sed -E 's/.*copied, ([0-9.]+) .+/\1 ms/'); then
+    rm "$testFile"
+    echo "$ddResult disk latency on device $(df -P "$_PATH" | tail -1 | cut -d' ' -f1)"
+    return 0
+else
+    rm "$testFile"
+    echo $ddResult
+    return 1
+fi
+```
+
+
+## <a name="-disk-perf"></a>-disk-perf
+
+```
+Usage: -disk-perf [OPTION]... [PATH]
+
+Performs a I/O speed test using 'fio' utilizing all available processors or single-threaded 'dd'.
+
+Parameters:
+  PATH (default: '.', directory)
+      Path where to create the test files.
+
+Options:
+-m, --mode MODE (one of: [dd,fio])
+        Select the benchmark mode.
+    --size SIZE (integer: 1-?)
+        Test file size in MB (Default is 2048MB).
+    -----------------------------
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+
+Examples:
+$ -disk-perf -disk-perf --mode dd --size 2
+Testing single-threaded sequential write performance...
+2097152 bytes (2.1 MB, 2.0 MiB) copied, 0.0186709 s, 112 MB/s
+
+Testing single-threaded sequential read performance...
+2097152 bytes (2.1 MB, 2.0 MiB) copied, 0.00332485 s, 631 MB/s
+```
+
+*Implementation:*
+```bash
+local _size=${_size:-2048}
+local _mode=${_mode:-fio}
+
+case $_mode in
+    dd) if ! hash dd &>/dev/null; then
+            echo "$__fn: Required command 'dd' is not available."
+            return 1
+        fi
+
+        local testFile="$(mktemp --tmpdir="$_PATH")"
+        echo "Testing single-threaded sequential write performance..."
+        dd if=/dev/zero of="${testFile}" bs=1M count=${_size} conv=fdatasync 2>&1 | head -3 | tail -1
+        echo
+        echo "Testing single-threaded sequential read performance..."
+        dd if="${testFile}" of=/dev/null bs=4k 2>&1 | head -3 | tail -1
+
+        rm $testFile
+       ;;
+    *)  if ! hash fio &>/dev/null; then
+            echo "$__fn: Required command 'fio' is not available. You can also try with option '--mode dd'."
+            return 1
+        fi
+
+        local testFile=$(basename $(mktemp --dry-run --tmpdir="$_PATH"))
+        echo "Testing multi-threaded random write performance..."
+        fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(grep processor /proc/cpuinfo | wc -l) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randwrite
+        echo
+        echo "Testing multi-threaded random read performance..."
+        fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(grep processor /proc/cpuinfo | wc -l) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randread
+        echo
+        echo "Testing multi-threaded random read-write (3:1) performance..."
+        fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(grep processor /proc/cpuinfo | wc -l) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randrw --rwmixread=75
+       ;;
 esac
 ```
 
@@ -99,6 +231,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 ```
 
 *Implementation:*
@@ -146,11 +280,15 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 ```
 
 *Implementation:*
 ```bash
 -cpu-count --selftest && echo || return 1
 -cpu-perf --selftest && echo || return 1
+-disk-latency --selftest && echo || return 1
+-disk-perf --selftest && echo || return 1
 -scp-perf --selftest && echo || return 1
 ```
