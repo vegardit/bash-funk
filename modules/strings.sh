@@ -72,6 +72,8 @@ function __impl-ascii2hex() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn XYZ\033[22m"
@@ -204,6 +206,8 @@ function __impl-hex2ascii() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn 58595A\033[22m"
@@ -336,6 +340,8 @@ function __impl-normalize-path() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn a/./b/c/d/../e\033[22m"
@@ -477,6 +483,8 @@ function __impl-str-join() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn , a b c\033[22m"
@@ -656,6 +664,8 @@ function __impl-str-lower() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn aBcDeF\033[22m"
@@ -799,6 +809,8 @@ function __impl-str-matches-glob() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn c?t\033[22m"
@@ -1018,6 +1030,8 @@ function __impl-str-matches-regex() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn c.t\033[22m"
@@ -1231,6 +1245,8 @@ function __impl-str-repeat() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn a 3\033[22m"
@@ -1374,6 +1390,8 @@ function __impl-str-trim() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn \"  abc  \"\033[22m"
@@ -1506,6 +1524,8 @@ function __impl-str-upper() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn aBcDeF\033[22m"
@@ -1642,6 +1662,8 @@ function __impl-strip-ansi() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn $(echo -e '\033[4mThis is underlined\033[24m')\033[22m"
@@ -1777,6 +1799,8 @@ function __impl-substr-after() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn 00aa11aa22 aa\033[22m"
@@ -1920,6 +1944,8 @@ function __impl-substr-after-last() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn 00aa11aa22 aa\033[22m"
@@ -2063,6 +2089,8 @@ function __impl-substr-before() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn 00aa11aa22 aa\033[22m"
@@ -2206,6 +2234,8 @@ function __impl-substr-before-last() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn 00aa11aa00 aa\033[22m"
@@ -2351,6 +2381,8 @@ function __impl-substr-between() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn 00aa11aa22aa00 aa aa\033[22m"
@@ -2498,6 +2530,8 @@ function __impl-test-strings() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;

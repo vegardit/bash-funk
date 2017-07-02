@@ -56,6 +56,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -ascii2hex XYZ
@@ -84,6 +86,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -hex2ascii 58595A
@@ -112,6 +116,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -normalize-path a/./b/c/d/../e
@@ -149,6 +155,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -str-join , a b c
@@ -193,6 +201,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -str-lower aBcDeF
@@ -232,6 +242,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -str-matches-glob c?t
@@ -305,6 +317,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -str-matches-regex c.t
@@ -372,6 +386,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -str-repeat a 3
@@ -401,6 +417,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -str-trim "  abc  "
@@ -429,6 +447,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -str-upper aBcDeF
@@ -461,6 +481,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -strip-ansi $(echo -e '\033[4mThis is underlined\033[24m')
@@ -500,6 +522,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -substr-after 00aa11aa22 aa
@@ -530,6 +554,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -substr-after-last 00aa11aa22 aa
@@ -560,6 +586,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -substr-before 00aa11aa22 aa
@@ -590,6 +618,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -substr-before-last 00aa11aa00 aa
@@ -622,6 +652,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -substr-between 00aa11aa22aa00 aa aa
@@ -647,6 +679,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 ```
 
 *Implementation:*

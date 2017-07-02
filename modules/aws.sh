@@ -79,6 +79,8 @@ function __impl-aws-account-id() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -188,6 +190,8 @@ function __impl-aws-az() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -307,6 +311,8 @@ function __impl-aws-describe-stack() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -444,6 +450,8 @@ function __impl-aws-instance-id() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -556,6 +564,8 @@ function __impl-aws-is-ec2() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -673,6 +683,8 @@ function __impl-aws-private-ip() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -782,6 +794,8 @@ function __impl-aws-region() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -894,6 +908,8 @@ function __impl-aws-stack-name() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -1007,6 +1023,8 @@ function __impl-aws-vpc-cidr-block() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -1116,6 +1134,8 @@ function __impl-aws-vpc-id() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -1225,6 +1245,8 @@ function __impl-test-aws() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;

@@ -53,6 +53,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -block-port --duration 1  12345
@@ -109,6 +111,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -is-port-open localhost 12345 1
@@ -164,6 +168,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 ```
 
 *Implementation:*
@@ -198,6 +204,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 ```
 
 *Implementation:*
@@ -275,6 +283,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 ```
 
 *Implementation:*
@@ -327,6 +337,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 ```
 
 *Implementation:*
@@ -358,6 +370,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 ```
 
 *Implementation:*
@@ -405,6 +419,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 ```
 
 *Implementation:*
@@ -427,6 +443,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 ```
 
 *Implementation:*

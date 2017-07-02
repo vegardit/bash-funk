@@ -72,6 +72,8 @@ function __impl-abspath() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -200,6 +202,8 @@ function __impl-cd-down() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -334,6 +338,8 @@ function __impl-cd-hist() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -479,6 +485,8 @@ function __impl-cd-up() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -635,6 +643,8 @@ function __impl-count-words() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -693,7 +703,7 @@ function __impl-count-words() {
 
     if [[ $_sort ]]; then
         if [[ $_sort == "@@##@@" ]]; then echo "$__fn: Error: Value MODE for option --sort must be specified."; return 64; fi
-        if [[ $_sort!='count' || $_sort!='word' ]]; then echo "$__fn: Error: Value '$_sort' for option --sort is not one of the allowed values [count,word]."; return 64; fi
+        if [[ $_sort != 'count' && $_sort != 'word' ]]; then echo "$__fn: Error: Value '$_sort' for option --sort is not one of the allowed values [count,word]."; return 64; fi
     fi
 
     if [[ $_FILE ]]; then
@@ -807,6 +817,8 @@ function __impl-du() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -924,6 +936,8 @@ function __impl-extract() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -1082,6 +1096,8 @@ function __impl-find-up() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -1138,7 +1154,7 @@ function __impl-find-up() {
 
     if [[ $_type ]]; then
         if [[ $_type == "@@##@@" ]]; then echo "$__fn: Error: Value TYPE for option --type must be specified."; return 64; fi
-        if [[ $_type!='d' || $_type!='dir' || $_type!='f' || $_type!='file' ]]; then echo "$__fn: Error: Value '$_type' for option --type is not one of the allowed values [d,dir,f,file]."; return 64; fi
+        if [[ $_type != 'd' && $_type != 'dir' && $_type != 'f' && $_type != 'file' ]]; then echo "$__fn: Error: Value '$_type' for option --type is not one of the allowed values [d,dir,f,file]."; return 64; fi
     fi
 
     if [[ $_FILENAME ]]; then
@@ -1253,6 +1269,8 @@ function __impl-findfiles() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -1516,6 +1534,8 @@ function __impl-ll() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -1562,9 +1582,10 @@ function __impl-ll() {
     ######### ll ######### START
 
 [[ ! $_PATH ]] && _PATH=(.) || true
-local _lsopts
-[[ ${OSTYPE} =~ "darwin" ]] && _lsopts=" -G" || _lsopts=" -I lost+found --color=always"
-command ls -lAph${_lsopts} "${_PATH[@]}" | awk '
+
+local _ls="command ls -lAph \"${_PATH[@]}\""
+[[ ${OSTYPE} =~ "darwin" ]] && _ls="$_ls -G" || _ls="$_ls -I lost+found --color=always"
+eval $_ls | awk '
     BEGIN { dotDirs = ""; dirs = ""; dotFiles = ""; files = "" }
     /^total/                                                           { total = $0 }                   # capture total line
 
@@ -1652,6 +1673,8 @@ function __impl-mkcd() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -1804,6 +1827,8 @@ function __impl-modified() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -1861,7 +1886,7 @@ function __impl-modified() {
     if [[ ! $_PATH ]]; then _PATH="."; fi
     if [[ $_format ]]; then
         if [[ $_format == "@@##@@" ]]; then echo "$__fn: Error: Value FORMAT for option --format must be specified."; return 64; fi
-        if [[ $_format!='locale' || $_format!='iso8601' || $_format!='human' ]]; then echo "$__fn: Error: Value '$_format' for option --format is not one of the allowed values [locale,iso8601,human]."; return 64; fi
+        if [[ $_format != 'locale' && $_format != 'iso8601' && $_format != 'human' ]]; then echo "$__fn: Error: Value '$_format' for option --format is not one of the allowed values [locale,iso8601,human]."; return 64; fi
     fi
 
     if [[ $_PATH ]]; then
@@ -1995,6 +2020,8 @@ function __impl-owner() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -2133,6 +2160,8 @@ function __impl-realpath() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -2274,6 +2303,8 @@ function __impl-sudo-append() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn /tmp/testfile.cfg 'foo=bar'\033[22m"
@@ -2427,6 +2458,8 @@ function __impl-sudo-write() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn /tmp/testfile.cfg $USER:$USER 'foo=bar'\033[22m"
@@ -2588,6 +2621,8 @@ function __impl-tail-reverse() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -2737,6 +2772,8 @@ function __impl-test-filesystem() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;

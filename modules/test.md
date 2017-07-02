@@ -52,6 +52,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -test-fn-flags 
@@ -95,6 +97,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -test-fn-multi-value-options 
@@ -139,6 +143,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -test-fn-multi-value-parameter-zero-or-more 
@@ -181,6 +187,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -test-fn-multi-value-parameters aa aa 12 34 1 5 A B foo bar
@@ -213,6 +221,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -test-fn-multi-value-parameters-variable-length 12 34
@@ -240,6 +250,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -test-fn-noargs 
@@ -272,6 +284,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -test-fn-requires-existing
@@ -301,6 +315,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 ```
 
 *Implementation:*
@@ -336,6 +352,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -test-fn-single-value-options 
@@ -390,6 +408,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -test-fn-single-value-parameters aa 12 5 A foo
@@ -422,6 +442,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -test-fn-single-value-parameters-first-optional 22
@@ -448,6 +470,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 ```
 
 *Implementation:*

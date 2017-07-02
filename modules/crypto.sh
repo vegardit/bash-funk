@@ -72,6 +72,8 @@ function __impl-md5sum() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -214,6 +216,8 @@ function __impl-sha256sum() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -352,6 +356,8 @@ function __impl-test-crypto() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;

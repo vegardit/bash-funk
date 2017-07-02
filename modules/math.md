@@ -49,6 +49,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -calc 1.103+1.203
@@ -103,6 +105,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -round 1.903 3
@@ -140,6 +144,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 
 Examples:
 $ -simple-calc 1.103+1.203
@@ -262,6 +268,8 @@ Options:
         Prints this help.
     --selftest 
         Performs a self-test.
+    --
+        Terminates the option list.
 ```
 
 *Implementation:*

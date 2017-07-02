@@ -72,6 +72,8 @@ function __impl-random-number() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn 1-1\033[22m"
@@ -224,6 +226,8 @@ function __impl-random-string() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn 12 0-9\033[22m"
@@ -391,6 +395,8 @@ function __impl-test-random() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;

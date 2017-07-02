@@ -71,6 +71,8 @@ function __impl-test-fn-flags() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn \033[22m"
@@ -226,6 +228,8 @@ function __impl-test-fn-multi-value-options() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn \033[22m"
@@ -501,7 +505,7 @@ function __impl-test-fn-multi-value-options() {
         [[ $_ee == "@@##@@" ]] && _ee=()
         local __param
         for __param in "${_ee[@]}"; do
-            if [[ $__param!='A' || $__param!='B' || $__param!='C' ]]; then echo "$__fn: Error: Value '$__param' for option --ee is not one of the allowed values [A,B,C]."; return 64; fi
+            if [[ $__param != 'A' && $__param != 'B' && $__param != 'C' ]]; then echo "$__fn: Error: Value '$__param' for option --ee is not one of the allowed values [A,B,C]."; return 64; fi
         done
         true
     fi
@@ -602,6 +606,8 @@ function __impl-test-fn-multi-value-parameter-zero-or-more() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn \033[22m"
@@ -768,6 +774,8 @@ function __impl-test-fn-multi-value-parameters() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn aa aa 12 34 1 5 A B foo bar\033[22m"
@@ -963,7 +971,7 @@ function __impl-test-fn-multi-value-parameters() {
     if [[ $_DD ]]; then
         local __param
         for __param in "${_DD[@]}"; do
-            if [[ $__param!='A' || $__param!='B' || $__param!='C' ]]; then echo "$__fn: Error: Value '$__param' for parameter DD is not one of the allowed values [A,B,C]."; return 64; fi
+            if [[ $__param != 'A' && $__param != 'B' && $__param != 'C' ]]; then echo "$__fn: Error: Value '$__param' for parameter DD is not one of the allowed values [A,B,C]."; return 64; fi
         done
     fi
     if [[ ${#_EE[@]} -lt 2 ]]; then echo "$__fn: Error: For parameter EE exactly 2 values must be specified. Found: ${#_EE[@]}."; return 64; fi
@@ -1052,6 +1060,8 @@ function __impl-test-fn-multi-value-parameters-variable-length() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn 12 34\033[22m"
@@ -1245,6 +1255,8 @@ function __impl-test-fn-noargs() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn \033[22m"
@@ -1403,6 +1415,8 @@ function __impl-test-fn-requires-existing() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn \033[22m"
@@ -1533,6 +1547,8 @@ function __impl-test-fn-requires-nonexistent() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -1668,6 +1684,8 @@ function __impl-test-fn-single-value-options() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn \033[22m"
@@ -1919,7 +1937,7 @@ function __impl-test-fn-single-value-options() {
     fi
     if [[ $_ee ]]; then
         if [[ $_ee == "@@##@@" ]]; then echo "$__fn: Error: Value v for option --ee must be specified."; return 64; fi
-        if [[ $_ee!='A' || $_ee!='B' || $_ee!='C' ]]; then echo "$__fn: Error: Value '$_ee' for option --ee is not one of the allowed values [A,B,C]."; return 64; fi
+        if [[ $_ee != 'A' && $_ee != 'B' && $_ee != 'C' ]]; then echo "$__fn: Error: Value '$_ee' for option --ee is not one of the allowed values [A,B,C]."; return 64; fi
     fi
     if [[ $_ff ]]; then
         if [[ $_ff == "@@##@@" ]]; then echo "$__fn: Error: Value v for option --ff must be specified."; return 64; fi
@@ -2020,6 +2038,8 @@ function __impl-test-fn-single-value-parameters() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn aa 12 5 A foo\033[22m"
@@ -2202,7 +2222,7 @@ function __impl-test-fn-single-value-parameters() {
         echo "$__fn: Error: Parameter CC must be specified."; return 64
     fi
     if [[ $_DD ]]; then
-        if [[ $_DD!='A' || $_DD!='B' || $_DD!='C' ]]; then echo "$__fn: Error: Value '$_DD' for parameter DD is not one of the allowed values [A,B,C]."; return 64; fi
+        if [[ $_DD != 'A' && $_DD != 'B' && $_DD != 'C' ]]; then echo "$__fn: Error: Value '$_DD' for parameter DD is not one of the allowed values [A,B,C]."; return 64; fi
     else
         echo "$__fn: Error: Parameter DD must be specified."; return 64
     fi
@@ -2287,6 +2307,8 @@ function __impl-test-fn-single-value-parameters-first-optional() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn 22\033[22m"
@@ -2452,6 +2474,8 @@ function __impl-test-test() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;

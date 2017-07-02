@@ -75,6 +75,8 @@ function __impl-alloc-mem() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
@@ -204,6 +206,8 @@ function __impl-memfree() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn \033[22m"
@@ -281,7 +285,7 @@ function __impl-memfree() {
     if [[ ! $_MEMORY_UNIT ]]; then _MEMORY_UNIT="KB"; fi
 
     if [[ $_MEMORY_UNIT ]]; then
-        if [[ $_MEMORY_UNIT!='KB' || $_MEMORY_UNIT!='MB' || $_MEMORY_UNIT!='GB' ]]; then echo "$__fn: Error: Value '$_MEMORY_UNIT' for parameter MEMORY_UNIT is not one of the allowed values [KB,MB,GB]."; return 64; fi
+        if [[ $_MEMORY_UNIT != 'KB' && $_MEMORY_UNIT != 'MB' && $_MEMORY_UNIT != 'GB' ]]; then echo "$__fn: Error: Value '$_MEMORY_UNIT' for parameter MEMORY_UNIT is not one of the allowed values [KB,MB,GB]."; return 64; fi
     fi
 
     ######### memfree ######### START
@@ -379,6 +383,8 @@ function __impl-meminfo() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn \033[22m"
@@ -504,6 +510,8 @@ function __impl-memtotal() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn \033[22m"
@@ -581,7 +589,7 @@ function __impl-memtotal() {
     if [[ ! $_MEMORY_UNIT ]]; then _MEMORY_UNIT="KB"; fi
 
     if [[ $_MEMORY_UNIT ]]; then
-        if [[ $_MEMORY_UNIT!='KB' || $_MEMORY_UNIT!='MB' || $_MEMORY_UNIT!='GB' ]]; then echo "$__fn: Error: Value '$_MEMORY_UNIT' for parameter MEMORY_UNIT is not one of the allowed values [KB,MB,GB]."; return 64; fi
+        if [[ $_MEMORY_UNIT != 'KB' && $_MEMORY_UNIT != 'MB' && $_MEMORY_UNIT != 'GB' ]]; then echo "$__fn: Error: Value '$_MEMORY_UNIT' for parameter MEMORY_UNIT is not one of the allowed values [KB,MB,GB]."; return 64; fi
     fi
 
     ######### memtotal ######### START
@@ -679,6 +687,8 @@ function __impl-test-memory() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;

@@ -78,6 +78,8 @@ function __impl-calc() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn 1.103+1.203\033[22m"
@@ -280,6 +282,8 @@ function __impl-round() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn 1.903 3\033[22m"
@@ -445,6 +449,8 @@ function __impl-simple-calc() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn 1.103+1.203\033[22m"
@@ -739,7 +745,7 @@ function __impl-simple-calc() {
     fi
     if [[ $_using ]]; then
         if [[ $_using == "@@##@@" ]]; then echo "$__fn: Error: Value COMMAND for option --using must be specified."; return 64; fi
-        if [[ $_using!='awk' || $_using!='bc' || $_using!='perl' || $_using!='python' ]]; then echo "$__fn: Error: Value '$_using' for option --using is not one of the allowed values [awk,bc,perl,python]."; return 64; fi
+        if [[ $_using != 'awk' && $_using != 'bc' && $_using != 'perl' && $_using != 'python' ]]; then echo "$__fn: Error: Value '$_using' for option --using is not one of the allowed values [awk,bc,perl,python]."; return 64; fi
     fi
 
     if [[ $_FORMULA ]]; then
@@ -913,6 +919,8 @@ function __impl-test-math() {
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
                 echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
                 echo
                 return 0
               ;;
