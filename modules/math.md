@@ -70,7 +70,7 @@ $ -calc 2^1.2 --round 1
 *Implementation:*
 ```bash
 if [[ ! ${_FORMULA:-} ]]; then
-    "$__fn: Formula is missing."
+    "-calc: Formula is missing."
     return 1
 fi
 

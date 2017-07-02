@@ -503,7 +503,7 @@ function __impl-disk-perf() {
             --help)
                 echo "Usage: $__fn [OPTION]... [PATH]"
                 echo
-                echo "Performs a I/O speed test using 'fio' utilizing all available processors or single-threaded 'dd'."
+                echo "Performs a I/O speed test using 'fio' utilizing all available processors or single-threaded using 'dd'."
                 echo
                 echo "Parameters:"
                 echo -e "  \033[1mPATH\033[22m (default: '.', directory)"
@@ -992,7 +992,7 @@ function -help-performance() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}cpu-count\033[0m  -  Prints the number of processors."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}cpu-perf\033[0m  -  Performs a CPU speed test using 'openssl speed' utilizing all available processors or 'cryptsetup benchmark' / 'dd' for single threaded tests."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}disk-latency [PATH]\033[0m  -  Determines disk latency in milliseconds using 'dd'."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}disk-perf [PATH]\033[0m  -  Performs a I/O speed test using 'fio' utilizing all available processors or single-threaded 'dd'."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}disk-perf [PATH]\033[0m  -  Performs a I/O speed test using 'fio' utilizing all available processors or single-threaded using 'dd'."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}scp-perf TARGET [SIZE_MB]\033[0m  -  Performs an SCP speed test."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-performance\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 

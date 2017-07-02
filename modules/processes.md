@@ -61,7 +61,7 @@ if [[ $? != 0 ]]; then
     return 1
 fi
 for childPid in $childPids; do
-    $__fn --printPPID $childPid
+    -get-child-pids --printPPID $childPid
 done
 if [[ $_printPPID ]]; then
     echo $_PARENT_PID
@@ -210,10 +210,10 @@ if hash netstat &>/dev/null; then
     local listener=$(netstat -lantp 2>/dev/null | sed -En "s/^tcp\s+[0-9]+\s+[0-9]+ .*:$_PORT .* (-|[0-9]+\/[^ ]*)\s+$/\1/p" | uniq || :)
 
     if [[ $listener == "-" ]]; then
-        echo "$__fn: Could not determine PID of processs listening on TCP port $_PORT. Try using sudo."
+        echo "-kill-listener: Could not determine PID of processs listening on TCP port $_PORT. Try using sudo."
         return 1
     else
-        echo "$__fn: No listening process on TCP port $_PORT found."
+        echo "-kill-listener: No listening process on TCP port $_PORT found."
         return 0
     fi
 else
@@ -221,10 +221,10 @@ else
 
     if [[ ! $listener ]]; then
         if [[ $EUID -eq 0 ]]; then
-            echo "$__fn: No listening process on TCP port $_PORT found."
+            echo "-kill-listener: No listening process on TCP port $_PORT found."
             return 1
         else
-            echo "$__fn: Could not determine if a processs is listening on TCP port $_PORT. Try using sudo."
+            echo "-kill-listener: Could not determine if a processs is listening on TCP port $_PORT. Try using sudo."
             return 1
         fi
     fi
@@ -232,7 +232,7 @@ fi
 
 if [[ $listener ]]; then
     local pid=${listener%%/*}
-    echo "$__fn: Sending kill signal $signal to process $process..."
+    echo "-kill-listener: Sending kill signal $signal to process $process..."
     kill -$signal $pid
     return
 fi

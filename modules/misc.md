@@ -194,10 +194,10 @@ Options:
 local cmd="$(echo $(fc -ln -1))"
 
 if [[ $cmd == sudo* ]]; then
-    echo "$__fn: Last command '$cmd' was already executed with sudo."
+    echo "-please: Last command '$cmd' was already executed with sudo."
     exit 1
 elif [[ $cmd == -please* ]]; then
-    echo "$__fn: Executing last command '$cmd' with sudo has no use."
+    echo "-please: Executing last command '$cmd' with sudo has no use."
     exit 1
 fi
 
@@ -225,12 +225,12 @@ Options:
 *Implementation:*
 ```bash
 if [[ ! ${__BASH_FUNK_ROOT} ]]; then
-    echo "$__fn: Error: __BASH_FUNK_ROOT variable is not defined."
+    echo "-reload: Error: __BASH_FUNK_ROOT variable is not defined."
     return 1
 fi
 
 if [[ ! -r ${__BASH_FUNK_ROOT}/bash-funk.sh ]]; then
-    echo "$__fn: Error: File [${__BASH_FUNK_ROOT}/bash-funk.sh] is not readable by user [$USER]."
+    echo "-reload: Error: File [${__BASH_FUNK_ROOT}/bash-funk.sh] is not readable by user [$USER]."
     return 1
 fi
 
@@ -412,12 +412,12 @@ Options:
 *Implementation:*
 ```bash
 if [[ ! ${__BASH_FUNK_ROOT} ]]; then
-    echo "$__fn: Error: __BASH_FUNK_ROOT variable is not defined."
+    echo "-update: Error: __BASH_FUNK_ROOT variable is not defined."
     return 1
 fi
 
 if [[ ! -w ${__BASH_FUNK_ROOT} ]]; then
-    echo "$__fn: Error: Directory [${__BASH_FUNK_ROOT}] is not writeable by user [$USER]."
+    echo "-update: Error: Directory [${__BASH_FUNK_ROOT}] is not writeable by user [$USER]."
     return 1
 fi
 
@@ -425,7 +425,7 @@ if [[ ! $_yes ]]; then
     read -p "Are you sure you want to update bash-funk located in [${__BASH_FUNK_ROOT}]? (y) " -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        echo "$__fn: Aborting on user request."
+        echo "-update: Aborting on user request."
         return 0
     fi
 fi

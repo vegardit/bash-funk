@@ -105,7 +105,7 @@ if [[ $path ]]; then
     echo "$path"
     cd $path
 else
-    echo "$__fn: $_DIR_NAME: No such directory"
+    echo "-cd-down: $_DIR_NAME: No such directory"
     return 1
 fi
 ```
@@ -161,7 +161,7 @@ else
           ;;
         esac
     done
-    echo "$__fn: $_STEPS_OR_DIRNAME: No such directory in history"
+    echo "-cd-hist: $_STEPS_OR_DIRNAME: No such directory in history"
     return 1
 fi
 ```
@@ -221,7 +221,7 @@ else
           ;;
         esac
     done
-    echo "$__fn: $_LEVEL_OR_PATTERN: No such directory"
+    echo "-cd-up: $_LEVEL_OR_PATTERN: No such directory"
     return 1
 fi
 ```
@@ -401,7 +401,7 @@ while [[ $path ]]; do
     esac
     path=${path%/*}
 done
-echo "$__fn: '$_FILENAME': No such file or directory"
+echo "-find-up: '$_FILENAME': No such file or directory"
 return 1
 ```
 

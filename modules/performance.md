@@ -141,7 +141,7 @@ fi
 ```
 Usage: -disk-perf [OPTION]... [PATH]
 
-Performs a I/O speed test using 'fio' utilizing all available processors or single-threaded 'dd'.
+Performs a I/O speed test using 'fio' utilizing all available processors or single-threaded using 'dd'.
 
 Parameters:
   PATH (default: '.', directory)
@@ -176,7 +176,7 @@ local _mode=${_mode:-fio}
 
 case $_mode in
     dd) if ! hash dd &>/dev/null; then
-            echo "$__fn: Required command 'dd' is not available."
+            echo "-disk-perf: Required command 'dd' is not available."
             return 1
         fi
 
@@ -190,7 +190,7 @@ case $_mode in
         rm $testFile
        ;;
     *)  if ! hash fio &>/dev/null; then
-            echo "$__fn: Required command 'fio' is not available. You can also try with option '--mode dd'."
+            echo "-disk-perf: Required command 'fio' is not available. You can also try with option '--mode dd'."
             return 1
         fi
 
