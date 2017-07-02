@@ -116,9 +116,16 @@ function __impl-random-number() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -270,9 +277,16 @@ function __impl-random-string() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -392,9 +406,16 @@ function __impl-test-random() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)

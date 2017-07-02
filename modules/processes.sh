@@ -94,9 +94,16 @@ function __impl-get-child-pids() {
                 _printPPID=1
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -220,9 +227,16 @@ function __impl-get-parent-pid() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -341,9 +355,16 @@ function __impl-get-toplevel-parent-pid() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -472,9 +493,16 @@ function __impl-kill-childs() {
                 __optionWithValue=signal
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -620,9 +648,16 @@ function __impl-kill-listener() {
                 __optionWithValue=signal
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -776,9 +811,16 @@ function __impl-test-processes() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)

@@ -100,9 +100,16 @@ function __impl-ansi-bold() {
                 _off=1
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -223,9 +230,16 @@ function __impl-ansi-codes() {
                 _escape=1
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -414,9 +428,16 @@ function __impl-ansi-colors-supported() {
                 _verbose=1
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -545,9 +566,16 @@ function __impl-ansi-colors16() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -667,9 +695,16 @@ function __impl-ansi-colors256() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -867,9 +902,16 @@ function __impl-ansi-reset() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -984,9 +1026,16 @@ function __impl-ansi-ul() {
                 _off=1
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -1164,9 +1213,16 @@ function __impl-cursor-pos() {
                 __optionWithValue=fd
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -1359,9 +1415,16 @@ function __impl-test-ansi() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)

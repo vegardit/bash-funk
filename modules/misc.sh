@@ -102,9 +102,16 @@ function __impl-choose() {
                 __optionWithValue=default
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -289,9 +296,16 @@ function __impl-help() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -394,9 +408,16 @@ function __impl-please() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -507,9 +528,16 @@ function __impl-reload() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -617,9 +645,16 @@ function __impl-test-all() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -721,9 +756,16 @@ function __impl-test-misc() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -836,9 +878,16 @@ function __impl-tweak-bash() {
                 _verbose=1
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -1018,9 +1067,16 @@ function __impl-update() {
                 _reload=1
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -1204,9 +1260,16 @@ function __impl-var-exists() {
                 _verbose=1
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -1324,9 +1387,16 @@ function __impl-wait() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)

@@ -89,9 +89,16 @@ function __impl-fn-copy() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -243,9 +250,16 @@ function __impl-fn-exists() {
                 _verbose=1
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -365,9 +379,16 @@ function __impl-fn-rename() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -502,9 +523,16 @@ function __impl-fn-unload() {
                 _verbose=1
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -617,9 +645,16 @@ function __impl-test-functions() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)

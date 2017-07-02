@@ -90,9 +90,16 @@ function __impl-alloc-mem() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -241,9 +248,16 @@ function __impl-memfree() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -267,8 +281,7 @@ function __impl-memfree() {
     if [[ ! $_MEMORY_UNIT ]]; then _MEMORY_UNIT="KB"; fi
 
     if [[ $_MEMORY_UNIT ]]; then
-        declare -A __allowed=( [KB]=1 [MB]=1 [GB]=1 )
-        if [[ ! ${__allowed[$_MEMORY_UNIT]} ]]; then echo "$__fn: Error: Value '$_MEMORY_UNIT' for parameter MEMORY_UNIT is not one of the allowed values [KB,MB,GB]."; return 64; fi
+        if [[ $_MEMORY_UNIT!='KB' || $_MEMORY_UNIT!='MB' || $_MEMORY_UNIT!='GB' ]]; then echo "$__fn: Error: Value '$_MEMORY_UNIT' for parameter MEMORY_UNIT is not one of the allowed values [KB,MB,GB]."; return 64; fi
     fi
 
     ######### memfree ######### START
@@ -395,9 +408,16 @@ MemAvailable:   16143004 kB
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -528,9 +548,16 @@ function __impl-memtotal() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -554,8 +581,7 @@ function __impl-memtotal() {
     if [[ ! $_MEMORY_UNIT ]]; then _MEMORY_UNIT="KB"; fi
 
     if [[ $_MEMORY_UNIT ]]; then
-        declare -A __allowed=( [KB]=1 [MB]=1 [GB]=1 )
-        if [[ ! ${__allowed[$_MEMORY_UNIT]} ]]; then echo "$__fn: Error: Value '$_MEMORY_UNIT' for parameter MEMORY_UNIT is not one of the allowed values [KB,MB,GB]."; return 64; fi
+        if [[ $_MEMORY_UNIT!='KB' || $_MEMORY_UNIT!='MB' || $_MEMORY_UNIT!='GB' ]]; then echo "$__fn: Error: Value '$_MEMORY_UNIT' for parameter MEMORY_UNIT is not one of the allowed values [KB,MB,GB]."; return 64; fi
     fi
 
     ######### memtotal ######### START
@@ -668,9 +694,16 @@ function __impl-test-memory() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)

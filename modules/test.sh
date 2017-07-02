@@ -119,9 +119,16 @@ function __impl-test-fn-flags() {
                 _myflag=1
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -408,9 +415,16 @@ function __impl-test-fn-multi-value-options() {
                 __optionWithValue=gg
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -487,8 +501,7 @@ function __impl-test-fn-multi-value-options() {
         [[ $_ee == "@@##@@" ]] && _ee=()
         local __param
         for __param in "${_ee[@]}"; do
-            declare -A __allowed=( [A]=1 [B]=1 [C]=1 )
-            if [[ ! ${__allowed[$__param]} ]]; then echo "$__fn: Error: Value '$__param' for option --ee is not one of the allowed values [A,B,C]."; return 64; fi
+            if [[ $__param!='A' || $__param!='B' || $__param!='C' ]]; then echo "$__fn: Error: Value '$__param' for option --ee is not one of the allowed values [A,B,C]."; return 64; fi
         done
         true
     fi
@@ -640,9 +653,16 @@ function __impl-test-fn-multi-value-parameter-zero-or-more() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -874,9 +894,16 @@ function __impl-test-fn-multi-value-parameters() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -936,8 +963,7 @@ function __impl-test-fn-multi-value-parameters() {
     if [[ $_DD ]]; then
         local __param
         for __param in "${_DD[@]}"; do
-            declare -A __allowed=( [A]=1 [B]=1 [C]=1 )
-            if [[ ! ${__allowed[$__param]} ]]; then echo "$__fn: Error: Value '$__param' for parameter DD is not one of the allowed values [A,B,C]."; return 64; fi
+            if [[ $__param!='A' || $__param!='B' || $__param!='C' ]]; then echo "$__fn: Error: Value '$__param' for parameter DD is not one of the allowed values [A,B,C]."; return 64; fi
         done
     fi
     if [[ ${#_EE[@]} -lt 2 ]]; then echo "$__fn: Error: For parameter EE exactly 2 values must be specified. Found: ${#_EE[@]}."; return 64; fi
@@ -1094,9 +1120,16 @@ function __impl-test-fn-multi-value-parameters-variable-length() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -1272,9 +1305,16 @@ function __impl-test-fn-noargs() {
                 _verbose=1
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -1393,9 +1433,16 @@ function __impl-test-fn-requires-existing() {
                 _verbose=1
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -1512,9 +1559,16 @@ function __impl-test-fn-requires-nonexistent() {
                 _verbose=1
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -1796,9 +1850,16 @@ function __impl-test-fn-single-value-options() {
                 __optionWithValue=gg
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -1858,8 +1919,7 @@ function __impl-test-fn-single-value-options() {
     fi
     if [[ $_ee ]]; then
         if [[ $_ee == "@@##@@" ]]; then echo "$__fn: Error: Value v for option --ee must be specified."; return 64; fi
-        declare -A __allowed=( [A]=1 [B]=1 [C]=1 )
-        if [[ ! ${__allowed[$_ee]} ]]; then echo "$__fn: Error: Value '$_ee' for option --ee is not one of the allowed values [A,B,C]."; return 64; fi
+        if [[ $_ee!='A' || $_ee!='B' || $_ee!='C' ]]; then echo "$__fn: Error: Value '$_ee' for option --ee is not one of the allowed values [A,B,C]."; return 64; fi
     fi
     if [[ $_ff ]]; then
         if [[ $_ff == "@@##@@" ]]; then echo "$__fn: Error: Value v for option --ff must be specified."; return 64; fi
@@ -2072,9 +2132,16 @@ function __impl-test-fn-single-value-parameters() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -2135,8 +2202,7 @@ function __impl-test-fn-single-value-parameters() {
         echo "$__fn: Error: Parameter CC must be specified."; return 64
     fi
     if [[ $_DD ]]; then
-        declare -A __allowed=( [A]=1 [B]=1 [C]=1 )
-        if [[ ! ${__allowed[$_DD]} ]]; then echo "$__fn: Error: Value '$_DD' for parameter DD is not one of the allowed values [A,B,C]."; return 64; fi
+        if [[ $_DD!='A' || $_DD!='B' || $_DD!='C' ]]; then echo "$__fn: Error: Value '$_DD' for parameter DD is not one of the allowed values [A,B,C]."; return 64; fi
     else
         echo "$__fn: Error: Parameter DD must be specified."; return 64
     fi
@@ -2277,9 +2343,16 @@ function __impl-test-fn-single-value-parameters-first-optional() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -2394,9 +2467,16 @@ function __impl-test-test() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)

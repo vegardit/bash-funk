@@ -87,9 +87,16 @@ function __impl-abspath() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -208,9 +215,16 @@ function __impl-cd-down() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -335,9 +349,16 @@ function __impl-cd-hist() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -473,9 +494,16 @@ function __impl-cd-up() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -627,9 +655,16 @@ function __impl-count-words() {
                 __optionWithValue=sort
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -658,8 +693,7 @@ function __impl-count-words() {
 
     if [[ $_sort ]]; then
         if [[ $_sort == "@@##@@" ]]; then echo "$__fn: Error: Value MODE for option --sort must be specified."; return 64; fi
-        declare -A __allowed=( [count]=1 [word]=1 )
-        if [[ ! ${__allowed[$_sort]} ]]; then echo "$__fn: Error: Value '$_sort' for option --sort is not one of the allowed values [count,word]."; return 64; fi
+        if [[ $_sort!='count' || $_sort!='word' ]]; then echo "$__fn: Error: Value '$_sort' for option --sort is not one of the allowed values [count,word]."; return 64; fi
     fi
 
     if [[ $_FILE ]]; then
@@ -788,9 +822,16 @@ function __impl-du() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -898,9 +939,16 @@ function __impl-extract() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -1054,9 +1102,16 @@ function __impl-find-up() {
                 __optionWithValue=type
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -1083,8 +1138,7 @@ function __impl-find-up() {
 
     if [[ $_type ]]; then
         if [[ $_type == "@@##@@" ]]; then echo "$__fn: Error: Value TYPE for option --type must be specified."; return 64; fi
-        declare -A __allowed=( [d]=1 [dir]=1 [f]=1 [file]=1 )
-        if [[ ! ${__allowed[$_type]} ]]; then echo "$__fn: Error: Value '$_type' for option --type is not one of the allowed values [d,dir,f,file]."; return 64; fi
+        if [[ $_type!='d' || $_type!='dir' || $_type!='f' || $_type!='file' ]]; then echo "$__fn: Error: Value '$_type' for option --type is not one of the allowed values [d,dir,f,file]."; return 64; fi
     fi
 
     if [[ $_FILENAME ]]; then
@@ -1241,9 +1295,16 @@ function __impl-findfiles() {
                 _verbose=1
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -1470,9 +1531,16 @@ function __impl-ll() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -1612,9 +1680,16 @@ function __impl-mkcd() {
                 _verbose=1
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -1749,9 +1824,16 @@ function __impl-modified() {
                 __optionWithValue=format
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -1779,8 +1861,7 @@ function __impl-modified() {
     if [[ ! $_PATH ]]; then _PATH="."; fi
     if [[ $_format ]]; then
         if [[ $_format == "@@##@@" ]]; then echo "$__fn: Error: Value FORMAT for option --format must be specified."; return 64; fi
-        declare -A __allowed=( [locale]=1 [iso8601]=1 [human]=1 )
-        if [[ ! ${__allowed[$_format]} ]]; then echo "$__fn: Error: Value '$_format' for option --format is not one of the allowed values [locale,iso8601,human]."; return 64; fi
+        if [[ $_format!='locale' || $_format!='iso8601' || $_format!='human' ]]; then echo "$__fn: Error: Value '$_format' for option --format is not one of the allowed values [locale,iso8601,human]."; return 64; fi
     fi
 
     if [[ $_PATH ]]; then
@@ -1929,9 +2010,16 @@ function __impl-owner() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -2060,9 +2148,16 @@ function __impl-realpath() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -2205,9 +2300,16 @@ function __impl-sudo-append() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -2351,9 +2453,16 @@ function __impl-sudo-write() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -2503,9 +2612,16 @@ function __impl-tail-reverse() {
                 __optionWithValue=lines
             ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
@@ -2636,9 +2752,16 @@ function __impl-test-filesystem() {
                 return 0
               ;;
 
+            --)
+                __optionWithValue=--
+              ;;
             -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
               ;;
 
             *)
