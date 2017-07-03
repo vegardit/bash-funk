@@ -4,6 +4,8 @@
 
 The following commands are available when this module is loaded:
 
+1. [-entropy-available](#-entropy-available)
+1. [-fill-entropy](#-fill-entropy)
 1. [-random-number](#-random-number)
 1. [-random-string](#-random-string)
 1. [-test-random](#-test-random)
@@ -24,6 +26,91 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+
+## <a name="-entropy-available"></a>-entropy-available
+
+```
+Usage: -entropy-available [OPTION]...
+
+Determines if enough entropy bits are available perform a non-blocking read from /dev/random.
+
+Options:
+-v, --verbose 
+        Prints additional information during command execution.
+    -----------------------------
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+
+Examples:
+$ -entropy-available 
+1235
+```
+
+*Implementation:*
+```bash
+if [[ ! -e /proc/sys/kernel/random/read_wakeup_threshold ]]; then
+    echo "-entropy-available: Warning: Kernel parameter /proc/sys/kernel/random/read_wakeup_threshold is not present, assuming sufficient entropy is available."
+    return 0
+fi
+
+local avail=$(cat /proc/sys/kernel/random/entropy_avail)
+local required=$(cat /proc/sys/kernel/random/read_wakeup_threshold)
+if [[ $_verbose ]]; then
+    echo "/proc/sys/kernel/random/entropy_avail: $avail"
+    echo "/proc/sys/kernel/random/read_wakeup_threshold: $required"
+fi
+[[ $(( avail > required )) ]]
+```
+
+
+## <a name="-fill-entropy"></a>-fill-entropy
+
+```
+Usage: -fill-entropy [OPTION]... [DURATION]
+
+Fills /dev/random with pseudo-random values from /dev/urandom.
+
+Requirements:
+  + Command 'rngd' must be available.
+  + Sudo 'rngd' is required.
+
+Parameters:
+  DURATION (default: '1', integer: 1-?)
+      Number of seconds the entropy pool will be filled.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+
+Examples:
+$ -fill-entropy 
+1235
+```
+
+*Implementation:*
+```bash
+echo -n "Available entropy bits before:"
+cat /proc/sys/kernel/random/entropy_avail
+
+echo "Generating..."
+if rngd --help | grep -q -- --timeout; then
+    sudo rngd -r /dev/urandom -o /dev/random -f --timeout ${_DURATION}
+else
+    -timeout ${_DURATION} sudo rngd -r /dev/urandom -o /dev/random -f
+fi
+
+echo -n "Available entropy bits after:"
+cat /proc/sys/kernel/random/entropy_avail
+```
 
 
 ## <a name="-random-number"></a>-random-number
@@ -121,6 +208,8 @@ Options:
 
 *Implementation:*
 ```bash
+-entropy-available --selftest && echo || return 1
+-fill-entropy --selftest && echo || return 1
 -random-number --selftest && echo || return 1
 -random-string --selftest && echo || return 1
 ```
