@@ -45,7 +45,7 @@ function -entropy-available() {
     return $rc
 }
 function __impl-entropy-available() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
     [ -t 1 ] && __interactive=1 || true
     
     for __arg in "$@"; do
@@ -61,12 +61,9 @@ function __impl-entropy-available() {
             --help)
                 echo "Usage: $__fn [OPTION]..."
                 echo
-                echo "Determines if enough entropy bits are available perform a non-blocking read from /dev/random."
+                echo "Determines if enough entropy bits are available perform a non-blocking read from /dev/random. Exit code 1 indicates entropy pool is not sufficiently filled."
                 echo
                 echo "Options:"
-                echo -e "\033[1m-v, --verbose\033[22m "
-                echo "        Prints additional information during command execution."
-                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
@@ -98,10 +95,6 @@ function __impl-entropy-available() {
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
-
-            --verbose|-v)
-                _verbose=1
-            ;;
 
             --)
                 __optionWithValue=--
@@ -138,10 +131,8 @@ fi
 
 local avail=$(cat /proc/sys/kernel/random/entropy_avail)
 local required=$(cat /proc/sys/kernel/random/read_wakeup_threshold)
-if [[ $_verbose ]]; then
-    echo "/proc/sys/kernel/random/entropy_avail: $avail"
-    echo "/proc/sys/kernel/random/read_wakeup_threshold: $required"
-fi
+echo "/proc/sys/kernel/random/entropy_avail: $avail"
+echo "/proc/sys/kernel/random/read_wakeup_threshold: $required"
 [[ $(( avail > required )) ]]
 
     ######### entropy-available ######### END
@@ -149,7 +140,7 @@ fi
 function __complete-entropy-available() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help --verbose -v "
+        local options=" --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -753,7 +744,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-random -- ${BASH_FUNK_PREFIX:--
 
 
 function -help-random() {
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}entropy-available\033[0m  -  Determines if enough entropy bits are available perform a non-blocking read from /dev/random."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}entropy-available\033[0m  -  Determines if enough entropy bits are available perform a non-blocking read from /dev/random. Exit code 1 indicates entropy pool is not sufficiently filled."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}fill-entropy [DURATION]\033[0m  -  Fills /dev/random with pseudo-random values from /dev/urandom."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}random-number RANGE\033[0m  -  Generates a random number of the given range. The range is inclusive."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}random-string LENGTH [CHARS]\033[0m  -  Prints a random string of the given length containing the given characters."

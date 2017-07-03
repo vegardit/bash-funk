@@ -33,12 +33,9 @@ limitations under the License.
 ```
 Usage: -entropy-available [OPTION]...
 
-Determines if enough entropy bits are available perform a non-blocking read from /dev/random.
+Determines if enough entropy bits are available perform a non-blocking read from /dev/random. Exit code 1 indicates entropy pool is not sufficiently filled.
 
 Options:
--v, --verbose 
-        Prints additional information during command execution.
-    -----------------------------
     --help 
         Prints this help.
     --selftest 
@@ -60,10 +57,8 @@ fi
 
 local avail=$(cat /proc/sys/kernel/random/entropy_avail)
 local required=$(cat /proc/sys/kernel/random/read_wakeup_threshold)
-if [[ $_verbose ]]; then
-    echo "/proc/sys/kernel/random/entropy_avail: $avail"
-    echo "/proc/sys/kernel/random/read_wakeup_threshold: $required"
-fi
+echo "/proc/sys/kernel/random/entropy_avail: $avail"
+echo "/proc/sys/kernel/random/read_wakeup_threshold: $required"
 [[ $(( avail > required )) ]]
 ```
 
