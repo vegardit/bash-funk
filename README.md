@@ -16,7 +16,7 @@
 
 bash-funk is a collection of useful commands for Bash 3.2 or higher.
 
-See the markdown files of the different [Bash modules](https://github.com/vegardit/bash-funk/tree/master/modules) for detailed information about the provided commands.
+See the markdown files of the different [Bash modules](https://github.com/vegardit/bash-funk/tree/master/docs) for detailed information about the provided commands.
 
 An adaptive bash prompt is provided too:
 
@@ -26,7 +26,7 @@ All bash-funk commands have a descriptive online help:
 
 ![function_help](docs/img/function_help.png)
 
-The command [-help](https://github.com/vegardit/bash-funk/blob/master/modules/misc.md#-help) shows a list of all available commands
+The command [-help](https://github.com/vegardit/bash-funk/blob/master/docs/misc.md#-help) shows a list of all available commands
 
 ![help](docs/img/help.png)
 
@@ -90,7 +90,7 @@ The following environment variables can be set in `~/.bash_funk_rc` to customize
 
 - `BASH_FUNK_PREFIX` - if specified, the names of all bash-funk commands will be prefixed with this value. Must only contain alphanumeric characters `a-z`, `A-Z`, `0-9`) and underscore `_`.
 - `BASH_FUNK_DIRS_COLOR` - ANSI color code to be used by the bash prompt to highlight directories, default is `94` which will be transformed to `\e[94m`
-- `BASH_FUNK_NO_TWEAK_BASH`     - if set to any value bash-funk will not automatically invoke the [-tweak-bash](https://github.com/vegardit/bash-funk/blob/master/modules/misc.md#-tweak-bash) command when loading.
+- `BASH_FUNK_NO_TWEAK_BASH`     - if set to any value bash-funk will not automatically invoke the [-tweak-bash](https://github.com/vegardit/bash-funk/blob/master/docs/misc.md#-tweak-bash) command when loading.
 - `BASH_FUNK_NO_PROMPT`         - if set to any value bash-funk will not install it's Bash prompt function.
 - `BASH_FUNK_PROMPT_PREFIX`     - text that shall be shown at the beginning of the Bash prompt, e.g. a stage identifier (DEV/TEST/PROD)
 - `BASH_FUNK_PROMPT_DATE`       - prompt escape sequence for the date section, default is "\t", which displays current time. See http://tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
@@ -106,7 +106,7 @@ All bash-funk modules are self-containing. This means, if you are only intereste
 
 ## <a name="update"></a>Updating
 
-Once loaded, you can easily update your bash-funk installation to the latest code base by using the [-update](https://github.com/vegardit/bash-funk/blob/master/modules/misc.md#-update) command:
+Once loaded, you can easily update your bash-funk installation to the latest code base by using the [-update](https://github.com/vegardit/bash-funk/blob/master/docs/misc.md#-update) command:
 
 ```bash
 -update -yr
