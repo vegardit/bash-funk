@@ -39,7 +39,7 @@ Usage: -git-branch-name [OPTION]... [PATH]
 Prints the name of the currently checked out git branch.
 
 Parameters:
-  PATH (default: '.')
+  PATH (default: '.', directory)
       The path to check.
 
 Options:

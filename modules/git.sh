@@ -75,7 +75,7 @@ function __impl-git-branch-name() {
                 echo "Prints the name of the currently checked out git branch."
                 echo
                 echo "Parameters:"
-                echo -e "  \033[1mPATH\033[22m (default: '.')"
+                echo -e "  \033[1mPATH\033[22m (default: '.', directory)"
                 echo "      The path to check."
                 echo
                 echo "Options:"
@@ -131,6 +131,12 @@ function __impl-git-branch-name() {
     done
 
     if [[ ! $_PATH ]]; then _PATH="."; fi
+
+    if [[ $_PATH ]]; then
+        if [[ ! -e "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH does not exist."; return 64; fi
+        if [[ -e "$_PATH" && ! -d "$_PATH" ]]; then echo "$__fn: Error: Path '$_PATH' for parameter PATH is not a directory."; return 64; fi
+        if [[ ! -r "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH is not readable by user '$USER'."; return 64; fi
+    fi
 
     ######### git-branch-name ######### START
 
