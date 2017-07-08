@@ -7,6 +7,7 @@ This module only loads if the git commandline client is installed.
 The following commands are available when this module is loaded:
 
 1. [-git-branch-name](#-git-branch-name)
+1. [-git-modified-files](#-git-modified-files)
 1. [-git-switch-remote-protocol](#-git-switch-remote-protocol)
 1. [-git-sync-fork](#-git-sync-fork)
 1. [-git-update-branch](#-git-update-branch)
@@ -54,6 +55,32 @@ Options:
 *Implementation:*
 ```bash
 git -C "$_PATH" rev-parse --symbolic-full-name --abbrev-ref HEAD
+```
+
+
+## <a name="-git-modified-files"></a>-git-modified-files
+
+```
+Usage: -git-modified-files [OPTION]... [PATH]
+
+Prints the name of the all deleted, changed and newly created files in the current directory tree.
+
+Parameters:
+  PATH (default: '.', directory)
+      The path to check.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+git -C "$_PATH" ls-files -o -m -d --exclude-standard
 ```
 
 
@@ -214,7 +241,7 @@ Parameters:
 
 Options:
     --merge 
-        Use 'git merge' instead of 'git rebase -p'. Rule of thumb: use 'git rebase -p' for personal branches and 'git merge' for shared branches with commits by others.
+        Use 'git merge' instead of 'git rebase -p'. Rule of thumb: use 'git rebase -p' for updating personal branches and 'git merge' for updating shared branches with commits by others.
     --push 
         Push updates to origin after sync.
     -----------------------------
@@ -300,6 +327,7 @@ Options:
 *Implementation:*
 ```bash
 -git-branch-name --selftest && echo || return 1
+-git-modified-files --selftest && echo || return 1
 -git-switch-remote-protocol --selftest && echo || return 1
 -git-sync-fork --selftest && echo || return 1
 -git-update-branch --selftest && echo || return 1
