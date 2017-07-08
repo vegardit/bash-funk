@@ -6,6 +6,7 @@ This module only loads if the git commandline client is installed.
 
 The following commands are available when this module is loaded:
 
+1. [-git-branch-name](#-git-branch-name)
 1. [-git-switch-remote-protocol](#-git-switch-remote-protocol)
 1. [-git-sync-fork](#-git-sync-fork)
 1. [-git-update-branch](#-git-update-branch)
@@ -28,6 +29,32 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+
+## <a name="-git-branch-name"></a>-git-branch-name
+
+```
+Usage: -git-branch-name [OPTION]... [PATH]
+
+Prints the name of the currently checked out git branch.
+
+Parameters:
+  PATH (default: '.')
+      The path to check.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+git -C "$_PATH" rev-parse --symbolic-full-name --abbrev-ref HEAD
+```
 
 
 ## <a name="-git-switch-remote-protocol"></a>-git-switch-remote-protocol
@@ -272,6 +299,7 @@ Options:
 
 *Implementation:*
 ```bash
+-git-branch-name --selftest && echo || return 1
 -git-switch-remote-protocol --selftest && echo || return 1
 -git-sync-fork --selftest && echo || return 1
 -git-update-branch --selftest && echo || return 1
