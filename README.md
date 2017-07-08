@@ -20,15 +20,15 @@ See the markdown files of the different [Bash modules](https://github.com/vegard
 
 An adaptive bash prompt is provided too:
 
-![console](img/console.png)
+![console](docs/img/console.png)
 
 All bash-funk commands have a descriptive online help:
 
-![function_help](img/function_help.png)
+![function_help](docs/img/function_help.png)
 
 The command [-help](https://github.com/vegardit/bash-funk/blob/master/modules/misc.md#-help) shows a list of all available commands
 
-![help](img/help.png)
+![help](docs/img/help.png)
 
 
 ## <a name="install"></a>Installation
