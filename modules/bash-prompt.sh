@@ -154,20 +154,32 @@ function __-bash-prompt() {
         # sub-shells, pipes and external programs are avoided as much as possible to significantly improve performance under Cygwin
         if scm_info=$(svn info 2>/dev/null && echo "-----" && svn status); then
             if [[ "$scm_info" == *URL:* ]]; then
-                p_scm="${scm_info#*$'\n'URL: }" # substring after 'URL: '
-                p_scm="${p_scm%%$'\n'*}"     # substring before \n
+                p_scm="${scm_info#*$'\n'URL: }"  # substring after 'URL: '
+                p_scm="${p_scm%%$'\n'*}"         # substring before \n
+                
                 case $p_scm in
+               
                     */trunk|*/trunk/*)
                         p_scm="trunk"
                       ;;
+                      
                     */branches/*)
                         p_scm="${p_scm#*branches/}"
                         p_scm="${p_scm%%/*}"
                       ;;
+                      
                     */tags/*)
                         p_scm="${p_scm#*tags/}"
                         p_scm="${p_scm%%/*}"
                       ;;
+                      
+                    *)
+                        local svn_repo_root="${scm_info#*$'\n'Repository Root: }" # substring after 'Repository Root: '
+                        svn_repo_root="${svn_repo_root%%$'\n'*}"  # substring before \n
+                        p_scm="${p_scm#$svn_repo_root/}"          # substring after repo root
+                        p_scm="${p_scm%%/*}"                      # substring before first /
+                      ;;
+
                 esac
 
                 if [[ $p_scm ]]; then
