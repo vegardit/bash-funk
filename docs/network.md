@@ -10,6 +10,7 @@ The following commands are available when this module is loaded:
 1. [-run-echo-server](#-run-echo-server)
 1. [-set-proxy](#-set-proxy)
 1. [-ssh-agent-add-key](#-ssh-agent-add-key)
+1. [-ssh-gen-keypair](#-ssh-gen-keypair)
 1. [-ssh-reconnect](#-ssh-reconnect)
 1. [-ssh-trust-host](#-ssh-trust-host)
 1. [-test-network](#-test-network)
@@ -354,6 +355,49 @@ EOF
 ```
 
 
+## <a name="-ssh-gen-keypair"></a>-ssh-gen-keypair
+
+```
+Usage: -ssh-gen-keypair [OPTION]... FILENAME
+
+Creates an private/public SSH keypair.
+
+Requirements:
+  + Command 'ssh-keygen' must be available.
+
+Parameters:
+  FILENAME (required, file)
+      Private key filename.
+
+Options:
+-C, --comment COMMENT 
+        Comment.
+    --keysize SIZE (integer: 1-?)
+        Number of bits of the private key. Default is 4096.
+-p, --password PASSWORD 
+        Password to protect the private key file.
+    -----------------------------
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+local opts
+
+# if password is specified and new OpenSSH key format is supported by ssh-keygen, then enable it
+if [[ ${_password:-} ]] && ssh-keygen --help 2>&1 | grep -q -- " -o "; then
+    opts=-o -a 500
+fi
+
+ssh-keygen -t rsa -f $_FILENAME -N "${_password:-}" -b ${_keysize:-4096} -C "${_comment:-}" $opts
+```
+
+
 ## <a name="-ssh-reconnect"></a>-ssh-reconnect
 
 ```
@@ -455,6 +499,7 @@ Options:
 -run-echo-server --selftest && echo || return 1
 -set-proxy --selftest && echo || return 1
 -ssh-agent-add-key --selftest && echo || return 1
+-ssh-gen-keypair --selftest && echo || return 1
 -ssh-reconnect --selftest && echo || return 1
 -ssh-trust-host --selftest && echo || return 1
 ```
