@@ -25,11 +25,7 @@
 
 
 function -is-loadable() {
-    if hash aws &>/dev/null || [[ -f /sys/hypervisor/uuid && $(head -c 3 /sys/hypervisor/uuid) == "ec2" ]]; then
-    return 0
-else
-    return 1
-fi
+    hash aws &>/dev/null || [[ -f /sys/hypervisor/uuid && $(head -c 3 /sys/hypervisor/uuid) == "ec2" ]]
 
 }
 

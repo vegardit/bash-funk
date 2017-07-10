@@ -25,11 +25,7 @@
 
 
 function -is-loadable() {
-    if hash git &>/dev/null; then
-    return 0
-else
-    return 1
-fi
+    hash git &>/dev/null
 
 }
 
