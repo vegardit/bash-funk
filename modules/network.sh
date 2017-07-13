@@ -473,7 +473,7 @@ function __impl-my-ips() {
             --help)
                 echo "Usage: $__fn [OPTION]..."
                 echo
-                echo "Prints the IP v4 addresses of this host excluding 127.0.0.1."
+                echo "Prints the configured IP v4 addresses of this host excluding 127.0.0.1."
                 echo
                 echo "Options:"
                 echo -e "\033[1m    --help\033[22m "
@@ -540,6 +540,365 @@ function __complete-my-ips() {
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}my-ips -- ${BASH_FUNK_PREFIX:--}my-ips
+
+function -my-public-hostname() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]..."
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-my-public-hostname() {
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _method _help _selftest
+    [ -t 1 ] && __interactive=1 || true
+    
+    for __arg in "$@"; do
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
+
+            --help)
+                echo "Usage: $__fn [OPTION]..."
+                echo
+                echo "Prints the public hostname of this host."
+                echo
+                echo "Options:"
+                echo -e "\033[1m-m, --method TYPE\033[22m (one of: [finger,ftp,https,nslookup,telnet])"
+                echo "        Method to determine the public hostname. Default is 'https'."
+                echo "    -----------------------------"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            --method|-m)
+                _method="@@##@@"
+                __optionWithValue=method
+            ;;
+
+            --)
+                __optionWithValue=--
+              ;;
+            -*)
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    method)
+                        _method=$__arg
+                        __optionWithValue=
+                      ;;
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if [[ $_method ]]; then
+        if [[ $_method == "@@##@@" ]]; then echo "$__fn: Error: Value TYPE for option --method must be specified."; return 64; fi
+        if [[ $_method != 'finger' && $_method != 'ftp' && $_method != 'https' && $_method != 'nslookup' && $_method != 'telnet' ]]; then echo "$__fn: Error: Value '$_method' for option --method is not one of the allowed values [finger,ftp,https,nslookup,telnet]."; return 64; fi
+    fi
+
+    ######### my-public-hostname ######### START
+
+case ${_method:-https} in
+    finger)
+        if ! hash finger &>/dev/null; then
+            echo "Required command 'ftp' is not available."
+            return 1
+        fi
+        finger @4.ifcfg.me 2>/dev/null | sed -nE 's/Your Host is (.*)/\1/p'
+        return ${PIPESTATUS[0]}
+      ;;
+    ftp)
+        if ! hash ftp &>/dev/null; then
+            echo "Required command 'ftp' is not available."
+            return 1
+        fi
+        echo close | ftp 4.ifcfg.me 2>/dev/null | sed -nE 's/.*[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+ \((.*)\)/\1/p'
+        return ${PIPESTATUS[0]}
+      ;;
+    https)
+        hash wget &>/dev/null && local get="wget -qO- --user-agent=curl" || local get="curl -s"
+        $get https://4.ifcfg.me/h
+      ;;
+    nslookup)
+        if ! hash nslookup &>/dev/null; then
+            echo "Required command 'nslookup' is not available."
+            return 1
+        fi
+        nslookup . 4.ifcfg.me 2>/dev/null | sed -nE 's/Name:\t(.*)/\1//p'
+        return ${PIPESTATUS[0]}
+      ;;
+    telnet)
+        if ! hash telnet &>/dev/null; then
+            echo "Required command 'telnet' is not available."
+            return 1
+        fi
+        telnet 4.ifcfg.me 2>/dev/null | sed -nE 's/Your Host is (.*)/\1/p'
+        return ${PIPESTATUS[0]}
+      ;;
+esac
+
+    ######### my-public-hostname ######### END
+}
+function __complete-my-public-hostname() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --method -m --help "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        local prev="${COMP_WORDS[COMP_CWORD-1]}"
+        case $prev in
+            --method|-m)
+                COMPREPLY=($(compgen -o default -W "finger
+ftp
+https
+nslookup
+telnet" -- $curr))
+              ;;
+            *)
+                COMPREPLY=($(compgen -o default -- $curr))
+              ;;
+        esac
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}my-public-hostname -- ${BASH_FUNK_PREFIX:--}my-public-hostname
+
+function -my-public-ip() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]..."
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-my-public-ip() {
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _method _help _selftest
+    [ -t 1 ] && __interactive=1 || true
+    
+    for __arg in "$@"; do
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
+
+            --help)
+                echo "Usage: $__fn [OPTION]..."
+                echo
+                echo "Prints the public IP v4 address of this host."
+                echo
+                echo "Options:"
+                echo -e "\033[1m-m, --method TYPE\033[22m (one of: [dns,finger,ftp,http,https,nslookup,telnet])"
+                echo "        Method to determine the public IP v4 address. Default is 'http'."
+                echo "    -----------------------------"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            --method|-m)
+                _method="@@##@@"
+                __optionWithValue=method
+            ;;
+
+            --)
+                __optionWithValue=--
+              ;;
+            -*)
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    method)
+                        _method=$__arg
+                        __optionWithValue=
+                      ;;
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if [[ $_method ]]; then
+        if [[ $_method == "@@##@@" ]]; then echo "$__fn: Error: Value TYPE for option --method must be specified."; return 64; fi
+        if [[ $_method != 'dns' && $_method != 'finger' && $_method != 'ftp' && $_method != 'http' && $_method != 'https' && $_method != 'nslookup' && $_method != 'telnet' ]]; then echo "$__fn: Error: Value '$_method' for option --method is not one of the allowed values [dns,finger,ftp,http,https,nslookup,telnet]."; return 64; fi
+    fi
+
+    ######### my-public-ip ######### START
+
+case ${_method:-http} in
+    dns)
+        dig +short myip.opendns.com @resolver1.opendns.com
+      ;;
+    finger)
+        if ! hash finger &>/dev/null; then
+            echo "Required command 'ftp' is not available."
+            return 1
+        fi
+        finger @4.ifcfg.me 2>/dev/null | sed -nE 's/.*IPv4 is ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/\1/p'
+        return ${PIPESTATUS[0]}
+      ;;
+    ftp)
+        if ! hash ftp &>/dev/null; then
+            echo "Required command 'ftp' is not available."
+            return 1
+        fi
+        echo close | ftp 4.ifcfg.me 2>/dev/null | sed -nE 's/.*IPv4 is ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+) .+/\1/p'
+        return ${PIPESTATUS[0]}
+      ;;
+    http)
+        hash wget &>/dev/null && local get="wget -qO- --user-agent=curl" || local get="curl -s"
+        $get http://whatismyip.akamai.com/
+      ;;
+    https)
+        hash wget &>/dev/null && local get="wget -qO- --user-agent=curl" || local get="curl -s"
+        $get https://4.ifcfg.me/
+      ;;
+    nslookup)
+        if ! hash nslookup &>/dev/null; then
+            echo "Required command 'nslookup' is not available."
+            return 1
+        fi
+        nslookup . 4.ifcfg.me 2>/dev/null | grep -A1 Name | sed -nE 's/.*: ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/\1/p'
+        return ${PIPESTATUS[0]}
+      ;;
+    telnet)
+        if ! hash telnet &>/dev/null; then
+            echo "Required command 'telnet' is not available."
+            return 1
+        fi
+        telnet 4.ifcfg.me 2>/dev/null | sed -nE 's/.*IPv4 is ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/\1/p'
+        return ${PIPESTATUS[0]}
+      ;;
+esac
+
+    ######### my-public-ip ######### END
+}
+function __complete-my-public-ip() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --method -m --help "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        local prev="${COMP_WORDS[COMP_CWORD-1]}"
+        case $prev in
+            --method|-m)
+                COMPREPLY=($(compgen -o default -W "dns
+finger
+ftp
+http
+https
+nslookup
+telnet" -- $curr))
+              ;;
+            *)
+                COMPREPLY=($(compgen -o default -- $curr))
+              ;;
+        esac
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}my-public-ip -- ${BASH_FUNK_PREFIX:--}my-public-ip
 
 function -run-echo-server() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
@@ -1009,6 +1368,8 @@ function __impl-test-network() {
 ${BASH_FUNK_PREFIX:--}block-port --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}is-port-open --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}my-ips --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}my-public-hostname --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}my-public-ip --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}run-echo-server --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}set-proxy --selftest && echo || return 1
 
@@ -1030,10 +1391,12 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-network -- ${BASH_FUNK_PREFIX:-
 function -help-network() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}block-port [BIND_ADDRESS] PORT\033[0m  -  Binds to the given port and thus block other programs from binding to it."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}is-port-open HOSTNAME PORT [CONNECT_TIMEOUT_IN_SECONDS]\033[0m  -  Checks if a TCP connection can be established to the given port."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}my-ips\033[0m  -  Prints the IP v4 addresses of this host excluding 127.0.0.1."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}my-ips\033[0m  -  Prints the configured IP v4 addresses of this host excluding 127.0.0.1."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}my-public-hostname\033[0m  -  Prints the public hostname of this host."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}my-public-ip\033[0m  -  Prints the public IP v4 address of this host."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}run-echo-server [BIND_ADDRESS] PORT\033[0m  -  Runs a simple single-connection TCP echo server."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}set-proxy PROXY_URL [NO_PROXY]\033[0m  -  Sets the proxy environment variables."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-network\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( block-port is-port-open my-ips run-echo-server set-proxy test-network )
+__BASH_FUNK_FUNCS+=( block-port is-port-open my-ips my-public-hostname my-public-ip run-echo-server set-proxy test-network )

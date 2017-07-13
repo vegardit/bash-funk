@@ -7,6 +7,8 @@ The following commands are available when this module is loaded:
 1. [-block-port](#-block-port)
 1. [-is-port-open](#-is-port-open)
 1. [-my-ips](#-my-ips)
+1. [-my-public-hostname](#-my-public-hostname)
+1. [-my-public-ip](#-my-public-ip)
 1. [-run-echo-server](#-run-echo-server)
 1. [-set-proxy](#-set-proxy)
 1. [-test-network](#-test-network)
@@ -158,7 +160,7 @@ fi
 ```
 Usage: -my-ips [OPTION]...
 
-Prints the IP v4 addresses of this host excluding 127.0.0.1.
+Prints the configured IP v4 addresses of this host excluding 127.0.0.1.
 
 Options:
     --help 
@@ -172,6 +174,137 @@ Options:
 *Implementation:*
 ```bash
 ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+```
+
+
+## <a name="-my-public-hostname"></a>-my-public-hostname
+
+```
+Usage: -my-public-hostname [OPTION]...
+
+Prints the public hostname of this host.
+
+Options:
+-m, --method TYPE (one of: [finger,ftp,https,nslookup,telnet])
+        Method to determine the public hostname. Default is 'https'.
+    -----------------------------
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+case ${_method:-https} in
+    finger)
+        if ! hash finger &>/dev/null; then
+            echo "Required command 'ftp' is not available."
+            return 1
+        fi
+        finger @4.ifcfg.me 2>/dev/null | sed -nE 's/Your Host is (.*)/\1/p'
+        return ${PIPESTATUS[0]}
+      ;;
+    ftp)
+        if ! hash ftp &>/dev/null; then
+            echo "Required command 'ftp' is not available."
+            return 1
+        fi
+        echo close | ftp 4.ifcfg.me 2>/dev/null | sed -nE 's/.*[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+ \((.*)\)/\1/p'
+        return ${PIPESTATUS[0]}
+      ;;
+    https)
+        hash wget &>/dev/null && local get="wget -qO- --user-agent=curl" || local get="curl -s"
+        $get https://4.ifcfg.me/h
+      ;;
+    nslookup)
+        if ! hash nslookup &>/dev/null; then
+            echo "Required command 'nslookup' is not available."
+            return 1
+        fi
+        nslookup . 4.ifcfg.me 2>/dev/null | sed -nE 's/Name:\t(.*)/\1//p'
+        return ${PIPESTATUS[0]}
+      ;;
+    telnet)
+        if ! hash telnet &>/dev/null; then
+            echo "Required command 'telnet' is not available."
+            return 1
+        fi
+        telnet 4.ifcfg.me 2>/dev/null | sed -nE 's/Your Host is (.*)/\1/p'
+        return ${PIPESTATUS[0]}
+      ;;
+esac
+```
+
+
+## <a name="-my-public-ip"></a>-my-public-ip
+
+```
+Usage: -my-public-ip [OPTION]...
+
+Prints the public IP v4 address of this host.
+
+Options:
+-m, --method TYPE (one of: [dns,finger,ftp,http,https,nslookup,telnet])
+        Method to determine the public IP v4 address. Default is 'http'.
+    -----------------------------
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+case ${_method:-http} in
+    dns)
+        dig +short myip.opendns.com @resolver1.opendns.com
+      ;;
+    finger)
+        if ! hash finger &>/dev/null; then
+            echo "Required command 'ftp' is not available."
+            return 1
+        fi
+        finger @4.ifcfg.me 2>/dev/null | sed -nE 's/.*IPv4 is ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/\1/p'
+        return ${PIPESTATUS[0]}
+      ;;
+    ftp)
+        if ! hash ftp &>/dev/null; then
+            echo "Required command 'ftp' is not available."
+            return 1
+        fi
+        echo close | ftp 4.ifcfg.me 2>/dev/null | sed -nE 's/.*IPv4 is ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+) .+/\1/p'
+        return ${PIPESTATUS[0]}
+      ;;
+    http)
+        hash wget &>/dev/null && local get="wget -qO- --user-agent=curl" || local get="curl -s"
+        $get http://whatismyip.akamai.com/
+      ;;
+    https)
+        hash wget &>/dev/null && local get="wget -qO- --user-agent=curl" || local get="curl -s"
+        $get https://4.ifcfg.me/
+      ;;
+    nslookup)
+        if ! hash nslookup &>/dev/null; then
+            echo "Required command 'nslookup' is not available."
+            return 1
+        fi
+        nslookup . 4.ifcfg.me 2>/dev/null | grep -A1 Name | sed -nE 's/.*: ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/\1/p'
+        return ${PIPESTATUS[0]}
+      ;;
+    telnet)
+        if ! hash telnet &>/dev/null; then
+            echo "Required command 'telnet' is not available."
+            return 1
+        fi
+        telnet 4.ifcfg.me 2>/dev/null | sed -nE 's/.*IPv4 is ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/\1/p'
+        return ${PIPESTATUS[0]}
+      ;;
+esac
 ```
 
 
@@ -332,6 +465,8 @@ Options:
 -block-port --selftest && echo || return 1
 -is-port-open --selftest && echo || return 1
 -my-ips --selftest && echo || return 1
+-my-public-hostname --selftest && echo || return 1
+-my-public-ip --selftest && echo || return 1
 -run-echo-server --selftest && echo || return 1
 -set-proxy --selftest && echo || return 1
 ```
