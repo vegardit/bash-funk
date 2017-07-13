@@ -6,6 +6,7 @@ The following commands are available when this module is loaded:
 
 1. [-ssh-agent-add-key](#-ssh-agent-add-key)
 1. [-ssh-gen-keypair](#-ssh-gen-keypair)
+1. [-ssh-pubkey](#-ssh-pubkey)
 1. [-ssh-reconnect](#-ssh-reconnect)
 1. [-ssh-trust-host](#-ssh-trust-host)
 1. [-test-ssh](#-test-ssh)
@@ -111,6 +112,35 @@ ssh-keygen -t rsa -f $_FILENAME -N "${_password:-}" -b ${_keysize:-4096} -C "${_
 ```
 
 
+## <a name="-ssh-pubkey"></a>-ssh-pubkey
+
+```
+Usage: -ssh-pubkey [OPTION]... PRIVATE_KEY_FILE
+
+Prints the public key for the given private key.
+
+Requirements:
+  + Command 'ssh-keygen' must be available.
+
+Parameters:
+  PRIVATE_KEY_FILE (required, file)
+      Private key file.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+ssh-keygen -y -f $_PRIVATE_KEY_FILE
+```
+
+
 ## <a name="-ssh-reconnect"></a>-ssh-reconnect
 
 ```
@@ -208,6 +238,7 @@ Options:
 ```bash
 -ssh-agent-add-key --selftest && echo || return 1
 -ssh-gen-keypair --selftest && echo || return 1
+-ssh-pubkey --selftest && echo || return 1
 -ssh-reconnect --selftest && echo || return 1
 -ssh-trust-host --selftest && echo || return 1
 ```

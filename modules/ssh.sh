@@ -356,6 +356,136 @@ function __complete-ssh-gen-keypair() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}ssh-gen-keypair -- ${BASH_FUNK_PREFIX:--}ssh-gen-keypair
 
+function -ssh-pubkey() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]... PRIVATE_KEY_FILE"
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-ssh-pubkey() {
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PRIVATE_KEY_FILE
+    [ -t 1 ] && __interactive=1 || true
+    
+    for __arg in "$@"; do
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
+
+            --help)
+                echo "Usage: $__fn [OPTION]... PRIVATE_KEY_FILE"
+                echo
+                echo "Prints the public key for the given private key."
+                echo
+                echo "Requirements:"
+                echo "  + Command 'ssh-keygen' must be available."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mPRIVATE_KEY_FILE\033[22m (required, file)"
+                echo "      Private key file."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            --)
+                __optionWithValue=--
+              ;;
+            -*)
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        if [[ ! $_PRIVATE_KEY_FILE ]]; then
+            _PRIVATE_KEY_FILE=$__param
+            continue
+        fi
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if [[ $_PRIVATE_KEY_FILE ]]; then
+        if [[ ! -e "$_PRIVATE_KEY_FILE" ]]; then echo "$__fn: Error: File '$_PRIVATE_KEY_FILE' for parameter PRIVATE_KEY_FILE does not exist."; return 64; fi
+        if [[ -e "$_PRIVATE_KEY_FILE" && ! -f "$_PRIVATE_KEY_FILE" ]]; then echo "$__fn: Error: Path '$_PRIVATE_KEY_FILE' for parameter PRIVATE_KEY_FILE is not a file."; return 64; fi
+        if [[ ! -r "$_PRIVATE_KEY_FILE" ]]; then echo "$__fn: Error: File '$_PRIVATE_KEY_FILE' for parameter PRIVATE_KEY_FILE is not readable by user '$USER'."; return 64; fi
+    else
+        echo "$__fn: Error: Parameter PRIVATE_KEY_FILE must be specified."; return 64
+    fi
+
+    if ! hash "ssh-keygen" &>/dev/null; then echo "$__fn: Error: Required command 'ssh-keygen' not found on this system."; return 64; fi
+
+    ######### ssh-pubkey ######### START
+
+ssh-keygen -y -f $_PRIVATE_KEY_FILE
+
+    ######### ssh-pubkey ######### END
+}
+function __complete-ssh-pubkey() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --help "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}ssh-pubkey -- ${BASH_FUNK_PREFIX:--}ssh-pubkey
+
 function -ssh-reconnect() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
     for opt in a u H t; do
@@ -727,6 +857,7 @@ function __impl-test-ssh() {
 
 ${BASH_FUNK_PREFIX:--}ssh-agent-add-key --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-gen-keypair --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}ssh-pubkey --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-reconnect --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-trust-host --selftest && echo || return 1
 
@@ -748,9 +879,10 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-ssh -- ${BASH_FUNK_PREFIX:--}te
 function -help-ssh() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-agent-add-key KEY_FILE PASSWORD\033[0m  -  Adds the private key to the ssh-agent."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-gen-keypair FILENAME\033[0m  -  Creates an private/public SSH keypair."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-pubkey PRIVATE_KEY_FILE\033[0m  -  Prints the public key for the given private key."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-reconnect [GREP_PATTERN]...\033[0m  -  Dialog that displays the last 10 issued SSH commands to execute one of them."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-trust-host HOSTNAME [PORT]\033[0m  -  Adds the public key of the given host to the ~/.ssh/known_hosts file."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-ssh\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( ssh-agent-add-key ssh-gen-keypair ssh-reconnect ssh-trust-host test-ssh )
+__BASH_FUNK_FUNCS+=( ssh-agent-add-key ssh-gen-keypair ssh-pubkey ssh-reconnect ssh-trust-host test-ssh )
