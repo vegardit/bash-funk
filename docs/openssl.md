@@ -35,7 +35,7 @@ Generates a (self-signed) X509 server certificate.
 
 Parameters:
   FQ_DNS_NAME (required, pattern: "[*a-zA-Z0-9_.-]+")
-      Ffully qualified DNS name of the server.
+      Fully qualified DNS name of the server.
 
 Options:
     --CAcert FILE (file)
@@ -97,16 +97,16 @@ echo " -> file [${_FQ_DNS_NAME}.key] created."
 
 openssl req -new -key "${_FQ_DNS_NAME}.key" -out "${_FQ_DNS_NAME}.csr" -subj "${_subject}" || return 1
 echo " -> file [${_FQ_DNS_NAME}.csr] created."
+
 echo "Generating certificate with subject [$_subject]..."
-
 local opts="x509 -req -sha256 -days ${_validity:-1095} -in \"${_FQ_DNS_NAME}.csr\" -out \"${_FQ_DNS_NAME}.crt\""
-
 if [[ ${_CAcert:-} ]]; then
+    opts="$opts -CA \"$_CAcert\" -CAkey \"$_CAkey\" "
     local caSerialFile="${_CAcert%.*}.srl"
     if [[ -e $caSerialFile ]]; then
-        opts="$opts -CA \"$_CAcert\" -CAkey \"$_CAkey\" -CAserial \"$caSerialFile\" "
+        opts="$opts -CAserial \"$caSerialFile\" "
     else
-        opts="$opts -CA \"$_CAcert\" -CAkey \"$_CAkey\" -CAcreateserial "
+        opts="$opts -CAcreateserial "
     fi
 else
     opts="$opts -set_serial 01 -signkey \"${_FQ_DNS_NAME}.key\" "

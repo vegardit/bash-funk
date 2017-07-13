@@ -75,7 +75,7 @@ function __impl-gen-x509cert() {
                 echo
                 echo "Parameters:"
                 echo -e "  \033[1mFQ_DNS_NAME\033[22m (required, pattern: \"[*a-zA-Z0-9_.-]+\")"
-                echo "      Ffully qualified DNS name of the server."
+                echo "      Fully qualified DNS name of the server."
                 echo
                 echo "Options:"
                 echo -e "\033[1m    --CAcert FILE\033[22m (file)"
@@ -281,16 +281,16 @@ echo " -> file [${_FQ_DNS_NAME}.key] created."
 
 openssl req -new -key "${_FQ_DNS_NAME}.key" -out "${_FQ_DNS_NAME}.csr" -subj "${_subject}" || return 1
 echo " -> file [${_FQ_DNS_NAME}.csr] created."
+
 echo "Generating certificate with subject [$_subject]..."
-
 local opts="x509 -req -sha256 -days ${_validity:-1095} -in \"${_FQ_DNS_NAME}.csr\" -out \"${_FQ_DNS_NAME}.crt\""
-
 if [[ ${_CAcert:-} ]]; then
+    opts="$opts -CA \"$_CAcert\" -CAkey \"$_CAkey\" "
     local caSerialFile="${_CAcert%.*}.srl"
     if [[ -e $caSerialFile ]]; then
-        opts="$opts -CA \"$_CAcert\" -CAkey \"$_CAkey\" -CAserial \"$caSerialFile\" "
+        opts="$opts -CAserial \"$caSerialFile\" "
     else
-        opts="$opts -CA \"$_CAcert\" -CAkey \"$_CAkey\" -CAcreateserial "
+        opts="$opts -CAcreateserial "
     fi
 else
     opts="$opts -set_serial 01 -signkey \"${_FQ_DNS_NAME}.key\" "
