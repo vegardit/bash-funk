@@ -94,7 +94,7 @@ EOL
         echo "| |_) | (_| \__ \ | | |/___/|  _| |_| | | | |   <"
         echo "|_.__/ \__,_|___/_| |_|     |_|  \__,_|_| |_|_|\_\\"
         echo -en "\033[0m"
-        echo "                  by Vegard IT GmbH (vegardit.com)"
+        echo "                     github.com/vegardit/bash-funk"
         echo
 
         echo "Local Version: $__BASH_FUNK_VERSION"
