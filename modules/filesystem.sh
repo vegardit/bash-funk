@@ -1590,17 +1590,17 @@ local _ls="command ls -lAph \"${_PATH[@]}\""
 [[ ${OSTYPE} =~ "darwin" ]] && _ls="$_ls -G" || _ls="$_ls -I lost+found --color=always"
 eval $_ls | awk '
     BEGIN { dotDirs = ""; dirs = ""; dotFiles = ""; files = "" }
-    /^total/                                                           { total = $0 }                   # capture total line
+    /^total/                                                                                    { total = $0 }                    # capture total line
 
-    /^d[rwx+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m)?[.].+/                { dotDirs = dotDirs "\n" $0 };   # capture hidden directories
-    /^d[rwx+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m[^.]|[^\033^.])/        { dirs = dirs "\n" $0 };         # capture normal directories
-    /^l[rwx+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m)?[.].+[\/]/            { dotDirs = dotDirs "\n" $0 };   # capture hidden sym-links to directories
-    /^l[rwx+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m[^.]|[^\033^.]).*[\/]/  { dirs = dirs "\n" $0 };         # capture normal sym-links to directories
+    /^d[rwx+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m)?[.].+/                 { dotDirs = dotDirs    "\n" $0 }; # capture hidden directories
+    /^d[rwx+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m[^.]|[^\033^.])/         { dirs    = dirs       "\n" $0 }; # capture normal directories
+    /^l[rwx+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m)?[.].+[\/]/             { dotDirs = dotDirs    "\n" $0 }; # capture hidden sym-links to directories
+    /^l[rwx+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m[^.]|[^\033^.]).*[\/]$/  { dirs    = dirs       "\n" $0 }; # capture normal sym-links to directories
 
-    /^-[rwx+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m)?[.].+/                { dotFiles = dotFiles "\n" $0 }; # capture hidden files
-    /^-[rwx+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m[^.]|[^\033^.])/        { files = files "\n" $0 };       # capture normal files
-    /^l[rwx+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m)?[.].+[^\/]/           { dotFiles = dotFiles "\n" $0 }; # capture hidden sym-links to files
-    /^l[rwx+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m[^.]|[^\033^.]).*[^\/]/ { files = files "\n" $0 };       # capture normal sym-links to files
+    /^-[rwx+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m)?[.].+/                 { dotFiles = dotFiles "\n" $0 };  # capture hidden files
+    /^-[rwx+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m[^.]|[^\033^.])/         { files    = files    "\n" $0 };  # capture normal files
+    /^l[rwx+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m)?[.].+[^\/]/            { dotFiles = dotFiles "\n" $0 };  # capture hidden sym-links to files
+    /^l[rwx+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m[^.]|[^\033^.]).*[^\/]$/ { files    = files    "\n" $0 };  # capture normal sym-links to files
     END { print total dotDirs dirs dotFiles files }'
 
     ######### ll ######### END
