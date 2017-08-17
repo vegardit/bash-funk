@@ -608,7 +608,9 @@ currBranch_remoteURL=$(git config --get remote.$currBranch_remote.url) || return
 upstreamURL=$(git remote get-url "upstream" 2>/dev/null) || true
 if [[ ! $upstreamURL ]]; then
     # if forked repo is on github try to get the upstream URL via github API
-    if [[ ! $currBranch_remoteURL == *github.com/* ]] || ! upstreamURL="$(${BASH_FUNK_PREFIX:--}github-upstream-url "${currBranch_remoteURL#*github.com/}")"; then
+    local githubRepo="${currBranch_remoteURL#*github.com/}"
+    githubRepo="${githubRepo%.git}"
+    if [[ ! $currBranch_remoteURL == *github.com/* ]] || ! upstreamURL="$(${BASH_FUNK_PREFIX:--}github-upstream-url "${githubRepo}")"; then
         echo "$__fn: No remote 'upstream' defined. You can add it using 'git remote add upstream [REMOTE_URL]'."
         return 1
     fi
