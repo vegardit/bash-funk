@@ -7,6 +7,7 @@ This module only loads if the git commandline client is installed.
 The following commands are available when this module is loaded:
 
 1. [-git-branch-name](#-git-branch-name)
+1. [-git-create-empty-branch](#-git-create-empty-branch)
 1. [-git-modified-files](#-git-modified-files)
 1. [-git-switch-remote-protocol](#-git-switch-remote-protocol)
 1. [-git-sync-fork](#-git-sync-fork)
@@ -55,6 +56,40 @@ Options:
 *Implementation:*
 ```bash
 git -C "$_PATH" rev-parse --symbolic-full-name --abbrev-ref HEAD
+```
+
+
+## <a name="-git-create-empty-branch"></a>-git-create-empty-branch
+
+```
+Usage: -git-create-empty-branch [OPTION]... BRANCH_NAME
+
+Creates a new empty branch in the local repository.
+
+Parameters:
+  BRANCH_NAME (required)
+      The name of the new branch.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+if git rev-parse --verify ${_BRANCH_NAME} &>/dev/null; then
+    echo "-git-create-empty-branch: A branch named [${_BRANCH_NAME}] already exists."
+    return 1
+fi
+
+git checkout --orphan ${_BRANCH_NAME} &&
+git clean -fd &&
+git rm -rf . &&
+git commit -am "Created empty branch." --allow-empty
 ```
 
 
@@ -329,6 +364,7 @@ Options:
 *Implementation:*
 ```bash
 -git-branch-name --selftest && echo || return 1
+-git-create-empty-branch --selftest && echo || return 1
 -git-modified-files --selftest && echo || return 1
 -git-switch-remote-protocol --selftest && echo || return 1
 -git-sync-fork --selftest && echo || return 1
