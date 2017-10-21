@@ -8,6 +8,7 @@ The following commands are available when this module is loaded:
 
 1. [-git-branch-name](#-git-branch-name)
 1. [-git-create-empty-branch](#-git-create-empty-branch)
+1. [-git-log](#-git-log)
 1. [-git-modified-files](#-git-modified-files)
 1. [-git-switch-remote-protocol](#-git-switch-remote-protocol)
 1. [-git-sync-fork](#-git-sync-fork)
@@ -90,6 +91,28 @@ git checkout --orphan ${_BRANCH_NAME} &&
 git clean -fd &&
 git rm -rf . &&
 git commit -am "Created empty branch." --allow-empty
+```
+
+
+## <a name="-git-log"></a>-git-log
+
+```
+Usage: -git-log [OPTION]...
+
+Displays the git log of the current project in a pretty and compact format.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+git log --pretty=format:"%C(bold black)%h%Creset %an %C(bold black)%ar%Creset %s" --graph
 ```
 
 
@@ -365,6 +388,7 @@ Options:
 ```bash
 -git-branch-name --selftest && echo || return 1
 -git-create-empty-branch --selftest && echo || return 1
+-git-log --selftest && echo || return 1
 -git-modified-files --selftest && echo || return 1
 -git-switch-remote-protocol --selftest && echo || return 1
 -git-sync-fork --selftest && echo || return 1
