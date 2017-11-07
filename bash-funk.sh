@@ -56,11 +56,16 @@ EOL
         echo "The variable BASH_FUNK_PREFIX may only contain ASCII alphanumeric characters (a-z, A-Z, 0-9), dash (-) and underscore (_)"
     else
 
-        case "${BASH_SOURCE[0]}" in
+        case "$OSTYPE" in
+            cygwin|msys) __BASH_FUNK_ROOT="$(cygpath ${BASH_SOURCE[0]})" ;;
+            *)           __BASH_FUNK_ROOT="${BASH_SOURCE[0]}" ;;
+        esac
+
+        case "${__BASH_FUNK_ROOT}" in
             /*)
-                __BASH_FUNK_ROOT="${BASH_SOURCE[0]%/*}" ;;
+                __BASH_FUNK_ROOT="${__BASH_FUNK_ROOT%/*}" ;;
             */*)
-                __BASH_FUNK_ROOT="$PWD/${BASH_SOURCE[0]%/*}" ;;
+                __BASH_FUNK_ROOT="$PWD/${__BASH_FUNK_ROOT%/*}" ;;
             *)
                 __BASH_FUNK_ROOT="$PWD" ;;
         esac

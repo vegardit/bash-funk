@@ -371,20 +371,34 @@ done
 
 
 #
-# Cygwin tweaks
+# cygwin/msys tweaks
 #
-if [[ $OSTYPE == "cygwin" ]]; then
-    for drive in {a..z}; do
-        if [[ -e /cygdrive/${drive} ]]; then
-            alias -- "${drive}:"="cd /cygdrive/${drive}"
-            alias -- "${drive^^}:"="cd /cygdrive/${drive}"
-        fi
-    done
+case "$OSTYPE" in
+    cygwin)
+        for drive in {a..z}; do
+            if [[ -e /cygdrive/${drive} ]]; then
+                alias -- "${drive}:"="cd /cygdrive/${drive}"
+                alias -- "${drive^^}:"="cd /cygdrive/${drive}"
+            fi
+        done
 
-    if ! hash sudo &>/dev/null; then
-        alias -- sudo="cygstart --action=runas"
-    fi
-fi
+        if ! hash sudo &>/dev/null; then
+            alias -- sudo="cygstart --action=runas"
+        fi
+      ;;
+    msys)
+        for drive in {a..z}; do
+            if [[ -e /${drive} ]]; then
+                alias -- "${drive}:"="cd /cygdrive/${drive}"
+                alias -- "${drive^^}:"="cd /cygdrive/${drive}"
+            fi
+        done
+
+        if ! hash sudo &>/dev/null; then
+            alias -- sudo="cygstart --action=runas"
+        fi
+      ;;
+esac
 ```
 
 

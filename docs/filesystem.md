@@ -513,9 +513,9 @@ else
 
     else
 
-        # to avoid "xargs: environment is too large for exec" on cygwin
+        # to avoid "xargs: environment is too large for exec" on cygwin/msys
         local xargsWorks=1
-        if [[ $OSTYPE == cygwin ]]; then
+        if [[ $OSTYPE == cygwin || $OSTYPE == msys ]]; then
             if ! echo whoami | xargs &>/dev/null; then
                 local xargsWorks=
             fi
