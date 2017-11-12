@@ -428,7 +428,7 @@ function __impl-simple-calc() {
                 echo "Performs simple floating point operations using awk, perl, python or bc - depending on which command is available."
                 echo
                 echo "Parameters:"
-                echo -e "  \033[1mFORMULA\033[22m (required, pattern: \"[+-]?[0-9]*\.?[0-9]+[/*+-^][0-9]*\.?[0-9]+\")"
+                echo -e "  \033[1mFORMULA\033[22m (required, pattern: \"[+-]?[0-9]*\.?[0-9]+[/*^+-][0-9]*\.?[0-9]+\")"
                 echo "      The formula in the form of <NUM><OPERATOR><NUM>."
                 echo
                 echo "Options:"
@@ -741,14 +741,14 @@ function __impl-simple-calc() {
     fi
 
     if [[ $_FORMULA ]]; then
-        if [[ ! "$_FORMULA" =~ ^[+-]?[0-9]*\.?[0-9]+[/*+-^][0-9]*\.?[0-9]+$ ]]; then echo "$__fn: Error: Value '$_FORMULA' for parameter FORMULA does not match required pattern '[+-]?[0-9]*\.?[0-9]+[/*+-^][0-9]*\.?[0-9]+'."; return 64; fi
+        if [[ ! "$_FORMULA" =~ ^[+-]?[0-9]*\.?[0-9]+[/*^+-][0-9]*\.?[0-9]+$ ]]; then echo "$__fn: Error: Value '$_FORMULA' for parameter FORMULA does not match required pattern '[+-]?[0-9]*\.?[0-9]+[/*^+-][0-9]*\.?[0-9]+'."; return 64; fi
     else
         echo "$__fn: Error: Parameter FORMULA must be specified."; return 64
     fi
 
     ######### simple-calc ######### START
 
-if [[ $_FORMULA =~ ^([+-]?[0-9]*\.?[0-9]+)([/*+-^])([0-9]*\.?[0-9]+)$ ]]; then
+if [[ $_FORMULA =~ ^([+-]?[0-9]*\.?[0-9]+)([/*^+-])([0-9]*\.?[0-9]+)$ ]]; then
     local leftNumber=${BASH_REMATCH[1]}
     local operator=${BASH_REMATCH[2]}
     local rightNumber=${BASH_REMATCH[3]}

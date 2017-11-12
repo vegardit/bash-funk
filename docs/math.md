@@ -133,7 +133,7 @@ Usage: -simple-calc [OPTION]... FORMULA
 Performs simple floating point operations using awk, perl, python or bc - depending on which command is available.
 
 Parameters:
-  FORMULA (required, pattern: "[+-]?[0-9]*\.?[0-9]+[/*+-^][0-9]*\.?[0-9]+")
+  FORMULA (required, pattern: "[+-]?[0-9]*\.?[0-9]+[/*^+-][0-9]*\.?[0-9]+")
       The formula in the form of <NUM><OPERATOR><NUM>.
 
 Options:
@@ -166,7 +166,7 @@ $ -simple-calc 2^1.2 --round 1
 
 *Implementation:*
 ```bash
-if [[ $_FORMULA =~ ^([+-]?[0-9]*\.?[0-9]+)([/*+-^])([0-9]*\.?[0-9]+)$ ]]; then
+if [[ $_FORMULA =~ ^([+-]?[0-9]*\.?[0-9]+)([/*^+-])([0-9]*\.?[0-9]+)$ ]]; then
     local leftNumber=${BASH_REMATCH[1]}
     local operator=${BASH_REMATCH[2]}
     local rightNumber=${BASH_REMATCH[3]}
