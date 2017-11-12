@@ -2454,7 +2454,7 @@ function __impl-sudo-write() {
                 echo "        Terminates the option list."
                 echo
                 echo "Examples:"
-                echo -e "$ \033[1m$__fn /tmp/testfile.cfg $USER:$USER 'foo=bar'\033[22m"
+                echo -e "$ \033[1m$__fn /tmp/testfile.cfg $USER:$GROUP 'foo=bar'\033[22m"
                 echo -e "Writing \[/tmp/testfile.cfg\]..."
                 echo
                 return 0
@@ -2467,8 +2467,8 @@ function __impl-sudo-write() {
                 __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn /tmp/testfile.cfg $USER:$USER 'foo=bar'\033[22m"
-                __stdout="$($__fn /tmp/testfile.cfg $USER:$USER 'foo=bar')"; __rc=$?
+                echo -e "$ \033[1m$__fn /tmp/testfile.cfg $USER:$GROUP 'foo=bar'\033[22m"
+                __stdout="$($__fn /tmp/testfile.cfg $USER:$GROUP 'foo=bar')"; __rc=$?
                 echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^Writing \[/tmp/testfile.cfg\]...$"

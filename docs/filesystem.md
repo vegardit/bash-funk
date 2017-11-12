@@ -837,7 +837,7 @@ Options:
         Terminates the option list.
 
 Examples:
-$ -sudo-write /tmp/testfile.cfg $USER:$USER 'foo=bar'
+$ -sudo-write /tmp/testfile.cfg $USER:$GROUP 'foo=bar'
 Writing \[/tmp/testfile.cfg\]...
 ```
 
