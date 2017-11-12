@@ -6,5 +6,4 @@ os:
   - linux
   - osx
 
-script:
-  - source bash-funk.sh && -test-all
+script: source bash-funk.sh && -test-all
