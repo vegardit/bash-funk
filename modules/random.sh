@@ -82,8 +82,8 @@ function __impl-entropy-available() {
                 __stdout="$($__fn )"; __rc=$?
                 echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^(.*: Warning: Kernel parameter.*|^.*: [0-9]+$)$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [(.*: Warning: Kernel parameter.*|^.*: [0-9]+$)]."; return 64; fi
+                __regex="^(.*: Warning: Kernel parameter.*|.*: [0-9]+)$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [(.*: Warning: Kernel parameter.*|.*: [0-9]+)]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
@@ -203,7 +203,13 @@ function __impl-fill-entropy() {
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn \033[22m"
-                echo "1235"
+                echo "Available entropy bits before: 1000
+Generating for 1 second(s)...
+Available entropy bits after: 1013"
+                echo -e "$ \033[1m$__fn 2\033[22m"
+                echo "Available entropy bits before: 1013
+Generating for 2 second(s)...
+Available entropy bits after: 1039"
                 echo
                 return 0
               ;;
@@ -219,8 +225,15 @@ function __impl-fill-entropy() {
                 __stdout="$($__fn )"; __rc=$?
                 echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^[0-9]+$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[0-9]+]."; return 64; fi
+                __regex="^Available entropy bits before: [0-9]+.*$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Available entropy bits before: [0-9]+.*]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo -e "$ \033[1m$__fn 2\033[22m"
+                __stdout="$($__fn 2)"; __rc=$?
+                echo "$__stdout"
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                __regex="^Available entropy bits before: [0-9]+.*$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Available entropy bits before: [0-9]+.*]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
@@ -269,17 +282,17 @@ function __impl-fill-entropy() {
 
     ######### fill-entropy ######### START
 
-echo -n "Available entropy bits before:"
+echo -n "Available entropy bits before: "
 cat /proc/sys/kernel/random/entropy_avail
 
-echo "Generating..."
+echo "Generating for ${_DURATION} seconds..."
 if rngd --help | grep -q -- --timeout; then
     sudo rngd -r /dev/urandom -o /dev/random -f --timeout ${_DURATION}
 else
     ${BASH_FUNK_PREFIX:--}timeout ${_DURATION} sudo rngd -r /dev/urandom -o /dev/random -f
 fi
 
-echo -n "Available entropy bits after:"
+echo -n "Available entropy bits after: "
 cat /proc/sys/kernel/random/entropy_avail
 
     ######### fill-entropy ######### END

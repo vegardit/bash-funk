@@ -91,22 +91,28 @@ Options:
 
 Examples:
 $ -fill-entropy 
-1235
+Available entropy bits before: 1000
+Generating for 1 second(s)...
+Available entropy bits after: 1013
+$ -fill-entropy 2
+Available entropy bits before: 1013
+Generating for 2 second(s)...
+Available entropy bits after: 1039
 ```
 
 *Implementation:*
 ```bash
-echo -n "Available entropy bits before:"
+echo -n "Available entropy bits before: "
 cat /proc/sys/kernel/random/entropy_avail
 
-echo "Generating..."
+echo "Generating for ${_DURATION} seconds..."
 if rngd --help | grep -q -- --timeout; then
     sudo rngd -r /dev/urandom -o /dev/random -f --timeout ${_DURATION}
 else
     -timeout ${_DURATION} sudo rngd -r /dev/urandom -o /dev/random -f
 fi
 
-echo -n "Available entropy bits after:"
+echo -n "Available entropy bits after: "
 cat /proc/sys/kernel/random/entropy_avail
 ```
 
