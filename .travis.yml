@@ -11,6 +11,11 @@ matrix:
   allow_failures:
     - os: osx
 
+install:
+  - if [[ $TRAVIS_OS_NAME == "linux" ]]; then
+        sudo apt-get --no-install-recommends -qq install rng-tools
+    fi
+
 script:
   - bash --version
   - source bash-funk.sh && -test-all
