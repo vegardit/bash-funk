@@ -47,7 +47,8 @@ Options:
 
 Examples:
 $ -entropy-available 
-1235
+/proc/sys/kernel/random/entropy_avail: 64
+/proc/sys/kernel/random/read_wakeup_threshold: 2429
 ```
 
 *Implementation:*

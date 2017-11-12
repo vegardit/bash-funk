@@ -65,7 +65,8 @@ function __impl-entropy-available() {
                 echo
                 echo "Examples:"
                 echo -e "$ \033[1m$__fn \033[22m"
-                echo "1235"
+                echo "/proc/sys/kernel/random/entropy_avail: 64
+/proc/sys/kernel/random/read_wakeup_threshold: 2429"
                 echo
                 return 0
               ;;
@@ -81,8 +82,8 @@ function __impl-entropy-available() {
                 __stdout="$($__fn )"; __rc=$?
                 echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^[0-9]+$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[0-9]+]."; return 64; fi
+                __regex="^(.*: Warning: Kernel parameter.*|^.*: [0-9]+$)$"
+                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [(.*: Warning: Kernel parameter.*|^.*: [0-9]+$)]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo "Testing function [$__fn]...DONE"
                 return 0
