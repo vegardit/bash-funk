@@ -23,6 +23,8 @@ The following commands are available when this module is loaded:
 
 Copyright (c) 2015-2017 Vegard IT GmbH, http://vegardit.com
 
+SPDX-License-Identifier: Apache-2.0
+
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at

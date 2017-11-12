@@ -1,5 +1,7 @@
 # bash-funk - Spice up your Bash!
 
+[![License](https://img.shields.io/github/license/vegardit/bash-funk.svg?label=license)](#license)
+
 1. [What is it?](#what-is-it)
 1. [Installation](#install)
     1. [Using git](#install-with-git)
