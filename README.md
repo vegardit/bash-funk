@@ -1,5 +1,6 @@
 # bash-funk - Spice up your Bash!
 
+[![Build Status](https://travis-ci.org/vegardit/bash-funk.svg?branch=master)](https://travis-ci.org/vegardit/bash-funk)
 [![License](https://img.shields.io/github/license/vegardit/bash-funk.svg?label=license)](#license)
 
 1. [What is it?](#what-is-it)
