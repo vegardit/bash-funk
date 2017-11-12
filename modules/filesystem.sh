@@ -2282,7 +2282,7 @@ function __impl-sudo-append() {
                 echo "Creates a file with the given content."
                 echo
                 echo "Requirements:"
-                echo "  + Sudo 'tee --append' is required."
+                echo "  + Sudo 'tee -a' is required."
                 echo
                 echo "Parameters:"
                 echo -e "  \033[1mFILE_PATH\033[22m (required)"
@@ -2369,12 +2369,12 @@ function __impl-sudo-append() {
     fi
 
     if ! hash "sudo" &>/dev/null; then echo "$__fn: Error: Required command 'sudo' not found on this system."; return 64; fi
-    if ! sudo -l -- tee --append &>/dev/null; then echo "$__fn: Error: User $USER misses required sudo permission for 'tee --append'"; return 64; fi
+    if ! sudo -l -- tee -a &>/dev/null; then echo "$__fn: Error: User $USER misses required sudo permission for 'tee -a'"; return 64; fi
 
     ######### sudo-append ######### START
 
 echo "Appending to [$_FILE_PATH]..."
-echo "$_CONTENT" | sudo tee --append "$_FILE_PATH" > /dev/null
+echo "$_CONTENT" | sudo tee -a "$_FILE_PATH" > /dev/null
 
     ######### sudo-append ######### END
 }

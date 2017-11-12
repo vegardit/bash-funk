@@ -781,7 +781,7 @@ Usage: -sudo-append [OPTION]... FILE_PATH CONTENT
 Creates a file with the given content.
 
 Requirements:
-  + Sudo 'tee --append' is required.
+  + Sudo 'tee -a' is required.
 
 Parameters:
   FILE_PATH (required)
@@ -805,7 +805,7 @@ Appending to \[/tmp/testfile.cfg\]...
 *Implementation:*
 ```bash
 echo "Appending to [$_FILE_PATH]..."
-echo "$_CONTENT" | sudo tee --append "$_FILE_PATH" > /dev/null
+echo "$_CONTENT" | sudo tee -a "$_FILE_PATH" > /dev/null
 ```
 
 
