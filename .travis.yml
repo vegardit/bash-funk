@@ -7,5 +7,5 @@ os:
   - osx
 
 script:
- - bash --version
- - source bash-funk.sh && -test-all
+  - bash --version
+  - source bash-funk.sh && -test-all

@@ -163,7 +163,7 @@ Options:
         Terminates the option list.
 
 Examples:
-$ -disk-perf -disk-perf --mode dd --size 2
+$ -disk-perf --mode dd --size 2
 Testing single-threaded sequential write performance...
 2097152 bytes (2.1 MB, 2.0 MiB) copied, 0.0186709 s, 112 MB/s
 

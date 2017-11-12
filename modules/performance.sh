@@ -515,7 +515,7 @@ function __impl-disk-perf() {
                 echo "        Terminates the option list."
                 echo
                 echo "Examples:"
-                echo -e "$ \033[1m$__fn -disk-perf --mode dd --size 2\033[22m"
+                echo -e "$ \033[1m$__fn --mode dd --size 2\033[22m"
                 echo "Testing single-threaded sequential write performance...
 2097152 bytes (2.1 MB, 2.0 MiB) copied, 0.0186709 s, 112 MB/s
 
@@ -533,8 +533,8 @@ Testing single-threaded sequential read performance...
                 __stdout="$($__fn --help)"; __rc=$?
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn -disk-perf --mode dd --size 2\033[22m"
-                __stdout="$($__fn -disk-perf --mode dd --size 2)"; __rc=$?
+                echo -e "$ \033[1m$__fn --mode dd --size 2\033[22m"
+                __stdout="$($__fn --mode dd --size 2)"; __rc=$?
                 echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^.+$"
