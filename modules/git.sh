@@ -509,6 +509,179 @@ function __complete-git-modified-files() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-modified-files -- ${BASH_FUNK_PREFIX:--}git-modified-files
 
+function -git-squash() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]... NUM_COMMITS"
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-git-squash() {
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _message _pull _push _help _selftest _NUM_COMMITS
+    [ -t 1 ] && __interactive=1 || true
+    
+    for __arg in "$@"; do
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
+
+            --help)
+                echo "Usage: $__fn [OPTION]... NUM_COMMITS"
+                echo
+                echo "Squashes the last n commits into one."
+                echo
+                echo "Requirements:"
+                echo "  + Command 'awk' must be available."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mNUM_COMMITS\033[22m (required, integer: 2-?)"
+                echo "      Number of commits to squash."
+                echo
+                echo "Options:"
+                echo -e "\033[1m-m, --message COMMIT_MESSAGE\033[22m "
+                echo "        The commit message to be used instead of the original ones."
+                echo -e "\033[1m    --pull\033[22m "
+                echo "        Execute 'git pull' before squashing."
+                echo -e "\033[1m    --push\033[22m "
+                echo "        Execute 'git push --force' after squashing."
+                echo "    -----------------------------"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            --message|-m)
+                _message="@@##@@"
+                __optionWithValue=message
+            ;;
+
+            --pull)
+                _pull=1
+            ;;
+
+            --push)
+                _push=1
+            ;;
+
+            --)
+                __optionWithValue=--
+              ;;
+            -*)
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    message)
+                        _message=$__arg
+                        __optionWithValue=
+                      ;;
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        if [[ ! $_NUM_COMMITS ]]; then
+            _NUM_COMMITS=$__param
+            continue
+        fi
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if [[ $_message ]]; then
+        if [[ $_message == "@@##@@" ]]; then echo "$__fn: Error: Value COMMIT_MESSAGE for option --message must be specified."; return 64; fi
+    fi
+
+    if [[ $_NUM_COMMITS ]]; then
+        if [[ ! "$_NUM_COMMITS" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_NUM_COMMITS' for parameter NUM_COMMITS is not a numeric value."; return 64; fi
+        if [[ $_NUM_COMMITS -lt 2 ]]; then echo "$__fn: Error: Value '$_NUM_COMMITS' for parameter NUM_COMMITS is too low. Must be >= 2."; return 64; fi
+    else
+        echo "$__fn: Error: Parameter NUM_COMMITS must be specified."; return 64
+    fi
+
+    if ! hash "awk" &>/dev/null; then echo "$__fn: Error: Required command 'awk' not found on this system."; return 64; fi
+
+    ######### git-squash ######### START
+
+			    if [[ $_pull ]]; then
+				    git pull
+				fi
+
+			    if [[ $_m ]]; then
+				   local commitMsg="${_m}"
+				else
+				   # load the commit messages, remove duplicates and blank lines
+			       local commitMsg="$(git log -${_NUM_COMMITS} --pretty=%B | awk 'NF > 0 && !a[$0]++')"
+				fi
+				
+			    git reset --soft HEAD~${_NUM_COMMITS} || return 1
+				git commit --allow-empty-message -m "${commitMsg}" || return 1
+
+                if [[ $_push ]]; then
+                    git push --force
+                fi
+
+    ######### git-squash ######### END
+}
+function __complete-git-squash() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --message -m --pull --push --help "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}git-squash -- ${BASH_FUNK_PREFIX:--}git-squash
+
 function -git-switch-remote-protocol() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
     for opt in a u H t; do
@@ -1265,6 +1438,7 @@ ${BASH_FUNK_PREFIX:--}git-branch-name --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-create-empty-branch --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-log --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-modified-files --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}git-squash --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-switch-remote-protocol --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-sync-fork --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-update-branch --selftest && echo || return 1
@@ -1290,6 +1464,7 @@ function -help-git() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-create-empty-branch BRANCH_NAME\033[0m  -  Creates a new empty branch in the local repository."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-log\033[0m  -  Displays the git log of the current project in a pretty and compact format."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-modified-files [PATH]\033[0m  -  Prints the name of the all deleted, changed and newly created files in the current directory tree."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-squash NUM_COMMITS\033[0m  -  Squashes the last n commits into one."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-switch-remote-protocol REMOTE_NAME1 [REMOTE_NAME]... PROTOCOL\033[0m  -  Switches the protocol of the given remote(s) between HTTPS and SSH."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-sync-fork\033[0m  -  Syncs the currently checked out branch of a forked repository with it's upstream repository. Uses 'git rebase -p' instead of 'git merge' by default to prevent an extra commit for the merge operation."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-update-branch [BRANCH] MASTER\033[0m  -  Updates the given branch using 'git rebase -p' by default."
@@ -1297,7 +1472,7 @@ function -help-git() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-git\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( git-branch-name git-create-empty-branch git-log git-modified-files git-switch-remote-protocol git-sync-fork git-update-branch github-upstream-url test-git )
+__BASH_FUNK_FUNCS+=( git-branch-name git-create-empty-branch git-log git-modified-files git-squash git-switch-remote-protocol git-sync-fork git-update-branch github-upstream-url test-git )
 
 else
     echo "SKIPPED"

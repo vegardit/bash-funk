@@ -10,6 +10,7 @@ The following commands are available when this module is loaded:
 1. [-git-create-empty-branch](#-git-create-empty-branch)
 1. [-git-log](#-git-log)
 1. [-git-modified-files](#-git-modified-files)
+1. [-git-squash](#-git-squash)
 1. [-git-switch-remote-protocol](#-git-switch-remote-protocol)
 1. [-git-sync-fork](#-git-sync-fork)
 1. [-git-update-branch](#-git-update-branch)
@@ -141,6 +142,58 @@ Options:
 *Implementation:*
 ```bash
 git -C "$_PATH" ls-files -o -m -d --exclude-standard
+```
+
+
+## <a name="-git-squash"></a>-git-squash
+
+```
+Usage: -git-squash [OPTION]... NUM_COMMITS
+
+Squashes the last n commits into one.
+
+Requirements:
+  + Command 'awk' must be available.
+
+Parameters:
+  NUM_COMMITS (required, integer: 2-?)
+      Number of commits to squash.
+
+Options:
+-m, --message COMMIT_MESSAGE 
+        The commit message to be used instead of the original ones.
+    --pull 
+        Execute 'git pull' before squashing.
+    --push 
+        Execute 'git push --force' after squashing.
+    -----------------------------
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+			    if [[ $_pull ]]; then
+				    git pull
+				fi
+
+			    if [[ $_m ]]; then
+				   local commitMsg="${_m}"
+				else
+				   # load the commit messages, remove duplicates and blank lines
+			       local commitMsg="$(git log -${_NUM_COMMITS} --pretty=%B | awk 'NF > 0 && !a[$0]++')"
+				fi
+				
+			    git reset --soft HEAD~${_NUM_COMMITS} || return 1
+				git commit --allow-empty-message -m "${commitMsg}" || return 1
+
+                if [[ $_push ]]; then
+                    git push --force
+                fi
 ```
 
 
@@ -392,6 +445,7 @@ Options:
 -git-create-empty-branch --selftest && echo || return 1
 -git-log --selftest && echo || return 1
 -git-modified-files --selftest && echo || return 1
+-git-squash --selftest && echo || return 1
 -git-switch-remote-protocol --selftest && echo || return 1
 -git-sync-fork --selftest && echo || return 1
 -git-update-branch --selftest && echo || return 1
