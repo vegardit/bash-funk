@@ -177,23 +177,23 @@ Options:
 
 *Implementation:*
 ```bash
-			    if [[ $_pull ]]; then
-				    git pull
-				fi
+if [[ $_pull ]]; then
+    git pull
+fi
+ 
+if [[ $_m ]]; then
+   local commitMsg="${_m}"
+else
+   # load the commit messages, remove duplicates and blank lines
+   local commitMsg="$(git log -${_NUM_COMMITS} --pretty=%B | awk 'NF > 0 && !a[$0]++')"
+fi
 
-			    if [[ $_m ]]; then
-				   local commitMsg="${_m}"
-				else
-				   # load the commit messages, remove duplicates and blank lines
-			       local commitMsg="$(git log -${_NUM_COMMITS} --pretty=%B | awk 'NF > 0 && !a[$0]++')"
-				fi
-				
-			    git reset --soft HEAD~${_NUM_COMMITS} || return 1
-				git commit --allow-empty-message -m "${commitMsg}" || return 1
-
-                if [[ $_push ]]; then
-                    git push --force
-                fi
+git reset --soft HEAD~${_NUM_COMMITS} || return 1
+git commit --allow-empty-message -m "${commitMsg}" || return 1
+ 
+if [[ $_push ]]; then
+    git push --force
+fi
 ```
 
 
