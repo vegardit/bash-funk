@@ -144,6 +144,165 @@ function __complete-git-branch-name() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-branch-name -- ${BASH_FUNK_PREFIX:--}git-branch-name
 
+function -git-cherry-pick() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]... COMMIT_HASHES1 [COMMIT_HASHES]..."
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-git-cherry-pick() {
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _pr _pull _push _help _selftest _COMMIT_HASHES=()
+    [ -t 1 ] && __interactive=1 || true
+    
+    for __arg in "$@"; do
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
+
+            --help)
+                echo "Usage: $__fn [OPTION]... COMMIT_HASHES1 [COMMIT_HASHES]..."
+                echo
+                echo "Cherry picks a commit into the currently checked out branch."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mCOMMIT_HASHES\033[22m (1 or more required)"
+                echo "      Hashes of commits to cherry pick."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --pr PR_NUMBER\033[22m (integer: 1-?)"
+                echo "        First fetches the pull request with the given number to be able to cherry pick from that PR."
+                echo -e "\033[1m    --pull\033[22m "
+                echo "        Execute 'git pull' before cherry picking."
+                echo -e "\033[1m    --push\033[22m "
+                echo "        Execute 'git push --force' after cherry picking."
+                echo "    -----------------------------"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            --pr)
+                _pr="@@##@@"
+                __optionWithValue=pr
+            ;;
+
+            --pull)
+                _pull=1
+            ;;
+
+            --push)
+                _push=1
+            ;;
+
+            --)
+                __optionWithValue=--
+              ;;
+            -*)
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    pr)
+                        _pr=$__arg
+                        __optionWithValue=
+                      ;;
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        _COMMIT_HASHES+=("$__param")
+        continue
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if [[ $_pr ]]; then
+        if [[ $_pr == "@@##@@" ]]; then echo "$__fn: Error: Value PR_NUMBER for option --pr must be specified."; return 64; fi
+        if [[ ! "$_pr" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_pr' for option --pr is not a numeric value."; return 64; fi
+        if [[ $_pr -lt 1 ]]; then echo "$__fn: Error: Value '$_pr' for option --pr is too low. Must be >= 1."; return 64; fi
+    fi
+
+    if [[ ${#_COMMIT_HASHES[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter COMMIT_HASHES 1 value(s) must be specified. Found: ${#_COMMIT_HASHES[@]}."; return 64; fi
+
+    ######### git-cherry-pick ######### START
+
+if [[ $_pull ]]; then
+    git pull || return 1
+fi
+
+if [[ $_pr ]]; then
+    git fetch origin pull/${_pr}/head:pr-${_pr} || return 1
+fi
+
+git cherry-pick ${_COMMIT_HASHES[@]} || return 1
+
+if [[ $_push ]]; then
+    git push
+fi
+
+    ######### git-cherry-pick ######### END
+}
+function __complete-git-cherry-pick() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --pr --pull --push --help "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}git-cherry-pick -- ${BASH_FUNK_PREFIX:--}git-cherry-pick
+
 function -git-create-empty-branch() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
     for opt in a u H t; do
@@ -274,6 +433,142 @@ function __complete-git-create-empty-branch() {
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-create-empty-branch -- ${BASH_FUNK_PREFIX:--}git-create-empty-branch
+
+function -git-fetch-pr() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]... PR_NUMBER"
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-git-fetch-pr() {
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _checkout _help _selftest _PR_NUMBER
+    [ -t 1 ] && __interactive=1 || true
+    
+    for __arg in "$@"; do
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
+
+            --help)
+                echo "Usage: $__fn [OPTION]... PR_NUMBER"
+                echo
+                echo "Fetches the given pull request."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mPR_NUMBER\033[22m (required, integer: 1-?)"
+                echo "      The number of the pull request to fetch."
+                echo
+                echo "Options:"
+                echo -e "\033[1m-c, --checkout\033[22m "
+                echo "        Checkout the PR branch after fetching."
+                echo "    -----------------------------"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            --checkout|-c)
+                _checkout=1
+            ;;
+
+            --)
+                __optionWithValue=--
+              ;;
+            -*)
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        if [[ ! $_PR_NUMBER ]]; then
+            _PR_NUMBER=$__param
+            continue
+        fi
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if [[ $_PR_NUMBER ]]; then
+        if [[ ! "$_PR_NUMBER" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_PR_NUMBER' for parameter PR_NUMBER is not a numeric value."; return 64; fi
+        if [[ $_PR_NUMBER -lt 1 ]]; then echo "$__fn: Error: Value '$_PR_NUMBER' for parameter PR_NUMBER is too low. Must be >= 1."; return 64; fi
+    else
+        echo "$__fn: Error: Parameter PR_NUMBER must be specified."; return 64
+    fi
+
+    ######### git-fetch-pr ######### START
+
+
+git fetch origin pull/${_PR_NUMBER}/head:pr-${_PR_NUMBER} || return 1
+
+if [[ $_checkout ]]; then
+    git checkout pr-${_PR_NUMBER}
+fi
+
+    ######### git-fetch-pr ######### END
+}
+function __complete-git-fetch-pr() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --checkout -c --help "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}git-fetch-pr -- ${BASH_FUNK_PREFIX:--}git-fetch-pr
 
 function -git-log() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
@@ -651,9 +946,9 @@ function __impl-git-squash() {
     ######### git-squash ######### START
 
 if [[ $_pull ]]; then
-    git pull
+    git pull || return 1
 fi
- 
+
 if [[ $_m ]]; then
    local commitMsg="${_m}"
 else
@@ -663,7 +958,7 @@ fi
 
 git reset --soft HEAD~${_NUM_COMMITS} || return 1
 git commit --allow-empty-message -m "${commitMsg}" || return 1
- 
+
 if [[ $_push ]]; then
     git push --force
 fi
@@ -1183,10 +1478,8 @@ if [[ ! ${_BRANCH:-} ]]; then
     _BRANCH=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) || return 1
 fi
 
-git checkout $_MASTER || return 1
-
-git pull || return 1
-
+git checkout $_MASTER &&
+git pull &&
 git checkout $_BRANCH || return 1
 
 echo "Incorporating updates from '$_MASTER' into '$_BRANCH'..."
@@ -1435,7 +1728,9 @@ function __impl-test-git() {
     ######### test-git ######### START
 
 ${BASH_FUNK_PREFIX:--}git-branch-name --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}git-cherry-pick --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-create-empty-branch --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}git-fetch-pr --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-log --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-modified-files --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-squash --selftest && echo || return 1
@@ -1461,7 +1756,9 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-git -- ${BASH_FUNK_PREFIX:--}te
 
 function -help-git() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-branch-name [PATH]\033[0m  -  Prints the name of the currently checked out git branch."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-cherry-pick COMMIT_HASHES1 [COMMIT_HASHES]...\033[0m  -  Cherry picks a commit into the currently checked out branch."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-create-empty-branch BRANCH_NAME\033[0m  -  Creates a new empty branch in the local repository."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-fetch-pr PR_NUMBER\033[0m  -  Fetches the given pull request."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-log\033[0m  -  Displays the git log of the current project in a pretty and compact format."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-modified-files [PATH]\033[0m  -  Prints the name of the all deleted, changed and newly created files in the current directory tree."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-squash NUM_COMMITS\033[0m  -  Squashes the last n commits into one."
@@ -1472,7 +1769,7 @@ function -help-git() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-git\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( git-branch-name git-create-empty-branch git-log git-modified-files git-squash git-switch-remote-protocol git-sync-fork git-update-branch github-upstream-url test-git )
+__BASH_FUNK_FUNCS+=( git-branch-name git-cherry-pick git-create-empty-branch git-fetch-pr git-log git-modified-files git-squash git-switch-remote-protocol git-sync-fork git-update-branch github-upstream-url test-git )
 
 else
     echo "SKIPPED"

@@ -7,7 +7,9 @@ This module only loads if the git commandline client is installed.
 The following commands are available when this module is loaded:
 
 1. [-git-branch-name](#-git-branch-name)
+1. [-git-cherry-pick](#-git-cherry-pick)
 1. [-git-create-empty-branch](#-git-create-empty-branch)
+1. [-git-fetch-pr](#-git-fetch-pr)
 1. [-git-log](#-git-log)
 1. [-git-modified-files](#-git-modified-files)
 1. [-git-squash](#-git-squash)
@@ -63,6 +65,51 @@ git -C "$_PATH" rev-parse --symbolic-full-name --abbrev-ref HEAD
 ```
 
 
+## <a name="-git-cherry-pick"></a>-git-cherry-pick
+
+```
+Usage: -git-cherry-pick [OPTION]... COMMIT_HASHES1 [COMMIT_HASHES]...
+
+Cherry picks a commit into the currently checked out branch.
+
+Parameters:
+  COMMIT_HASHES (1 or more required)
+      Hashes of commits to cherry pick.
+
+Options:
+    --pr PR_NUMBER (integer: 1-?)
+        First fetches the pull request with the given number to be able to cherry pick from that PR.
+    --pull 
+        Execute 'git pull' before cherry picking.
+    --push 
+        Execute 'git push --force' after cherry picking.
+    -----------------------------
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+if [[ $_pull ]]; then
+    git pull || return 1
+fi
+
+if [[ $_pr ]]; then
+    git fetch origin pull/${_pr}/head:pr-${_pr} || return 1
+fi
+
+git cherry-pick ${_COMMIT_HASHES[@]} || return 1
+
+if [[ $_push ]]; then
+    git push
+fi
+```
+
+
 ## <a name="-git-create-empty-branch"></a>-git-create-empty-branch
 
 ```
@@ -94,6 +141,40 @@ git checkout --orphan ${_BRANCH_NAME} &&
 git clean -fd &&
 git rm -rf . &&
 git commit -am "Created empty branch." --allow-empty
+```
+
+
+## <a name="-git-fetch-pr"></a>-git-fetch-pr
+
+```
+Usage: -git-fetch-pr [OPTION]... PR_NUMBER
+
+Fetches the given pull request.
+
+Parameters:
+  PR_NUMBER (required, integer: 1-?)
+      The number of the pull request to fetch.
+
+Options:
+-c, --checkout 
+        Checkout the PR branch after fetching.
+    -----------------------------
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+
+git fetch origin pull/${_PR_NUMBER}/head:pr-${_PR_NUMBER} || return 1
+
+if [[ $_checkout ]]; then
+    git checkout pr-${_PR_NUMBER}
+fi
 ```
 
 
@@ -178,9 +259,9 @@ Options:
 *Implementation:*
 ```bash
 if [[ $_pull ]]; then
-    git pull
+    git pull || return 1
 fi
- 
+
 if [[ $_m ]]; then
    local commitMsg="${_m}"
 else
@@ -190,7 +271,7 @@ fi
 
 git reset --soft HEAD~${_NUM_COMMITS} || return 1
 git commit --allow-empty-message -m "${commitMsg}" || return 1
- 
+
 if [[ $_push ]]; then
     git push --force
 fi
@@ -374,10 +455,8 @@ if [[ ! ${_BRANCH:-} ]]; then
     _BRANCH=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) || return 1
 fi
 
-git checkout $_MASTER || return 1
-
-git pull || return 1
-
+git checkout $_MASTER &&
+git pull &&
 git checkout $_BRANCH || return 1
 
 echo "Incorporating updates from '$_MASTER' into '$_BRANCH'..."
@@ -442,7 +521,9 @@ Options:
 *Implementation:*
 ```bash
 -git-branch-name --selftest && echo || return 1
+-git-cherry-pick --selftest && echo || return 1
 -git-create-empty-branch --selftest && echo || return 1
+-git-fetch-pr --selftest && echo || return 1
 -git-log --selftest && echo || return 1
 -git-modified-files --selftest && echo || return 1
 -git-squash --selftest && echo || return 1
