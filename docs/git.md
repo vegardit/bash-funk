@@ -262,8 +262,8 @@ if [[ $_pull ]]; then
     git pull || return 1
 fi
 
-if [[ $_m ]]; then
-   local commitMsg="${_m}"
+if [[ $_message ]]; then
+   local commitMsg="${_message}"
 else
    # load the commit messages, remove duplicates and blank lines
    local commitMsg="$(git log -${_NUM_COMMITS} --pretty=%B | awk 'NF > 0 && !a[$0]++')"
