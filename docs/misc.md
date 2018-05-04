@@ -409,7 +409,7 @@ esac
 ```
 Usage: -update [OPTION]...
 
-Updates bash-funk with the latest code from the github repo.
+Updates bash-funk to the latest code from github (https://github.com/vegardit/bash-funk). All local modifications are overwritten.
 
 Options:
 -r, --reload 
@@ -448,6 +448,7 @@ fi
 
 # update via SVN
 if [[ -e "${__BASH_FUNK_ROOT}/.svn" ]]; then
+    svn revert -R "${__BASH_FUNK_ROOT}" || return
     svn update "${__BASH_FUNK_ROOT}" || return
     [[ $_reload ]] && ${__BASH_FUNK_PREFIX:--}reload || true
     return
@@ -455,7 +456,7 @@ fi
 
 # update via Git
 if [[ -e "${__BASH_FUNK_ROOT}/.git" ]]; then
-    ( cd "${__BASH_FUNK_ROOT}" && git fetch && git merge ) || return
+    ( cd "${__BASH_FUNK_ROOT}" && git reset --hard && git pull ) || return
     [[ $_reload ]] && ${__BASH_FUNK_PREFIX:--}reload || true
     return
 fi

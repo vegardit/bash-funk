@@ -1052,7 +1052,7 @@ function __impl-update() {
             --help)
                 echo "Usage: $__fn [OPTION]..."
                 echo
-                echo "Updates bash-funk with the latest code from the github repo."
+                echo "Updates bash-funk to the latest code from github (https://github.com/vegardit/bash-funk). All local modifications are overwritten."
                 echo
                 echo "Options:"
                 echo -e "\033[1m-r, --reload\033[22m "
@@ -1138,6 +1138,7 @@ fi
 
 # update via SVN
 if [[ -e "${__BASH_FUNK_ROOT}/.svn" ]]; then
+    svn revert -R "${__BASH_FUNK_ROOT}" || return
     svn update "${__BASH_FUNK_ROOT}" || return
     [[ $_reload ]] && ${__BASH_FUNK_PREFIX:--}reload || true
     return
@@ -1145,7 +1146,7 @@ fi
 
 # update via Git
 if [[ -e "${__BASH_FUNK_ROOT}/.git" ]]; then
-    ( cd "${__BASH_FUNK_ROOT}" && git fetch && git merge ) || return
+    ( cd "${__BASH_FUNK_ROOT}" && git reset --hard && git pull ) || return
     [[ $_reload ]] && ${__BASH_FUNK_PREFIX:--}reload || true
     return
 fi
@@ -1496,7 +1497,7 @@ function -help-misc() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-all\033[0m  -  Executes the selftests of all loaded bash-funk commands."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-misc\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}tweak-bash\033[0m  -  Performs some usability configurations of Bash."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}update\033[0m  -  Updates bash-funk with the latest code from the github repo."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}update\033[0m  -  Updates bash-funk to the latest code from github (https://github.com/vegardit/bash-funk). All local modifications are overwritten."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}var-exists VARIABLE_NAME\033[0m  -  Determines if the given variable is declared."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}wait SECONDS\033[0m  -  Waits for the given number of seconds or until the key 's' pressed."
 
