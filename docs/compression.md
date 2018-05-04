@@ -200,7 +200,7 @@ fi
 ```
 Usage: -untar-zstd [OPTION]... ARCHIVE [TARGET_DIR]
 
-Deompresses the given archive using zstd (https://github.com/facebook/zstd) and tar displaying a real-time progress bar.
+Decompresses the given archive using zstd (https://github.com/facebook/zstd) and tar displaying a real-time progress bar.
 
 Requirements:
   + Command 'cut' must be available.

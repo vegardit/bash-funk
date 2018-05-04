@@ -649,7 +649,7 @@ function __impl-untar-zstd() {
             --help)
                 echo "Usage: $__fn [OPTION]... ARCHIVE [TARGET_DIR]"
                 echo
-                echo "Deompresses the given archive using zstd (https://github.com/facebook/zstd) and tar displaying a real-time progress bar."
+                echo "Decompresses the given archive using zstd (https://github.com/facebook/zstd) and tar displaying a real-time progress bar."
                 echo
                 echo "Requirements:"
                 echo "  + Command 'cut' must be available."
@@ -776,7 +776,7 @@ function -help-compression() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}tar-zstd ARCHIVE PATH1 [PATH]...\033[0m  -  Compresses the given files using tar and zstd (https://github.com/facebook/zstd) displaying a real-time progress bar."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-compression\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}untar-gz ARCHIVE [TARGET_DIR]\033[0m  -  Decompresses the given archive using gzip and tar displaying a real-time progress bar."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}untar-zstd ARCHIVE [TARGET_DIR]\033[0m  -  Deompresses the given archive using zstd (https://github.com/facebook/zstd) and tar displaying a real-time progress bar."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}untar-zstd ARCHIVE [TARGET_DIR]\033[0m  -  Decompresses the given archive using zstd (https://github.com/facebook/zstd) and tar displaying a real-time progress bar."
 
 }
 __BASH_FUNK_FUNCS+=( tar-gz tar-zstd test-compression untar-gz untar-zstd )
