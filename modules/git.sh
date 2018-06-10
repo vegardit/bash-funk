@@ -328,7 +328,7 @@ function -git-create-empty-branch() {
     return $rc
 }
 function __impl-git-create-empty-branch() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _BRANCH_NAME
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _push _help _selftest _BRANCH_NAME
     [ -t 1 ] && __interactive=1 || true
     
     for __arg in "$@"; do
@@ -351,6 +351,9 @@ function __impl-git-create-empty-branch() {
                 echo "      The name of the new branch."
                 echo
                 echo "Options:"
+                echo -e "\033[1m    --push\033[22m "
+                echo "        Execute 'git push --set-upstream origin <BRANCH_NAME>' after branch creation."
+                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
@@ -371,6 +374,10 @@ function __impl-git-create-empty-branch() {
                 echo "Testing function [$__fn]...DONE"
                 return 0
               ;;
+
+            --push)
+                _push=1
+            ;;
 
             --)
                 __optionWithValue=--
@@ -418,14 +425,18 @@ fi
 git checkout --orphan ${_BRANCH_NAME} &&
 git clean -fd &&
 git rm -rf . &&
-git commit -am "Created empty branch." --allow-empty
+git commit -am "Created empty branch." --allow-empty || return 1
+
+if [[ $_push ]]; then
+    git push --set-upstream origin ${_BRANCH_NAME}
+fi
 
     ######### git-create-empty-branch ######### END
 }
 function __complete-git-create-empty-branch() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help "
+        local options=" --push --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else

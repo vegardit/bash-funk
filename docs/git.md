@@ -121,6 +121,9 @@ Parameters:
       The name of the new branch.
 
 Options:
+    --push 
+        Execute 'git push --set-upstream origin <BRANCH_NAME>' after branch creation.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
@@ -139,7 +142,11 @@ fi
 git checkout --orphan ${_BRANCH_NAME} &&
 git clean -fd &&
 git rm -rf . &&
-git commit -am "Created empty branch." --allow-empty
+git commit -am "Created empty branch." --allow-empty || return 1
+
+if [[ $_push ]]; then
+    git push --set-upstream origin ${_BRANCH_NAME}
+fi
 ```
 
 
