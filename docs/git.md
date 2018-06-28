@@ -12,6 +12,7 @@ The following commands are available when this module is loaded:
 1. [-git-fetch-pr](#-git-fetch-pr)
 1. [-git-log](#-git-log)
 1. [-git-modified-files](#-git-modified-files)
+1. [-git-reset](#-git-reset)
 1. [-git-squash](#-git-squash)
 1. [-git-switch-remote-protocol](#-git-switch-remote-protocol)
 1. [-git-sync-fork](#-git-sync-fork)
@@ -229,6 +230,35 @@ Options:
 *Implementation:*
 ```bash
 git -C "$_PATH" ls-files -o -m -d --exclude-standard
+```
+
+
+## <a name="-git-reset"></a>-git-reset
+
+```
+Usage: -git-reset [OPTION]...
+
+Revers any changes in the local working tree including untracked files.
+
+Options:
+    --pull 
+        Execute 'git pull' after reset/clean.
+    -----------------------------
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+git reset --hard HEAD~ && git clean -dfx || return 1
+
+if [[ $_pull ]]; then
+    git pull || return 1
+fi
 ```
 
 
@@ -532,6 +562,7 @@ Options:
 -git-fetch-pr --selftest && echo || return 1
 -git-log --selftest && echo || return 1
 -git-modified-files --selftest && echo || return 1
+-git-reset --selftest && echo || return 1
 -git-squash --selftest && echo || return 1
 -git-switch-remote-protocol --selftest && echo || return 1
 -git-sync-fork --selftest && echo || return 1

@@ -815,6 +815,126 @@ function __complete-git-modified-files() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-modified-files -- ${BASH_FUNK_PREFIX:--}git-modified-files
 
+function -git-reset() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]..."
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-git-reset() {
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _pull _help _selftest
+    [ -t 1 ] && __interactive=1 || true
+    
+    for __arg in "$@"; do
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
+
+            --help)
+                echo "Usage: $__fn [OPTION]..."
+                echo
+                echo "Revers any changes in the local working tree including untracked files."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --pull\033[22m "
+                echo "        Execute 'git pull' after reset/clean."
+                echo "    -----------------------------"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            --pull)
+                _pull=1
+            ;;
+
+            --)
+                __optionWithValue=--
+              ;;
+            -*)
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    ######### git-reset ######### START
+
+git reset --hard HEAD~ && git clean -dfx || return 1
+
+if [[ $_pull ]]; then
+    git pull || return 1
+fi
+
+    ######### git-reset ######### END
+}
+function __complete-git-reset() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --pull --help "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}git-reset -- ${BASH_FUNK_PREFIX:--}git-reset
+
 function -git-squash() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
     for opt in a u H t; do
@@ -1744,6 +1864,7 @@ ${BASH_FUNK_PREFIX:--}git-create-empty-branch --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-fetch-pr --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-log --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-modified-files --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}git-reset --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-squash --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-switch-remote-protocol --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-sync-fork --selftest && echo || return 1
@@ -1772,6 +1893,7 @@ function -help-git() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-fetch-pr PR_NUMBER\033[0m  -  Fetches the given pull request."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-log\033[0m  -  Displays the git log of the current project in a pretty and compact format."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-modified-files [PATH]\033[0m  -  Prints the name of the all deleted, changed and newly created files in the current directory tree."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-reset\033[0m  -  Revers any changes in the local working tree including untracked files."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-squash NUM_COMMITS\033[0m  -  Squashes the last n commits into one."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-switch-remote-protocol REMOTE_NAME1 [REMOTE_NAME]... PROTOCOL\033[0m  -  Switches the protocol of the given remote(s) between HTTPS and SSH."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-sync-fork\033[0m  -  Syncs the currently checked out branch of a forked repository with it's upstream repository. Uses 'git rebase -p' instead of 'git merge' by default to prevent an extra commit for the merge operation."
@@ -1780,7 +1902,7 @@ function -help-git() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-git\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( git-branch-name git-cherry-pick git-create-empty-branch git-fetch-pr git-log git-modified-files git-squash git-switch-remote-protocol git-sync-fork git-update-branch github-upstream-url test-git )
+__BASH_FUNK_FUNCS+=( git-branch-name git-cherry-pick git-create-empty-branch git-fetch-pr git-log git-modified-files git-reset git-squash git-switch-remote-protocol git-sync-fork git-update-branch github-upstream-url test-git )
 
 else
     echo "SKIPPED"
