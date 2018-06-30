@@ -9,6 +9,9 @@ The following commands are available when this module is loaded:
 1. [-git-branch-name](#-git-branch-name)
 1. [-git-cherry-pick](#-git-cherry-pick)
 1. [-git-create-empty-branch](#-git-create-empty-branch)
+1. [-git-delete-branch](#-git-delete-branch)
+1. [-git-delete-local-branch](#-git-delete-local-branch)
+1. [-git-delete-remote-branch](#-git-delete-remote-branch)
 1. [-git-fetch-pr](#-git-fetch-pr)
 1. [-git-log](#-git-log)
 1. [-git-modified-files](#-git-modified-files)
@@ -148,6 +151,94 @@ git commit -am "Created empty branch." --allow-empty || return 1
 if [[ $_push ]]; then
     git push --set-upstream origin ${_BRANCH_NAME}
 fi
+```
+
+
+## <a name="-git-delete-branch"></a>-git-delete-branch
+
+```
+Usage: -git-delete-branch [OPTION]... BRANCH_NAME
+
+Deletes a branch in the local and the remote repository.
+
+Parameters:
+  BRANCH_NAME (required)
+      The name of the branch.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+git branch --delete --force $_BRANCH_NAME
+git fetch origin --prune
+git push origin --delete $_BRANCH_NAME
+```
+
+
+## <a name="-git-delete-local-branch"></a>-git-delete-local-branch
+
+```
+Usage: -git-delete-local-branch [OPTION]... BRANCH_NAME
+
+Deletes a branch in the local repository.
+
+Parameters:
+  BRANCH_NAME (required)
+      The name of the branch.
+
+Options:
+    --force 
+        Delete the branch irrespective of its merged status.
+    -----------------------------
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+if [[ $_force ]]; then
+    git branch --delete --force $_BRANCH_NAME
+else
+    git branch --delete $_BRANCH_NAME
+fi
+```
+
+
+## <a name="-git-delete-remote-branch"></a>-git-delete-remote-branch
+
+```
+Usage: -git-delete-remote-branch [OPTION]... BRANCH_NAME
+
+Deletes a branch in the remote repository.
+
+Parameters:
+  BRANCH_NAME (required)
+      The name of the branch.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+git fetch origin --prune
+git push origin --delete $_BRANCH_NAME
 ```
 
 
@@ -559,6 +650,9 @@ Options:
 -git-branch-name --selftest && echo || return 1
 -git-cherry-pick --selftest && echo || return 1
 -git-create-empty-branch --selftest && echo || return 1
+-git-delete-branch --selftest && echo || return 1
+-git-delete-local-branch --selftest && echo || return 1
+-git-delete-remote-branch --selftest && echo || return 1
 -git-fetch-pr --selftest && echo || return 1
 -git-log --selftest && echo || return 1
 -git-modified-files --selftest && echo || return 1
