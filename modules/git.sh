@@ -552,8 +552,8 @@ function __impl-git-delete-branch() {
 
     ######### git-delete-branch ######### START
 
-git branch --delete --force $_BRANCH_NAME
-git fetch origin --prune
+git branch --delete --force $_BRANCH_NAME &&
+git fetch origin --prune &&
 git push origin --delete $_BRANCH_NAME
 
     ######### git-delete-branch ######### END
@@ -811,7 +811,7 @@ function __impl-git-delete-remote-branch() {
 
     ######### git-delete-remote-branch ######### START
 
-git fetch origin --prune
+git fetch origin --prune &&
 git push origin --delete $_BRANCH_NAME
 
     ######### git-delete-remote-branch ######### END
@@ -1301,7 +1301,7 @@ function __impl-git-reset() {
 git reset --hard HEAD~ && git clean -dfx || return 1
 
 if [[ $_pull ]]; then
-    git pull || return 1
+    git pull
 fi
 
     ######### git-reset ######### END
@@ -1470,7 +1470,7 @@ else
    local commitMsg="$(git log -${_NUM_COMMITS} --pretty=%B | awk 'NF > 0 && !a[$0]++')"
 fi
 
-git reset --soft HEAD~${_NUM_COMMITS} || return 1
+git reset --soft HEAD~${_NUM_COMMITS} &&
 git commit --allow-empty-message -m "${commitMsg}" || return 1
 
 if [[ $_push ]]; then
@@ -1619,7 +1619,7 @@ for remote in "${_REMOTE_NAME[@]}"; do
                 case "$url" in
                     https://*)
                         echo "Switching protocol of remote [$remote] to SSH..."
-                        git remote set-url origin "git@${url#https://*}"
+                        git remote set-url origin "git@${url#https://*}" &&
                         git remote -v | grep "^$remote"
                       ;;
                     git@*)
@@ -1639,7 +1639,7 @@ for remote in "${_REMOTE_NAME[@]}"; do
                       ;;
                     git@*)
                         echo "Switching protocol of remote [$remote] to HTTPS..."
-                        git remote set-url origin "https://${url#git@*}"
+                        git remote set-url origin "https://${url#git@*}" &&
                         git remote -v | grep "^$remote"
                       ;;
                     *)
@@ -1832,8 +1832,7 @@ fi
 local _upstream_branch=${_upstream_branch:-$currBranch}
 
 echo "Fetching updates from 'upstream/$_upstream_branch'..."
-git fetch upstream $_upstream_branch || return 1
-
+git fetch upstream $_upstream_branch &&
 git checkout $_branch || return 1
 
 echo "Incorporating updates from 'upstream/$_upstream_branch' into '$currBranch'..."
