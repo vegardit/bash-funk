@@ -1298,7 +1298,7 @@ function __impl-git-reset() {
 
     ######### git-reset ######### START
 
-git reset --hard HEAD~ && git clean -dfx || return 1
+git reset --hard HEAD && git clean -dfx || return 1
 
 if [[ $_pull ]]; then
     git pull
