@@ -7,6 +7,7 @@ The following commands are available when this module is loaded:
 1. [-md5sum](#-md5sum)
 1. [-sha256sum](#-sha256sum)
 1. [-test-crypto](#-test-crypto)
+1. [-verify-tar-md5](#-verify-tar-md5)
 
 
 ## <a name="license"></a>License
@@ -137,4 +138,49 @@ Options:
 ```bash
 -md5sum --selftest && echo || return 1
 -sha256sum --selftest && echo || return 1
+-verify-tar-md5 --selftest && echo || return 1
+```
+
+
+## <a name="-verify-tar-md5"></a>-verify-tar-md5
+
+```
+Usage: -verify-tar-md5 [OPTION]... [PATH_TO_ARCHIVE]...
+
+Verifies the MD5 sum of tar files with embedded checksum information. Usually Android firmware archives, see https://fileinfo.com/extension/tar.md5.
+
+Parameters:
+  PATH_TO_ARCHIVE (file)
+      The tar.md5 file.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+local path mismatch=0
+echo "Verifying..."
+for path in "${_PATH_TO_ARCHIVE[@]}"; do
+    echo -n "$path "
+    local embedded_md5=$(tail -1 "$path" | cut -f1 -d' ' | tr '[:upper:]' '[:lower:]')
+    local actual_md5=$(head -n -1 "$path" | md5sum | cut -f1 -d' ')
+    if [[ $embedded_md5 == $actual_md5 ]]; then
+        echo "OK"
+    else
+        echo "FAILED"
+        mismatch=1
+        echo "  -> embedded MD5 sum: $embedded_md5"
+        echo "  ->   actual MD5 sum: $actual_md5"
+    fi
+done
+
+if [[ $mismatch == 1 ]]; then
+    return 1
+fi
 ```

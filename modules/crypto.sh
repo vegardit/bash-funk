@@ -395,6 +395,7 @@ function __impl-test-crypto() {
 
 ${BASH_FUNK_PREFIX:--}md5sum --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}sha256sum --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}verify-tar-md5 --selftest && echo || return 1
 
     ######### test-crypto ######### END
 }
@@ -410,11 +411,154 @@ function __complete-test-crypto() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-crypto -- ${BASH_FUNK_PREFIX:--}test-crypto
 
+function -verify-tar-md5() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]... [PATH_TO_ARCHIVE]..."
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-verify-tar-md5() {
+    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH_TO_ARCHIVE=()
+    [ -t 1 ] && __interactive=1 || true
+    
+    for __arg in "$@"; do
+        case "$__arg" in
+            -|--*) __args+=("$__arg") ;;
+            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        case "$__arg" in
+
+            --help)
+                echo "Usage: $__fn [OPTION]... [PATH_TO_ARCHIVE]..."
+                echo
+                echo "Verifies the MD5 sum of tar files with embedded checksum information. Usually Android firmware archives, see https://fileinfo.com/extension/tar.md5."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mPATH_TO_ARCHIVE\033[22m (file)"
+                echo "      The tar.md5 file."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            --)
+                __optionWithValue=--
+              ;;
+            -*)
+                if [[ $__optionWithValue == '--' ]]; then
+                        __params+=("$__arg")
+                else
+                    echo "$__fn: invalid option: '$__arg'"
+                    return 64
+                fi
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        _PATH_TO_ARCHIVE+=("$__param")
+        continue
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if [[ $_PATH_TO_ARCHIVE ]]; then
+        local __param
+        for __param in "${_PATH_TO_ARCHIVE[@]}"; do
+            if [[ ! -e "$__param" ]]; then echo "$__fn: Error: File '$__param' for parameter PATH_TO_ARCHIVE does not exist."; return 64; fi
+            if [[ -e "$__param" && ! -f "$__param" ]]; then echo "$__fn: Error: Path '$__param' for parameter PATH_TO_ARCHIVE is not a file."; return 64; fi
+            if [[ ! -r "$__param" ]]; then echo "$__fn: Error: File '$__param' for parameter PATH_TO_ARCHIVE is not readable by user '$USER'."; return 64; fi
+        done
+    fi
+
+    ######### verify-tar-md5 ######### START
+
+local path mismatch=0
+echo "Verifying..."
+for path in "${_PATH_TO_ARCHIVE[@]}"; do
+    echo -n "$path "
+    local embedded_md5=$(tail -1 "$path" | cut -f1 -d' ' | tr '[:upper:]' '[:lower:]')
+    local actual_md5=$(head -n -1 "$path" | md5sum | cut -f1 -d' ')
+    if [[ $embedded_md5 == $actual_md5 ]]; then
+        echo "OK"
+    else
+        echo "FAILED"
+        mismatch=1
+        echo "  -> embedded MD5 sum: $embedded_md5"
+        echo "  ->   actual MD5 sum: $actual_md5"
+    fi
+done
+
+if [[ $mismatch == 1 ]]; then
+    return 1
+fi
+
+    ######### verify-tar-md5 ######### END
+}
+function __complete-verify-tar-md5() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --help "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}verify-tar-md5 -- ${BASH_FUNK_PREFIX:--}verify-tar-md5
+
 
 function -help-crypto() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}md5sum PATH_TO_FILE\033[0m  -  Calculates the MD5 hash of the given file."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}sha256sum PATH_TO_FILE\033[0m  -  Calculates the SHA256 hash of the given file."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-crypto\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}verify-tar-md5 [PATH_TO_ARCHIVE]...\033[0m  -  Verifies the MD5 sum of tar files with embedded checksum information. Usually Android firmware archives, see https://fileinfo.com/extension/tar.md5."
 
 }
-__BASH_FUNK_FUNCS+=( md5sum sha256sum test-crypto )
+__BASH_FUNK_FUNCS+=( md5sum sha256sum test-crypto verify-tar-md5 )
