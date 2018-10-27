@@ -8,6 +8,7 @@ The following commands are available when this module is loaded:
 
 1. [-git-branch-name](#-git-branch-name)
 1. [-git-cherry-pick](#-git-cherry-pick)
+1. [-git-clone-shallow](#-git-clone-shallow)
 1. [-git-create-empty-branch](#-git-create-empty-branch)
 1. [-git-delete-branch](#-git-delete-branch)
 1. [-git-delete-local-branch](#-git-delete-local-branch)
@@ -110,6 +111,34 @@ git cherry-pick ${_COMMIT_HASHES[@]} || return 1
 if [[ $_push ]]; then
     git push
 fi
+```
+
+
+## <a name="-git-clone-shallow"></a>-git-clone-shallow
+
+```
+Usage: -git-clone-shallow [OPTION]... REPO_URL [BRANCH_NAME]
+
+Creates a shallow clone of the selected branch of the given repository with a truncated history.
+
+Parameters:
+  REPO_URL (required)
+      The URL to the git repository to clone.
+  BRANCH_NAME (default: 'master')
+      The name of the branch to clone.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+git clone --depth 1 $_REPO_URL -b $_BRANCH_NAME
 ```
 
 
@@ -483,7 +512,7 @@ Usage: -git-sync-fork [OPTION]...
 Syncs the currently checked out branch of a forked repository with it's upstream repository. Uses 'git rebase -p' instead of 'git merge' by default to prevent an extra commit for the merge operation.
 
 Options:
-    --branch NAME 
+-b, --branch NAME 
         Branch in the forked repository to sync.
     --merge 
         Use 'git merge' instead of 'git rebase -p'.
@@ -648,6 +677,7 @@ Options:
 ```bash
 -git-branch-name --selftest && echo || return 1
 -git-cherry-pick --selftest && echo || return 1
+-git-clone-shallow --selftest && echo || return 1
 -git-create-empty-branch --selftest && echo || return 1
 -git-delete-branch --selftest && echo || return 1
 -git-delete-local-branch --selftest && echo || return 1
