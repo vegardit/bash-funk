@@ -390,8 +390,8 @@ case "$OSTYPE" in
     msys)
         for drive in {a..z}; do
             if [[ -e /${drive} ]]; then
-                alias -- "${drive}:"="cd /cygdrive/${drive}"
-                alias -- "${drive^^}:"="cd /cygdrive/${drive}"
+                alias -- "${drive}:"="cd /${drive}"
+                alias -- "${drive^^}:"="cd /${drive}"
             fi
         done
 
