@@ -145,23 +145,23 @@ function __-bash-prompt() {
             if [[ "$scm_info" == *URL:* ]]; then
                 p_scm="${scm_info#*$'\n'URL: }"  # substring after 'URL: '
                 p_scm="${p_scm%%$'\n'*}"         # substring before \n
-                
+
                 case $p_scm in
-               
+
                     */trunk|*/trunk/*)
                         p_scm="trunk"
                       ;;
-                      
+
                     */branches/*)
                         p_scm="${p_scm#*branches/}"
                         p_scm="${p_scm%%/*}"
                       ;;
-                      
+
                     */tags/*)
                         p_scm="${p_scm#*tags/}"
                         p_scm="${p_scm%%/*}"
                       ;;
-                      
+
                     *)
                         local svn_repo_root="${scm_info#*$'\n'Repository Root: }" # substring after 'Repository Root: '
                         svn_repo_root="${svn_repo_root%%$'\n'*}"  # substring before \n
@@ -234,6 +234,61 @@ function __-bash-prompt() {
         else
             p_tty="| tty #\l "
         fi
+    fi
+
+    if [[ ${#BASH_FUNK_PROMPT_DIRENV_TRUSTED_DIRS[@]:-} -gt 0 ]]; then
+        if [[ ${__resetDirRC:-} != "" ]]; then
+            # unset previously set directory-scoped environment variables
+            eval "$__resetDirRC"
+            unset __resetDirRC
+        fi
+        # search for trusted .bash_funk_direnv.sh files upwards recursively
+        local dirEnvFile trustedDirPattern trustedDirEnvFiles=( ) currDir=$PWD
+        local unset_extglob=true
+        if ! shopt -q extglob; then
+            shopt -s extglob
+            unset_extglob="shopt -u extglob"
+        fi
+        while [[ $currDir ]]; do
+            dirEnvFile=$currDir/.bash_funk_dir_rc
+            if [[ -f "$dirEnvFile" ]]; then
+                for trustedDirPattern in "${BASH_FUNK_PROMPT_DIRENV_TRUSTED_DIRS[@]:-}"; do
+                    # convert "**" to "*" and "*" to "+([!/])", see http://wiki.bash-hackers.org/syntax/pattern
+                    trustedDirPattern="${trustedDirPattern//\*\*/ANY_SUB_DIRECTORY}"
+                    trustedDirPattern="${trustedDirPattern//\*/+([!/])}"
+                    trustedDirPattern="${trustedDirPattern//ANY_SUB_DIRECTORY/*}"
+                    if [[ "$currDir" == $trustedDirPattern ]]; then
+                        trustedDirEnvFiles=("$dirEnvFile" "${trustedDirEnvFiles[@]}")
+                        export __resetDirEnv="true"
+                    fi
+                done
+            fi
+            currDir=${currDir%/*}
+        done
+        eval ${unset_extglob}
+
+        # evaluate each .bash_funk_direnv.sh starting with the one from the most top-level directory
+        for dirEnvFile in "${trustedDirEnvFiles[@]}"; do
+            local ORIG_IFS=$IFS IFS=$'\n' line
+            for line in $(sh "$dirEnvFile"); do
+               case $line in
+                  export\ ?*=*)
+                     local varAssignment=${line:7}
+                     local varName=${varAssignment%%=*}
+                     local varValue=${varAssignment#*=}
+                     if eval ${!varName+false}; then
+                        # var does not yet exist
+                        __resetDirRC="$__resetDirEnv; unset $varName"
+                     else
+                        # var already exists
+                        __resetDirRC="$__resetDirEnv; $varName='${!varName}'"
+                     fi
+                     eval $line
+                   ;;
+               esac
+            done
+            IFS=$ORIG_IFS
+        done
     fi
 
     local p_prefix

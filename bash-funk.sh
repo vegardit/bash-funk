@@ -30,11 +30,12 @@ else
 #BASH_FUNK_NO_PROMPT=1         # if set to any value bash-funk will not install it's Bash prompt function.
 #BASH_FUNK_PROMPT_PREFIX=      # text that shall be shown at the beginning of the Bash prompt, e.g. a stage identifier (DEV/TEST/PROD)
 #BASH_FUNK_PROMPT_DATE="\d \t" # prompt escape sequence for the date section, default is "\t", which displays current time. See http://tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
-#BASH_FUNK_PROMPT_NO_GIT=1     # if set to any value the Bash prompt will not display GIT branch and modification information.
 #BASH_FUNK_PROMPT_NO_JOBS=1    # if set to any value the Bash prompt will not display the number of shell jobs.
 #BASH_FUNK_PROMPT_NO_SCREENS=1 # if set to any value the Bash prompt will not display the number of detached screens
-#BASH_FUNK_PROMPT_NO_SVN=1     # if set to any value the Bash prompt will not display SVN branch and modification information.- BASH_FUNK_NO_PROMPT_TTY - if set to any value the Bash prompt will not display the current tty.
-
+#BASH_FUNK_PROMPT_NO_TTY=1     # if set to any value the Bash prompt will not display the current tty.
+#BASH_FUNK_PROMPT_NO_GIT=1     # if set to any value the Bash prompt will not display GIT branch and modification information.
+#BASH_FUNK_PROMPT_NO_SVN=1     # if set to any value the Bash prompt will not display SVN branch and modification information.
+#BASH_FUNK_PROMPT_DIRENV_TRUSTED_DIRS=() # Bash array of directory paths where found .bash_funk_auto_rc files automatically executed.
 # other user settings below here
 
 EOL

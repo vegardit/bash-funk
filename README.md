@@ -87,6 +87,7 @@ All bash-funk commands are prefixed with a `-` by default and support the `--hel
 
 Bash completion for options is supported by all commands too, simply type a dash (-) and hit the [TAB] key twice.
 
+
 ### Customization
 
 The following environment variables can be set in `~/.bash_funk_rc` to customize bash-funk's behavior. This file will be sourced automatically.
@@ -97,10 +98,145 @@ The following environment variables can be set in `~/.bash_funk_rc` to customize
 - `BASH_FUNK_NO_PROMPT`         - if set to any value bash-funk will not install it's Bash prompt function.
 - `BASH_FUNK_PROMPT_PREFIX`     - text that shall be shown at the beginning of the Bash prompt, e.g. a stage identifier (DEV/TEST/PROD)
 - `BASH_FUNK_PROMPT_DATE`       - prompt escape sequence for the date section, default is "\t", which displays current time. See http://tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
-- `BASH_FUNK_PROMPT_NO_GIT`     - if set to any value the Bash prompt will not display GIT branch and modification information.
 - `BASH_FUNK_PROMPT_NO_JOBS`    - if set to any value the Bash prompt will not display the number of shell jobs.
 - `BASH_FUNK_PROMPT_NO_SCREENS` - if set to any value the Bash prompt will not display the number of detached screens
-- `BASH_FUNK_PROMPT_NO_SVN`     - if set to any value the Bash prompt will not display SVN branch and modification information.- `BASH_FUNK_NO_PROMPT_TTY`    - if set to any value the Bash prompt will not display the current tty.
+- `BASH_FUNK_PROMPT_NO_TTY`     - if set to any value the Bash prompt will not display the current tty.
+- `BASH_FUNK_PROMPT_NO_GIT`     - if set to any value the Bash prompt will not display GIT branch and modification information.
+- `BASH_FUNK_PROMPT_NO_SVN`     - if set to any value the Bash prompt will not display SVN branch and modification information.
+
+
+### Directory-Scoped Environment Variables
+
+When changing into a directory, the bash-funk Bash prompt can automatically evaluate `.bash_funk_dir_rc` files found in the current directory or it's parent directories
+to set context-relevant environment variables.
+
+*This feature is disabled by default.* To enable it, define the variable `BASH_FUNK_PROMPT_DIRENV_AUTHORIZED_DIRS` in `~/.bash_funk_rc` as an Bash array containing fully qualified paths to trusted directories.
+Only `.bash_funk_dir_rc` files found in these directories will be evaluated for security reasons. The entries in `BASH_FUNK_PROMPT_DIRENV_AUTHORIZED_DIRS` may also expressed as a variant of [glob patterns](https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html),
+where `*` will match one directory level and `**` any directory level.
+
+The `.bash_funk_dir_rc` are executed in a sub-shell, whose output is capture and parsed. All lines matching the pattern `export <VARNAME>=<VALUE>` will then be executed via `eval` in the context of the current shell.
+
+If multiple files named `.bash_funk_dir_rc` are found in the directory hierarchy (from the current directory up to `/`), they will be all evaluated starting with the file at the highest level (i.e. /).
+
+Here is an example setup:
+
+1. A file at `/opt/projects/.bash_funk_dir_rc` containing:
+    ```bash
+    #!/usr/bin/env bash
+    echo "export JAVA_VERSION=1.8"
+    echo "export MAVEN_VERSION=3.5"
+    ```
+1. A file at `/opt/projects/project1/.bash_funk_dir_rc` containing:
+    ```bash
+    #!/usr/bin/env bash
+
+    # override JAVA_VERSION=1.8 from /opt/projects/.bash_funk_dir_rc
+    echo "export JAVA_VERSION=9"
+    ```
+1. `BASH_FUNK_PROMPT_DIRENV_TRUSTED_DIRS` in `~/.bash_funk_rc`, either explicit:
+    ```bash
+    BASH_FUNK_PROMPT_DIRENV_TRUSTED_DIRS=(
+      "/opt/projects"
+      "/opt/projects/project1"
+      "/opt/projects/project2"
+    )
+    ```
+    or with single-level pattern matching
+    ```bash
+    BASH_FUNK_PROMPT_DIRENV_TRUSTED_DIRS=(
+      "/opt/projects/*"
+    )
+    ```
+    or with multi-level pattern matching
+    ```bash
+    BASH_FUNK_PROMPT_DIRENV_TRUSTED_DIRS=(
+      "/opt/**"
+    )
+    ```
+1. If you now `cd` into `/opt/projects/project1/` the environment variables `JAVA_VERSION=9` and `MAVEN_VERSION=3.5` are present.
+1. If you go one level up to `/opt/projects/`, `JAVA_VERSION=1.8` will be set.
+1. If you go one level up to `/opt`, the environment variables `JAVA_VERSION` and `MAVEN_VERSION` will be unset.
+1. If you comment out the first entry in `BASH_FUNK_PROMPT_DIRENV_TRUSTED_DIRS` in `~/.bash_funk_rc`:
+    ```bash
+    BASH_FUNK_PROMPT_DIRENV_TRUSTED_DIRS=(
+      #"/opt/projects"
+      "/opt/projects/project1"
+      "/opt/projects/project2"
+    )
+    ```
+    and again `cd` into `/opt/projects/project1/` only the environment variables `JAVA_VERSION=9` will be present
+    as the `/opt/projects/.bash_funk_dir_rc` is not evaluated anymore.
+
+
+### Efficiently navigating the filesystem
+
+1. Navigating **up** the directory tree
+
+   1. Navigating to the parent directory:
+      <pre>
+      [me@local /opt/projects/project1/src/main/java/com/<b>acme</b>] $ <b>..</b>
+      [me@local /opt/projects/project1/src/main/java/com] $
+      </pre>
+
+   1. Navigating to the parent's parent directory:
+      <pre>
+      [me@local /opt/projects/project1/src/main/java/<b>com/acme</b>] $ <b>...</b>
+      [me@local /opt/projects/project1/src/main/java] $
+      </pre>
+
+   1. Navigating up n-levels:
+      <pre>
+      [me@local /opt/projects/project1/<b>src/main/java/com/acme</b>] $ .. 5
+      [me@local /opt/projects/project1] $
+      </pre>
+
+   1. Navigating up to a directory with a given name:
+      <pre>
+      [me@local /opt/projects/<b>project1</b>/src/main/java/com/acme] $ .. <b>project1</b>
+      [me@local /opt/projects/project1] $
+      </pre>
+
+   **Note:** `--` is an alias for the command <a href="https://github.com/vegardit/bash-funk/blob/master/docs/filesystem.md#-cd-up">-cd-up</a> which you also can use, e.g. `-cd-up 5`
+
+1. Navigating **down** the directory tree to a directory with a given name:
+
+   <pre>
+   [me@local /opt/projects/project1] $ ++ <b>acme</b>
+   [me@local /opt/projects/project1/src/main/java/com/<b>acme</b>] $
+   </pre>
+
+   **Note:**  `++` is an alias for <a href="https://github.com/vegardit/bash-funk/blob/master/docs/filesystem.md#-cd-up">-cd-down</a> which you also can use, e.g. `-cd-down acme`
+
+1. Navigating **back** in the directory history
+
+   1. Navigate back to the last visited directory:
+      <pre>
+      [me@local /var/log/project1/<b>mod1</b>] $ cd /opt/projects/project1
+      [me@local /opt/projects/project1] $ -
+      [me@local /var/log/project1/<b>mod1</b>] $
+      </pre>
+
+   1. Navigate back to a directory with a given name:
+      <pre>
+      [me@local /var/log/project1/<b>mod1</b>] $ cd /opt/projects/project1
+      [me@local /opt/projects/project1] $ cd /opt/projects/project2
+      [me@local /opt/projects/project2] $ cd /var/log/project2/mod2
+      [me@local /var/log/project2/mod2] $ -- <b>mod1</b>
+      [me@local /var/log/project1/<b>mod1</b>] $
+      </pre>
+
+   1. Navigate back to the n-last visited directory:
+      <pre>
+      [me@local /var/log/project1/<b>mod1</b>] $ cd /opt/projects/project1
+      [me@local /opt/projects/project1] $ cd /opt/projects/project2
+      [me@local /opt/projects/project2] $ cd /var/log/project2/mod2
+      [me@local /var/log/project2/mod2] $ -- <b>3</b>
+      [me@local /var/log/project1/<b>mod1</b>] $
+      </pre>
+
+   **Note:** `--` is an alias for <a href="https://github.com/vegardit/bash-funk/blob/master/docs/filesystem.md#-cd-up">-cd-hist</a> which you also can use, e.g. `-cd-hist mod1`
+
+
 
 ### Using bash-funk modules separately
 
