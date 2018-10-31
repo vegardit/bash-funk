@@ -237,10 +237,10 @@ function __-bash-prompt() {
     fi
 
     if [[ ${#BASH_FUNK_PROMPT_DIRENV_TRUSTED_DIRS[@]:-} -gt 0 ]]; then
-        if [[ ${__resetDirRC:-} != "" ]]; then
+        if [[ ${__resetDirEnv:-} != "" ]]; then
             # unset previously set directory-scoped environment variables
-            eval "$__resetDirRC"
-            unset __resetDirRC
+            eval "$__resetDirEnv"
+            unset __resetDirEnv
         fi
         # search for trusted .bash_funk_direnv.sh files upwards recursively
         local dirEnvFile trustedDirPattern trustedDirEnvFiles=( ) currDir=$PWD
@@ -278,10 +278,10 @@ function __-bash-prompt() {
                      local varValue=${varAssignment#*=}
                      if eval ${!varName+false}; then
                         # var does not yet exist
-                        __resetDirRC="$__resetDirEnv; unset $varName"
+                        __resetDirEnv="$__resetDirEnv; unset $varName"
                      else
                         # var already exists
-                        __resetDirRC="$__resetDirEnv; $varName='${!varName}'"
+                        __resetDirEnv="$__resetDirEnv; $varName='${!varName}'"
                      fi
                      eval $line
                    ;;
