@@ -272,6 +272,19 @@ function __-bash-prompt() {
             local ORIG_IFS=$IFS IFS=$'\n' line
             for line in $(sh "$dirEnvFile"); do
                case $line in
+                  alias\ ?*=*)
+                     local aliasAssignment=${line:6}
+                     local aliasName=${aliasAssignment%%=*}
+                     local aliasValue=${aliasAssignment#*=}
+                     if eval ${!aliasName+false}; then
+                        # alias does not yet exist
+                        __resetDirEnv="$__resetDirEnv; unalias $aliasName"
+                     else
+                        # alias already exists
+                        __resetDirEnv="$__resetDirEnv; $(alias $aliasName)"
+                     fi
+                     eval $line
+                   ;;
                   export\ ?*=*)
                      local varAssignment=${line:7}
                      local varName=${varAssignment%%=*}

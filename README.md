@@ -105,7 +105,7 @@ The following environment variables can be set in `~/.bash_funk_rc` to customize
 - `BASH_FUNK_PROMPT_NO_SVN`     - if set to any value the Bash prompt will not display SVN branch and modification information.
 
 
-### Directory-Scoped Environment Variables
+### Directory-Scoped Environment Variables and Aliases
 
 When changing into a directory, the bash-funk Bash prompt can automatically evaluate `.bash_funk_dir_rc` files found in the current directory or it's parent directories
 to set context-relevant environment variables.
@@ -114,7 +114,7 @@ to set context-relevant environment variables.
 Only `.bash_funk_dir_rc` files found in these directories will be evaluated for security reasons. The entries in `BASH_FUNK_PROMPT_DIRENV_AUTHORIZED_DIRS` may also expressed as a variant of [glob patterns](https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html),
 where `*` will match one directory level and `**` any directory level.
 
-The `.bash_funk_dir_rc` are executed in a sub-shell, whose output is capture and parsed. All lines matching the pattern `export <VARNAME>=<VALUE>` will then be executed via `eval` in the context of the current shell.
+The `.bash_funk_dir_rc` are executed in a sub-shell, whose output is captured and parsed. All lines matching the pattern `export <VARNAME>=<VALUE>` or `alias <VARNAME>=<VALUE>` will then be executed via `eval` in the context of the current shell.
 
 If multiple files named `.bash_funk_dir_rc` are found in the directory hierarchy (from the current directory up to `/`), they will be all evaluated starting with the file at the highest level (i.e. /).
 
