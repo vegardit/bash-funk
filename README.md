@@ -196,7 +196,7 @@ Here is an example setup:
       [me@local /opt/projects/project1] $
       </pre>
 
-   **Note:** `--` is an alias for the command <a href="https://github.com/vegardit/bash-funk/blob/master/docs/filesystem.md#-cd-up">-cd-up</a> which you also can use, e.g. `-cd-up 5`
+   **Note:** `..` is an alias for the command <a href="https://github.com/vegardit/bash-funk/blob/master/docs/filesystem.md#-cd-up">-cd-up</a> which you also can use, e.g. `-cd-up 5`
 
 1. Navigating **down** the directory tree to a directory with a given name:
 
