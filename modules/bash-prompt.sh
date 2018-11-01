@@ -236,7 +236,7 @@ function __-bash-prompt() {
         fi
     fi
 
-    if [[ ${#BASH_FUNK_PROMPT_DIRENV_TRUSTED_DIRS[@]:-} -gt 0 ]]; then
+    if [[ ${BASH_FUNK_PROMPT_DIRENV_TRUSTED_DIRS+false} && ${#BASH_FUNK_PROMPT_DIRENV_TRUSTED_DIRS[@]} -gt 0 ]]; then
         if [[ ${__resetDirEnv:-} != "" ]]; then
             # unset previously set directory-scoped environment variables
             eval "$__resetDirEnv"
@@ -276,7 +276,7 @@ function __-bash-prompt() {
                      local aliasAssignment=${line:6}
                      local aliasName=${aliasAssignment%%=*}
                      local aliasValue=${aliasAssignment#*=}
-                     if eval ${!aliasName+false}; then
+                     if [[ ${!aliasName+false} ]]; then
                         # alias does not yet exist
                         __resetDirEnv="$__resetDirEnv; unalias $aliasName"
                      else
@@ -289,7 +289,7 @@ function __-bash-prompt() {
                      local varAssignment=${line:7}
                      local varName=${varAssignment%%=*}
                      local varValue=${varAssignment#*=}
-                     if eval ${!varName+false}; then
+                     if [[ ${!varName+false} ]]; then
                         # var does not yet exist
                         __resetDirEnv="$__resetDirEnv; unset $varName"
                      else
