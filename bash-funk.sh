@@ -125,11 +125,14 @@ EOL
         echo "* Finished loading applicable modules."
 
         # export all functions
-        echo "* Exporting functions..."
-        for __fname in ${__BASH_FUNK_FUNCS[@]}; do
-            export -f -- ${BASH_FUNK_PREFIX}${__fname}
-        done
-        unset __fname __fnames
+        if [[ ${BASH_FUNK_EXPORT_FUNCTIONS:-true} == "true" ]]; then
+            echo "* Exporting functions..."
+            for __fname in ${__BASH_FUNK_FUNCS[@]}; do
+                export -f -- ${BASH_FUNK_PREFIX}${__fname}
+                export -f -- __impl${BASH_FUNK_PREFIX}${__fname}
+            done
+            unset __fname __fnames
+        fi
 
         if [[ ! ${BASH_FUNK_NO_TWEAK_BASH:-} ]] && declare -F -- ${BASH_FUNK_PREFIX}tweak-bash &>/dev/null; then
             echo "* Executing command '${BASH_FUNK_PREFIX}tweak-bash'..."
