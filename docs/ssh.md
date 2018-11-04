@@ -9,6 +9,7 @@ The following commands are available when this module is loaded:
 1. [-ssh-pubkey](#-ssh-pubkey)
 1. [-ssh-reconnect](#-ssh-reconnect)
 1. [-ssh-trust-host](#-ssh-trust-host)
+1. [-ssh-with-pass](#-ssh-with-pass)
 1. [-test-ssh](#-test-ssh)
 
 
@@ -219,6 +220,50 @@ mv ~/.ssh/known_hosts.tmp ~/.ssh/known_hosts
 ```
 
 
+## <a name="-ssh-with-pass"></a>-ssh-with-pass
+
+```
+Usage: -ssh-with-pass [OPTION]... PASSWORD SSH_OPTION1 [SSH_OPTION]...
+
+Executes ssh non-interactive with password-based login.
+
+Requirements:
+  + Command 'ssh' must be available.
+
+Parameters:
+  PASSWORD (required)
+      The password to be used.
+  SSH_OPTION (1 or more required)
+      SSH command line options.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+
+Examples:
+$ -ssh-with-pass myPassword user1@myHost whoami
+user1
+$ -ssh-with-pass myPassword -- user1@myHost -o ServerAliveInterval=5 -o ServerAliveCountMax=1 whoami
+user1
+```
+
+*Implementation:*
+```bash
+local askPassFile=~/.ssh-askpass-$(${BASH_FUNK_PREFIX:-}random-string 8 [:alnum:]).sh
+echo "#!/usr/bin/env bash
+    echo '$_PASSWORD'
+    rm -f $askPassFile >/dev/null
+" > $askPassFile
+chmod 770 $askPassFile
+
+SSH_ASKPASS=$askPassFile DISPLAY=${DISPLAY:-:0} setsid -w -- ssh ${_SSH_OPTION[@]} </dev/null
+```
+
+
 ## <a name="-test-ssh"></a>-test-ssh
 
 ```
@@ -242,4 +287,5 @@ Options:
 -ssh-pubkey --selftest && echo || return 1
 -ssh-reconnect --selftest && echo || return 1
 -ssh-trust-host --selftest && echo || return 1
+-ssh-with-pass --selftest && echo || return 1
 ```
