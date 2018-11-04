@@ -47,24 +47,24 @@ EOL
     else
 
         case "$OSTYPE" in
-            cygwin|msys) __BASH_FUNK_ROOT="$(cygpath ${BASH_SOURCE[0]})" ;;
-            *)           __BASH_FUNK_ROOT="${BASH_SOURCE[0]}" ;;
+            cygwin|msys) BASH_FUNK_ROOT="$(cygpath ${BASH_SOURCE[0]})" ;;
+            *)           BASH_FUNK_ROOT="${BASH_SOURCE[0]}" ;;
         esac
 
-        case "${__BASH_FUNK_ROOT}" in
+        case "${BASH_FUNK_ROOT}" in
             /*)
-                __BASH_FUNK_ROOT="${__BASH_FUNK_ROOT%/*}" ;;
+                BASH_FUNK_ROOT="${BASH_FUNK_ROOT%/*}" ;;
             */*)
-                __BASH_FUNK_ROOT="$PWD/${__BASH_FUNK_ROOT%/*}" ;;
+                BASH_FUNK_ROOT="$PWD/${BASH_FUNK_ROOT%/*}" ;;
             *)
-                __BASH_FUNK_ROOT="$PWD" ;;
+                BASH_FUNK_ROOT="$PWD" ;;
         esac
-        export BASH_FUNK_ROOT=${__BASH_FUNK_ROOT}
+        export BASH_FUNK_ROOT
 
-        if [[ -d ${__BASH_FUNK_ROOT}/.git ]]; then
+        if [[ -d ${BASH_FUNK_ROOT}/.git ]]; then
             __BASH_FUNK_VERSION=$(git log -1 --format=%ci 2>/dev/null || true)
-        elif [[ -d ${__BASH_FUNK_ROOT}/.svn ]]; then
-            __BASH_FUNK_VERSION=$(svn info "${__BASH_FUNK_ROOT}" 2>/dev/null || true)
+        elif [[ -d ${BASH_FUNK_ROOT}/.svn ]]; then
+            __BASH_FUNK_VERSION=$(svn info "${BASH_FUNK_ROOT}" 2>/dev/null || true)
             if [[ $__BASH_FUNK_VERSION ]]; then
                 __BASH_FUNK_VERSION="${__BASH_FUNK_VERSION#*$'\n'Last Changed Date: }" # substring after 'Last Changed Date: '
                 __BASH_FUNK_VERSION="${__BASH_FUNK_VERSION%% (*}"                  # substring before ' ('
@@ -75,7 +75,7 @@ EOL
 
         # if no SCM was used, we assume installation via curl/wget, thus we take the last modification date of the oldest file
         if [[ ! $__BASH_FUNK_VERSION ]]; then
-            __BASH_FUNK_VERSION=$(find ${__BASH_FUNK_ROOT} -not -path '*/\.*' -type f -printf "%TY.%Tm.%Td %TT %TZ\n" | sort | head -n 1)
+            __BASH_FUNK_VERSION=$(find ${BASH_FUNK_ROOT} -not -path '*/\.*' -type f -printf "%TY.%Tm.%Td %TT %TZ\n" | sort | head -n 1)
             __BASH_FUNK_VERSION="${__BASH_FUNK_VERSION%.*} ${__BASH_FUNK_VERSION#${__BASH_FUNK_VERSION% *} }"
         fi
 
@@ -104,7 +104,7 @@ EOL
         __BASH_FUNK_FUNCS=()
 
         # load all modules
-        for __module in "${__BASH_FUNK_ROOT}"/modules/*.sh; do
+        for __module in "${BASH_FUNK_ROOT}"/modules/*.sh; do
             # don't load the test module automatically
             if [[ $__module == *test.sh ]]; then
                 continue;

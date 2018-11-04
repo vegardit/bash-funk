@@ -556,17 +556,17 @@ function __impl-reload() {
 
     ######### reload ######### START
 
-if [[ ! ${__BASH_FUNK_ROOT} ]]; then
-    echo "$__fn: Error: __BASH_FUNK_ROOT variable is not defined."
+if [[ ! ${BASH_FUNK_ROOT} ]]; then
+    echo "$__fn: Error: BASH_FUNK_ROOT variable is not defined."
     return 1
 fi
 
-if [[ ! -r ${__BASH_FUNK_ROOT}/bash-funk.sh ]]; then
-    echo "$__fn: Error: File [${__BASH_FUNK_ROOT}/bash-funk.sh] is not readable by user [$USER]."
+if [[ ! -r ${BASH_FUNK_ROOT}/bash-funk.sh ]]; then
+    echo "$__fn: Error: File [${BASH_FUNK_ROOT}/bash-funk.sh] is not readable by user [$USER]."
     return 1
 fi
 
-source ${__BASH_FUNK_ROOT}/bash-funk.sh
+source ${BASH_FUNK_ROOT}/bash-funk.sh
 
     ######### reload ######### END
 }
@@ -1117,18 +1117,18 @@ function __impl-update() {
 
     ######### update ######### START
 
-if [[ ! ${__BASH_FUNK_ROOT} ]]; then
-    echo "$__fn: Error: __BASH_FUNK_ROOT variable is not defined."
+if [[ ! ${BASH_FUNK_ROOT} ]]; then
+    echo "$__fn: Error: BASH_FUNK_ROOT variable is not defined."
     return 1
 fi
 
-if [[ ! -w ${__BASH_FUNK_ROOT} ]]; then
-    echo "$__fn: Error: Directory [${__BASH_FUNK_ROOT}] is not writeable by user [$USER]."
+if [[ ! -w ${BASH_FUNK_ROOT} ]]; then
+    echo "$__fn: Error: Directory [${BASH_FUNK_ROOT}] is not writeable by user [$USER]."
     return 1
 fi
 
 if [[ ! $_yes ]]; then
-    read -p "Are you sure you want to update bash-funk located in [${__BASH_FUNK_ROOT}]? (y) " -n 1 -r
+    read -p "Are you sure you want to update bash-funk located in [${BASH_FUNK_ROOT}]? (y) " -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
         echo "$__fn: Aborting on user request."
@@ -1137,16 +1137,16 @@ if [[ ! $_yes ]]; then
 fi
 
 # update via SVN
-if [[ -e "${__BASH_FUNK_ROOT}/.svn" ]]; then
-    svn revert -R "${__BASH_FUNK_ROOT}" || return
-    svn update "${__BASH_FUNK_ROOT}" || return
+if [[ -e "${BASH_FUNK_ROOT}/.svn" ]]; then
+    svn revert -R "${BASH_FUNK_ROOT}" || return
+    svn update "${BASH_FUNK_ROOT}" || return
     [[ $_reload ]] && ${__BASH_FUNK_PREFIX:--}reload || true
     return
 fi
 
 # update via Git
-if [[ -e "${__BASH_FUNK_ROOT}/.git" ]]; then
-    ( cd "${__BASH_FUNK_ROOT}" && git config core.autocrlf false && git reset --hard && git pull ) || return
+if [[ -e "${BASH_FUNK_ROOT}/.git" ]]; then
+    ( cd "${BASH_FUNK_ROOT}" && git config core.autocrlf false && git reset --hard && git pull ) || return
     [[ $_reload ]] && ${__BASH_FUNK_PREFIX:--}reload || true
     return
 fi
@@ -1162,7 +1162,7 @@ else
         get="wget -qO-"
     fi
 fi
-( cd "${__BASH_FUNK_ROOT}" && $get https://github.com/vegardit/bash-funk/tarball/master | tar -xzv --strip-components 1 ) || return
+( cd "${BASH_FUNK_ROOT}" && $get https://github.com/vegardit/bash-funk/tarball/master | tar -xzv --strip-components 1 ) || return
 [[ $_reload ]] && ${__BASH_FUNK_PREFIX:--}reload || true
 return
 
