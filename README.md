@@ -11,6 +11,10 @@
     1. [Using wget](#install-with-wget)
     1. [Portable on Windows](#install-win-portable)
 1. [Usage](#usage)
+   1. [Customization](#customization)
+   1. [Directory-scoped Environment Variables and Aliases](#bash_funk_dir_rc)
+   1. [Efficiently navigating the filesystem](#efficient_fs_navigation)
+   1. [Using bash-funk modules separately](#using_modules_separately)
 1. [Updating](#update)
 1. [License](#license)
 
@@ -88,7 +92,7 @@ All bash-funk commands are prefixed with a `-` by default and support the `--hel
 Bash completion for options is supported by all commands too, simply type a dash (-) and hit the [TAB] key twice.
 
 
-### Customization
+### <a name="customization"></a>Customization
 
 The following environment variables can be set in `~/.bash_funk_rc` to customize bash-funk's behavior. This file will be sourced automatically.
 
@@ -106,7 +110,7 @@ The following environment variables can be set in `~/.bash_funk_rc` to customize
 - `BASH_FUNK_PROMPT_NO_SVN` - if set to any value the Bash prompt will not display SVN branch and modification information.
 
 
-### Directory-Scoped Environment Variables and Aliases
+### <a name="bash_funk_dir_rc"></a>Directory-scoped Environment Variables and Aliases
 
 When changing into a directory, the bash-funk Bash prompt can automatically evaluate `.bash_funk_dir_rc` files found in the current directory or it's parent directories
 to set context-relevant environment variables.
@@ -169,7 +173,7 @@ Here is an example setup:
     as the `/opt/projects/.bash_funk_dir_rc` is not evaluated anymore.
 
 
-### Efficiently navigating the filesystem
+### <a name="efficient_fs_navigation"></a>Efficiently navigating the filesystem
 
 1. Navigating **up** the directory tree
 
@@ -239,7 +243,7 @@ Here is an example setup:
 
 
 
-### Using bash-funk modules separately
+### <a name="using_modules_separately"></a>Using bash-funk modules separately
 
 All bash-funk modules are self-containing. This means, if you are only interested in the commands provided by one module, you can also directly source that particular module located in the `modules` folder and do not use the `bash-funk.sh` loader script.
 
