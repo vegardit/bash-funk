@@ -1,4 +1,4 @@
-# bash-funk - Spice up your Bash!
+# bash-funk - Spice up your Bash! <a href="https://github.com/vegarditbash-funk/" title="GitHub Repo"><img height="30" src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/github.svg?sanitize=true"></a>
 
 [![Build Status](https://travis-ci.org/vegardit/bash-funk.svg?branch=master)](https://travis-ci.org/vegardit/bash-funk)
 [![License](https://img.shields.io/github/license/vegardit/bash-funk.svg?label=license)](#license)
@@ -260,4 +260,4 @@ or:
 
 ## <a name="license"></a>License
 
-All files are released under the [Apache License 2.0](https://github.com/vegardit/bash-funk/blob/master/LICENSE.txt).
+All files are released under the [Apache License 2.0](LICENSE.txt).
