@@ -37,17 +37,21 @@ function -calc() {
     return $rc
 }
 function __impl-calc() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _round _help _selftest _FORMULA=()
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _round _help _selftest _FORMULA=()
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -149,15 +153,11 @@ function __impl-calc() {
             ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -245,17 +245,21 @@ function -round() {
     return $rc
 }
 function __impl-round() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _VALUE _PRECISION
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _VALUE _PRECISION
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -321,15 +325,11 @@ function __impl-round() {
               ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -409,17 +409,21 @@ function -simple-calc() {
     return $rc
 }
 function __impl-simple-calc() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _round _using _help _selftest _FORMULA
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _round _using _help _selftest _FORMULA
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -693,15 +697,11 @@ function __impl-simple-calc() {
             ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -888,17 +888,21 @@ function -test-math() {
     return $rc
 }
 function __impl-test-math() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -929,15 +933,11 @@ function __impl-test-math() {
               ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)

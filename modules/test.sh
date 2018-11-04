@@ -37,17 +37,21 @@ function -test-fn-flags() {
     return $rc
 }
 function __impl-test-fn-flags() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _myflag _help _selftest
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _myflag _help _selftest
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -114,15 +118,11 @@ function __impl-test-fn-flags() {
             ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -182,17 +182,21 @@ function -test-fn-multi-value-options() {
     return $rc
 }
 function __impl-test-fn-multi-value-options() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _aa _bb _cc _dd _ee _ff _gg _help _selftest
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _aa _bb _cc _dd _ee _ff _gg _help _selftest
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -412,15 +416,11 @@ function __impl-test-fn-multi-value-options() {
             ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -571,17 +571,21 @@ function -test-fn-multi-value-parameter-zero-or-more() {
     return $rc
 }
 function __impl-test-fn-multi-value-parameter-zero-or-more() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA=()
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA=()
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -652,15 +656,11 @@ function __impl-test-fn-multi-value-parameter-zero-or-more() {
               ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -729,17 +729,21 @@ function -test-fn-multi-value-parameters() {
     return $rc
 }
 function __impl-test-fn-multi-value-parameters() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA=() _BB=() _CC=() _DD=() _EE=() _FF=()
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA=() _BB=() _CC=() _DD=() _EE=() _FF=()
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -895,15 +899,11 @@ function __impl-test-fn-multi-value-parameters() {
               ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -1023,17 +1023,21 @@ function -test-fn-multi-value-parameters-variable-length() {
     return $rc
 }
 function __impl-test-fn-multi-value-parameters-variable-length() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA=() _BB=()
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA=() _BB=()
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -1123,15 +1127,11 @@ function __impl-test-fn-multi-value-parameters-variable-length() {
               ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -1221,17 +1221,21 @@ function -test-fn-noargs() {
     return $rc
 }
 function __impl-test-fn-noargs() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -1310,15 +1314,11 @@ function __impl-test-fn-noargs() {
             ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -1378,17 +1378,21 @@ function -test-fn-requires-existing() {
     return $rc
 }
 function __impl-test-fn-requires-existing() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -1440,15 +1444,11 @@ function __impl-test-fn-requires-existing() {
             ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -1510,17 +1510,21 @@ function -test-fn-requires-nonexistent() {
     return $rc
 }
 function __impl-test-fn-requires-nonexistent() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -1568,15 +1572,11 @@ function __impl-test-fn-requires-nonexistent() {
             ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -1638,17 +1638,21 @@ function -test-fn-single-value-options() {
     return $rc
 }
 function __impl-test-fn-single-value-options() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _aa _bb _cc _dd _ee _ff _gg _help _selftest
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _aa _bb _cc _dd _ee _ff _gg _help _selftest
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -1861,15 +1865,11 @@ function __impl-test-fn-single-value-options() {
             ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -1993,17 +1993,21 @@ function -test-fn-single-value-parameters() {
     return $rc
 }
 function __impl-test-fn-single-value-parameters() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA _BB _CC _DD _EE _FF
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA _BB _CC _DD _EE _FF
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -2145,15 +2149,11 @@ function __impl-test-fn-single-value-parameters() {
               ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -2270,17 +2270,21 @@ function -test-fn-single-value-parameters-first-optional() {
     return $rc
 }
 function __impl-test-fn-single-value-parameters-first-optional() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA _BB
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA _BB
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -2358,15 +2362,11 @@ function __impl-test-fn-single-value-parameters-first-optional() {
               ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -2443,17 +2443,21 @@ function -test-test() {
     return $rc
 }
 function __impl-test-test() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -2484,15 +2488,11 @@ function __impl-test-test() {
               ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)

@@ -37,17 +37,21 @@ function -block-port() {
     return $rc
 }
 function __impl-block-port() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _duration _help _selftest _BIND_ADDRESS _PORT
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _duration _help _selftest _BIND_ADDRESS _PORT
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -125,15 +129,11 @@ Press \[CTRL]\+\[C] to abort\.]."; return 64; fi
             ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -236,17 +236,21 @@ function -is-port-open() {
     return $rc
 }
 function __impl-is-port-open() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _HOSTNAME _PORT _CONNECT_TIMEOUT_IN_SECONDS
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _HOSTNAME _PORT _CONNECT_TIMEOUT_IN_SECONDS
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -319,15 +323,11 @@ function __impl-is-port-open() {
             ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -446,17 +446,21 @@ function -my-ips() {
     return $rc
 }
 function __impl-my-ips() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -487,15 +491,11 @@ function __impl-my-ips() {
               ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -555,17 +555,21 @@ function -my-public-hostname() {
     return $rc
 }
 function __impl-my-public-hostname() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _method _help _selftest
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _method _help _selftest
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -604,15 +608,11 @@ function __impl-my-public-hostname() {
             ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -730,17 +730,21 @@ function -my-public-ip() {
     return $rc
 }
 function __impl-my-public-ip() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _method _help _selftest
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _method _help _selftest
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -779,15 +783,11 @@ function __impl-my-public-ip() {
             ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -914,17 +914,21 @@ function -run-echo-server() {
     return $rc
 }
 function __impl-run-echo-server() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _stop_when _disconnect_when _help _selftest _BIND_ADDRESS _PORT
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _stop_when _disconnect_when _help _selftest _BIND_ADDRESS _PORT
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -979,15 +983,11 @@ function __impl-run-echo-server() {
             ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -1129,17 +1129,21 @@ function -set-proxy() {
     return $rc
 }
 function __impl-set-proxy() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _PROXY_URL _NO_PROXY
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _PROXY_URL _NO_PROXY
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -1183,15 +1187,11 @@ function __impl-set-proxy() {
             ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -1286,17 +1286,21 @@ function -test-network() {
     return $rc
 }
 function __impl-test-network() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -1327,15 +1331,11 @@ function __impl-test-network() {
               ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)

@@ -44,17 +44,21 @@ function -gen-x509cert() {
     return $rc
 }
 function __impl-gen-x509cert() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _CAkey _CAcert _keysize _validity _subject _aliases _dh1024 _force _help _selftest _FQ_DNS_NAME
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _CAkey _CAcert _keysize _validity _subject _aliases _dh1024 _force _help _selftest _FQ_DNS_NAME
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -144,15 +148,11 @@ function __impl-gen-x509cert() {
             ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -348,17 +348,21 @@ function -gen-x509rootca() {
     return $rc
 }
 function __impl-gen-x509rootca() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _validity _keysize _subject _force _help _selftest _COMMON_NAME
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _validity _keysize _subject _force _help _selftest _COMMON_NAME
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -421,15 +425,11 @@ function __impl-gen-x509rootca() {
             ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
@@ -541,17 +541,21 @@ function -test-openssl() {
     return $rc
 }
 function __impl-test-openssl() {
-    local __args=() __arg __idx __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
     [ -t 1 ] && __interactive=1 || true
-    
-    for __arg in "$@"; do
+        for __arg in "$@"; do
         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
             -|--*) __args+=("$__arg") ;;
-            -*) for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
             *) __args+=("$__arg") ;;
         esac
     done
     for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
         case "$__arg" in
 
             --help)
@@ -582,15 +586,11 @@ function __impl-test-openssl() {
               ;;
 
             --)
-                __optionWithValue=--
+                __optionWithValue="--"
               ;;
             -*)
-                if [[ $__optionWithValue == '--' ]]; then
-                        __params+=("$__arg")
-                else
-                    echo "$__fn: invalid option: '$__arg'"
-                    return 64
-                fi
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
               ;;
 
             *)
