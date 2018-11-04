@@ -22,20 +22,22 @@ else
     else
         cat >~/.bash_funk_rc <<EOL
 # Uncomment the settings you want to change:
-#BASH_FUNK_PREFIX=-            # if specified, the names of all bash-funk commands will be prefixed with this value. Must only contain alphanumeric characters a-z, A-Z, 0-9) and underscore _.
-#BASH_FUNK_DIRS_COLOR=94       # ANSI color code to be used by the bash prompt to highlight directories, default is 94 which will be transformed to \e[94m
-#BASH_FUNK_NO_TWEAK_BASH=1     # if set to any value bash-funk will not automatically invoke the -tweak-bash command when loading.
+#BASH_FUNK_PREFIX=-              # if specified, the names of all bash-funk commands will be prefixed with this value. Must only contain alphanumeric characters a-z, A-Z, 0-9) and underscore _.
+#BASH_FUNK_DIRS_COLOR=94         # ANSI color code to be used by the bash prompt to highlight directories, default is 94 which will be transformed to \e[94m
+#BASH_FUNK_NO_EXPORT_FUNCTIONS=1 # if set bash-funk commands are not exported to sub-shells, thus will not be available in your own shell scripts.
+#BASH_FUNK_NO_TWEAK_BASH=1       # if set to any value bash-funk will not automatically invoke the -tweak-bash command when loading.
 
 # Bash prompt customizations:
-#BASH_FUNK_NO_PROMPT=1         # if set to any value bash-funk will not install it's Bash prompt function.
-#BASH_FUNK_PROMPT_PREFIX=      # text that shall be shown at the beginning of the Bash prompt, e.g. a stage identifier (DEV/TEST/PROD)
-#BASH_FUNK_PROMPT_DATE="\d \t" # prompt escape sequence for the date section, default is "\t", which displays current time. See http://tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
-#BASH_FUNK_PROMPT_NO_JOBS=1    # if set to any value the Bash prompt will not display the number of shell jobs.
-#BASH_FUNK_PROMPT_NO_SCREENS=1 # if set to any value the Bash prompt will not display the number of detached screens
-#BASH_FUNK_PROMPT_NO_TTY=1     # if set to any value the Bash prompt will not display the current tty.
-#BASH_FUNK_PROMPT_NO_GIT=1     # if set to any value the Bash prompt will not display GIT branch and modification information.
-#BASH_FUNK_PROMPT_NO_SVN=1     # if set to any value the Bash prompt will not display SVN branch and modification information.
+#BASH_FUNK_NO_PROMPT=1           # if set to any value bash-funk will not install it's Bash prompt function.
+#BASH_FUNK_PROMPT_PREFIX=        # text that shall be shown at the beginning of the Bash prompt, e.g. a stage identifier (DEV/TEST/PROD)
+#BASH_FUNK_PROMPT_DATE="\d \t"   # prompt escape sequence for the date section, default is "\t", which displays current time. See http://tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
+#BASH_FUNK_PROMPT_NO_JOBS=1      # if set to any value the Bash prompt will not display the number of shell jobs.
+#BASH_FUNK_PROMPT_NO_SCREENS=1   # if set to any value the Bash prompt will not display the number of detached screens
+#BASH_FUNK_PROMPT_NO_TTY=1       # if set to any value the Bash prompt will not display the current tty.
+#BASH_FUNK_PROMPT_NO_GIT=1       # if set to any value the Bash prompt will not display GIT branch and modification information.
+#BASH_FUNK_PROMPT_NO_SVN=1       # if set to any value the Bash prompt will not display SVN branch and modification information.
 #BASH_FUNK_PROMPT_DIRENV_TRUSTED_DIRS=() # Bash array of directory paths where found .bash_funk_auto_rc files automatically executed.
+
 # other user settings below here
 
 EOL
@@ -125,7 +127,7 @@ EOL
         echo "* Finished loading applicable modules."
 
         # export all functions
-        if [[ ${BASH_FUNK_EXPORT_FUNCTIONS:-true} == "true" ]]; then
+        if [[ ! ${BASH_FUNK_NO_EXPORT_FUNCTIONS:-} ]]; then
             echo "* Exporting functions..."
             for __fname in ${__BASH_FUNK_FUNCS[@]}; do
                 export -f -- ${BASH_FUNK_PREFIX}${__fname}
