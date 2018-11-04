@@ -449,14 +449,14 @@ fi
 if [[ -e "${BASH_FUNK_ROOT}/.svn" ]]; then
     svn revert -R "${BASH_FUNK_ROOT}" || return
     svn update "${BASH_FUNK_ROOT}" || return
-    [[ $_reload ]] && ${BASH_FUNK_PREFIX:--}reload || true
+    [[ $_reload ]] && -reload || true
     return
 fi
 
 # update via Git
 if [[ -e "${BASH_FUNK_ROOT}/.git" ]]; then
     ( cd "${BASH_FUNK_ROOT}" && git config core.autocrlf false && git reset --hard && git pull ) || return
-    [[ $_reload ]] && ${BASH_FUNK_PREFIX:--}reload || true
+    [[ $_reload ]] && -reload || true
     return
 fi
 
@@ -472,7 +472,7 @@ else
     fi
 fi
 ( cd "${BASH_FUNK_ROOT}" && $get https://github.com/vegardit/bash-funk/tarball/master | tar -xzv --strip-components 1 ) || return
-[[ $_reload ]] && ${BASH_FUNK_PREFIX:--}reload || true
+[[ $_reload ]] && -reload || true
 return
 ```
 
