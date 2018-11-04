@@ -23,7 +23,10 @@
 
 bash-funk is a collection of useful commands for Bash 3.2 or higher.
 
-See the markdown files of the different [Bash modules](https://github.com/vegardit/bash-funk/tree/master/docs) for detailed information about the provided commands.
+See the markdown files of the different [Bash modules](docs) for detailed information about the provided commands:
+  * [ansi](docs/ansi.md) - contains functions related to ANSI colored text output
+  * [aws](docs/aws.md) - contains functions related to Amazon WebServices (AWS)
+
 
 An adaptive bash prompt is provided too:
 
