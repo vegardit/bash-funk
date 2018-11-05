@@ -177,7 +177,7 @@ ssh_hist="${ssh_hist//\"/\\\"}"
 local ssh_cmd
 echo Please select the SSH command to execute and press [ENTER]. Press [ESC] or [CTRL]+[C] to abort:
 echo
-eval -- ${BASH_FUNK_PREFIX:-}choose --assign ssh_cmd "\"${ssh_hist//$'\n'/\" \"}\"" || return 1
+eval -- -choose --assign ssh_cmd "\"${ssh_hist//$'\n'/\" \"}\"" || return 1
 echo
 echo "Press Enter when ready. [CTRL]+[C] to abort."
 read -e -p "$ " -i "$ssh_cmd" ssh_cmd
@@ -223,20 +223,21 @@ mv ~/.ssh/known_hosts.tmp ~/.ssh/known_hosts
 ## <a name="-ssh-with-pass"></a>-ssh-with-pass
 
 ```
-Usage: -ssh-with-pass [OPTION]... PASSWORD SSH_OPTION1 [SSH_OPTION]...
+Usage: -ssh-with-pass [OPTION]... SSH_OPTION1 [SSH_OPTION]...
 
-Executes ssh non-interactive with password-based login.
+Executes SSH with non-interactive password-based login. The password must either specified via --password <VALUE> or is read from stdin.
 
 Requirements:
   + Command 'ssh' must be available.
 
 Parameters:
-  PASSWORD (required)
-      The password to be used.
   SSH_OPTION (1 or more required)
       SSH command line options.
 
 Options:
+    --password PASSWORD 
+        The password to be used.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
@@ -245,17 +246,29 @@ Options:
         Terminates the option list.
 
 Examples:
-$ -ssh-with-pass myPassword user1@myHost whoami
+$  -ssh-with-pass --password myPassword user1@myHost whoami
 user1
-$ -ssh-with-pass myPassword -- user1@myHost -o ServerAliveInterval=5 -o ServerAliveCountMax=1 whoami
+$  -ssh-with-pass --password myPassword -- user1@myHost -o ServerAliveInterval=5 -o ServerAliveCountMax=1 whoami
+user1
+$  echo myPassword | -ssh-with-pass user1@myHost whoami
 user1
 ```
 
 *Implementation:*
 ```bash
-local askPassFile=~/.ssh-askpass-$(${BASH_FUNK_PREFIX:-}random-string 8 [:alnum:]).sh
+local askPassPW
+if [[ ${_password:-} ]]; then
+    askPassPW=$_password
+else
+    if ! read -s -t 2 askPassPW; then
+        echo 'No password provided!'
+        return 1
+    fi
+fi
+
+local askPassFile=~/.ssh-askpass-$(-random-string 8 [:alnum:]).sh
 echo "#!/usr/bin/env bash
-    echo '$_PASSWORD'
+    echo '$askPassPW'
     rm -f $askPassFile >/dev/null
 " > $askPassFile
 chmod 770 $askPassFile

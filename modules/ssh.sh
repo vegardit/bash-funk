@@ -586,7 +586,7 @@ ssh_hist="${ssh_hist//\"/\\\"}"
 local ssh_cmd
 echo Please select the SSH command to execute and press [ENTER]. Press [ESC] or [CTRL]+[C] to abort:
 echo
-eval -- ${BASH_FUNK_PREFIX:-}choose --assign ssh_cmd "\"${ssh_hist//$'\n'/\" \"}\"" || return 1
+eval -- ${BASH_FUNK_PREFIX:--}choose --assign ssh_cmd "\"${ssh_hist//$'\n'/\" \"}\"" || return 1
 echo
 echo "Press Enter when ready. [CTRL]+[C] to abort."
 read -e -p "$ " -i "$ssh_cmd" ssh_cmd
@@ -767,7 +767,7 @@ function -ssh-with-pass() {
     __impl$__fn "$@" && rc=0 || rc=$?
 
     if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... PASSWORD SSH_OPTION1 [SSH_OPTION]..."
+        echo; echo "Usage: $__fn [OPTION]... SSH_OPTION1 [SSH_OPTION]..."
         echo; echo "Type '$__fn --help' for more details."
     fi
 
@@ -776,7 +776,7 @@ function -ssh-with-pass() {
     return $rc
 }
 function __impl-ssh-with-pass() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PASSWORD _SSH_OPTION=()
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _password _help _selftest _SSH_OPTION=()
     [ -t 1 ] && __interactive=1 || true
         for __arg in "$@"; do
         case "$__arg" in
@@ -794,20 +794,21 @@ function __impl-ssh-with-pass() {
         case "$__arg" in
 
             --help)
-                echo "Usage: $__fn [OPTION]... PASSWORD SSH_OPTION1 [SSH_OPTION]..."
+                echo "Usage: $__fn [OPTION]... SSH_OPTION1 [SSH_OPTION]..."
                 echo
-                echo "Executes ssh non-interactive with password-based login."
+                echo "Executes SSH with non-interactive password-based login. The password must either specified via --password <VALUE> or is read from stdin."
                 echo
                 echo "Requirements:"
                 echo "  + Command 'ssh' must be available."
                 echo
                 echo "Parameters:"
-                echo -e "  \033[1mPASSWORD\033[22m (required)"
-                echo "      The password to be used."
                 echo -e "  \033[1mSSH_OPTION\033[22m (1 or more required)"
                 echo "      SSH command line options."
                 echo
                 echo "Options:"
+                echo -e "\033[1m    --password PASSWORD\033[22m "
+                echo "        The password to be used."
+                echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
                 echo "        Prints this help."
                 echo -e "\033[1m    --selftest\033[22m "
@@ -816,9 +817,11 @@ function __impl-ssh-with-pass() {
                 echo "        Terminates the option list."
                 echo
                 echo "Examples:"
-                echo -e "$ \033[1m$__fn myPassword user1@myHost whoami\033[22m"
+                echo -e "$ \033[1m ${BASH_FUNK_PREFIX:--}ssh-with-pass --password myPassword user1@myHost whoami\033[22m"
                 echo "user1"
-                echo -e "$ \033[1m$__fn myPassword -- user1@myHost -o ServerAliveInterval=5 -o ServerAliveCountMax=1 whoami\033[22m"
+                echo -e "$ \033[1m ${BASH_FUNK_PREFIX:--}ssh-with-pass --password myPassword -- user1@myHost -o ServerAliveInterval=5 -o ServerAliveCountMax=1 whoami\033[22m"
+                echo "user1"
+                echo -e "$ \033[1m echo myPassword | ${BASH_FUNK_PREFIX:--}ssh-with-pass user1@myHost whoami\033[22m"
                 echo "user1"
                 echo
                 return 0
@@ -835,6 +838,11 @@ function __impl-ssh-with-pass() {
                 return 0
               ;;
 
+            --password)
+                _password="@@##@@"
+                __optionWithValue=password
+            ;;
+
             --)
                 __optionWithValue="--"
               ;;
@@ -845,6 +853,10 @@ function __impl-ssh-with-pass() {
 
             *)
                 case $__optionWithValue in
+                    password)
+                        _password=$__arg
+                        __optionWithValue=
+                      ;;
                     *)
                         __params+=("$__arg")
                 esac
@@ -853,30 +865,35 @@ function __impl-ssh-with-pass() {
     done
 
     for __param in "${__params[@]}"; do
-        if [[ ! $_PASSWORD ]]; then
-            _PASSWORD=$__param
-            continue
-        fi
         _SSH_OPTION+=("$__param")
         continue
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
 
-    if [[ $_PASSWORD ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter PASSWORD must be specified."; return 64
+    if [[ $_password ]]; then
+        if [[ $_password == "@@##@@" ]]; then echo "$__fn: Error: Value PASSWORD for option --password must be specified."; return 64; fi
     fi
-    if [[ ${#_SSH_OPTION[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter SSH_OPTION 1 value(s) must be specified. Found: ${#_SSH_OPTION[@]}."; return 64; fi
+
+    if [[ ${#_SSH_OPTION[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter SSH_OPTION at least 1 value must be specified. Found: ${#_SSH_OPTION[@]}."; return 64; fi
 
     if ! hash "ssh" &>/dev/null; then echo "$__fn: Error: Required command 'ssh' not found on this system."; return 64; fi
 
     ######### ssh-with-pass ######### START
 
-local askPassFile=~/.ssh-askpass-$(${BASH_FUNK_PREFIX:-}random-string 8 [:alnum:]).sh
+local askPassPW
+if [[ ${_password:-} ]]; then
+    askPassPW=$_password
+else
+    if ! read -s -t 2 askPassPW; then
+        echo 'No password provided!'
+        return 1
+    fi
+fi
+
+local askPassFile=~/.ssh-askpass-$(${BASH_FUNK_PREFIX:--}random-string 8 [:alnum:]).sh
 echo "#!/usr/bin/env bash
-    echo '$_PASSWORD'
+    echo '$askPassPW'
     rm -f $askPassFile >/dev/null
 " > $askPassFile
 chmod 770 $askPassFile
@@ -888,7 +905,7 @@ SSH_ASKPASS=$askPassFile DISPLAY=${DISPLAY:-:0} setsid -w -- ssh ${_SSH_OPTION[@
 function __complete-ssh-with-pass() {
     local curr=${COMP_WORDS[COMP_CWORD]}
     if [[ ${curr} == -* ]]; then
-        local options=" --help "
+        local options=" --password --help "
         for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
         COMPREPLY=($(compgen -o default -W '$options' -- $curr))
     else
@@ -1018,7 +1035,7 @@ function -help-ssh() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-pubkey PRIVATE_KEY_FILE\033[0m  -  Prints the public key for the given private key."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-reconnect [GREP_PATTERN]...\033[0m  -  Dialog that displays the last 10 issued SSH commands to execute one of them."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-trust-host HOSTNAME [PORT]\033[0m  -  Adds the public key of the given host to the ~/.ssh/known_hosts file."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-with-pass PASSWORD SSH_OPTION1 [SSH_OPTION]...\033[0m  -  Executes ssh non-interactive with password-based login."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-with-pass SSH_OPTION1 [SSH_OPTION]...\033[0m  -  Executes SSH with non-interactive password-based login. The password must either specified via --password <VALUE> or is read from stdin."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-ssh\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
