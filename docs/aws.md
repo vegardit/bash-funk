@@ -21,6 +21,7 @@ The following commands are available when this module is loaded:
 
 ## <a name="license"></a>License
 
+```
 Copyright 2015-2018 by Vegard IT GmbH, Germany, https://vegardit.com
 SPDX-License-Identifier: Apache-2.0
 
@@ -35,6 +36,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+```
 
 
 ## <a name="-aws-account-id"></a>-aws-account-id
@@ -55,9 +57,9 @@ Options:
 
 *Implementation:*
 ```bash
-hash wget &>/dev/null && local get="wget -qO-" || local get="curl -s"
+hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
-$get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/accountId/ {print $4}'
+$http_get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/accountId/ {print $4}'
 ```
 
 
@@ -79,9 +81,9 @@ Options:
 
 *Implementation:*
 ```bash
-hash wget &>/dev/null && local get="wget -qO-" || local get="curl -s"
+hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
-$get http://169.254.169.254/latest/meta-data/placement/availability-zone
+$http_get http://169.254.169.254/latest/meta-data/placement/availability-zone
 ```
 
 
@@ -113,14 +115,14 @@ Options:
 
 *Implementation:*
 ```bash
-hash wget &>/dev/null && local get="wget -qO-" || local get="curl -s"
+hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
 if [[ ! $_region ]]; then
-    local _region=$($get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/region/ {print $4}')
+    local _region=$($http_get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/region/ {print $4}')
 fi
 
 if [[ ! $_STACK_NAME ]]; then
-    local instanceId=$($get http://169.254.169.254/latest/meta-data/instance-id)
+    local instanceId=$($http_get http://169.254.169.254/latest/meta-data/instance-id)
     local _STACK_NAME=$(aws ec2 describe-instances --region $_region --instance-id $instanceId --query 'Reservations[*].Instances[*].Tags[?Key==`aws:cloudformation:stack-name`].Value' --output text)
 fi
 
@@ -146,9 +148,9 @@ Options:
 
 *Implementation:*
 ```bash
-hash wget &>/dev/null && local get="wget -qO-" || local get="curl -s"
+hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
-$get http://169.254.169.254/latest/meta-data/instance-id
+$http_get http://169.254.169.254/latest/meta-data/instance-id
 ```
 
 
@@ -201,9 +203,9 @@ Options:
 
 *Implementation:*
 ```bash
-hash wget &>/dev/null && local get="wget -qO-" || local get="curl -s"
+hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
-$get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/privateIp/ {print $4}'
+$http_get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/privateIp/ {print $4}'
 ```
 
 
@@ -225,9 +227,9 @@ Options:
 
 *Implementation:*
 ```bash
-hash wget &>/dev/null && local get="wget -qO-" || local get="curl -s"
+hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
-$get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/region/ {print $4}'
+$http_get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/region/ {print $4}'
 ```
 
 
@@ -252,10 +254,10 @@ Options:
 
 *Implementation:*
 ```bash
-hash wget &>/dev/null && local get="wget -qO-" || local get="curl -s"
+hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
-local region=$($get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/region/ {print $4}')
-local instanceId=$($get http://169.254.169.254/latest/meta-data/instance-id)
+local region=$($http_get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/region/ {print $4}')
+local instanceId=$($http_get http://169.254.169.254/latest/meta-data/instance-id)
 aws ec2 describe-instances --region $region --instance-id $instanceId --query 'Reservations[*].Instances[*].Tags[?Key==`aws:cloudformation:stack-name`].Value' --output text
 ```
 
@@ -278,9 +280,10 @@ Options:
 
 *Implementation:*
 ```bash
-hash wget &>/dev/null && local get="wget -qO-" || local get="curl -s"
+hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
-$get http://169.254.169.254/latest/meta-data/network/interfaces/macs/$($get http://169.254.169.254/latest/meta-data/mac)/vpc-ipv4-cidr-block
+local mac=$($http_get http://169.254.169.254/latest/meta-data/mac)
+$http_get http://169.254.169.254/latest/meta-data/network/interfaces/macs/$mac/vpc-ipv4-cidr-block
 ```
 
 
@@ -302,9 +305,10 @@ Options:
 
 *Implementation:*
 ```bash
-hash wget &>/dev/null && local get="wget -qO-" || local get="curl -s"
+hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
-$get http://169.254.169.254/latest/meta-data/network/interfaces/macs/$($get http://169.254.169.254/latest/meta-data/mac)/vpc-id
+local mac=$($http_get http://169.254.169.254/latest/meta-data/mac)
+$http_get http://169.254.169.254/latest/meta-data/network/interfaces/macs/$mac/vpc-id
 ```
 
 
