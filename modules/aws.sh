@@ -112,9 +112,9 @@ function __impl-aws-account-id() {
 
     ######### aws-account-id ######### START
 
-hash wget &>/dev/null && local get="wget -qO-" || local get="curl -s"
+hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
-$get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/accountId/ {print $4}'
+$http_get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/accountId/ {print $4}'
 
     ######### aws-account-id ######### END
 }
@@ -223,9 +223,9 @@ function __impl-aws-az() {
 
     ######### aws-az ######### START
 
-hash wget &>/dev/null && local get="wget -qO-" || local get="curl -s"
+hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
-$get http://169.254.169.254/latest/meta-data/placement/availability-zone
+$http_get http://169.254.169.254/latest/meta-data/placement/availability-zone
 
     ######### aws-az ######### END
 }
@@ -363,14 +363,14 @@ function __impl-aws-describe-stack() {
 
     ######### aws-describe-stack ######### START
 
-hash wget &>/dev/null && local get="wget -qO-" || local get="curl -s"
+hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
 if [[ ! $_region ]]; then
-    local _region=$($get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/region/ {print $4}')
+    local _region=$($http_get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/region/ {print $4}')
 fi
 
 if [[ ! $_STACK_NAME ]]; then
-    local instanceId=$($get http://169.254.169.254/latest/meta-data/instance-id)
+    local instanceId=$($http_get http://169.254.169.254/latest/meta-data/instance-id)
     local _STACK_NAME=$(aws ec2 describe-instances --region $_region --instance-id $instanceId --query 'Reservations[*].Instances[*].Tags[?Key==`aws:cloudformation:stack-name`].Value' --output text)
 fi
 
@@ -483,9 +483,9 @@ function __impl-aws-instance-id() {
 
     ######### aws-instance-id ######### START
 
-hash wget &>/dev/null && local get="wget -qO-" || local get="curl -s"
+hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
-$get http://169.254.169.254/latest/meta-data/instance-id
+$http_get http://169.254.169.254/latest/meta-data/instance-id
 
     ######### aws-instance-id ######### END
 }
@@ -716,9 +716,9 @@ function __impl-aws-private-ip() {
 
     ######### aws-private-ip ######### START
 
-hash wget &>/dev/null && local get="wget -qO-" || local get="curl -s"
+hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
-$get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/privateIp/ {print $4}'
+$http_get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/privateIp/ {print $4}'
 
     ######### aws-private-ip ######### END
 }
@@ -827,9 +827,9 @@ function __impl-aws-region() {
 
     ######### aws-region ######### START
 
-hash wget &>/dev/null && local get="wget -qO-" || local get="curl -s"
+hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
-$get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/region/ {print $4}'
+$http_get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/region/ {print $4}'
 
     ######### aws-region ######### END
 }
@@ -943,10 +943,10 @@ function __impl-aws-stack-name() {
 
     ######### aws-stack-name ######### START
 
-hash wget &>/dev/null && local get="wget -qO-" || local get="curl -s"
+hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
-local region=$($get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/region/ {print $4}')
-local instanceId=$($get http://169.254.169.254/latest/meta-data/instance-id)
+local region=$($http_get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/region/ {print $4}')
+local instanceId=$($http_get http://169.254.169.254/latest/meta-data/instance-id)
 aws ec2 describe-instances --region $region --instance-id $instanceId --query 'Reservations[*].Instances[*].Tags[?Key==`aws:cloudformation:stack-name`].Value' --output text
 
     ######### aws-stack-name ######### END
@@ -1056,9 +1056,10 @@ function __impl-aws-vpc-cidr-block() {
 
     ######### aws-vpc-cidr-block ######### START
 
-hash wget &>/dev/null && local get="wget -qO-" || local get="curl -s"
+hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
-$get http://169.254.169.254/latest/meta-data/network/interfaces/macs/$($get http://169.254.169.254/latest/meta-data/mac)/vpc-ipv4-cidr-block
+local mac=$($http_get http://169.254.169.254/latest/meta-data/mac)
+$http_get http://169.254.169.254/latest/meta-data/network/interfaces/macs/$mac/vpc-ipv4-cidr-block
 
     ######### aws-vpc-cidr-block ######### END
 }
@@ -1167,9 +1168,10 @@ function __impl-aws-vpc-id() {
 
     ######### aws-vpc-id ######### START
 
-hash wget &>/dev/null && local get="wget -qO-" || local get="curl -s"
+hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
-$get http://169.254.169.254/latest/meta-data/network/interfaces/macs/$($get http://169.254.169.254/latest/meta-data/mac)/vpc-id
+local mac=$($http_get http://169.254.169.254/latest/meta-data/mac)
+$http_get http://169.254.169.254/latest/meta-data/network/interfaces/macs/$mac/vpc-id
 
     ######### aws-vpc-id ######### END
 }
