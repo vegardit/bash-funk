@@ -271,7 +271,7 @@ function __impl-git-cherry-pick() {
         if [[ $_pr -lt 1 ]]; then echo "$__fn: Error: Value '$_pr' for option --pr is too low. Must be >= 1."; return 64; fi
     fi
 
-    if [[ ${#_COMMIT_HASHES[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter COMMIT_HASHES 1 value(s) must be specified. Found: ${#_COMMIT_HASHES[@]}."; return 64; fi
+    if [[ ${#_COMMIT_HASHES[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter COMMIT_HASHES at least 1 value must be specified. Found: ${#_COMMIT_HASHES[@]}."; return 64; fi
 
     ######### git-cherry-pick ######### START
 
@@ -1732,7 +1732,7 @@ function __impl-git-switch-remote-protocol() {
         return 64
     done
 
-    if [[ ${#_REMOTE_NAME[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter REMOTE_NAME 1 value(s) must be specified. Found: ${#_REMOTE_NAME[@]}."; return 64; fi
+    if [[ ${#_REMOTE_NAME[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter REMOTE_NAME at least 1 value must be specified. Found: ${#_REMOTE_NAME[@]}."; return 64; fi
     if [[ $_PROTOCOL ]]; then
         if [[ $_PROTOCOL != 'https' && $_PROTOCOL != 'ssh' ]]; then echo "$__fn: Error: Value '$_PROTOCOL' for parameter PROTOCOL is not one of the allowed values [https,ssh]."; return 64; fi
     else

@@ -139,7 +139,7 @@ function __impl-choose() {
         if [[ $_default == "@@##@@" ]]; then echo "$__fn: Error: Value OPTION for option --default must be specified."; return 64; fi
     fi
 
-    if [[ ${#_OPTION[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter OPTION 1 value(s) must be specified. Found: ${#_OPTION[@]}."; return 64; fi
+    if [[ ${#_OPTION[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter OPTION at least 1 value must be specified. Found: ${#_OPTION[@]}."; return 64; fi
 
     ######### choose ######### START
 

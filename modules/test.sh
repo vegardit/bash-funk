@@ -471,8 +471,8 @@ function __impl-test-fn-multi-value-options() {
     fi
     if [[ $_bb ]]; then
         [[ $_bb == "@@##@@" ]] && _bb=()
-        if [[ ${#_bb[@]} -lt 1 ]]; then echo "$__fn: Error: For option --bb a list with at least 1 value(s) must be specified. Found: ${#_bb[@]}."; return 64; fi
-        if [[ ${#_bb[@]} -gt 2 ]]; then echo "$__fn: Error: For option --bb a list with no more than 2 values must be specified. Found: ${#_bb[@]}."; return 64; fi
+        if [[ ${#_bb[@]} -lt 1 ]]; then echo "$__fn: Error: For option --bb a list with at least 1 value must be specified. Found: ${#_bb[@]}."; return 64; fi
+        if [[ ${#_bb[@]} -gt 2 ]]; then echo "$__fn: Error: Too many values for option --bb specified. Maximum number is 2. Found: ${#_bb[@]}."; return 64; fi
         true
     fi
     if [[ $_cc ]]; then

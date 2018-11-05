@@ -703,7 +703,7 @@ function __impl-count-words() {
     else
         echo "$__fn: Error: Parameter FILE must be specified."; return 64
     fi
-    if [[ ${#_WORD[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter WORD 1 value(s) must be specified. Found: ${#_WORD[@]}."; return 64; fi
+    if [[ ${#_WORD[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter WORD at least 1 value must be specified. Found: ${#_WORD[@]}."; return 64; fi
 
     ######### count-words ######### START
 

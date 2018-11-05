@@ -222,7 +222,7 @@ function __impl-gen-x509cert() {
     fi
     if [[ $_aliases ]]; then
         [[ $_aliases == "@@##@@" ]] && _aliases=()
-        if [[ ${#_aliases[@]} -lt 1 ]]; then echo "$__fn: Error: For option --aliases a list with at least 1 value(s) must be specified. Found: ${#_aliases[@]}."; return 64; fi
+        if [[ ${#_aliases[@]} -lt 1 ]]; then echo "$__fn: Error: For option --aliases a list with at least 1 value must be specified. Found: ${#_aliases[@]}."; return 64; fi
         local __param
         for __param in "${_aliases[@]}"; do
             if [[ ! "$__param" =~ ^[*a-zA-Z0-9_.-]+$ ]]; then echo "$__fn: Error: Value '$__param' for option --aliases does not match required pattern '[*a-zA-Z0-9_.-]+'."; return 64; fi

@@ -134,7 +134,7 @@ function __impl-tar-gz() {
     else
         echo "$__fn: Error: Parameter ARCHIVE must be specified."; return 64
     fi
-    if [[ ${#_PATH[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter PATH 1 value(s) must be specified. Found: ${#_PATH[@]}."; return 64; fi
+    if [[ ${#_PATH[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter PATH at least 1 value must be specified. Found: ${#_PATH[@]}."; return 64; fi
     if [[ $_PATH ]]; then
         local __param
         for __param in "${_PATH[@]}"; do
@@ -295,7 +295,7 @@ function __impl-tar-zstd() {
     else
         echo "$__fn: Error: Parameter ARCHIVE must be specified."; return 64
     fi
-    if [[ ${#_PATH[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter PATH 1 value(s) must be specified. Found: ${#_PATH[@]}."; return 64; fi
+    if [[ ${#_PATH[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter PATH at least 1 value must be specified. Found: ${#_PATH[@]}."; return 64; fi
     if [[ $_PATH ]]; then
         local __param
         for __param in "${_PATH[@]}"; do
