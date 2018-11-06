@@ -276,12 +276,12 @@ function __-bash-prompt() {
                      local aliasAssignment=${line:6}
                      local aliasName=${aliasAssignment%%=*}
                      local aliasValue=${aliasAssignment#*=}
-                     if [[ ${!aliasName+false} ]]; then
+                     if alias $aliasName 2>/dev/null; then
+                        # alias already exists
+                        __resetDirEnv="$__resetDirEnv; alias $(alias $aliasName)"
+                     else
                         # alias does not yet exist
                         __resetDirEnv="$__resetDirEnv; unalias $aliasName"
-                     else
-                        # alias already exists
-                        __resetDirEnv="$__resetDirEnv; $(alias $aliasName)"
                      fi
                      eval $line
                    ;;
