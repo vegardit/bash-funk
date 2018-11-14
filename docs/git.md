@@ -8,6 +8,7 @@ The following commands are available when this module is loaded:
 
 1. [-git-branch-name](#-git-branch-name)
 1. [-git-cherry-pick](#-git-cherry-pick)
+1. [-git-cleanse](#-git-cleanse)
 1. [-git-clone-shallow](#-git-clone-shallow)
 1. [-git-create-empty-branch](#-git-create-empty-branch)
 1. [-git-delete-branch](#-git-delete-branch)
@@ -15,11 +16,12 @@ The following commands are available when this module is loaded:
 1. [-git-delete-remote-branch](#-git-delete-remote-branch)
 1. [-git-fetch-pr](#-git-fetch-pr)
 1. [-git-log](#-git-log)
-1. [-git-modified-files](#-git-modified-files)
-1. [-git-reset](#-git-reset)
+1. [-git-ls-conflicts](#-git-ls-conflicts)
+1. [-git-ls-modified](#-git-ls-modified)
 1. [-git-squash](#-git-squash)
 1. [-git-switch-remote-protocol](#-git-switch-remote-protocol)
 1. [-git-sync-fork](#-git-sync-fork)
+1. [-git-undo](#-git-undo)
 1. [-git-update-branch](#-git-update-branch)
 1. [-github-upstream-url](#-github-upstream-url)
 1. [-test-git](#-test-git)
@@ -112,6 +114,46 @@ git cherry-pick ${_COMMIT_HASHES[@]} || return 1
 
 if [[ $_push ]]; then
     git push
+fi
+```
+
+
+## <a name="-git-cleanse"></a>-git-cleanse
+
+```
+Usage: -git-cleanse [OPTION]...
+
+Reverts any uncomitted changes in the local working tree including untracked files.
+
+Options:
+    --pull 
+        Execute 'git pull' after reset/clean.
+-y, --yes 
+        Answer interactive prompts with 'yes'.
+    -----------------------------
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+if [[ ! $_yes ]]; then
+    read -p "Are you sure you want to erase all uncommitted changes? (y) " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "-git-cleanse: Aborting on user request."
+        return 0
+    fi
+fi
+
+git reset --hard HEAD && git clean -dfx || return 1
+
+if [[ $_pull ]]; then
+    git pull
 fi
 ```
 
@@ -298,7 +340,6 @@ Options:
 
 *Implementation:*
 ```bash
-
 git fetch origin pull/${_PR_NUMBER}/head:pr-${_PR_NUMBER} || return 1
 
 if [[ $_checkout ]]; then
@@ -329,10 +370,36 @@ git log --pretty=format:"%C(bold black)%h%Creset %an %C(bold black)%ar%Creset %s
 ```
 
 
-## <a name="-git-modified-files"></a>-git-modified-files
+## <a name="-git-ls-conflicts"></a>-git-ls-conflicts
 
 ```
-Usage: -git-modified-files [OPTION]... [PATH]
+Usage: -git-ls-conflicts [OPTION]... [PATH]
+
+Prints the name of the all conflicting files in the current directory tree.
+
+Parameters:
+  PATH (default: '.', directory)
+      The path to check.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+git diff --name-only --diff-filter=U "$_PATH"
+```
+
+
+## <a name="-git-ls-modified"></a>-git-ls-modified
+
+```
+Usage: -git-ls-modified [OPTION]... [PATH]
 
 Prints the name of the all deleted, changed and newly created files in the current directory tree.
 
@@ -352,35 +419,6 @@ Options:
 *Implementation:*
 ```bash
 git -C "$_PATH" ls-files -o -m -d --exclude-standard
-```
-
-
-## <a name="-git-reset"></a>-git-reset
-
-```
-Usage: -git-reset [OPTION]...
-
-Revers any changes in the local working tree including untracked files.
-
-Options:
-    --pull 
-        Execute 'git pull' after reset/clean.
-    -----------------------------
-    --help 
-        Prints this help.
-    --selftest 
-        Performs a self-test.
-    --
-        Terminates the option list.
-```
-
-*Implementation:*
-```bash
-git reset --hard HEAD && git clean -dfx || return 1
-
-if [[ $_pull ]]; then
-    git pull
-fi
 ```
 
 
@@ -579,6 +617,45 @@ fi
 ```
 
 
+## <a name="-git-undo"></a>-git-undo
+
+```
+Usage: -git-undo [OPTION]... [NUM_COMMITS]
+
+Removes the last N commits from the commit history.
+
+Parameters:
+  NUM_COMMITS (default: '1', integer: 1-?)
+      Number of commits to undo.
+
+Options:
+    --push 
+        Push updates to origin after undo.
+    --reset 
+        Removes any changes from the working tree.
+    -----------------------------
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+if [[ $_reset ]]; then
+    git reset --hard HEAD~${_NUM_COMMITS} && git clean -dfx || return 1
+else
+    git reset --soft HEAD~${_NUM_COMMITS} || return 1
+fi
+
+if [[ $_push ]]; then
+    git push --force
+fi
+```
+
+
 ## <a name="-git-update-branch"></a>-git-update-branch
 
 ```
@@ -679,6 +756,7 @@ Options:
 ```bash
 -git-branch-name --selftest && echo || return 1
 -git-cherry-pick --selftest && echo || return 1
+-git-cleanse --selftest && echo || return 1
 -git-clone-shallow --selftest && echo || return 1
 -git-create-empty-branch --selftest && echo || return 1
 -git-delete-branch --selftest && echo || return 1
@@ -686,11 +764,12 @@ Options:
 -git-delete-remote-branch --selftest && echo || return 1
 -git-fetch-pr --selftest && echo || return 1
 -git-log --selftest && echo || return 1
--git-modified-files --selftest && echo || return 1
--git-reset --selftest && echo || return 1
+-git-ls-conflicts --selftest && echo || return 1
+-git-ls-modified --selftest && echo || return 1
 -git-squash --selftest && echo || return 1
 -git-switch-remote-protocol --selftest && echo || return 1
 -git-sync-fork --selftest && echo || return 1
+-git-undo --selftest && echo || return 1
 -git-update-branch --selftest && echo || return 1
 -github-upstream-url --selftest && echo || return 1
 ```
