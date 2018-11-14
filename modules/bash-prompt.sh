@@ -236,7 +236,7 @@ function __-bash-prompt() {
         fi
     fi
 
-    if [[ ${BASH_FUNK_PROMPT_DIRENV_TRUSTED_DIRS+false} && ${#BASH_FUNK_PROMPT_DIRENV_TRUSTED_DIRS[@]} -gt 0 ]]; then
+    if [[ ${#BASH_FUNK_PROMPT_DIRENV_TRUSTED_DIRS[@]} -gt 0 ]]; then
         if [[ ${__resetDirEnv:-} != "" ]]; then
             # unset previously set directory-scoped environment variables
             eval "$__resetDirEnv"
@@ -271,34 +271,34 @@ function __-bash-prompt() {
         for dirEnvFile in "${trustedDirEnvFiles[@]}"; do
             local ORIG_IFS=$IFS IFS=$'\n' line
             for line in $(sh "$dirEnvFile"); do
-               case $line in
-                  alias\ ?*=*)
-                     local aliasAssignment=${line:6}
-                     local aliasName=${aliasAssignment%%=*}
-                     local aliasValue=${aliasAssignment#*=}
-                     if alias $aliasName 2>/dev/null; then
-                        # alias already exists
-                        __resetDirEnv="$__resetDirEnv; alias $(alias $aliasName)"
-                     else
-                        # alias does not yet exist
-                        __resetDirEnv="$__resetDirEnv; unalias $aliasName"
-                     fi
-                     eval $line
-                   ;;
-                  export\ ?*=*)
-                     local varAssignment=${line:7}
-                     local varName=${varAssignment%%=*}
-                     local varValue=${varAssignment#*=}
-                     if [[ ${!varName+false} ]]; then
-                        # var does not yet exist
-                        __resetDirEnv="$__resetDirEnv; unset $varName"
-                     else
-                        # var already exists
-                        __resetDirEnv="$__resetDirEnv; $varName='${!varName}'"
-                     fi
-                     eval $line
-                   ;;
-               esac
+                case $line in
+                    alias\ ?*=*)
+                        local aliasAssignment=${line:6}
+                        local aliasName=${aliasAssignment%%=*}
+                        local aliasValue=${aliasAssignment#*=}
+                        if alias $aliasName 2>/dev/null; then
+                            # alias already exists
+                            __resetDirEnv="$__resetDirEnv; alias $(alias $aliasName)"
+                        else
+                            # alias does not yet exist
+                            __resetDirEnv="$__resetDirEnv; unalias $aliasName"
+                        fi
+                        eval $line
+                      ;;
+                    export\ ?*=*)
+                       local varAssignment=${line:7}
+                       local varName=${varAssignment%%=*}
+                       local varValue=${varAssignment#*=}
+                       if ${!varName+false}; then
+                           # var does not yet exist
+                           __resetDirEnv="$__resetDirEnv; unset $varName"
+                       else
+                           # var already exists
+                           __resetDirEnv="$__resetDirEnv; $varName='${!varName}'"
+                       fi
+                       eval $line
+                     ;;
+                esac
             done
             IFS=$ORIG_IFS
         done
