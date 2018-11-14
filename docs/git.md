@@ -4,6 +4,15 @@
 
 This module only loads if the git commandline client is installed.
 
+The following statements are automatically executed when this module loads:
+
+```bash
+alias -- -git-ls-branches="git branch -a"
+alias -- -git-ls-remotes="git remote -v"
+alias -- -git-ls-stashes="git stash list"
+alias -- -git-ls-tags="git tag"
+```
+
 The following commands are available when this module is loaded:
 
 1. [-git-branch-name](#-git-branch-name)
@@ -351,9 +360,13 @@ fi
 ## <a name="-git-log"></a>-git-log
 
 ```
-Usage: -git-log [OPTION]...
+Usage: -git-log [OPTION]... [COUNT]
 
 Displays the git log of the current project in a pretty and compact format.
+
+Parameters:
+  COUNT (default: '10', integer: ?-?)
+      Number of entries to be displayed.
 
 Options:
     --help 
@@ -366,7 +379,7 @@ Options:
 
 *Implementation:*
 ```bash
-git log --pretty=format:"%C(bold black)%h%Creset %an %C(bold black)%ar%Creset %s" --graph
+git log --graph -${_COUNT} --branches --remotes --tags --pretty=format:'%C(bold black)%h%Creset %<(70,trunc)%s %C(bold black)(%aN, %cr)%Cred%d' --date-order
 ```
 
 

@@ -1245,7 +1245,7 @@ function -git-log() {
     __impl$__fn "$@" && rc=0 || rc=$?
 
     if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]..."
+        echo; echo "Usage: $__fn [OPTION]... [COUNT]"
         echo; echo "Type '$__fn --help' for more details."
     fi
 
@@ -1254,7 +1254,7 @@ function -git-log() {
     return $rc
 }
 function __impl-git-log() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _COUNT
     [ -t 1 ] && __interactive=1 || true
         for __arg in "$@"; do
         case "$__arg" in
@@ -1272,9 +1272,13 @@ function __impl-git-log() {
         case "$__arg" in
 
             --help)
-                echo "Usage: $__fn [OPTION]..."
+                echo "Usage: $__fn [OPTION]... [COUNT]"
                 echo
                 echo "Displays the git log of the current project in a pretty and compact format."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mCOUNT\033[22m (default: '10', integer: ?-?)"
+                echo "      Number of entries to be displayed."
                 echo
                 echo "Options:"
                 echo -e "\033[1m    --help\033[22m "
@@ -1316,13 +1320,23 @@ function __impl-git-log() {
     done
 
     for __param in "${__params[@]}"; do
+        if [[ ! $_COUNT && ${#__params[@]} > 0 ]]; then
+            _COUNT=$__param
+            continue
+        fi
         echo "$__fn: Error: too many parameters: '$__param'"
         return 64
     done
 
+    if [[ ! $_COUNT ]]; then _COUNT="10"; fi
+
+    if [[ $_COUNT ]]; then
+        if [[ ! "$_COUNT" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_COUNT' for parameter COUNT is not a numeric value."; return 64; fi
+    fi
+
     ######### git-log ######### START
 
-git log --pretty=format:"%C(bold black)%h%Creset %an %C(bold black)%ar%Creset %s" --graph
+git log --graph -${_COUNT} --branches --remotes --tags --pretty=format:'%C(bold black)%h%Creset %<(70,trunc)%s %C(bold black)(%aN, %cr)%Cred%d' --date-order
 
     ######### git-log ######### END
 }
@@ -2699,7 +2713,7 @@ function -help-git() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-delete-local-branch BRANCH_NAME\033[0m  -  Deletes a branch in the local repository."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-delete-remote-branch BRANCH_NAME\033[0m  -  Deletes a branch in the remote repository."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-fetch-pr PR_NUMBER\033[0m  -  Fetches the given pull request."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-log\033[0m  -  Displays the git log of the current project in a pretty and compact format."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-log [COUNT]\033[0m  -  Displays the git log of the current project in a pretty and compact format."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-ls-conflicts [PATH]\033[0m  -  Prints the name of the all conflicting files in the current directory tree."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-ls-modified [PATH]\033[0m  -  Prints the name of the all deleted, changed and newly created files in the current directory tree."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-squash NUM_COMMITS\033[0m  -  Squashes the last n commits into one."
@@ -2712,6 +2726,11 @@ function -help-git() {
 
 }
 __BASH_FUNK_FUNCS+=( git-branch-name git-cherry-pick git-cleanse git-clone-shallow git-create-empty-branch git-delete-branch git-delete-local-branch git-delete-remote-branch git-fetch-pr git-log git-ls-conflicts git-ls-modified git-squash git-switch-remote-protocol git-sync-fork git-undo git-update-branch github-upstream-url test-git )
+
+alias -- ${BASH_FUNK_PREFIX:--}git-ls-branches="git branch -a"
+alias -- ${BASH_FUNK_PREFIX:--}git-ls-remotes="git remote -v"
+alias -- ${BASH_FUNK_PREFIX:--}git-ls-stashes="git stash list"
+alias -- ${BASH_FUNK_PREFIX:--}git-ls-tags="git tag"
 
 else
     echo "SKIPPED"
