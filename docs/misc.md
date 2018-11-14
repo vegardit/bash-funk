@@ -512,12 +512,12 @@ Bash variable 'NON_EXISTANT_VARIABLE' does not exist.
 
 *Implementation:*
 ```bash
-if declare -p $_VARIABLE_NAME &>/dev/null; then
-    [[ $_verbose ]] && echo "Bash variable '$_VARIABLE_NAME' exists." || true
-    return 0
-else
+if ${!_VARIABLE_NAME+false}; then
     [[ $_verbose ]] && echo "Bash variable '$_VARIABLE_NAME' does not exist." || true
     return 1
+else
+    [[ $_verbose ]] && echo "Bash variable '$_VARIABLE_NAME' exists." || true
+    return 0
 fi
 ```
 
