@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
-# Copyright 2015-2018 by Vegard IT GmbH, Germany, https://vegardit.com
+# Copyright 2015-2019 by Vegard IT GmbH, Germany, https://vegardit.com
 # SPDX-License-Identifier: Apache-2.0
-# 
+#
 # @author Sebastian Thomschke, Vegard IT GmbH
 # @author Patrick Spielmann, Vegard IT GmbH
 
@@ -514,7 +514,11 @@ function __impl-my-ips() {
 
     ######### my-ips ######### START
 
-ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+if [[ $OSTYPE == cygwin || $OSTYPE == msys ]]; then
+    ipconfig /all | grep "IPv4 Address" | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+else
+    ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+fi
 
     ######### my-ips ######### END
 }
