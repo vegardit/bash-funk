@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
-# Copyright 2015-2018 by Vegard IT GmbH, Germany, https://vegardit.com
+# Copyright 2015-2019 by Vegard IT GmbH, Germany, https://vegardit.com
 # SPDX-License-Identifier: Apache-2.0
-# 
+#
 # @author Sebastian Thomschke, Vegard IT GmbH
 # @author Patrick Spielmann, Vegard IT GmbH
 
@@ -15,7 +15,6 @@
 
 function -is-loadable() {
     hash aws &>/dev/null || [[ -f /sys/hypervisor/uuid && $(head -c 3 /sys/hypervisor/uuid) == "ec2" ]]
-
 }
 
 if ${BASH_FUNK_PREFIX:--}is-loadable; then

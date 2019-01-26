@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
-# Copyright 2015-2018 by Vegard IT GmbH, Germany, https://vegardit.com
+# Copyright 2015-2019 by Vegard IT GmbH, Germany, https://vegardit.com
 # SPDX-License-Identifier: Apache-2.0
-# 
+#
 # @author Sebastian Thomschke, Vegard IT GmbH
 # @author Patrick Spielmann, Vegard IT GmbH
 
@@ -524,8 +524,7 @@ function __impl-disk-perf() {
 2097152 bytes (2.1 MB, 2.0 MiB) copied, 0.0186709 s, 112 MB/s
 
 Testing single-threaded sequential read performance...
-2097152 bytes (2.1 MB, 2.0 MiB) copied, 0.00332485 s, 631 MB/s
-"
+2097152 bytes (2.1 MB, 2.0 MiB) copied, 0.00332485 s, 631 MB/s"
                 echo
                 return 0
               ;;

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (c) 2015-2018 Vegard IT GmbH, http://vegardit.com
+# Copyright (c) 2015-2019 Vegard IT GmbH, http://vegardit.com
 # SPDX-License-Identifier: Apache-2.0
 #
 # @author Sebastian Thomschke, Vegard IT GmbH
