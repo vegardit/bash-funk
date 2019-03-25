@@ -281,7 +281,7 @@ function __-bash-prompt() {
                             __resetDirEnv="$__resetDirEnv; alias $(alias $aliasName)"
                         else
                             # alias does not yet exist
-                            __resetDirEnv="$__resetDirEnv; unalias $aliasName"
+                            __resetDirEnv="$__resetDirEnv; unalias $aliasName 2>/dev/null"
                         fi
                         eval $line
                       ;;
