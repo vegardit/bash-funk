@@ -22,6 +22,7 @@ The following commands are available when this module is loaded:
 1. [-help](#-help)
 1. [-please](#-please)
 1. [-reload](#-reload)
+1. [-root](#-root)
 1. [-test-all](#-test-all)
 1. [-test-misc](#-test-misc)
 1. [-tweak-bash](#-tweak-bash)
@@ -241,6 +242,28 @@ source ${BASH_FUNK_ROOT}/bash-funk.sh
 ```
 
 
+## <a name="-root"></a>-root
+
+```
+Usage: -root [OPTION]...
+
+Starts an interactive shell as root user. Same as 'sudo -i'.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+sudo -i
+```
+
+
 ## <a name="-test-all"></a>-test-all
 
 ```
@@ -289,6 +312,7 @@ Options:
 -help --selftest && echo || return 1
 -please --selftest && echo || return 1
 -reload --selftest && echo || return 1
+-root --selftest && echo || return 1
 -test-all --selftest && echo || return 1
 -tweak-bash --selftest && echo || return 1
 -update --selftest && echo || return 1

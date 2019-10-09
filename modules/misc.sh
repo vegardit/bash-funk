@@ -582,6 +582,115 @@ function __complete-reload() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}reload -- ${BASH_FUNK_PREFIX:--}reload
 
+function -root() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]..."
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-root() {
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+    [ -t 1 ] && __interactive=1 || true
+        for __arg in "$@"; do
+        case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
+            -|--*) __args+=("$__arg") ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
+        case "$__arg" in
+
+            --help)
+                echo "Usage: $__fn [OPTION]..."
+                echo
+                echo "Starts an interactive shell as root user. Same as 'sudo -i'."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            --)
+                __optionWithValue="--"
+              ;;
+            -*)
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    ######### root ######### START
+
+sudo -i
+
+    ######### root ######### END
+}
+function __complete-root() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --help "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}root -- ${BASH_FUNK_PREFIX:--}root
+
 function -test-all() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
     for opt in a u H t; do
@@ -792,6 +901,7 @@ ${BASH_FUNK_PREFIX:--}choose --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}help --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}please --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}reload --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}root --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}test-all --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}tweak-bash --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}update --selftest && echo || return 1
@@ -1494,6 +1604,7 @@ function -help-misc() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}help\033[0m  -  Prints the online help of all bash-funk commands."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}please\033[0m  -  Re-runs the previously entered command with sudo."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}reload\033[0m  -  Reloads bash-funk."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}root\033[0m  -  Starts an interactive shell as root user. Same as 'sudo -i'."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-all\033[0m  -  Executes the selftests of all loaded bash-funk commands."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-misc\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}tweak-bash\033[0m  -  Performs some usability configurations of Bash."
@@ -1502,7 +1613,7 @@ function -help-misc() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}wait SECONDS\033[0m  -  Waits for the given number of seconds or until the key 's' pressed."
 
 }
-__BASH_FUNK_FUNCS+=( choose help please reload test-all test-misc tweak-bash update var-exists wait )
+__BASH_FUNK_FUNCS+=( choose help please reload root test-all test-misc tweak-bash update var-exists wait )
 
 function -timeout() {
     if [[ $# < 2 || ${1:-} == "--help" ]]; then
