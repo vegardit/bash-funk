@@ -382,6 +382,10 @@ alias -- --="-cd-hist"
 alias -- ..="-cd-up"
 alias -- ...="command cd ../.."
 alias -- -="command cd -"
+if hash mc 2>/dev/null && [[ -e /usr/lib/mc/mc-wrapper.sh ]]; then
+  # see https://stackoverflow.com/questions/39017391/how-to-make-midnight-commander-exit-to-its-current-directory
+  alias mc='. /usr/lib/mc/mc-wrapper.sh'
+fi
 
 
 #
