@@ -28,6 +28,7 @@ See the markdown files of the different [Bash modules](docs) for detailed inform
   * [aws](docs/aws.md) - query information about Amazon WebServices (AWS)
   * [compression](docs/compression.md) - file compression
   * [crypto](docs/crypto.md) - encryption and checksums
+  * [docker](docs/docker.md) - Docker and Docker Swarm management
   * [filesystem](docs/filesystem.md) - filesystem navigation and file operations
   * [git](docs/git.md) - working with GIT repositories
   * [math](docs/math.md) - mathematical operations
