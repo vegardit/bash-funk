@@ -126,8 +126,8 @@ while true; do
             fi
           ;;
         $ESC)
-            echo
-            echo "Aborting on user request"
+            echo >&2
+            echo "Aborting on user request" >&2
             return 1
           ;;
         *)
@@ -383,8 +383,8 @@ alias -- ..="-cd-up"
 alias -- ...="command cd ../.."
 alias -- -="command cd -"
 if hash mc 2>/dev/null && [[ -e /usr/lib/mc/mc-wrapper.sh ]]; then
-  # see https://stackoverflow.com/questions/39017391/how-to-make-midnight-commander-exit-to-its-current-directory
-  alias mc='. /usr/lib/mc/mc-wrapper.sh'
+    # see https://stackoverflow.com/questions/39017391/how-to-make-midnight-commander-exit-to-its-current-directory
+    alias mc='. /usr/lib/mc/mc-wrapper.sh'
 fi
 
 

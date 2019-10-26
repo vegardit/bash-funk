@@ -6,6 +6,7 @@ This module contains functions related to docker. It only loads if docker is ins
 
 The following commands are available when this module is loaded:
 
+1. [-docker-sh](#-docker-sh)
 1. [-dockly](#-dockly)
 1. [-swarm-cluster-id](#-swarm-cluster-id)
 1. [-test-docker](#-test-docker)
@@ -28,6 +29,33 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+```
+
+
+## <a name="-docker-sh"></a>-docker-sh
+
+```
+Usage: -docker-sh [OPTION]...
+
+Displays a list of all running containers and starts an interactive shell (/bin/sh) for the selected one.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+local containers=$(docker container ls --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.ID}}' | sort)
+echo "   $containers" | head -1
+local selection
+eval -- "-choose --assign selection $(echo "$containers" | tail +2 | while read line; do printf "%s" "'$line' "; done)" || return 1
+echo "Entering [$(-substr-before "$selection" " ")]..."
+docker exec -it $(-substr-after-last "$selection" " ") /bin/sh
 ```
 
 
@@ -93,6 +121,7 @@ Options:
 
 *Implementation:*
 ```bash
+-docker-sh --selftest && echo || return 1
 -dockly --selftest && echo || return 1
 -swarm-cluster-id --selftest && echo || return 1
 ```
