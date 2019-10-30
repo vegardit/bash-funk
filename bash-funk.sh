@@ -64,7 +64,7 @@ EOL
         export BASH_FUNK_ROOT
 
         if [[ -d ${BASH_FUNK_ROOT}/.git ]]; then
-            __BASH_FUNK_VERSION=$(git log -1 --format=%ci 2>/dev/null || true)
+            __BASH_FUNK_VERSION=$(cd ${BASH_FUNK_ROOT}/.git && git log -1 --format=%ci 2>/dev/null || true)
         elif [[ -d ${BASH_FUNK_ROOT}/.svn ]]; then
             __BASH_FUNK_VERSION=$(svn info "${BASH_FUNK_ROOT}" 2>/dev/null || true)
             if [[ $__BASH_FUNK_VERSION ]]; then
