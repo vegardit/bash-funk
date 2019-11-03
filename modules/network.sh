@@ -99,18 +99,18 @@ Press [CTRL]+[C] to abort."
                 echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^Binding to 0\.0\.0\.0:12345\.\.\.
-Press \[CTRL]\+\[C] to abort\.$"
+Press \[CTRL\]\+\[C\] to abort\.$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Binding to 0\.0\.0\.0:12345\.\.\.
-Press \[CTRL]\+\[C] to abort\.]."; return 64; fi
+Press \[CTRL\]\+\[C\] to abort\.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn -d 1  127.0.0.1  12345\033[22m"
                 __stdout="$($__fn -d 1  127.0.0.1  12345)"; __rc=$?
                 echo "$__stdout"
                 if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
                 __regex="^Binding to 127\.0\.0\.1:12345\.\.\.
-Press \[CTRL]\+\[C] to abort\.$"
+Press \[CTRL\]\+\[C\] to abort\.$"
                 if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Binding to 127\.0\.0\.1:12345\.\.\.
-Press \[CTRL]\+\[C] to abort\.]."; return 64; fi
+Press \[CTRL\]\+\[C\] to abort\.]."; return 64; fi
                 echo -e "--> \033[32mOK\033[0m"
                 echo -e "$ \033[1m$__fn 70000\033[22m"
                 __stdout="$($__fn 70000)"; __rc=$?
@@ -757,7 +757,7 @@ function __impl-my-public-ip() {
                 echo "Prints the public IP v4 address of this host."
                 echo
                 echo "Options:"
-                echo -e "\033[1m-m, --method TYPE\033[22m (one of: [dns,finger,ftp,http,https,nslookup,telnet])"
+                echo -e "\033[1m-m, --method TYPE\033[22m (one of: [dns,http,https,nslookup,telnet])"
                 echo "        Method to determine the public IP v4 address. Default is 'http'."
                 echo "    -----------------------------"
                 echo -e "\033[1m    --help\033[22m "
@@ -814,45 +814,38 @@ function __impl-my-public-ip() {
 
     if [[ $_method ]]; then
         if [[ $_method == "@@##@@" ]]; then echo "$__fn: Error: Value TYPE for option --method must be specified."; return 64; fi
-        if [[ $_method != 'dns' && $_method != 'finger' && $_method != 'ftp' && $_method != 'http' && $_method != 'https' && $_method != 'nslookup' && $_method != 'telnet' ]]; then echo "$__fn: Error: Value '$_method' for option --method is not one of the allowed values [dns,finger,ftp,http,https,nslookup,telnet]."; return 64; fi
+        if [[ $_method != 'dns' && $_method != 'http' && $_method != 'https' && $_method != 'nslookup' && $_method != 'telnet' ]]; then echo "$__fn: Error: Value '$_method' for option --method is not one of the allowed values [dns,http,https,nslookup,telnet]."; return 64; fi
     fi
 
     ######### my-public-ip ######### START
 
 case ${_method:-http} in
     dns)
-        dig +short myip.opendns.com @resolver1.opendns.com
-      ;;
-    finger)
-        if ! hash finger &>/dev/null; then
-            echo "Required command 'ftp' is not available."
+        if hash dig &>/dev/null; then
+            dig @resolver1.opendns.com -4 myip.opendns.com +short
+        elif ! hash host &>/dev/null; then
+            echo "Required command 'dig' or 'host' is not available."
             return 1
+        else
+            host myip.opendns.com resolver1.opendns.com | grep --color=never -oP '(?<=myip.opendns.com has address )[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+'
         fi
-        finger @4.ifcfg.me 2>/dev/null | sed -nE 's/.*IPv4 is ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/\1/p'
-        return ${PIPESTATUS[0]}
-      ;;
-    ftp)
-        if ! hash ftp &>/dev/null; then
-            echo "Required command 'ftp' is not available."
-            return 1
-        fi
-        echo close | ftp 4.ifcfg.me 2>/dev/null | sed -nE 's/.*IPv4 is ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+) .+/\1/p'
-        return ${PIPESTATUS[0]}
       ;;
     http)
         hash wget &>/dev/null && local get="wget -qO- --user-agent=curl" || local get="curl -s"
+        # alternatives: icanhazip.com, ifconfig.co, ifconfig.me, ipecho.net
         $get http://whatismyip.akamai.com/
       ;;
     https)
         hash wget &>/dev/null && local get="wget -qO- --user-agent=curl" || local get="curl -s"
-        $get https://4.ifcfg.me/
+        # alternatives: icanhazip.com, ifconfig.co, ifconfig.me
+        $get https://ipecho.net/plain
       ;;
     nslookup)
         if ! hash nslookup &>/dev/null; then
             echo "Required command 'nslookup' is not available."
             return 1
         fi
-        nslookup . 4.ifcfg.me 2>/dev/null | grep -A1 Name | sed -nE 's/.*: ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/\1/p'
+        nslookup myip.opendns.com resolver1.opendns.com | grep -oP '(?<=Address: )[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+'
         return ${PIPESTATUS[0]}
       ;;
     telnet)
@@ -860,7 +853,7 @@ case ${_method:-http} in
             echo "Required command 'telnet' is not available."
             return 1
         fi
-        telnet 4.ifcfg.me 2>/dev/null | sed -nE 's/.*IPv4 is ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/\1/p'
+        telnet telnetmyip.com 2>/dev/null | sed -nE 's/.*ip\": \"([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+).+/\1/p'
         return ${PIPESTATUS[0]}
       ;;
 esac
@@ -878,8 +871,6 @@ function __complete-my-public-ip() {
         case $prev in
             --method|-m)
                 COMPREPLY=($(compgen -o default -W "dns
-finger
-ftp
 http
 https
 nslookup

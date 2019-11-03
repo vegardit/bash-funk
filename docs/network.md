@@ -254,7 +254,7 @@ Usage: -my-public-ip [OPTION]...
 Prints the public IP v4 address of this host.
 
 Options:
--m, --method TYPE (one of: [dns,finger,ftp,http,https,nslookup,telnet])
+-m, --method TYPE (one of: [dns,http,https,nslookup,telnet])
         Method to determine the public IP v4 address. Default is 'http'.
     -----------------------------
     --help 
@@ -269,38 +269,31 @@ Options:
 ```bash
 case ${_method:-http} in
     dns)
-        dig +short myip.opendns.com @resolver1.opendns.com
-      ;;
-    finger)
-        if ! hash finger &>/dev/null; then
-            echo "Required command 'ftp' is not available."
+        if hash dig &>/dev/null; then
+            dig @resolver1.opendns.com -4 myip.opendns.com +short
+        elif ! hash host &>/dev/null; then
+            echo "Required command 'dig' or 'host' is not available."
             return 1
+        else
+            host myip.opendns.com resolver1.opendns.com | grep --color=never -oP '(?<=myip.opendns.com has address )[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+'
         fi
-        finger @4.ifcfg.me 2>/dev/null | sed -nE 's/.*IPv4 is ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/\1/p'
-        return ${PIPESTATUS[0]}
-      ;;
-    ftp)
-        if ! hash ftp &>/dev/null; then
-            echo "Required command 'ftp' is not available."
-            return 1
-        fi
-        echo close | ftp 4.ifcfg.me 2>/dev/null | sed -nE 's/.*IPv4 is ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+) .+/\1/p'
-        return ${PIPESTATUS[0]}
       ;;
     http)
         hash wget &>/dev/null && local get="wget -qO- --user-agent=curl" || local get="curl -s"
+        # alternatives: icanhazip.com, ifconfig.co, ifconfig.me, ipecho.net
         $get http://whatismyip.akamai.com/
       ;;
     https)
         hash wget &>/dev/null && local get="wget -qO- --user-agent=curl" || local get="curl -s"
-        $get https://4.ifcfg.me/
+        # alternatives: icanhazip.com, ifconfig.co, ifconfig.me
+        $get https://ipecho.net/plain
       ;;
     nslookup)
         if ! hash nslookup &>/dev/null; then
             echo "Required command 'nslookup' is not available."
             return 1
         fi
-        nslookup . 4.ifcfg.me 2>/dev/null | grep -A1 Name | sed -nE 's/.*: ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/\1/p'
+        nslookup myip.opendns.com resolver1.opendns.com | grep -oP '(?<=Address: )[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+'
         return ${PIPESTATUS[0]}
       ;;
     telnet)
@@ -308,7 +301,7 @@ case ${_method:-http} in
             echo "Required command 'telnet' is not available."
             return 1
         fi
-        telnet 4.ifcfg.me 2>/dev/null | sed -nE 's/.*IPv4 is ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/\1/p'
+        telnet telnetmyip.com 2>/dev/null | sed -nE 's/.*ip\": \"([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+).+/\1/p'
         return ${PIPESTATUS[0]}
       ;;
 esac
