@@ -127,13 +127,17 @@ function __-bash-prompt() {
     local p_scm scm_info
     if [[ ! ${BASH_FUNK_PROMPT_NO_GIT:-} ]] && ${BASH_FUNK_PREFIX:--}find-up --type d .git &>/dev/null; then
         # sub-shells, pipes and external programs are avoided as much as possible to significantly improve performance under Cygwin
-        if scm_info=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD 2>/dev/null && echo "-----" && git ls-files -o -m -d --exclude-standard); then
+        if scm_info=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD 2>/dev/null && echo "-----" && timeout 1 git status --untracked-files=all --porcelain || echo "timeout"); then
             p_scm="${scm_info%%$'\n'-----*}"     # substring before '\n-----'
 
             local modifications="${scm_info#*$'\n'-----}" # substring after '-----'
             modifications=( ${modifications// /} )
             if [[ ${#modifications[@]} != "0" ]]; then
-                p_scm="git:$p_scm${C_FG_WHITE}(${#modifications[@]})"
+                if [[ ${modifications[-1]} == "timeout" ]]; then
+                    p_scm="git:$p_scm${C_FG_WHITE}($(( ${#modifications[@]} - 1 ))?)"
+                else
+                    p_scm="git:$p_scm${C_FG_WHITE}(${#modifications[@]})"
+                fi
             else
                 p_scm="git:$p_scm"
             fi
