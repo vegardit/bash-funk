@@ -120,10 +120,11 @@ The following environment variables can be set in `~/.bash_funk_rc` to customize
 - `BASH_FUNK_NO_TWEAK_BASH` - if set to any value bash-funk will not automatically invoke the [-tweak-bash](docs/misc.md#-tweak-bash) command when loading.
 - `BASH_FUNK_NO_PROMPT` - if set to any value bash-funk will not install it's Bash prompt function.
 - `BASH_FUNK_PROMPT_PREFIX` - text that shall be shown at the beginning of the Bash prompt, e.g. a stage identifier (DEV/TEST/PROD)
-- `BASH_FUNK_PROMPT_DATE` - prompt escape sequence for the date section, default is "\t", which displays current time. See http://tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
+- `BASH_FUNK_PROMPT_DATE` - prompt escape sequence for the date section, default is `\t`, which displays current time. See http://tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
 - `BASH_FUNK_PROMPT_NO_JOBS` - if set to any value the Bash prompt will not display the number of shell jobs.
 - `BASH_FUNK_PROMPT_NO_SCREENS` - if set to any value the Bash prompt will not display the number of detached screens
 - `BASH_FUNK_PROMPT_NO_TTY` - if set to any value the Bash prompt will not display the current tty.
+- `BASH_FUNK_PROMPT_NO_KUBECTL` - if set to any value the Bash prompt will not display [kubectl](https://kubernetes.io/docs/reference/kubectl/)'s current context
 - `BASH_FUNK_PROMPT_NO_GIT` - if set to any value the Bash prompt will not display GIT branch and modification information.
 - `BASH_FUNK_PROMPT_NO_SVN` - if set to any value the Bash prompt will not display SVN branch and modification information.
 

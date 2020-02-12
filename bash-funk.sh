@@ -34,6 +34,7 @@ else
 #BASH_FUNK_PROMPT_NO_JOBS=1      # if set to any value the Bash prompt will not display the number of shell jobs.
 #BASH_FUNK_PROMPT_NO_SCREENS=1   # if set to any value the Bash prompt will not display the number of detached screens
 #BASH_FUNK_PROMPT_NO_TTY=1       # if set to any value the Bash prompt will not display the current tty.
+#BASH_FUNK_PROMPT_NO_KUBECTL=1   # if set to any value the Bash prompt will not display kubectl's current context
 #BASH_FUNK_PROMPT_NO_GIT=1       # if set to any value the Bash prompt will not display GIT branch and modification information.
 #BASH_FUNK_PROMPT_NO_SVN=1       # if set to any value the Bash prompt will not display SVN branch and modification information.
 #BASH_FUNK_PROMPT_DIRENV_TRUSTED_DIRS=() # Bash array of directory paths where found .bash_funk_auto_rc files automatically executed.

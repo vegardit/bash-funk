@@ -12,14 +12,17 @@ else
     BASH_FUNK_DIRS_COLOR="${BASH_FUNK_DIRS_COLOR:-0;94}"
 fi
 
+if ! hash screen &>/dev/null; then
+    BASH_FUNK_PROMPT_NO_SCREENS=1
+fi
 if ! hash svn &>/dev/null; then
     BASH_FUNK_PROMPT_NO_SVN=1
 fi
 if ! hash git &>/dev/null; then
     BASH_FUNK_PROMPT_NO_GIT=1
 fi
-if ! hash screen &>/dev/null; then
-    BASH_FUNK_PROMPT_NO_SCREENS=1
+if ! hash kubectl &>/dev/null; then
+    BASH_FUNK_PROMPT_NO_KUBECTL=1
 fi
 
 # change the color of directories in ls
@@ -84,6 +87,7 @@ function __-bash-prompt() {
     local C_BOLD="\033[1m"
     local C_BOLD_OFF="\033[22m"
     local C_FG_YELLOW="\033[30m"
+    local C_FG_BLUE="\033[34m"
     local C_FG_GRAY="\033[37m"
     local C_FG_WHITE="\033[97m"
     local C_BG_RED="\033[41m"
@@ -122,6 +126,64 @@ function __-bash-prompt() {
 
     local p_host
     p_host="@${C_FG_WHITE}\h${C_FG_BLACK} "
+
+
+    local p_date
+    if [[ ${BASH_FUNK_PROMPT_DATE:-} ]]; then
+        p_date="| ${BASH_FUNK_PROMPT_DATE:-} "
+    else
+        p_date="| \t "
+    fi
+
+
+    local p_jobs
+    if [[ ! ${BASH_FUNK_PROMPT_NO_JOBS:-} ]]; then
+        if [[ $OSTYPE == "cygwin" ]]; then
+            p_jobs="| \j jobs "
+        else
+            p_jobs=$(jobs -r | wc -l)
+            case "$p_jobs" in
+                0) p_jobs= ;;
+                1) p_jobs="| ${C_FG_LIGHT_YELLOW}1 job${C_FG_BLACK} " ;;
+                *) p_jobs="| ${C_FG_LIGHT_YELLOW}$p_job jobs${C_FG_BLACK} " ;;
+            esac
+        fi
+    fi
+
+
+    local p_screens
+    if [[ ! ${BASH_FUNK_PROMPT_NO_SCREENS:-} ]]; then
+        # determine number of attached and detached screens
+        p_screens=$(screen -ls 2>/dev/null | grep "tached)" | wc -l);
+        if [[ ${STY:-} ]]; then
+            # don't count the current screen session
+            (( p_screens-- ))
+        fi
+        case "$p_screens" in
+            0) p_screens= ;;
+            1) p_screens="| ${C_FG_LIGHT_YELLOW}1 screen${C_FG_BLACK} " ;;
+            *) p_screens="| ${C_FG_LIGHT_YELLOW}$p_screens screens${C_FG_BLACK} " ;;
+        esac
+    fi
+
+
+    local p_tty
+    if [[ ! ${BASH_FUNK_PROMPT_NO_TTY:-} ]]; then
+        if [[ ${STY:-} ]]; then
+            p_tty="| tty #\l ${C_FG_LIGHT_YELLOW}(screen)${C_FG_BLACK} "
+        else
+            p_tty="| tty #\l "
+        fi
+    fi
+
+
+    local p_kubectl
+    if [[ ! ${BASH_FUNK_PROMPT_NO_KUBECTL:-} ]]; then
+        p_kubectl=$(kubectl config get-contexts --no-headers 2>/dev/null | sed -r 's/\*\s*(\S+)\s.*\s(\S+)$/\1:\2/')
+        if [[ -n ${p_kubectl} ]]; then
+            p_kubectl="| ${C_FG_BLUE}${p_kubectl}${C_FG_BLACK} "
+        fi
+    fi
 
 
     local p_scm scm_info
@@ -191,54 +253,6 @@ function __-bash-prompt() {
         p_scm="| ${C_FG_LIGHT_YELLOW}$p_scm${C_FG_BLACK} "
     fi
 
-
-    local p_date
-    if [[ ${BASH_FUNK_PROMPT_DATE:-} ]]; then
-        p_date="| ${BASH_FUNK_PROMPT_DATE:-} "
-    else
-        p_date="| \t "
-    fi
-
-
-    local p_jobs
-    if [[ ! ${BASH_FUNK_PROMPT_NO_JOBS:-} ]]; then
-        if [[ $OSTYPE == "cygwin" ]]; then
-            p_jobs="| \j jobs "
-        else
-            p_jobs=$(jobs -r | wc -l)
-            case "$p_jobs" in
-                0) p_jobs= ;;
-                1) p_jobs="| ${C_FG_LIGHT_YELLOW}1 job${C_FG_BLACK} " ;;
-                *) p_jobs="| ${C_FG_LIGHT_YELLOW}$p_job jobs${C_FG_BLACK} " ;;
-            esac
-        fi
-    fi
-
-
-    local p_screens
-    if [[ ! ${BASH_FUNK_PROMPT_NO_SCREENS:-} ]]; then
-        # determine number of attached and detached screens
-        p_screens=$(screen -ls 2>/dev/null | grep "tached)" | wc -l);
-        if [[ ${STY:-} ]]; then
-            # don't count the current screen session
-            (( p_screens-- ))
-        fi
-        case "$p_screens" in
-            0) p_screens= ;;
-            1) p_screens="| ${C_FG_LIGHT_YELLOW}1 screen${C_FG_BLACK} " ;;
-            *) p_screens="| ${C_FG_LIGHT_YELLOW}$p_screens screens${C_FG_BLACK} " ;;
-        esac
-    fi
-
-
-    local p_tty
-    if [[ ! ${BASH_FUNK_PROMPT_NO_TTY:-} ]]; then
-        if [[ ${STY:-} ]]; then
-            p_tty="| tty #\l ${C_FG_LIGHT_YELLOW}(screen)${C_FG_BLACK} "
-        else
-            p_tty="| tty #\l "
-        fi
-    fi
 
     if [[ ${#BASH_FUNK_PROMPT_DIRENV_TRUSTED_DIRS[@]} -gt 0 ]]; then
         if [[ ${__resetDirEnv:-} != "" ]]; then
@@ -315,7 +329,7 @@ function __-bash-prompt() {
         p_prefix="${C_RESET}${p_bg}"
     fi
 
-    local LINE1="${p_prefix}${p_lastRC}${p_user}${p_host}${p_date}${p_scm}${p_jobs}${p_screens}${p_tty}${C_RESET}"
+    local LINE1="${p_prefix}${p_lastRC}${p_user}${p_host}${p_date}${p_jobs}${p_screens}${p_tty}${p_kubectl}${p_scm}${C_RESET}"
     local LINE2="[\033[${BASH_FUNK_DIRS_COLOR}m${pwd}${C_RESET}]"
     local LINE3="$ "
     PS1="\n$LINE1\n$LINE2\n$LINE3"
