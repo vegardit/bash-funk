@@ -143,6 +143,193 @@ function __complete-git-branch-name() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-branch-name -- ${BASH_FUNK_PREFIX:--}git-branch-name
 
+function -git-change-date() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]... COMMIT_HASH NEW_DATE"
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-git-change-date() {
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _pull _push _author _committer _help _selftest _COMMIT_HASH _NEW_DATE
+    [ -t 1 ] && __interactive=1 || true
+        for __arg in "$@"; do
+        case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
+            -|--*) __args+=("$__arg") ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
+        case "$__arg" in
+
+            --help)
+                echo "Usage: $__fn [OPTION]... COMMIT_HASH NEW_DATE"
+                echo
+                echo "Changes the author and/or committer date of the given commit."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mCOMMIT_HASH\033[22m (required)"
+                echo "      Hash of commit to change."
+                echo -e "  \033[1mNEW_DATE\033[22m (required)"
+                echo "      The new date to set."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --author\033[22m "
+                echo "        Indicates to change the author date of the commit."
+                echo -e "\033[1m    --committer\033[22m "
+                echo "        Indicates to change the committer date of the commit."
+                echo -e "\033[1m    --pull\033[22m "
+                echo "        Execute 'git pull' before altering the commit."
+                echo -e "\033[1m    --push\033[22m "
+                echo "        Execute 'git push --force' after altering the commit."
+                echo "    -----------------------------"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
+                echo
+                echo "Examples:"
+                echo -e "$ \033[1m -git-change-date --author fe65a726b8f07cbcedc1d4b76fbdbf53678a31cf $(date --date '27 days ago')\033[22m"
+                echo
+                echo -e "$ \033[1m -git-change-date --author --comitter $(git log --format='%H' -n 1) $(date --date '15 hours ago')\033[22m"
+                echo
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            --pull)
+                _pull=1
+            ;;
+
+            --push)
+                _push=1
+            ;;
+
+            --author)
+                _author=1
+            ;;
+
+            --committer)
+                _committer=1
+            ;;
+
+            --)
+                __optionWithValue="--"
+              ;;
+            -*)
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        if [[ ! $_COMMIT_HASH ]]; then
+            _COMMIT_HASH=$__param
+            continue
+        fi
+        if [[ ! $_NEW_DATE ]]; then
+            _NEW_DATE=$__param
+            continue
+        fi
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if [[ $_COMMIT_HASH ]]; then
+        true
+    else
+        echo "$__fn: Error: Parameter COMMIT_HASH must be specified."; return 64
+    fi
+    if [[ $_NEW_DATE ]]; then
+        true
+    else
+        echo "$__fn: Error: Parameter NEW_DATE must be specified."; return 64
+    fi
+
+    ######### git-change-date ######### START
+
+if [[ $_pull ]]; then
+    git pull || return 1
+fi
+
+if [[ ! $_author && ! $_comitter ]]; then
+  echo "$__fn: Error: The --author and/or --committer flag need to be specified."
+  return 1
+fi
+
+git filter-branch -f --env-filter '
+  if [ $GIT_COMMIT = $_COMMIT_HASH ]; then
+    if [ $_author ]; then
+      export GIT_AUTHOR_DATE=$=$_NEW_DATE
+    fi
+    if [ $_committer ]; then
+      export GIT_COMMITTER_DATE=$_NEW_DATE
+    fi
+  fi
+'
+
+if [[ $_push ]]; then
+    git push
+fi
+
+    ######### git-change-date ######### END
+}
+function __complete-git-change-date() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --pull --push --author --committer --help "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}git-change-date -- ${BASH_FUNK_PREFIX:--}git-change-date
+
 function -git-cherry-pick() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
     for opt in a u H t; do
@@ -683,7 +870,7 @@ function __impl-git-create-empty-branch() {
     ######### git-create-empty-branch ######### START
 
 if git rev-parse --verify ${_BRANCH_NAME} &>/dev/null; then
-    echo "$__fn: A branch named [${_BRANCH_NAME}] already exists."
+    echo "$__fn: Error: A branch named [${_BRANCH_NAME}] already exists."
     return 1
 fi
 
@@ -1600,6 +1787,129 @@ function __complete-git-ls-modified() {
     fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-ls-modified -- ${BASH_FUNK_PREFIX:--}git-ls-modified
+
+function -git-reset-file() {
+    local opts="" opt rc __fn=${FUNCNAME[0]}
+    for opt in a u H t; do
+        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+    done
+    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+    for opt in nullglob extglob nocasematch nocaseglob; do
+        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+    done
+
+    set +auHt
+    set -o pipefail
+
+    __impl$__fn "$@" && rc=0 || rc=$?
+
+    if [[ $rc == 64 && -t 1 ]]; then
+        echo; echo "Usage: $__fn [OPTION]... FILE"
+        echo; echo "Type '$__fn --help' for more details."
+    fi
+
+    eval $opts
+
+    return $rc
+}
+function __impl-git-reset-file() {
+    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _FILE
+    [ -t 1 ] && __interactive=1 || true
+        for __arg in "$@"; do
+        case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
+            -|--*) __args+=("$__arg") ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+        esac
+    done
+    for __arg in "${__args[@]}"; do
+        if [[ $__optionWithValue == "--" ]]; then
+            __params+=("$__arg")
+            continue
+        fi
+        case "$__arg" in
+
+            --help)
+                echo "Usage: $__fn [OPTION]... FILE"
+                echo
+                echo "Reverts the uncommitted changes of the given local FILE to the version of the latest commit."
+                echo
+                echo "Parameters:"
+                echo -e "  \033[1mFILE\033[22m (required, file)"
+                echo "      File to reset."
+                echo
+                echo "Options:"
+                echo -e "\033[1m    --help\033[22m "
+                echo "        Prints this help."
+                echo -e "\033[1m    --selftest\033[22m "
+                echo "        Performs a self-test."
+                echo -e "    \033[1m--\033[22m"
+                echo "        Terminates the option list."
+                echo
+                return 0
+              ;;
+
+            --selftest)
+                echo "Testing function [$__fn]..."
+                echo -e "$ \033[1m$__fn --help\033[22m"
+                local __stdout __rc
+                __stdout="$($__fn --help)"; __rc=$?
+                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+                echo -e "--> \033[32mOK\033[0m"
+                echo "Testing function [$__fn]...DONE"
+                return 0
+              ;;
+
+            --)
+                __optionWithValue="--"
+              ;;
+            -*)
+                echo "$__fn: invalid option: '$__arg'"
+                return 64
+              ;;
+
+            *)
+                case $__optionWithValue in
+                    *)
+                        __params+=("$__arg")
+                esac
+              ;;
+        esac
+    done
+
+    for __param in "${__params[@]}"; do
+        if [[ ! $_FILE ]]; then
+            _FILE=$__param
+            continue
+        fi
+        echo "$__fn: Error: too many parameters: '$__param'"
+        return 64
+    done
+
+    if [[ $_FILE ]]; then
+        if [[ -e "$_FILE" && ! -f "$_FILE" ]]; then echo "$__fn: Error: Path '$_FILE' for parameter FILE is not a file."; return 64; fi
+    else
+        echo "$__fn: Error: Parameter FILE must be specified."; return 64
+    fi
+
+    ######### git-reset-file ######### START
+
+git checkout -- "$_FILE"
+
+    ######### git-reset-file ######### END
+}
+function __complete-git-reset-file() {
+    local curr=${COMP_WORDS[COMP_CWORD]}
+    if [[ ${curr} == -* ]]; then
+        local options=" --help "
+        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+    else
+        COMPREPLY=($(compgen -o default -- $curr))
+    fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}git-reset-file -- ${BASH_FUNK_PREFIX:--}git-reset-file
 
 function -git-squash() {
     local opts="" opt rc __fn=${FUNCNAME[0]}
@@ -2669,6 +2979,7 @@ function __impl-test-git() {
     ######### test-git ######### START
 
 ${BASH_FUNK_PREFIX:--}git-branch-name --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}git-change-date --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-cherry-pick --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-cleanse --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-clone-shallow --selftest && echo || return 1
@@ -2680,6 +2991,7 @@ ${BASH_FUNK_PREFIX:--}git-fetch-pr --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-log --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-ls-conflicts --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-ls-modified --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}git-reset-file --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-squash --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-switch-remote-protocol --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-sync-fork --selftest && echo || return 1
@@ -2704,6 +3016,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-git -- ${BASH_FUNK_PREFIX:--}te
 
 function -help-git() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-branch-name [PATH]\033[0m  -  Prints the name of the currently checked out git branch."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-change-date COMMIT_HASH NEW_DATE\033[0m  -  Changes the author and/or committer date of the given commit."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-cherry-pick COMMIT_HASHES1 [COMMIT_HASHES]...\033[0m  -  Cherry picks a commit into the currently checked out branch."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-cleanse\033[0m  -  Reverts any uncomitted changes in the local working tree including untracked files."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-clone-shallow REPO_URL [BRANCH_NAME]\033[0m  -  Creates a shallow clone of the selected branch of the given repository with a truncated history."
@@ -2715,6 +3028,7 @@ function -help-git() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-log [COUNT]\033[0m  -  Displays the git log of the current project in a pretty and compact format."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-ls-conflicts [PATH]\033[0m  -  Prints the name of the all conflicting files in the current directory tree."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-ls-modified [PATH]\033[0m  -  Prints the name of the all deleted, changed and newly created files in the current directory tree."
+    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-reset-file FILE\033[0m  -  Reverts the uncommitted changes of the given local FILE to the version of the latest commit."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-squash NUM_COMMITS\033[0m  -  Squashes the last n commits into one."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-switch-remote-protocol REMOTE_NAME1 [REMOTE_NAME]... PROTOCOL\033[0m  -  Switches the protocol of the given remote(s) between HTTPS and SSH."
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-sync-fork\033[0m  -  Syncs the currently checked out branch of a forked repository with it's upstream repository. Uses 'git rebase -p' instead of 'git merge' by default to prevent an extra commit for the merge operation."
@@ -2724,7 +3038,7 @@ function -help-git() {
     echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-git\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( git-branch-name git-cherry-pick git-cleanse git-clone-shallow git-create-empty-branch git-delete-branch git-delete-local-branch git-delete-remote-branch git-fetch-pr git-log git-ls-conflicts git-ls-modified git-squash git-switch-remote-protocol git-sync-fork git-undo git-update-branch github-upstream-url test-git )
+__BASH_FUNK_FUNCS+=( git-branch-name git-change-date git-cherry-pick git-cleanse git-clone-shallow git-create-empty-branch git-delete-branch git-delete-local-branch git-delete-remote-branch git-fetch-pr git-log git-ls-conflicts git-ls-modified git-reset-file git-squash git-switch-remote-protocol git-sync-fork git-undo git-update-branch github-upstream-url test-git )
 
 alias -- ${BASH_FUNK_PREFIX:--}git-ls-branches="git branch -a"
 alias -- ${BASH_FUNK_PREFIX:--}git-ls-remotes="git remote -v"

@@ -16,6 +16,7 @@ alias -- -git-ls-tags="git tag"
 The following commands are available when this module is loaded:
 
 1. [-git-branch-name](#-git-branch-name)
+1. [-git-change-date](#-git-change-date)
 1. [-git-cherry-pick](#-git-cherry-pick)
 1. [-git-cleanse](#-git-cleanse)
 1. [-git-clone-shallow](#-git-clone-shallow)
@@ -27,6 +28,7 @@ The following commands are available when this module is loaded:
 1. [-git-log](#-git-log)
 1. [-git-ls-conflicts](#-git-ls-conflicts)
 1. [-git-ls-modified](#-git-ls-modified)
+1. [-git-reset-file](#-git-reset-file)
 1. [-git-squash](#-git-squash)
 1. [-git-switch-remote-protocol](#-git-switch-remote-protocol)
 1. [-git-sync-fork](#-git-sync-fork)
@@ -79,6 +81,70 @@ Options:
 *Implementation:*
 ```bash
 git -C "$_PATH" rev-parse --symbolic-full-name --abbrev-ref HEAD
+```
+
+
+## <a name="-git-change-date"></a>-git-change-date
+
+```
+Usage: -git-change-date [OPTION]... COMMIT_HASH NEW_DATE
+
+Changes the author and/or committer date of the given commit.
+
+Parameters:
+  COMMIT_HASH (required)
+      Hash of commit to change.
+  NEW_DATE (required)
+      The new date to set.
+
+Options:
+    --author 
+        Indicates to change the author date of the commit.
+    --committer 
+        Indicates to change the committer date of the commit.
+    --pull 
+        Execute 'git pull' before altering the commit.
+    --push 
+        Execute 'git push --force' after altering the commit.
+    -----------------------------
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+
+Examples:
+$  -git-change-date --author fe65a726b8f07cbcedc1d4b76fbdbf53678a31cf $(date --date '27 days ago')
+
+$  -git-change-date --author --comitter $(git log --format='%H' -n 1) $(date --date '15 hours ago')
+```
+
+*Implementation:*
+```bash
+if [[ $_pull ]]; then
+    git pull || return 1
+fi
+
+if [[ ! $_author && ! $_comitter ]]; then
+  echo "-git-change-date: Error: The --author and/or --committer flag need to be specified."
+  return 1
+fi
+
+git filter-branch -f --env-filter '
+  if [ $GIT_COMMIT = $_COMMIT_HASH ]; then
+    if [ $_author ]; then
+      export GIT_AUTHOR_DATE=$=$_NEW_DATE
+    fi
+    if [ $_committer ]; then
+      export GIT_COMMITTER_DATE=$_NEW_DATE
+    fi
+  fi
+'
+
+if [[ $_push ]]; then
+    git push
+fi
 ```
 
 
@@ -221,7 +287,7 @@ Options:
 *Implementation:*
 ```bash
 if git rev-parse --verify ${_BRANCH_NAME} &>/dev/null; then
-    echo "-git-create-empty-branch: A branch named [${_BRANCH_NAME}] already exists."
+    echo "-git-create-empty-branch: Error: A branch named [${_BRANCH_NAME}] already exists."
     return 1
 fi
 
@@ -432,6 +498,32 @@ Options:
 *Implementation:*
 ```bash
 git -C "$_PATH" ls-files -o -m -d --exclude-standard
+```
+
+
+## <a name="-git-reset-file"></a>-git-reset-file
+
+```
+Usage: -git-reset-file [OPTION]... FILE
+
+Reverts the uncommitted changes of the given local FILE to the version of the latest commit.
+
+Parameters:
+  FILE (required, file)
+      File to reset.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+git checkout -- "$_FILE"
 ```
 
 
@@ -768,6 +860,7 @@ Options:
 *Implementation:*
 ```bash
 -git-branch-name --selftest && echo || return 1
+-git-change-date --selftest && echo || return 1
 -git-cherry-pick --selftest && echo || return 1
 -git-cleanse --selftest && echo || return 1
 -git-clone-shallow --selftest && echo || return 1
@@ -779,6 +872,7 @@ Options:
 -git-log --selftest && echo || return 1
 -git-ls-conflicts --selftest && echo || return 1
 -git-ls-modified --selftest && echo || return 1
+-git-reset-file --selftest && echo || return 1
 -git-squash --selftest && echo || return 1
 -git-switch-remote-protocol --selftest && echo || return 1
 -git-sync-fork --selftest && echo || return 1
