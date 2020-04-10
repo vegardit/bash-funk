@@ -20,6 +20,7 @@ function -docker-slim() {
 The following commands are available when this module is loaded:
 
 1. [-docker-log](#-docker-log)
+1. [-docker-netshoot](#-docker-netshoot)
 1. [-docker-sh](#-docker-sh)
 1. [-docker-top](#-docker-top)
 1. [-swarm-cluster-id](#-swarm-cluster-id)
@@ -68,6 +69,40 @@ sudo journalctl -u docker.service -f -n20
 ```
 
 
+## <a name="-docker-netshoot"></a>-docker-netshoot
+
+```
+Usage: -docker-netshoot [OPTION]...
+
+Starts Netshoot (https://github.com/nicolaka/netshoot) - a network trouble-shooting container.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+echo "Select a network to troubleshoot:"
+local containers=$(sudo docker container ls --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.ID}}' | sort)
+echo "   $containers" | head -1
+local selection
+eval -- "-choose --assign selection $(echo -n "'Docker Host Network' " && echo "$containers" | tail +2 | while read line; do printf "%s" "'$line' "; done)" || return 1
+if [[ $selection == "Docker Host Network" ]] ; then
+   echo "Attaching to Docker host network..."
+   sudo docker run -it --rm --net host nicolaka/netshoot
+else
+   local containerId=$(-substr-after-last "$selection" " ")
+   echo "Attaching to network of container [$containerId]..."
+   sudo docker run -it --rm --net container:$containerId nicolaka/netshoot
+fi
+```
+
+
 ## <a name="-docker-sh"></a>-docker-sh
 
 ```
@@ -89,7 +124,8 @@ Options:
 
 *Implementation:*
 ```bash
-local containers=$(docker container ls --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.ID}}' | sort)
+echo "Select a container to enter:"
+local containers=$(sudo docker container ls --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.ID}}' | sort)
 echo "   $containers" | head -1
 local selection
 eval -- "-choose --assign selection $(echo "$containers" | tail +2 | while read line; do printf "%s" "'$line' "; done)" || return 1
@@ -165,6 +201,7 @@ Options:
 *Implementation:*
 ```bash
 -docker-log --selftest && echo || return 1
+-docker-netshoot --selftest && echo || return 1
 -docker-sh --selftest && echo || return 1
 -docker-top --selftest && echo || return 1
 -swarm-cluster-id --selftest && echo || return 1
