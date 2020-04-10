@@ -4,10 +4,24 @@
 
 This module contains functions related to docker. It only loads if docker is installed.
 
+The following statements are automatically executed when this module loads:
+
+```bash
+function -docker-slim() {
+   # https://github.com/docker-slim/docker-slim
+   if [ $# -eq 0 ]; then
+      sudo docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock dslim/docker-slim help
+   else
+      sudo docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock dslim/docker-slim "$@"
+    fi
+}
+```
+
 The following commands are available when this module is loaded:
 
+1. [-docker-log](#-docker-log)
 1. [-docker-sh](#-docker-sh)
-1. [-dockly](#-dockly)
+1. [-docker-top](#-docker-top)
 1. [-swarm-cluster-id](#-swarm-cluster-id)
 1. [-test-docker](#-test-docker)
 
@@ -32,6 +46,28 @@ limitations under the License.
 ```
 
 
+## <a name="-docker-log"></a>-docker-log
+
+```
+Usage: -docker-log [OPTION]...
+
+Displays dockerd's log messages in realtime.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+sudo journalctl -u docker.service -f -n20
+```
+
+
 ## <a name="-docker-sh"></a>-docker-sh
 
 ```
@@ -40,6 +76,9 @@ Usage: -docker-sh [OPTION]...
 Displays a list of all running containers and starts an interactive shell (/bin/sh) for the selected one.
 
 Options:
+-u, --user USER 
+        Login user.
+    -----------------------------
     --help 
         Prints this help.
     --selftest 
@@ -55,14 +94,18 @@ echo "   $containers" | head -1
 local selection
 eval -- "-choose --assign selection $(echo "$containers" | tail +2 | while read line; do printf "%s" "'$line' "; done)" || return 1
 echo "Entering [$(-substr-before "$selection" " ")]..."
-docker exec -it $(-substr-after-last "$selection" " ") /bin/sh
+if [[ $_user ]]; then
+    sudo docker exec -u $_user -it $(-substr-after-last "$selection" " ") /bin/sh
+else
+    sudo docker exec -it $(-substr-after-last "$selection" " ") /bin/sh
+fi
 ```
 
 
-## <a name="-dockly"></a>-dockly
+## <a name="-docker-top"></a>-docker-top
 
 ```
-Usage: -dockly [OPTION]...
+Usage: -docker-top [OPTION]...
 
 Starts Dockly (https://lirantal.github.io/dockly/).
 
@@ -77,7 +120,7 @@ Options:
 
 *Implementation:*
 ```bash
-docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock lirantal/dockly
+sudo docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock lirantal/dockly
 ```
 
 
@@ -99,7 +142,7 @@ Options:
 
 *Implementation:*
 ```bash
-docker info 2>/dev/null | grep --color=never -oP '(?<=ClusterID: ).*'
+sudo docker info 2>/dev/null | grep --color=never -oP '(?<=ClusterID: ).*'
 ```
 
 
@@ -121,7 +164,8 @@ Options:
 
 *Implementation:*
 ```bash
+-docker-log --selftest && echo || return 1
 -docker-sh --selftest && echo || return 1
--dockly --selftest && echo || return 1
+-docker-top --selftest && echo || return 1
 -swarm-cluster-id --selftest && echo || return 1
 ```
