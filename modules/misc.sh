@@ -1260,7 +1260,7 @@ fi
 
 # update via Git
 if [[ -e "${BASH_FUNK_ROOT}/.git" ]]; then
-    ( cd "${BASH_FUNK_ROOT}" && git config core.autocrlf false && git reset --hard && git pull ) || return
+    ( cd "${BASH_FUNK_ROOT}" && git config core.autocrlf false && git fetch && git reset origin/master --hard && git pull ) || return
     [[ $_reload ]] && ${BASH_FUNK_PREFIX:--}reload || true
     return
 fi
