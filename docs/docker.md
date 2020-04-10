@@ -7,6 +7,30 @@ This module contains functions related to docker. It only loads if docker is ins
 The following statements are automatically executed when this module loads:
 
 ```bash
+function -docker-debug() {
+   if hash docker-debug &>/dev/null; then
+      sudo docker-debug "$@"
+      return
+   fi
+
+   if [[ ! -e ~/.docker-debug/docker-debug.bin ]]; then
+      echo "Installing the docker-debug tool (https://github.com/zeromake/docker-debug)..."
+      mkdir -p ~/.docker-debug
+      if [[ $OSTYPE =~ "darwin" ]]; then
+         curl -Lo ~/.docker-debug/docker-debug.bin https://github.com/zeromake/docker-debug/releases/download/0.6.3/docker-debug-darwin-amd64-upx
+         chmod 700 ~/.docker-debug/docker-debug.bin
+      elif [[ $OSTYPE =~ "linux" ]]; then
+         curl -Lo ~/.docker-debug/docker-debug.bin https://github.com/zeromake/docker-debug/releases/download/0.6.3/docker-debug-linux-amd64-upx
+         chmod 700 ~/.docker-debug/docker-debug.bin
+      else
+         echo "$OSTYPE is not supported!"
+         return 1
+      fi
+   fi
+
+   sudo ~/.docker-debug/docker-debug.bin "$@"
+}
+
 function -docker-slim() {
    # https://github.com/docker-slim/docker-slim
    if [ $# -eq 0 ]; then
@@ -19,6 +43,7 @@ function -docker-slim() {
 
 The following commands are available when this module is loaded:
 
+1. [-docker-debug](#-docker-debug)
 1. [-docker-log](#-docker-log)
 1. [-docker-netshoot](#-docker-netshoot)
 1. [-docker-sh](#-docker-sh)
@@ -44,6 +69,28 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+```
+
+
+## <a name="-docker-debug"></a>-docker-debug
+
+```
+Usage: -docker-debug [OPTION]...
+
+Installs and executes the docker-debug tool (https://github.com/zeromake/docker-debug).
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+sudo journalctl -u docker.service -f -n20
 ```
 
 
@@ -200,6 +247,7 @@ Options:
 
 *Implementation:*
 ```bash
+-docker-debug --selftest && echo || return 1
 -docker-log --selftest && echo || return 1
 -docker-netshoot --selftest && echo || return 1
 -docker-sh --selftest && echo || return 1
