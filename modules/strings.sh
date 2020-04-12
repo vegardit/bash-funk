@@ -403,7 +403,7 @@ local normalized=${_PATH//\/.\//\/}
 
 # Remove all occurrences of "dir/.."
 while [[ ${normalized} =~ [^\/][^\/]*\/\.\.\/ ]]; do
-    normalized=${normalized/${BASH_REMATCH[0]}/}
+   normalized=${normalized/${BASH_REMATCH[0]}/}
 done
 echo $normalized
 
@@ -580,12 +580,12 @@ function __impl-str-join() {
    ######### str-join ######### START
 
 if [[ ${#_STRING[@]} -lt 1 ]]; then
-    return 0;
+   return 0;
 fi
 local firstItem=${_STRING[0]}
 if [[ ${#_STRING[@]} -lt 2 ]]; then
-    echo $firstItem
-    return 0;
+   echo $firstItem
+   return 0;
 fi
 local additionalItems=("${_STRING[@]:1}")
 printf "%s" "$firstItem${additionalItems[@]/#/$_SEPARATOR}"
@@ -723,9 +723,9 @@ function __impl-str-lower() {
    ######### str-lower ######### START
 
 if ((${BASH_VERSION::1} < 4)); then
-    echo "$_STRING" | tr '[:upper:]' '[:lower:]'
+   echo "$_STRING" | tr '[:upper:]' '[:lower:]'
 else
-    echo "${_STRING,,}"
+   echo "${_STRING,,}"
 fi
 
    ######### str-lower ######### END
@@ -920,33 +920,33 @@ no match: hat]."; return 64; fi
    ######### str-matches-glob ######### START
 
 if [[ ! ${_STRING} ]]; then
-    return 0
+   return 0
 fi
 
 local matchFound mismatchFound str
 for str in ${_STRING[@]}; do
 
-    case "$str" in
-        $_GLOB_PATTERN)
-            matchFound=1
-            if [[ $_verbose ]]; then
-                echo "match: $str"
-            else
-                echo "$str"
-            fi
-          ;;
+   case "$str" in
+      $_GLOB_PATTERN)
+         matchFound=1
+         if [[ $_verbose ]]; then
+            echo "match: $str"
+         else
+            echo "$str"
+         fi
+        ;;
 
-        *)
-            mismatchFound=1
-            [[ $_verbose ]] && echo "no match: $str" || true
-          ;;
-    esac
+      *)
+         mismatchFound=1
+         [[ $_verbose ]] && echo "no match: $str" || true
+        ;;
+   esac
 done
 
 if [[ $_all ]]; then
-    [[ $mismatchFound ]] && return 1 || return 0
+   [[ $mismatchFound ]] && return 1 || return 0
 else
-    [[ $matchFound ]] && return 0 || return 1
+   [[ $matchFound ]] && return 0 || return 1
 fi
 
    ######### str-matches-glob ######### END
@@ -1141,33 +1141,33 @@ no match: hat]."; return 64; fi
    ######### str-matches-regex ######### START
 
 if [[ ! ${_STRING} ]]; then
-    return 0
+   return 0
 fi
 
 local matchFound mismatchFound str
-for str in ${_STRING[@]}; do
-    if [[ $str =~ $_REGEX_PATTERN ]]; then
-        matchFound=1
-        if [[ $_verbose ]]; then
+   for str in ${_STRING[@]}; do
+      if [[ $str =~ $_REGEX_PATTERN ]]; then
+         matchFound=1
+         if [[ $_verbose ]]; then
             echo "match: $str"
             local i=1 n=${#BASH_REMATCH[*]}
             while [[ $i -lt $n ]]; do
-                echo "  group($i): ${BASH_REMATCH[$i]}"
-                (( i++ ))
+               echo "  group($i): ${BASH_REMATCH[$i]}"
+               (( i++ ))
             done
-        else
+         else
             echo "$str"
-        fi
-    else
-        mismatchFound=1
-        [[ $_verbose ]] && echo "no match: $str" || true
-    fi
-done
-if [[ $_all ]]; then
-    [[ $mismatchFound ]] && return 1 || return 0
-else
-    [[ $matchFound ]] && return 0 || return 1
-fi
+         fi
+      else
+         mismatchFound=1
+         [[ $_verbose ]] && echo "no match: $str" || true
+      fi
+   done
+   if [[ $_all ]]; then
+      [[ $mismatchFound ]] && return 1 || return 0
+   else
+      [[ $matchFound ]] && return 0 || return 1
+   fi
 
    ######### str-matches-regex ######### END
 }
@@ -1583,9 +1583,9 @@ function __impl-str-upper() {
    ######### str-upper ######### START
 
 if ((${BASH_VERSION::1} < 4)); then
-    echo "$_STRING" | tr '[:lower:]' '[:upper:]'
+   echo "$_STRING" | tr '[:lower:]' '[:upper:]'
 else
-    echo "${_STRING^^}"
+   echo "${_STRING^^}"
 fi
 
    ######### str-upper ######### END
@@ -1718,9 +1718,9 @@ local ansiCursors2="[su]" # save/restore cursor position
 local ansiPattern="\x1B\[((${ansiColors})|(${ansiCursors1})|(${ansiCursors2}))"
 
 if [[ ${_STRING} ]]; then
-    echo "${_STRING[@]}" | sed -Eu "s/${ansiPattern}//g"
+   echo "${_STRING[@]}" | sed -Eu "s/${ansiPattern}//g"
 else
-    sed -Eu "s/${ansiPattern}//g"
+   sed -Eu "s/${ansiPattern}//g"
 fi
 
    ######### strip-ansi ######### END
