@@ -63,7 +63,7 @@ local avail=$(cat /proc/sys/kernel/random/entropy_avail)
 local required=$(cat /proc/sys/kernel/random/read_wakeup_threshold)
 echo "/proc/sys/kernel/random/entropy_avail: $avail"
 echo "/proc/sys/kernel/random/read_wakeup_threshold: $required"
-[[ $(( avail > required )) ]]
+(( avail > required ))
 ```
 
 

@@ -120,7 +120,7 @@ while true; do
             fi
           ;;
         ${ESC}*B)
-            if [[ $(( selectedIndex + 1 )) -lt ${#_OPTION[@]} ]]; then
+            if (( selectedIndex + 1 < ${#_OPTION[@]} )); then
                 (( selectedIndex++ ))
                 redraw=1
             fi
@@ -485,7 +485,7 @@ fi
 
 # update via Git
 if [[ -e "${BASH_FUNK_ROOT}/.git" ]]; then
-    ( cd "${BASH_FUNK_ROOT}" && git config core.autocrlf false && git reset --hard && git pull ) || return
+    ( cd "${BASH_FUNK_ROOT}" && git config core.autocrlf false && git fetch && git reset origin/master --hard && git pull ) || return
     [[ $_reload ]] && -reload || true
     return
 fi

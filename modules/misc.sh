@@ -185,7 +185,7 @@ while true; do
             fi
           ;;
         ${ESC}*B)
-            if [[ $(( selectedIndex + 1 )) -lt ${#_OPTION[@]} ]]; then
+            if (( selectedIndex + 1 < ${#_OPTION[@]} )); then
                 (( selectedIndex++ ))
                 redraw=1
             fi
