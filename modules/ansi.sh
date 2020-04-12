@@ -12,6 +12,214 @@
 # documentation: https://github.com/vegardit/bash-funk/tree/master/docs/ansi.md
 #
 
+function -ansi-alternate() {
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
+
+   set +auHt
+   set -o pipefail
+
+   __impl$__fn "$@" && rc=0 || rc=$?
+
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... [ANSI_SEQUENCE]..."
+      echo; echo "Type '$__fn --help' for more details."
+   fi
+
+   eval $opts
+
+   return $rc
+  }
+function __impl-ansi-alternate() {
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _color _skip _help _selftest _ANSI_SEQUENCE=()
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
+
+         --help)
+            echo "Usage: $__fn [OPTION]... [ANSI_SEQUENCE]..."
+            echo
+            echo "Alternately colorizes the line read from stdin. If stdout is no terminal highlighting is disabled automatically."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mANSI_SEQUENCE\033[22m "
+            echo -e "      ANSI escape sequence used for every n-th row, defaults to' '\\\033[35m'."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --color [WHEN]\033[22m (default: 'auto', one of: [always,auto,never])"
+            echo "        Indicates when to colorize the output."
+            echo -e "\033[1m    --skip LINES\033[22m (integer: 0-?)"
+            echo "        Do not colorize the first N lines."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m echo -e 'line1\\\nline2\\\nline3\\\nline4' | ${BASH_FUNK_PREFIX:--}ansi-alternate\033[22m"
+            echo
+            echo -e "$ \033[1m echo -e 'line1\\\nline2\\\nline3\\\nline4' | ${BASH_FUNK_PREFIX:--}ansi-alternate '\\\033[31m'\033[22m"
+            echo
+            echo -e "$ \033[1m echo -e 'line1\\\nline2\\\nline3\\\nline4' | ${BASH_FUNK_PREFIX:--}ansi-alternate '\\\033[31m' '\\\033[32m'\033[22m"
+            echo
+            echo -e "$ \033[1m echo -e 'line1\\\nline2\\\nline3\\\nline4' | ${BASH_FUNK_PREFIX:--}ansi-alternate '\\\033[31m' '\\\033[32m' '\\\033[33m'\033[22m"
+            echo
+            echo -e "$ \033[1m echo -e 'line1\\\nline2\\\nline3\\\nline4' | ${BASH_FUNK_PREFIX:--}ansi-alternate '\\\033[31m' --skip 3\033[22m"
+            echo
+            echo
+            return 0
+           ;;
+
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
+
+         --color)
+            _color="auto"
+            __optionWithValue=color
+         ;;
+
+         --skip)
+            _skip="@@##@@"
+            __optionWithValue=skip
+         ;;
+
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
+
+         *)
+            case $__optionWithValue in
+               color)
+                  _color=$__arg
+                  __optionWithValue=
+                 ;;
+               skip)
+                  _skip=$__arg
+                  __optionWithValue=
+                 ;;
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
+
+   for __param in "${__params[@]}"; do
+      _ANSI_SEQUENCE+=("$__param")
+      continue
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
+
+   if [[ $_color ]]; then
+      if [[ $_color == "@@##@@" ]]; then echo "$__fn: Error: Value WHEN for option --color must be specified."; return 64; fi
+      if [[ $_color != 'always' && $_color != 'auto' && $_color != 'never' ]]; then echo "$__fn: Error: Value '$_color' for option --color is not one of the allowed values [always,auto,never]."; return 64; fi
+   fi
+   if [[ $_skip ]]; then
+      if [[ $_skip == "@@##@@" ]]; then echo "$__fn: Error: Value LINES for option --skip must be specified."; return 64; fi
+      if [[ ! "$_skip" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_skip' for option --skip is not a numeric value."; return 64; fi
+      if [[ $_skip -lt 0 ]]; then echo "$__fn: Error: Value '$_skip' for option --skip is too low. Must be >= 0."; return 64; fi
+   fi
+
+   ######### ansi-alternate ######### START
+
+# check if stdin is opend on terminal (and thus not on a pipe)
+if [[ -t 0 ]]; then
+   return 0
+fi
+
+local colorize
+case "${_color:-auto}" in
+   always) colorize=1 ;;
+   never) colorize=0 ;;
+   auto) [[ -t 1 ]] && colorize=1 || colorize=0 ;;
+esac
+
+if [[ $colorize == 1 ]]; then
+   local ansi_sequences_count=${#_ANSI_SEQUENCE[@]}
+   if (( ansi_sequences_count == 0 )); then
+      _ANSI_SEQUENCE=( '\033[35m' '' )
+      ansi_sequences_count=2
+   elif (( ansi_sequences_count == 1 )); then
+      _ANSI_SEQUENCE=( "${_ANSI_SEQUENCE[0]}" '' )
+      ansi_sequences_count=2
+   fi
+
+   local line line_no=0 skip=${_skip:0}
+   while IFS='$\n' read -r line; do
+      (( line_no++ ))
+      if (( line_no > skip )); then
+         echo -ne "${_ANSI_SEQUENCE[$(( ( (line_no - skip) - 1) % ansi_sequences_count ))]}"
+         echo -n "$line"
+         echo -e "\033[0m"
+      else
+         echo "$line"
+      fi
+   done
+else
+   local line
+   while IFS='$\n' read -r line; do
+      echo "$line"
+   done
+fi
+
+   ######### ansi-alternate ######### END
+}
+function __complete-ansi-alternate() {
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --color --skip --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      local prev="${COMP_WORDS[COMP_CWORD-1]}"
+      case $prev in
+         --color)
+            COMPREPLY=($(compgen -o default -W "always
+auto
+never" -- $curr))
+              ;;
+         *)
+            COMPREPLY=($(compgen -o default -- $curr))
+           ;;
+      esac
+   fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}ansi-alternate -- ${BASH_FUNK_PREFIX:--}ansi-alternate
+
 function -ansi-bold() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
@@ -127,13 +335,13 @@ function __impl-ansi-bold() {
    ######### ansi-bold ######### START
 
 if [[ $_TEXT ]]; then
-    echo -ne "\033[1m$_TEXT\033[22m"
+   echo -ne "\033[1m$_TEXT\033[22m"
 fi
 
 if [[ $_on ]]; then
-    echo -ne "\033[1m"
+   echo -ne "\033[1m"
 elif [[ $_off ]]; then
-    echo -ne "\033[22m"
+   echo -ne "\033[22m"
 fi
 
    ######### ansi-bold ######### END
@@ -261,9 +469,9 @@ function __impl-ansi-codes() {
    ######### ansi-codes ######### START
 
 if [[ $_escape ]]; then
-    local ESC="\033";
+   local ESC="\033";
 else
-    local ESC=$(echo -e "\033");
+   local ESC=$(echo -e "\033");
 fi
 
 echo "
@@ -460,31 +668,31 @@ function __impl-ansi-colors-supported() {
 
 local numColors
 if hash tput &>/dev/null; then
-    numColors=$(tput colors)
+   numColors=$(tput colors)
 elif hash infocmp &>/dev/null; then
-    local termInfo=$(infocmp $TERM || true);
-    if [[ $termInfo =~ colors#([0-9]+), ]]; then
-        local numColors=${BASH_REMATCH[1]}
-    else
-        numColors=-1
-    fi
+   local termInfo=$(infocmp $TERM || true);
+   if [[ $termInfo =~ colors#([0-9]+), ]]; then
+      local numColors=${BASH_REMATCH[1]}
+   else
+      numColors=-1
+   fi
 elif [[ $TERM == "cygwin" ]]; then
-    numColors=8
+   numColors=8
 else
-    numColors=-1
+   numColors=-1
 fi
 
 if [[ $_NUM_COLORS ]]; then
-    if [[ $numColors -ge $_NUM_COLORS ]]; then
-        [[ $_verbose ]] && echo "Terminal '$TERM' supports $numColors colors."
-        return 0
-    else
-        [[ $_verbose ]] && echo "Terminal '$TERM' supports only $numColors colors."
-        return 1
-    fi
+   if [[ $numColors -ge $_NUM_COLORS ]]; then
+      [[ $_verbose ]] && echo "Terminal '$TERM' supports $numColors colors."
+      return 0
+   else
+      [[ $_verbose ]] && echo "Terminal '$TERM' supports only $numColors colors."
+      return 1
+   fi
 else
-    echo $numColors
-    return 0
+   echo $numColors
+   return 0
 fi
 
    ######### ansi-colors-supported ######### END
@@ -594,28 +802,27 @@ function __impl-ansi-colors16() {
 
    ######### ansi-colors16 ######### START
 
-
 if ! ${BASH_FUNK_PREFIX:--}ansi-colors-supported 8; then
-    echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 8 colors."
-    echo
+   echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 8 colors."
+   echo
 elif ! ${BASH_FUNK_PREFIX:--}ansi-colors-supported 16; then
-    echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 16 colors."
-    echo
+   echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 16 colors."
+   echo
 fi
 
 echo "To set one of the following color combinations use '\033[<BG>;<FG>m'"
 echo
 echo -n "      "
 for fg in {30..37} 39 {90..97}; do
-    printf "  FG %2d" "$fg"
+   printf "  FG %2d" "$fg"
 done
 echo
 for bg in {40..47} 49 {100..107}; do
-    printf "BG %3d " "$bg"
-    for fg in {30..37} 39 {90..97}; do
-        printf "\033[${bg};${fg}m%3d;%2d\033[0m " "$bg" "$fg"
-    done
-    echo
+   printf "BG %3d " "$bg"
+   for fg in {30..37} 39 {90..97}; do
+      printf "\033[${bg};${fg}m%3d;%2d\033[0m " "$bg" "$fg"
+   done
+   echo
 done
 
    ######### ansi-colors16 ######### END
@@ -725,10 +932,9 @@ function __impl-ansi-colors256() {
 
    ######### ansi-colors256 ######### START
 
-
 if ! ${BASH_FUNK_PREFIX:--}ansi-colors-supported 256; then
-    echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 256 colors."
-    echo
+   echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 256 colors."
+   echo
 fi
 
 # this function is inspired by https://github.com/Evanlec/config/blob/master/bin/256colors2.pl
@@ -739,44 +945,44 @@ printf "To set one of the following \033[1mforeground\033[0m colors use '\\\033[
 echo
 echo "System Colors:"
 for (( i=0; i<16; i++));do
-    if (( i == 0 )); then
-        printf "\033[48;5;231m"
-    else
-        printf "\033[48;5;0m"
-    fi
-    printf "\033[38;5;${i}m%2d \033[0m" "$i"
+   if (( i == 0 )); then
+      printf "\033[48;5;231m"
+   else
+      printf "\033[48;5;0m"
+   fi
+   printf "\033[38;5;${i}m%2d \033[0m" "$i"
 done
 echo
 echo
 echo "Color Cubes 6x6x6:"
 for (( green=0; green<6; green++ )) {
-    for (( red=0; red<6; red++ )) {
-        for (( blue=0; blue<6; blue++ )) {
-            i=$(( 16 + 36*red + 6*green + blue ))
-            if (( (i - 16) % 6 == 0)); then
-                spacer=""
-            else
-                spacer=" "
-            fi
-            if (( i > 87 )); then
-                printf "\033[38;5;${i}m$spacer%3d\033[0m" "$i"
-            else
-                printf "\033[38;5;${i}m$spacer%2d\033[0m" "$i"
-            fi
-        }
-        printf "\033[38;5;8m|\033[0m"
-    }
-    echo
+   for (( red=0; red<6; red++ )) {
+      for (( blue=0; blue<6; blue++ )) {
+         i=$(( 16 + 36*red + 6*green + blue ))
+         if (( (i - 16) % 6 == 0)); then
+            spacer=""
+         else
+            spacer=" "
+         fi
+         if (( i > 87 )); then
+            printf "\033[38;5;${i}m$spacer%3d\033[0m" "$i"
+         else
+            printf "\033[38;5;${i}m$spacer%2d\033[0m" "$i"
+         fi
+      }
+      printf "\033[38;5;8m|\033[0m"
+   }
+   echo
 }
 echo
 echo "Grayscale Ramp:"
 for i in 16 {232..255} 231;do
-    if (( i == 16 || i > 231 && i < 234 )); then
-        printf "\033[48;5;236m"
-    else
-        printf "\033[48;5;0m"
-    fi
-    printf "\033[38;5;${i}m%3d \033[0m" "$i"
+   if (( i == 16 || i > 231 && i < 234 )); then
+      printf "\033[48;5;236m"
+   else
+      printf "\033[48;5;0m"
+   fi
+   printf "\033[38;5;${i}m%3d \033[0m" "$i"
 done
 echo
 
@@ -786,44 +992,44 @@ printf "To set one of the following \033[1mbackground\033[0m colors use '\\\033[
 echo
 echo "System Colors:"
 for (( i=0; i<16; i++));do
-    if (( i == 0 )); then
-        printf "\033[48;5;231m"
-    else
-        printf "\033[48;5;0m"
-    fi
-    printf "\033[48;5;${i}m%2d \033[0m" "$i"
+   if (( i == 0 )); then
+      printf "\033[48;5;231m"
+   else
+      printf "\033[48;5;0m"
+   fi
+   printf "\033[48;5;${i}m%2d \033[0m" "$i"
 done
 echo
 echo
 echo "Color Cubes 6x6x6:"
 for (( green=0; green<6; green++ )) {
-    for (( red=0; red<6; red++ )) {
-        for (( blue=0; blue<6; blue++ )) {
-            i=$(( 16 + 36*red + 6*green + blue ))
-            if (( (i - 16) % 6 == 0)); then
-                spacer=""
-            else
-                spacer=" "
-            fi
-            if (( i > 87 )); then
-                printf "\033[38;5;235;48;5;${i}m$spacer%3d\033[0m" "$i"
-            else
-                printf "\033[38;5;235;48;5;${i}m$spacer%2d\033[0m" "$i"
-            fi
-        }
-        printf " "
-    }
-    echo
+   for (( red=0; red<6; red++ )) {
+      for (( blue=0; blue<6; blue++ )) {
+         i=$(( 16 + 36*red + 6*green + blue ))
+         if (( (i - 16) % 6 == 0)); then
+            spacer=""
+         else
+            spacer=" "
+         fi
+         if (( i > 87 )); then
+            printf "\033[38;5;235;48;5;${i}m$spacer%3d\033[0m" "$i"
+         else
+            printf "\033[38;5;235;48;5;${i}m$spacer%2d\033[0m" "$i"
+         fi
+      }
+      printf " "
+   }
+   echo
 }
 echo
 echo "Grayscale Ramp:"
 for i in 16 {232..255} 231;do
-    if (( i == 231 )); then
-        printf "\033[38;5;254m"
-    else
-        printf "\033[38;5;15m"
-    fi
-    printf "\033[48;5;${i}m%3d \033[0m" "$i"
+   if (( i == 231 )); then
+      printf "\033[38;5;254m"
+   else
+      printf "\033[38;5;15m"
+   fi
+   printf "\033[48;5;${i}m%3d \033[0m" "$i"
 done
 echo
 
@@ -1065,13 +1271,13 @@ function __impl-ansi-ul() {
    ######### ansi-ul ######### START
 
 if [[ $_TEXT ]]; then
-    echo -ne "\033[4m$_TEXT\033[24m"
+   echo -ne "\033[4m$_TEXT\033[24m"
 fi
 
 if [[ $_on ]]; then
-    echo -ne "\033[4m"
+   echo -ne "\033[4m"
 elif [[ $_off ]]; then
-    echo -ne "\033[24m"
+   echo -ne "\033[24m"
 fi
 
    ######### ansi-ul ######### END
@@ -1304,45 +1510,44 @@ function __impl-cursor-pos() {
 
    ######### cursor-pos ######### START
 
-
 if [[ $_save ]]; then
-    >&$_fd echo -en "\033[s"
+   >&$_fd echo -en "\033[s"
 fi
 
 if [[ $_restore ]]; then
-    >&$_fd echo -en "\033[u"
+   >&$_fd echo -en "\033[u"
 fi
 
 if [[ $_up ]]; then
-    >&$_fd echo -en "\033[${_up}A"
+   >&$_fd echo -en "\033[${_up}A"
 fi
 
 if [[ $_down ]]; then
-    >&$_fd echo -en "\033[${_up}B"
+   >&$_fd echo -en "\033[${_up}B"
 fi
 
 if [[ $_right ]]; then
-    >&$_fd echo -en "\033[${_right}C"
+   >&$_fd echo -en "\033[${_right}C"
 fi
 
 if [[ $_left ]]; then
-    >&$_fd echo -en "\033[${_left}D"
+   >&$_fd echo -en "\033[${_left}D"
 fi
 
 if [[ $_set ]]; then
-    >&$_fd echo -en "\033[${_set//:/;}H"
+   >&$_fd echo -en "\033[${_set//:/;}H"
 fi
 
 if [[ $_print || $_assign ]]; then
-    local pos
-    >&$_fd echo -en "\E[6n" && read -sdR pos
-    pos=${pos#*[}
-    pos=${pos//;/:}
-    if [[ $_print ]]; then
-        >&$_fd echo $pos
-    fi
-    if [[ $_assign ]]; then
-        eval "$_assign=\"$pos\""
+   local pos
+   >&$_fd echo -en "\E[6n" && read -sdR pos
+   pos=${pos#*[}
+   pos=${pos//;/:}
+   if [[ $_print ]]; then
+      >&$_fd echo $pos
+   fi
+   if [[ $_assign ]]; then
+      eval "$_assign=\"$pos\""
     fi
 fi
 
@@ -1453,6 +1658,7 @@ function __impl-test-ansi() {
 
    ######### test-ansi ######### START
 
+${BASH_FUNK_PREFIX:--}ansi-alternate --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-bold --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-codes --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-colors-supported --selftest && echo || return 1
@@ -1478,6 +1684,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-ansi -- ${BASH_FUNK_PREFIX:--}t
 
 
 function -help-ansi() {
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-alternate [ANSI_SEQUENCE]...\033[0m  -  Alternately colorizes the line read from stdin. If stdout is no terminal highlighting is disabled automatically."
    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-bold [TEXT]\033[0m  -  Sets bold mode or prints the given text in bold."
    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-codes [PREFIX]\033[0m  -  Prints commands to set variables with common ANSI codes. When used with the 'echo' command, the -e option is not required."
    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-colors-supported [NUM_COLORS]\033[0m  -  Determines if the given number of ANSI colors is supported by the current terminal. If NUM_COLORS is specified, the exit value indicates if the color range is supported. If NUM_COLORS is not specified, the number of supported colors is printed with exit code 0."
@@ -1489,4 +1696,4 @@ function -help-ansi() {
    echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-ansi\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( ansi-bold ansi-codes ansi-colors-supported ansi-colors16 ansi-colors256 ansi-reset ansi-ul cursor-pos test-ansi )
+__BASH_FUNK_FUNCS+=( ansi-alternate ansi-bold ansi-codes ansi-colors-supported ansi-colors16 ansi-colors256 ansi-reset ansi-ul cursor-pos test-ansi )
