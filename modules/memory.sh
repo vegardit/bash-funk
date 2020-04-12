@@ -286,31 +286,31 @@ local totalMem=$(awk '/MemFree/ {print $2}' /proc/meminfo)
 local totalMemUnit=$(awk '/MemFree/ {print $3}' /proc/meminfo)
 
 case ${totalMemUnit} in
-    [Kk][Bb])
-        local memTotalKB=$totalMem
-        ;;
-    [Mm][Bb])
-        local memTotalKB=$(( totalMem * 1024 ))
-        ;;
-    [Gg][Bb])
-        local memTotalKB=$(( totalMem * 1024 * 1024 ))
-        ;;
-    *)
-        echo "Error: Unsupported memory unit ${totalMemUnit} encountered."
-        return 1
-        ;;
+   [Kk][Bb])
+      local memTotalKB=$totalMem
+     ;;
+   [Mm][Bb])
+      local memTotalKB=$(( totalMem * 1024 ))
+     ;;
+   [Gg][Bb])
+      local memTotalKB=$(( totalMem * 1024 * 1024 ))
+     ;;
+   *)
+      echo "Error: Unsupported memory unit ${totalMemUnit} encountered."
+      return 1
+     ;;
 esac
 
 case $_MEMORY_UNIT in
-    KB)
-        echo $memTotalKB
-        ;;
-    MB)
-        echo $(( memTotalKB / 1024 ))
-        ;;
-    GB)
-        echo $(( memTotalKB / 1024 / 1024 ))
-        ;;
+   KB)
+      echo $memTotalKB
+     ;;
+   MB)
+      echo $(( memTotalKB / 1024 ))
+     ;;
+   GB)
+      echo $(( memTotalKB / 1024 / 1024 ))
+     ;;
 esac
 
    ######### memfree ######### END
@@ -590,31 +590,31 @@ local totalMem=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
 local totalMemUnit=$(awk '/MemTotal/ {print $3}' /proc/meminfo)
 
 case ${totalMemUnit} in
-    [Kk][Bb])
-        local memTotalKB=$totalMem
-        ;;
-    [Mm][Bb])
-        local memTotalKB=$(( totalMem * 1024 ))
-        ;;
-    [Gg][Bb])
-        local memTotalKB=$(( totalMem * 1024 * 1024 ))
-        ;;
-    *)
-        echo "Error: Unsupported memory unit ${totalMemUnit} encountered."
-        return 1
-        ;;
+   [Kk][Bb])
+      local memTotalKB=$totalMem
+     ;;
+   [Mm][Bb])
+      local memTotalKB=$(( totalMem * 1024 ))
+     ;;
+   [Gg][Bb])
+      local memTotalKB=$(( totalMem * 1024 * 1024 ))
+     ;;
+   *)
+      echo "Error: Unsupported memory unit ${totalMemUnit} encountered."
+      return 1
+     ;;
 esac
 
 case $_MEMORY_UNIT in
-    KB)
-        echo $memTotalKB
-        ;;
-    MB)
-        echo $(( memTotalKB / 1024 ))
-        ;;
-    GB)
-        echo $(( memTotalKB / 1024 / 1024 ))
-        ;;
+   KB)
+      echo $memTotalKB
+     ;;
+   MB)
+      echo $(( memTotalKB / 1024 ))
+     ;;
+   GB)
+      echo $(( memTotalKB / 1024 / 1024 ))
+     ;;
 esac
 
    ######### memtotal ######### END
@@ -630,6 +630,206 @@ function __complete-memtotal() {
    fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}memtotal -- ${BASH_FUNK_PREFIX:--}memtotal
+
+function -procmem() {
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
+
+   set +auHt
+   set -o pipefail
+
+   __impl$__fn "$@" && rc=0 || rc=$?
+
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]..."
+      echo; echo "Type '$__fn --help' for more details."
+   fi
+
+   eval $opts
+
+   return $rc
+  }
+function __impl-procmem() {
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _group _color _help _selftest
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
+
+         --help)
+            echo "Usage: $__fn [OPTION]..."
+            echo
+            echo "Prints memory consumption information of all running processes."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --color [WHEN]\033[22m (default: 'auto', one of: [always,auto,never])"
+            echo "        Indicates when to colorize the output."
+            echo -e "\033[1m-g, --group\033[22m "
+            echo "        Group memory usage of same processes."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m$__fn \033[22m"
+            echo "MemTotal:       24689452 kB
+MemFree:        13713796 kB
+MemAvailable:   16143004 kB
+..."
+            echo
+            return 0
+           ;;
+
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn \033[22m"
+            __stdout="$($__fn )"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^.*MemTotal.*MemFree.*$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [.*MemTotal.*MemFree.*]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
+
+         --group|-g)
+            _group=1
+         ;;
+
+         --color)
+            _color="auto"
+            __optionWithValue=color
+         ;;
+
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
+
+         *)
+            case $__optionWithValue in
+               color)
+                  _color=$__arg
+                  __optionWithValue=
+                 ;;
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
+
+   for __param in "${__params[@]}"; do
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
+
+   if [[ $_color ]]; then
+      if [[ $_color == "@@##@@" ]]; then echo "$__fn: Error: Value WHEN for option --color must be specified."; return 64; fi
+      if [[ $_color != 'always' && $_color != 'auto' && $_color != 'never' ]]; then echo "$__fn: Error: Value '$_color' for option --color is not one of the allowed values [always,auto,never]."; return 64; fi
+   fi
+
+   ######### procmem ######### START
+
+if [[ $_group ]]; then
+
+   echo "  PHYS. MEM   VIRT. MEM  USER     #  PROCESS"
+   local mem1 mem2 usr cmd prev_mem1 prev_mem2 prev_usr prev_cmd prev_count
+   (ps -eww -o rss,vsize,user,args --sort=+user,+args | tail -n +1 | while read mem1 mem2 usr cmd; do
+      if [[ $prev_usr == $usr && $prev_cmd == $cmd ]]; then
+         prev_mem1=$((prev_mem1 + mem1))
+         prev_mem2=$((prev_mem1 + mem2))
+         prev_count=$(( prev_count + 1 ))
+      else
+         if [[ -n $prev_cmd ]]; then
+            printf "%5d.%02d MB " $((prev_mem1/1024 )) $(( (prev_mem1*100/1024) - (prev_mem1/1024*100) ))
+            printf "%5d.%02d MB " $((prev_mem2/1024 )) $(( (prev_mem2*100/1024) - (prev_mem2/1024*100) ))
+            printf "%-8s " $prev_usr
+            printf "%2sx " $prev_count
+            echo "$prev_cmd"
+         fi
+         prev_usr=$usr
+         prev_mem1=$mem1
+         prev_mem2=$mem2
+         prev_cmd=$cmd
+         prev_count=1
+      fi
+   done && (
+      printf "%5d.%02d MB " $((prev_mem1/1024 )) $(( (prev_mem1*100/1024) - (prev_mem1/1024*100) ))
+      printf "%5d.%02d MB " $((prev_mem2/1024 )) $(( (prev_mem2*100/1024) - (prev_mem2/1024*100) ))
+      printf " %-8s " $prev_usr
+      printf "%2sx $prev_cmd\n" $prev_count
+   )) | grep -v "0.00 MB"| sort -h | -ansi-alternate --color ${_color:-auto}
+
+else
+
+   echo "  PHYS. MEM   VIRT. MEM    PID  USER     PROCESS"
+   local mem1 mem2 pid usr cmd
+   ps -eww -o rss,vsize,pid,user,args --sort=+rss,+args | tail -n +1 | while read mem1 mem2 pid usr cmd; do
+      if [[ mem2 -gt 0 ]]; then
+         printf "%5d.%02d MB " $((mem1/1024 )) $(( (mem1*100/1024) - (mem1/1024*100) ))
+         printf "%5d.%02d MB " $((mem2/1024 )) $(( (mem2*100/1024) - (mem2/1024*100) ))
+         printf "%6d  " $pid
+         printf "%-8s " $usr
+         echo "$cmd"
+      fi
+   done | -ansi-alternate --color ${_color:-auto}
+
+fi
+
+   ######### procmem ######### END
+}
+function __complete-procmem() {
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --group -g --color --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      local prev="${COMP_WORDS[COMP_CWORD-1]}"
+      case $prev in
+         --color)
+            COMPREPLY=($(compgen -o default -W "always
+auto
+never" -- $curr))
+              ;;
+         *)
+            COMPREPLY=($(compgen -o default -- $curr))
+           ;;
+      esac
+   fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}procmem -- ${BASH_FUNK_PREFIX:--}procmem
 
 function -test-memory() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
@@ -728,6 +928,7 @@ ${BASH_FUNK_PREFIX:--}alloc-mem --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}memfree --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}meminfo --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}memtotal --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}procmem --selftest && echo || return 1
 
    ######### test-memory ######### END
 }
@@ -749,7 +950,8 @@ function -help-memory() {
    echo -e "\033[1m${BASH_FUNK_PREFIX:--}memfree [MEMORY_UNIT]\033[0m  -  Prints the free memory (in KB by default)."
    echo -e "\033[1m${BASH_FUNK_PREFIX:--}meminfo\033[0m  -  Prints memory information from /proc/meminfo."
    echo -e "\033[1m${BASH_FUNK_PREFIX:--}memtotal [MEMORY_UNIT]\033[0m  -  Prints the total memory (in KB by default)."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}procmem\033[0m  -  Prints memory consumption information of all running processes."
    echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-memory\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( alloc-mem memfree meminfo memtotal test-memory )
+__BASH_FUNK_FUNCS+=( alloc-mem memfree meminfo memtotal procmem test-memory )

@@ -8,6 +8,7 @@ The following commands are available when this module is loaded:
 1. [-memfree](#-memfree)
 1. [-meminfo](#-meminfo)
 1. [-memtotal](#-memtotal)
+1. [-procmem](#-procmem)
 1. [-test-memory](#-test-memory)
 
 
@@ -99,31 +100,31 @@ local totalMem=$(awk '/MemFree/ {print $2}' /proc/meminfo)
 local totalMemUnit=$(awk '/MemFree/ {print $3}' /proc/meminfo)
 
 case ${totalMemUnit} in
-    [Kk][Bb])
-        local memTotalKB=$totalMem
-        ;;
-    [Mm][Bb])
-        local memTotalKB=$(( totalMem * 1024 ))
-        ;;
-    [Gg][Bb])
-        local memTotalKB=$(( totalMem * 1024 * 1024 ))
-        ;;
-    *)
-        echo "Error: Unsupported memory unit ${totalMemUnit} encountered."
-        return 1
-        ;;
+   [Kk][Bb])
+      local memTotalKB=$totalMem
+     ;;
+   [Mm][Bb])
+      local memTotalKB=$(( totalMem * 1024 ))
+     ;;
+   [Gg][Bb])
+      local memTotalKB=$(( totalMem * 1024 * 1024 ))
+     ;;
+   *)
+      echo "Error: Unsupported memory unit ${totalMemUnit} encountered."
+      return 1
+     ;;
 esac
 
 case $_MEMORY_UNIT in
-    KB)
-        echo $memTotalKB
-        ;;
-    MB)
-        echo $(( memTotalKB / 1024 ))
-        ;;
-    GB)
-        echo $(( memTotalKB / 1024 / 1024 ))
-        ;;
+   KB)
+      echo $memTotalKB
+     ;;
+   MB)
+      echo $(( memTotalKB / 1024 ))
+     ;;
+   GB)
+      echo $(( memTotalKB / 1024 / 1024 ))
+     ;;
 esac
 ```
 
@@ -191,32 +192,110 @@ local totalMem=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
 local totalMemUnit=$(awk '/MemTotal/ {print $3}' /proc/meminfo)
 
 case ${totalMemUnit} in
-    [Kk][Bb])
-        local memTotalKB=$totalMem
-        ;;
-    [Mm][Bb])
-        local memTotalKB=$(( totalMem * 1024 ))
-        ;;
-    [Gg][Bb])
-        local memTotalKB=$(( totalMem * 1024 * 1024 ))
-        ;;
-    *)
-        echo "Error: Unsupported memory unit ${totalMemUnit} encountered."
-        return 1
-        ;;
+   [Kk][Bb])
+      local memTotalKB=$totalMem
+     ;;
+   [Mm][Bb])
+      local memTotalKB=$(( totalMem * 1024 ))
+     ;;
+   [Gg][Bb])
+      local memTotalKB=$(( totalMem * 1024 * 1024 ))
+     ;;
+   *)
+      echo "Error: Unsupported memory unit ${totalMemUnit} encountered."
+      return 1
+     ;;
 esac
 
 case $_MEMORY_UNIT in
-    KB)
-        echo $memTotalKB
-        ;;
-    MB)
-        echo $(( memTotalKB / 1024 ))
-        ;;
-    GB)
-        echo $(( memTotalKB / 1024 / 1024 ))
-        ;;
+   KB)
+      echo $memTotalKB
+     ;;
+   MB)
+      echo $(( memTotalKB / 1024 ))
+     ;;
+   GB)
+      echo $(( memTotalKB / 1024 / 1024 ))
+     ;;
 esac
+```
+
+
+## <a name="-procmem"></a>-procmem
+
+```
+Usage: -procmem [OPTION]...
+
+Prints memory consumption information of all running processes.
+
+Options:
+    --color [WHEN] (default: 'auto', one of: [always,auto,never])
+        Indicates when to colorize the output.
+-g, --group 
+        Group memory usage of same processes.
+    -----------------------------
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+
+Examples:
+$ -procmem 
+MemTotal:       24689452 kB
+MemFree:        13713796 kB
+MemAvailable:   16143004 kB
+...
+```
+
+*Implementation:*
+```bash
+if [[ $_group ]]; then
+
+   echo "  PHYS. MEM   VIRT. MEM  USER     #  PROCESS"
+   local mem1 mem2 usr cmd prev_mem1 prev_mem2 prev_usr prev_cmd prev_count
+   (ps -eww -o rss,vsize,user,args --sort=+user,+args | tail -n +1 | while read mem1 mem2 usr cmd; do
+      if [[ $prev_usr == $usr && $prev_cmd == $cmd ]]; then
+         prev_mem1=$((prev_mem1 + mem1))
+         prev_mem2=$((prev_mem1 + mem2))
+         prev_count=$(( prev_count + 1 ))
+      else
+         if [[ -n $prev_cmd ]]; then
+            printf "%5d.%02d MB " $((prev_mem1/1024 )) $(( (prev_mem1*100/1024) - (prev_mem1/1024*100) ))
+            printf "%5d.%02d MB " $((prev_mem2/1024 )) $(( (prev_mem2*100/1024) - (prev_mem2/1024*100) ))
+            printf "%-8s " $prev_usr
+            printf "%2sx " $prev_count
+            echo "$prev_cmd"
+         fi
+         prev_usr=$usr
+         prev_mem1=$mem1
+         prev_mem2=$mem2
+         prev_cmd=$cmd
+         prev_count=1
+      fi
+   done && (
+      printf "%5d.%02d MB " $((prev_mem1/1024 )) $(( (prev_mem1*100/1024) - (prev_mem1/1024*100) ))
+      printf "%5d.%02d MB " $((prev_mem2/1024 )) $(( (prev_mem2*100/1024) - (prev_mem2/1024*100) ))
+      printf " %-8s " $prev_usr
+      printf "%2sx $prev_cmd\n" $prev_count
+   )) | grep -v "0.00 MB"| sort -h | -ansi-alternate --color ${_color:-auto}
+
+else
+
+   echo "  PHYS. MEM   VIRT. MEM    PID  USER     PROCESS"
+   local mem1 mem2 pid usr cmd
+   ps -eww -o rss,vsize,pid,user,args --sort=+rss,+args | tail -n +1 | while read mem1 mem2 pid usr cmd; do
+      if [[ mem2 -gt 0 ]]; then
+         printf "%5d.%02d MB " $((mem1/1024 )) $(( (mem1*100/1024) - (mem1/1024*100) ))
+         printf "%5d.%02d MB " $((mem2/1024 )) $(( (mem2*100/1024) - (mem2/1024*100) ))
+         printf "%6d  " $pid
+         printf "%-8s " $usr
+         echo "$cmd"
+      fi
+   done | -ansi-alternate --color ${_color:-auto}
+
+fi
 ```
 
 
@@ -242,4 +321,5 @@ Options:
 -memfree --selftest && echo || return 1
 -meminfo --selftest && echo || return 1
 -memtotal --selftest && echo || return 1
+-procmem --selftest && echo || return 1
 ```
