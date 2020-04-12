@@ -69,11 +69,11 @@ Options:
 
 # use realpath if available
 if hash realpath &>/dev/null; then
-    realpath -m $_PATH
+   realpath -m $_PATH
 
 # use python as last resort
 else
-    python -c "import os
+   python -c "import os
 print(os.path.abspath('$_PATH'))"
 fi
 ```
@@ -105,11 +105,11 @@ Options:
 ```bash
 local path=$(find $_START_AT -name "$_DIR_NAME" -type d -print -quit 2>/dev/null || true);
 if [[ $path ]]; then
-    echo "$path"
-    cd $path
+   echo "$path"
+   cd $path
 else
-    echo "-cd-down: $_DIR_NAME: No such directory"
-    return 1
+   echo "-cd-down: $_DIR_NAME: No such directory"
+   return 1
 fi
 ```
 
@@ -137,35 +137,35 @@ Options:
 *Implementation:*
 ```bash
 if [[ ! $_STEPS_OR_DIRNAME ]]; then
-    echo "Directory history:"
-    for (( __idx=2; __idx<${#DIRSTACK[*]}; __idx++ )); do
-        echo "$(( __idx - 1 )) cd ${DIRSTACK[$__idx]}"
-        [[ $__idx -eq 22 ]] && break || true
-    done
-    return 0
+   echo "Directory history:"
+   for (( __idx=2; __idx<${#DIRSTACK[*]}; __idx++ )); do
+      echo "$(( __idx - 1 )) cd ${DIRSTACK[$__idx]}"
+      [[ $__idx -eq 22 ]] && break || true
+   done
+   return 0
 fi
 
 if [[ $_STEPS_OR_DIRNAME == "-" ]]; then
-    cd - && return 0 || return 1
+   cd - && return 0 || return 1
 fi
 
 if [[ $_STEPS_OR_DIRNAME =~ ^[0-9]+$ ]]; then
-    local path="${DIRSTACK[@]:$(( _STEPS_OR_DIRNAME + 1 )):1}"
-    echo "$path"
-    cd $path
+   local path="${DIRSTACK[@]:$(( _STEPS_OR_DIRNAME + 1 )):1}"
+   echo "$path"
+   cd $path
 else
-    local path
-    for path in "${DIRSTACK[@]}"; do
-        case "${path}" in
-            *"/"$_STEPS_OR_DIRNAME)
-                echo "$path"
-                cd "$path"
-                return 0;
+   local path
+   for path in "${DIRSTACK[@]}"; do
+      case "${path}" in
+         *"/"$_STEPS_OR_DIRNAME)
+            echo "$path"
+            cd "$path"
+            return 0;
           ;;
-        esac
-    done
-    echo "-cd-hist: $_STEPS_OR_DIRNAME: No such directory in history"
-    return 1
+      esac
+   done
+   echo "-cd-hist: $_STEPS_OR_DIRNAME: No such directory in history"
+   return 1
 fi
 ```
 
@@ -193,39 +193,39 @@ Options:
 *Implementation:*
 ```bash
 if [[ $_LEVEL_OR_PATTERN == ".." ]]; then
-    cd ..
-    return 0
+   cd ..
+   return 0
 fi
 
 # check if value is numeric
 if [[ $_LEVEL_OR_PATTERN =~ ^[0-9]+$ ]]; then
-    local path
-    for (( i = 0; i < _LEVEL_OR_PATTERN; i++ )); do
-        path="../$path"
-    done
-    echo "$path"
-    cd "$path"
+   local path
+   for (( i = 0; i < _LEVEL_OR_PATTERN; i++ )); do
+      path="../$path"
+   done
+   echo "$path"
+   cd "$path"
 
 else
-    local elem path=()
+   local elem path=()
 
-    # read current path elements into array 'path'
-    IFS=/ read -r -a path <<< "$PWD"
+   # read current path elements into array 'path'
+   IFS=/ read -r -a path <<< "$PWD"
 
-    # iterate reverse through the array and check for matching directory
-    for (( idx=${#path[@]}-2; idx>=0; idx-- )); do
-        case "${path[idx]}" in
-            $_LEVEL_OR_PATTERN)
-                # join the path
-                IFS="/" eval 'path="${path[*]:0:$((idx+1))}"'
-                echo "$path"
-                cd "$path"
-                return 0;
-          ;;
-        esac
-    done
-    echo "-cd-up: $_LEVEL_OR_PATTERN: No such directory"
-    return 1
+   # iterate reverse through the array and check for matching directory
+   for (( idx=${#path[@]}-2; idx>=0; idx-- )); do
+      case "${path[idx]}" in
+         $_LEVEL_OR_PATTERN)
+            # join the path
+            IFS="/" eval 'path="${path[*]:0:$((idx+1))}"'
+            echo "$path"
+            cd "$path"
+            return 0;
+           ;;
+      esac
+   done
+   echo "-cd-up: $_LEVEL_OR_PATTERN: No such directory"
+   return 1
 fi
 ```
 
@@ -233,17 +233,17 @@ fi
 ## <a name="-count-words"></a>-count-words
 
 ```
-Usage: -count-words [OPTION]... FILE WORD1 [WORD]...
+Usage: -count-words [OPTION]... WORD1 [WORD]...
 
-Counts the number of occurences of the word(s) in the given file.
+Counts the number of occurences of the word(s) in the text read from stdin.
 
 Parameters:
-  FILE (required)
-      The file to analyze.
   WORD (1 or more required)
       The word to count.
 
 Options:
+-f, --file PATH (file)
+        Count the words in the given file instead of reading from stdin.
 -s, --sort MODE (one of: [count,word])
         Specifies how to sort the output.
     -----------------------------
@@ -257,31 +257,29 @@ Options:
 
 *Implementation:*
 ```bash
-if [[ ! -e "$_FILE" ]]; then
-    echo "Error: File [$_FILE] does not exist."
-    return 1
-fi
-
-if [[ ! -r "$_FILE" ]]; then
-    echo "Error: File [$_FILE] is not readable by user '$USER'."
-    return 1
-fi
-
-if [[ ! -f "$_FILE" ]]; then
-    echo "Error: Path [$_FILE] does not point to a file."
-    return 1
-fi
-
 local sedCmds grepCmds
 for word in "${_WORD[@]}"; do
-    sedCmds="s/$word/\n$word\n/g; $sedCmds"
-    grepCmds="$grepCmds -e $word"
+   sedCmds="s/$word/\n$word\n/g; $sedCmds"
+   grepCmds="$grepCmds -e $word"
 done
 
-if [[ $_sort == "count" ]]; then
-    sed "$sedCmds" "$_FILE" | grep $grepCmds | sort | uniq -c | sort -r
+if [[ $_file ]]; then
+   if [[ $_sort == "count" ]]; then
+      sed "$sedCmds" "$_file" | grep $grepCmds | sort | uniq -c | sort -r
+   else
+      sed "$sedCmds" "$_file" | grep $grepCmds | sort | uniq -c
+   fi
 else
-    sed "$sedCmds" "$_FILE" | grep $grepCmds | sort | uniq -c
+   # check if stdin is opend on terminal (and thus not on a pipe)
+   if [[ -t 0 ]]; then
+      return 0
+   fi
+
+   if [[ $_sort == "count" ]]; then
+      cat /dev/fd/0 | sed "$sedCmds" | grep $grepCmds | sort | uniq -c | sort -r
+   else
+      cat /dev/fd/0 | sed "$sedCmds" | grep $grepCmds | sort | uniq -c
+   fi
 fi
 ```
 
@@ -339,33 +337,33 @@ Options:
 *Implementation:*
 ```bash
 if [[ $_TO_DIR ]]; then
-    local origPWD="$PWD"
-    mkdir "$_TO_DIR"
-    cd "$_TO_DIR"
+   local origPWD="$PWD"
+   mkdir "$_TO_DIR"
+   cd "$_TO_DIR"
 fi
 
 if [[ ! -w "$PWD" ]]; then
-    echo "Error: Path [$PWD] is not writeable."
-    return 1
+   echo "Error: Path [$PWD] is not writeable."
+   return 1
 fi
 
 local tmpDir=$(mktemp -d -p "$PWD")
 
 case "$_FILE" in
-    *.bz2)            bunzip2    "$_ARCHIVE" ;;
-    *.gz)             gunzip     "$_ARCHIVE" ;;
-    *.rar)            unrar x    "$_ARCHIVE" ;;
-    *.tar)            tar xvf    "$_ARCHIVE" ;;
-    *.tbz2|*.tar.bz2) tar xvjf   "$_ARCHIVE" ;;
-    *.tgz|*.tar.gz)   tar xvzf   "$_ARCHIVE" ;;
-    *.zip)            unzip      "$_ARCHIVE" ;;
-    *.Z)              uncompress "$_ARCHIVE" ;;
-    *.7z)             7z x       "$_ARCHIVE" ;;
-    *) echo "Error: Unsupported archive format '$_ARCHIVE'"; return 1 ;;
+   *.bz2)            bunzip2    "$_ARCHIVE" ;;
+   *.gz)             gunzip     "$_ARCHIVE" ;;
+   *.rar)            unrar x    "$_ARCHIVE" ;;
+   *.tar)            tar xvf    "$_ARCHIVE" ;;
+   *.tbz2|*.tar.bz2) tar xvjf   "$_ARCHIVE" ;;
+   *.tgz|*.tar.gz)   tar xvzf   "$_ARCHIVE" ;;
+   *.zip)            unzip      "$_ARCHIVE" ;;
+   *.Z)              uncompress "$_ARCHIVE" ;;
+   *.7z)             7z x       "$_ARCHIVE" ;;
+   *) echo "Error: Unsupported archive format '$_ARCHIVE'"; return 1 ;;
 esac
 
 if [[ $_TO_DIR ]]; then
-    cd "$origPWD"
+   cd "$origPWD"
 fi
 ```
 
@@ -397,12 +395,12 @@ Options:
 ```bash
 local path=$PWD
 while [[ $path ]]; do
-    case $_type in
-        d|dir)  if [[ -d "$path/$_FILENAME" ]]; then echo "$path/$_FILENAME"; return; fi ;;
-        f|file) if [[ -f "$path/$_FILENAME" ]]; then echo "$path/$_FILENAME"; return; fi ;;
-        *)      if [[ -e "$path/$_FILENAME" ]]; then echo "$path/$_FILENAME"; return; fi ;;
-    esac
-    path=${path%/*}
+   case $_type in
+      d|dir)  if [[ -d "$path/$_FILENAME" ]]; then echo "$path/$_FILENAME"; return; fi ;;
+      f|file) if [[ -f "$path/$_FILENAME" ]]; then echo "$path/$_FILENAME"; return; fi ;;
+      *)      if [[ -e "$path/$_FILENAME" ]]; then echo "$path/$_FILENAME"; return; fi ;;
+   esac
+   path=${path%/*}
 done
 echo "-find-up: '$_FILENAME': No such file or directory"
 return 1
@@ -447,91 +445,91 @@ Options:
 *Implementation:*
 ```bash
 if [[ ! -e "$_START_PATH" ]]; then
-    echo "Error: Path [$_START_PATH] does not exist."
-    return 1
+   echo "Error: Path [$_START_PATH] does not exist."
+   return 1
 fi
 
 if [[ ! -r "$_START_PATH" ]]; then
-    echo "Error: Path [$_START_PATH] is not readable by user '$USER'."
-    return 1
+   echo "Error: Path [$_START_PATH] is not readable by user '$USER'."
+   return 1
 fi
 
 if [[ $_lines ]]; then
-    local grepCmd="grep -n"
+   local grepCmd="grep -n"
 else
-    local grepCmd="grep -l"
+   local grepCmd="grep -l"
 fi
 
 local findOpts="-type f"
 if [[ $_name ]]; then
-    findOpts="$findOpts -name $_name"
+   findOpts="$findOpts -name $_name"
 fi
 if [[ $_maxdepth ]]; then
-    findOpts="$findOpts -maxdepth $_maxdepth"
+   findOpts="$findOpts -maxdepth $_maxdepth"
 fi
 if [[ $_mindepth ]]; then
-    findOpts="$findOpts -mindepth $_mindepth"
+   findOpts="$findOpts -mindepth $_mindepth"
 fi
 
 # turn off verbose if part of pipe or subshell
 [[ ! $__interactive ]] && _verbose= || true
 
 if [[ $_verbose ]]; then
-    if hash tput &>/dev/null; then
-        cols=$(tput cols)
-    else
-        cols=$(stty size| cut -d' ' -f 2)
-    fi
+   if hash tput &>/dev/null; then
+      cols=$(tput cols)
+   else
+      cols=$(stty size| cut -d' ' -f 2)
+   fi
 
-    find "$_START_PATH" $findOpts 2>/dev/null | while read file; do
-        local message="Scanning $file ..."
+   find "$_START_PATH" $findOpts 2>/dev/null | while read file; do
+      local message="Scanning $file ..."
 
-        echo -en "\033[s${message:0:$cols}"
-        if [[ $_unpack && ( $file == *.zip || $file == *.jar || $file == *.ear || $file == *.war ) ]]; then
-            if unzip -p "$file" | LC_ALL=C $grepCmd "$_SEARCH_STRING" "$file" 2>&1 >/dev/null; then
-                echo -e "\033[u\033[K$file" || echo -e "$file"
-            else
-                echo -en "\033[u\033[K"
-            fi
-        else
-            if LC_ALL=C $grepCmd "$_SEARCH_STRING" "$file" 2>&1 >/dev/null; then
-                echo -e "\033[u\033[K$file" || echo -e "$file"
-            else
-                echo -en "\033[u\033[K"
-            fi
-        fi
-    done
+      echo -en "\033[s${message:0:$cols}"
+      if [[ $_unpack && ( $file == *.zip || $file == *.jar || $file == *.ear || $file == *.war ) ]]; then
+         if unzip -p "$file" | LC_ALL=C $grepCmd "$_SEARCH_STRING" "$file" 2>&1 >/dev/null; then
+            echo -e "\033[u\033[K$file" || echo -e "$file"
+         else
+            echo -en "\033[u\033[K"
+         fi
+      else
+         if LC_ALL=C $grepCmd "$_SEARCH_STRING" "$file" 2>&1 >/dev/null; then
+            echo -e "\033[u\033[K$file" || echo -e "$file"
+         else
+            echo -en "\033[u\033[K"
+         fi
+      fi
+   done
 
 else
 
-    if [[ $_unpack ]]; then
+   if [[ $_unpack ]]; then
 
-        find "$_START_PATH" $findOpts 2>/dev/null | while read file; do
-            if [[ $file == *.zip || $file == *.jar || $file == *.ear || $file == *.war ]]; then
-                unzip -p "$file" | LC_ALL=C $grepCmd "$_SEARCH_STRING" "$file" 2>/dev/null || true
-            else
-                LC_ALL=C $grepCmd "$_SEARCH_STRING" "$file" 2>/dev/null
-            fi
-        done
+      find "$_START_PATH" $findOpts 2>/dev/null | while read file; do
+         if [[ $file == *.zip || $file == *.jar || $file == *.ear || $file == *.war ]]; then
+            unzip -p "$file" | LC_ALL=C $grepCmd "$_SEARCH_STRING" "$file" 2>/dev/null || true
+         else
+            LC_ALL=C $grepCmd "$_SEARCH_STRING" "$file" 2>/dev/null
+         fi
+      done
 
-    else
+   else
 
-        # to avoid "xargs: environment is too large for exec" on cygwin/msys
-        local xargsWorks=1
-        if [[ $OSTYPE == cygwin || $OSTYPE == msys ]]; then
-            if ! echo whoami | xargs &>/dev/null; then
-                local xargsWorks=
-            fi
-        fi
+      # to avoid "xargs: environment is too large for exec" on cygwin/msys
+      local xargsWorks=1
+      if [[ $OSTYPE == cygwin || $OSTYPE == msys ]]; then
+         if ! echo whoami | xargs &>/dev/null; then
+            local xargsWorks=
+         fi
+      fi
 
-        if [[ $xargsWorks ]]; then
-            find "$_START_PATH" $findOpts -print0 | LC_ALL=C xargs -r -0 -P2 $grepCmd "$_SEARCH_STRING" 2>/dev/null
-        else
-            find "$_START_PATH" $findOpts 2>/dev/null | while read file; do
-                LC_ALL=C $grepCmd "$_SEARCH_STRING" "$file" 2>/dev/null
-            done
-        fi
-    fi
+      if [[ $xargsWorks ]]; then
+         find "$_START_PATH" $findOpts -print0 | LC_ALL=C xargs -r -0 -P2 $grepCmd "$_SEARCH_STRING" 2>/dev/null
+      else
+         find "$_START_PATH" $findOpts 2>/dev/null | while read file; do
+            LC_ALL=C $grepCmd "$_SEARCH_STRING" "$file" 2>/dev/null
+         done
+      fi
+   fi
 fi
 ```
 
@@ -563,19 +561,19 @@ Options:
 local _ls="command ls -lAph \"${_PATH[@]}\""
 [[ ${OSTYPE} =~ "darwin" ]] && _ls="$_ls -G" || _ls="$_ls -I lost+found --color=always"
 eval $_ls | awk '
-    BEGIN { dotDirs = ""; dirs = ""; dotFiles = ""; files = "" }
-    /^total/                                                                                    { total = $0 }                    # capture total line
+   BEGIN { dotDirs = ""; dirs = ""; dotFiles = ""; files = "" }
+   /^total/                                                                                       { total = $0 }                    # capture total line
 
-    /^d[rwxXst+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m)?[.].+/                 { dotDirs = dotDirs    "\n" $0 }; # capture hidden directories
-    /^d[rwxXst+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m[^.]|[^\033^.])/         { dirs    = dirs       "\n" $0 }; # capture normal directories
-    /^l[rwxXst+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m)?[.].+[\/]/             { dotDirs = dotDirs    "\n" $0 }; # capture hidden sym-links to directories
-    /^l[rwxXst+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m[^.]|[^\033^.]).*[\/]$/  { dirs    = dirs       "\n" $0 }; # capture normal sym-links to directories
+   /^d[rwxXst+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m)?[.].+/                 { dotDirs = dotDirs    "\n" $0 }; # capture hidden directories
+   /^d[rwxXst+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m[^.]|[^\033^.])/         { dirs    = dirs       "\n" $0 }; # capture normal directories
+   /^l[rwxXst+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m)?[.].+[\/]/             { dotDirs = dotDirs    "\n" $0 }; # capture hidden sym-links to directories
+   /^l[rwxXst+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m[^.]|[^\033^.]).*[\/]$/  { dirs    = dirs       "\n" $0 }; # capture normal sym-links to directories
 
-    /^-[rwxXst+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m)?[.].+/                 { dotFiles = dotFiles "\n" $0 };  # capture hidden files
-    /^-[rwxXst+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m[^.]|[^\033^.])/         { files    = files    "\n" $0 };  # capture normal files
-    /^l[rwxXst+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m)?[.].+[^\/]/            { dotFiles = dotFiles "\n" $0 };  # capture hidden sym-links to files
-    /^l[rwxXst+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m[^.]|[^\033^.]).*[^\/]$/ { files    = files    "\n" $0 };  # capture normal sym-links to files
-    END { print total dotDirs dirs dotFiles files }'
+   /^-[rwxXst+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m)?[.].+/                 { dotFiles = dotFiles "\n" $0 };  # capture hidden files
+   /^-[rwxXst+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m[^.]|[^\033^.])/         { files    = files    "\n" $0 };  # capture normal files
+   /^l[rwxXst+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m)?[.].+[^\/]/            { dotFiles = dotFiles "\n" $0 };  # capture hidden sym-links to files
+   /^l[rwxXst+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m[^.]|[^\033^.]).*[^\/]$/ { files    = files    "\n" $0 };  # capture normal sym-links to files
+   END { print total dotDirs dirs dotFiles files }'
 ```
 
 
@@ -646,48 +644,48 @@ Options:
 local _format=${_format:-timestamp}
 
 case $_format in
-    human)  find "$_PATH" -maxdepth 0 -printf "%TY.%Tm.%Td %TT %TZ\n" ;;
-    locale) find "$_PATH" -maxdepth 0 -printf "%Tc\n" ;;
-    timestamp)
-        # use stat if available
-        if hash stat &>/dev/null; then
-            stat -c %Y "$_PATH"
+   human)  find "$_PATH" -maxdepth 0 -printf "%TY.%Tm.%Td %TT %TZ\n" ;;
+   locale) find "$_PATH" -maxdepth 0 -printf "%Tc\n" ;;
+   timestamp)
+      # use stat if available
+      if hash stat &>/dev/null; then
+         stat -c %Y "$_PATH"
 
-        # use perl if available
-        elif hash perl &>/dev/null; then
-            perl << EOF
+      # use perl if available
+      elif hash perl &>/dev/null; then
+         perl << EOF
 use File::stat;
 print stat("$_PATH")->mtime, "\n"
 EOF
 
-        # use python as last resort
-        else
-            python -c "import os, pwd
-print(str(int(os.path.getmtime('$_PATH'))))"
-        fi
-      ;;
-    iso8601)
+      # use python as last resort
+      else
+         python -c "import os, pwd
+ print(str(int(os.path.getmtime('$_PATH'))))"
+      fi
+     ;;
+   iso8601)
 
-        # use stat if available
-        if hash stat &>/dev/null; then
-            local timestamp=$(stat -c %Y "$_PATH")
-            date --iso-8601=seconds -d@$timestamp
+      # use stat if available
+      if hash stat &>/dev/null; then
+         local timestamp=$(stat -c %Y "$_PATH")
+         date --iso-8601=seconds -d@$timestamp
 
-        # use perl if available
-        elif hash perl &>/dev/null; then
-            local timestamp=$(perl << EOF
+      # use perl if available
+      elif hash perl &>/dev/null; then
+         local timestamp=$(perl << EOF
 use File::stat;
 print stat("$_PATH")->mtime, "\n"
 EOF
-        )
-            date --iso-8601=seconds -d@$timestamp
+         )
+         date --iso-8601=seconds -d@$timestamp
 
-        # use python as last resort
-        else
-            python -c "import os, pwd, datetime, time
+      # use python as last resort
+      else
+         python -c "import os, pwd, datetime, time
 print(datetime.datetime.fromtimestamp(int(os.path.getmtime('$_PATH'))).isoformat() + time.strftime('%z'))"
-        fi
-      ;;
+      fi
+     ;;
 esac
 ```
 
@@ -716,18 +714,18 @@ Options:
 ```bash
 # use stat if available
 if hash stat &>/dev/null; then
-    echo $(stat -c %U "$_PATH")
+   echo $(stat -c %U "$_PATH")
 
 # use perl if available
 elif hash perl &>/dev/null; then
-    perl << EOF
+   perl << EOF
 use File::stat;
 print getpwuid(stat("$_PATH")->uid), "\n"
 EOF
 
 # use python as last resort
 else
-    python -c "import os, pwd
+   python -c "import os, pwd
 print(pwd.getpwuid(os.stat('$_PATH').st_uid).pw_name)"
 fi
 ```
@@ -757,18 +755,18 @@ Options:
 ```bash
 # use readlink if available
 if hash readlink &>/dev/null; then
-    readlink -m "$_PATH"
+   readlink -m "$_PATH"
 
 # use perl if available
 elif hash perl &>/dev/null; then
-    perl << EOF
+   perl << EOF
 use Cwd 'abs_path';
 print abs_path('$_PATH'), "\n"
 EOF
 
 # use python as last resort
 else
-    python -c "import os
+   python -c "import os
 print(os.path.realpath('$_PATH'))"
 fi
 ```
@@ -877,17 +875,17 @@ Options:
 *Implementation:*
 ```bash
 if [[ $_unique ]]; then
-    if [[ $_lines ]]; then
-        awk "{lines[len++]=\$0} END {for(i=len-1;i>=0;i--) if (occurrences[lines[i]]++ == 0) { print lines[i]; count++; if (count>=$_lines) break}}" $_FILE
-    else
-        awk "{lines[len++]=\$0} END {for(i=len-1;i>=0;i--) if (occurrences[lines[i]]++ == 0) print lines[i]}" $_FILE
-    fi
-else
-    if [[ $_lines ]]; then
-        awk "{lines[len++]=\$0} END {for(i=len-1;len-i<=$_lines;i--) print lines[i]}" $_FILE
-    else
-        awk "{lines[len++]=\$0} END {for(i=len-1;i>=0;i--) print lines[i]}" $_FILE
-    fi
+   if [[ $_lines ]]; then
+      awk "{lines[len++]=\$0} END {for(i=len-1;i>=0;i--) if (occurrences[lines[i]]++ == 0) { print lines[i]; count++; if (count>=$_lines) break}}" $_FILE
+   else
+      awk "{lines[len++]=\$0} END {for(i=len-1;i>=0;i--) if (occurrences[lines[i]]++ == 0) print lines[i]}" $_FILE
+   fi
+ else
+   if [[ $_lines ]]; then
+      awk "{lines[len++]=\$0} END {for(i=len-1;len-i<=$_lines;i--) print lines[i]}" $_FILE
+   else
+      awk "{lines[len++]=\$0} END {for(i=len-1;i>=0;i--) print lines[i]}" $_FILE
+   fi
 fi
 ```
 
