@@ -14,283 +14,283 @@
 
 
 function -is-loadable() {
-    hash git &>/dev/null
+   hash git &>/dev/null
 }
 
 if ${BASH_FUNK_PREFIX:--}is-loadable; then
 function -git-branch-name() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... [PATH]"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... [PATH]"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-git-branch-name() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... [PATH]"
-                echo
-                echo "Prints the name of the currently checked out git branch."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mPATH\033[22m (default: '.', directory)"
-                echo "      The path to check."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... [PATH]"
+            echo
+            echo "Prints the name of the currently checked out git branch."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mPATH\033[22m (default: '.', directory)"
+            echo "      The path to check."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_PATH && ${#__params[@]} > 0 ]]; then
-            _PATH=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_PATH && ${#__params[@]} > 0 ]]; then
+         _PATH=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ ! $_PATH ]]; then _PATH="."; fi
+   if [[ ! $_PATH ]]; then _PATH="."; fi
 
-    if [[ $_PATH ]]; then
-        if [[ ! -e "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH does not exist."; return 64; fi
-        if [[ -e "$_PATH" && ! -d "$_PATH" ]]; then echo "$__fn: Error: Path '$_PATH' for parameter PATH is not a directory."; return 64; fi
-        if [[ ! -r "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH is not readable by user '$USER'."; return 64; fi
-    fi
+   if [[ $_PATH ]]; then
+      if [[ ! -e "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH does not exist."; return 64; fi
+      if [[ -e "$_PATH" && ! -d "$_PATH" ]]; then echo "$__fn: Error: Path '$_PATH' for parameter PATH is not a directory."; return 64; fi
+      if [[ ! -r "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH is not readable by user '$USER'."; return 64; fi
+   fi
 
-    ######### git-branch-name ######### START
+   ######### git-branch-name ######### START
 
 git -C "$_PATH" rev-parse --symbolic-full-name --abbrev-ref HEAD
 
-    ######### git-branch-name ######### END
+   ######### git-branch-name ######### END
 }
 function __complete-git-branch-name() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-branch-name -- ${BASH_FUNK_PREFIX:--}git-branch-name
 
 function -git-change-date() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... COMMIT_HASH NEW_DATE"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... COMMIT_HASH NEW_DATE"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-git-change-date() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _pull _push _author _committer _help _selftest _COMMIT_HASH _NEW_DATE
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _pull _push _author _committer _help _selftest _COMMIT_HASH _NEW_DATE
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... COMMIT_HASH NEW_DATE"
-                echo
-                echo "Changes the author and/or committer date of the given commit."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mCOMMIT_HASH\033[22m (required)"
-                echo "      Hash of commit to change."
-                echo -e "  \033[1mNEW_DATE\033[22m (required)"
-                echo "      The new date to set."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --author\033[22m "
-                echo "        Indicates to change the author date of the commit."
-                echo -e "\033[1m    --committer\033[22m "
-                echo "        Indicates to change the committer date of the commit."
-                echo -e "\033[1m    --pull\033[22m "
-                echo "        Execute 'git pull' before altering the commit."
-                echo -e "\033[1m    --push\033[22m "
-                echo "        Execute 'git push --force' after altering the commit."
-                echo "    -----------------------------"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m -git-change-date --author fe65a726b8f07cbcedc1d4b76fbdbf53678a31cf $(date --date '27 days ago')\033[22m"
-                echo
-                echo -e "$ \033[1m -git-change-date --author --comitter $(git log --format='%H' -n 1) $(date --date '15 hours ago')\033[22m"
-                echo
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... COMMIT_HASH NEW_DATE"
+            echo
+            echo "Changes the author and/or committer date of the given commit."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mCOMMIT_HASH\033[22m (required)"
+            echo "      Hash of commit to change."
+            echo -e "  \033[1mNEW_DATE\033[22m (required)"
+            echo "      The new date to set."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --author\033[22m "
+            echo "        Indicates to change the author date of the commit."
+            echo -e "\033[1m    --committer\033[22m "
+            echo "        Indicates to change the committer date of the commit."
+            echo -e "\033[1m    --pull\033[22m "
+            echo "        Execute 'git pull' before altering the commit."
+            echo -e "\033[1m    --push\033[22m "
+            echo "        Execute 'git push --force' after altering the commit."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m -git-change-date --author fe65a726b8f07cbcedc1d4b76fbdbf53678a31cf $(date --date '27 days ago')\033[22m"
+            echo
+            echo -e "$ \033[1m -git-change-date --author --comitter $(git log --format='%H' -n 1) $(date --date '15 hours ago')\033[22m"
+            echo
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --pull)
-                _pull=1
-            ;;
+         --pull)
+            _pull=1
+         ;;
 
-            --push)
-                _push=1
-            ;;
+         --push)
+            _push=1
+         ;;
 
-            --author)
-                _author=1
-            ;;
+         --author)
+            _author=1
+         ;;
 
-            --committer)
-                _committer=1
-            ;;
+         --committer)
+            _committer=1
+         ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_COMMIT_HASH ]]; then
-            _COMMIT_HASH=$__param
-            continue
-        fi
-        if [[ ! $_NEW_DATE ]]; then
-            _NEW_DATE=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_COMMIT_HASH ]]; then
+         _COMMIT_HASH=$__param
+         continue
+      fi
+      if [[ ! $_NEW_DATE ]]; then
+         _NEW_DATE=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_COMMIT_HASH ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter COMMIT_HASH must be specified."; return 64
-    fi
-    if [[ $_NEW_DATE ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter NEW_DATE must be specified."; return 64
-    fi
+   if [[ $_COMMIT_HASH ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter COMMIT_HASH must be specified."; return 64
+   fi
+   if [[ $_NEW_DATE ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter NEW_DATE must be specified."; return 64
+   fi
 
-    ######### git-change-date ######### START
+   ######### git-change-date ######### START
 
 if [[ $_pull ]]; then
     git pull || return 1
@@ -316,150 +316,150 @@ if [[ $_push ]]; then
     git push
 fi
 
-    ######### git-change-date ######### END
+   ######### git-change-date ######### END
 }
 function __complete-git-change-date() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --pull --push --author --committer --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --pull --push --author --committer --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-change-date -- ${BASH_FUNK_PREFIX:--}git-change-date
 
 function -git-cherry-pick() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... COMMIT_HASHES1 [COMMIT_HASHES]..."
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... COMMIT_HASHES1 [COMMIT_HASHES]..."
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-git-cherry-pick() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _pr _pull _push _help _selftest _COMMIT_HASHES=()
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _pr _pull _push _help _selftest _COMMIT_HASHES=()
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... COMMIT_HASHES1 [COMMIT_HASHES]..."
-                echo
-                echo "Cherry picks a commit into the currently checked out branch."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mCOMMIT_HASHES\033[22m (1 or more required)"
-                echo "      Hashes of commits to cherry pick."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --pr PR_NUMBER\033[22m (integer: 1-?)"
-                echo "        First fetches the pull request with the given number to be able to cherry pick from that PR."
-                echo -e "\033[1m    --pull\033[22m "
-                echo "        Execute 'git pull' before cherry picking."
-                echo -e "\033[1m    --push\033[22m "
-                echo "        Execute 'git push --force' after cherry picking."
-                echo "    -----------------------------"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... COMMIT_HASHES1 [COMMIT_HASHES]..."
+            echo
+            echo "Cherry picks a commit into the currently checked out branch."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mCOMMIT_HASHES\033[22m (1 or more required)"
+            echo "      Hashes of commits to cherry pick."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --pr PR_NUMBER\033[22m (integer: 1-?)"
+            echo "        First fetches the pull request with the given number to be able to cherry pick from that PR."
+            echo -e "\033[1m    --pull\033[22m "
+            echo "        Execute 'git pull' before cherry picking."
+            echo -e "\033[1m    --push\033[22m "
+            echo "        Execute 'git push --force' after cherry picking."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --pr)
-                _pr="@@##@@"
-                __optionWithValue=pr
-            ;;
+         --pr)
+            _pr="@@##@@"
+            __optionWithValue=pr
+         ;;
 
-            --pull)
-                _pull=1
-            ;;
+         --pull)
+            _pull=1
+         ;;
 
-            --push)
-                _push=1
-            ;;
+         --push)
+            _push=1
+         ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    pr)
-                        _pr=$__arg
-                        __optionWithValue=
-                      ;;
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               pr)
+                  _pr=$__arg
+                  __optionWithValue=
+                 ;;
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        _COMMIT_HASHES+=("$__param")
-        continue
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      _COMMIT_HASHES+=("$__param")
+      continue
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_pr ]]; then
-        if [[ $_pr == "@@##@@" ]]; then echo "$__fn: Error: Value PR_NUMBER for option --pr must be specified."; return 64; fi
-        if [[ ! "$_pr" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_pr' for option --pr is not a numeric value."; return 64; fi
-        if [[ $_pr -lt 1 ]]; then echo "$__fn: Error: Value '$_pr' for option --pr is too low. Must be >= 1."; return 64; fi
-    fi
+   if [[ $_pr ]]; then
+      if [[ $_pr == "@@##@@" ]]; then echo "$__fn: Error: Value PR_NUMBER for option --pr must be specified."; return 64; fi
+      if [[ ! "$_pr" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_pr' for option --pr is not a numeric value."; return 64; fi
+      if [[ $_pr -lt 1 ]]; then echo "$__fn: Error: Value '$_pr' for option --pr is too low. Must be >= 1."; return 64; fi
+   fi
 
-    if [[ ${#_COMMIT_HASHES[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter COMMIT_HASHES at least 1 value must be specified. Found: ${#_COMMIT_HASHES[@]}."; return 64; fi
+   if [[ ${#_COMMIT_HASHES[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter COMMIT_HASHES at least 1 value must be specified. Found: ${#_COMMIT_HASHES[@]}."; return 64; fi
 
-    ######### git-cherry-pick ######### START
+   ######### git-cherry-pick ######### START
 
 if [[ $_pull ]]; then
     git pull || return 1
@@ -475,125 +475,125 @@ if [[ $_push ]]; then
     git push
 fi
 
-    ######### git-cherry-pick ######### END
+   ######### git-cherry-pick ######### END
 }
 function __complete-git-cherry-pick() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --pr --pull --push --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --pr --pull --push --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-cherry-pick -- ${BASH_FUNK_PREFIX:--}git-cherry-pick
 
 function -git-cleanse() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]..."
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]..."
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-git-cleanse() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _pull _yes _help _selftest
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _pull _yes _help _selftest
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]..."
-                echo
-                echo "Reverts any uncomitted changes in the local working tree including untracked files."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --pull\033[22m "
-                echo "        Execute 'git pull' after reset/clean."
-                echo -e "\033[1m-y, --yes\033[22m "
-                echo "        Answer interactive prompts with 'yes'."
-                echo "    -----------------------------"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]..."
+            echo
+            echo "Reverts any uncomitted changes in the local working tree including untracked files."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --pull\033[22m "
+            echo "        Execute 'git pull' after reset/clean."
+            echo -e "\033[1m-y, --yes\033[22m "
+            echo "        Answer interactive prompts with 'yes'."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --pull)
-                _pull=1
-            ;;
+         --pull)
+            _pull=1
+         ;;
 
-            --yes|-y)
-                _yes=1
-            ;;
+         --yes|-y)
+            _yes=1
+         ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    ######### git-cleanse ######### START
+   ######### git-cleanse ######### START
 
 if [[ ! $_yes ]]; then
     read -p "Are you sure you want to erase all uncommitted changes? (y) " -n 1 -r
@@ -610,264 +610,264 @@ if [[ $_pull ]]; then
     git pull
 fi
 
-    ######### git-cleanse ######### END
+   ######### git-cleanse ######### END
 }
 function __complete-git-cleanse() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --pull --yes -y --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --pull --yes -y --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-cleanse -- ${BASH_FUNK_PREFIX:--}git-cleanse
 
 function -git-clone-shallow() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... REPO_URL [BRANCH_NAME]"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... REPO_URL [BRANCH_NAME]"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-git-clone-shallow() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _REPO_URL _BRANCH_NAME
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _REPO_URL _BRANCH_NAME
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... REPO_URL [BRANCH_NAME]"
-                echo
-                echo "Creates a shallow clone of the selected branch of the given repository with a truncated history."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mREPO_URL\033[22m (required)"
-                echo "      The URL to the git repository to clone."
-                echo -e "  \033[1mBRANCH_NAME\033[22m (default: 'master')"
-                echo "      The name of the branch to clone."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... REPO_URL [BRANCH_NAME]"
+            echo
+            echo "Creates a shallow clone of the selected branch of the given repository with a truncated history."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mREPO_URL\033[22m (required)"
+            echo "      The URL to the git repository to clone."
+            echo -e "  \033[1mBRANCH_NAME\033[22m (default: 'master')"
+            echo "      The name of the branch to clone."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_REPO_URL ]]; then
-            _REPO_URL=$__param
-            continue
-        fi
-        if [[ ! $_BRANCH_NAME ]]; then
-            _BRANCH_NAME=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_REPO_URL ]]; then
+         _REPO_URL=$__param
+         continue
+      fi
+      if [[ ! $_BRANCH_NAME ]]; then
+         _BRANCH_NAME=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ ! $_BRANCH_NAME ]]; then _BRANCH_NAME="master"; fi
+   if [[ ! $_BRANCH_NAME ]]; then _BRANCH_NAME="master"; fi
 
-    if [[ $_REPO_URL ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter REPO_URL must be specified."; return 64
-    fi
+   if [[ $_REPO_URL ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter REPO_URL must be specified."; return 64
+   fi
 
-    ######### git-clone-shallow ######### START
+   ######### git-clone-shallow ######### START
 
 git clone --depth 1 $_REPO_URL -b $_BRANCH_NAME
 
-    ######### git-clone-shallow ######### END
+   ######### git-clone-shallow ######### END
 }
 function __complete-git-clone-shallow() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-clone-shallow -- ${BASH_FUNK_PREFIX:--}git-clone-shallow
 
 function -git-create-empty-branch() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... BRANCH_NAME"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... BRANCH_NAME"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-git-create-empty-branch() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _push _help _selftest _BRANCH_NAME
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _push _help _selftest _BRANCH_NAME
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... BRANCH_NAME"
-                echo
-                echo "Creates a new empty branch in the local repository."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mBRANCH_NAME\033[22m (required)"
-                echo "      The name of the new branch."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --push\033[22m "
-                echo "        Execute 'git push --set-upstream origin <BRANCH_NAME>' after branch creation."
-                echo "    -----------------------------"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... BRANCH_NAME"
+            echo
+            echo "Creates a new empty branch in the local repository."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mBRANCH_NAME\033[22m (required)"
+            echo "      The name of the new branch."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --push\033[22m "
+            echo "        Execute 'git push --set-upstream origin <BRANCH_NAME>' after branch creation."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --push)
-                _push=1
-            ;;
+         --push)
+            _push=1
+         ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_BRANCH_NAME ]]; then
-            _BRANCH_NAME=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_BRANCH_NAME ]]; then
+         _BRANCH_NAME=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_BRANCH_NAME ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter BRANCH_NAME must be specified."; return 64
-    fi
+   if [[ $_BRANCH_NAME ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter BRANCH_NAME must be specified."; return 64
+   fi
 
-    ######### git-create-empty-branch ######### START
+   ######### git-create-empty-branch ######### START
 
 if git rev-parse --verify ${_BRANCH_NAME} &>/dev/null; then
     echo "$__fn: Error: A branch named [${_BRANCH_NAME}] already exists."
@@ -883,258 +883,258 @@ if [[ $_push ]]; then
     git push --set-upstream origin ${_BRANCH_NAME}
 fi
 
-    ######### git-create-empty-branch ######### END
+   ######### git-create-empty-branch ######### END
 }
 function __complete-git-create-empty-branch() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --push --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --push --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-create-empty-branch -- ${BASH_FUNK_PREFIX:--}git-create-empty-branch
 
 function -git-delete-branch() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... BRANCH_NAME"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... BRANCH_NAME"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-git-delete-branch() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _BRANCH_NAME
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _BRANCH_NAME
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... BRANCH_NAME"
-                echo
-                echo "Deletes a branch in the local and the remote repository."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mBRANCH_NAME\033[22m (required)"
-                echo "      The name of the branch."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... BRANCH_NAME"
+            echo
+            echo "Deletes a branch in the local and the remote repository."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mBRANCH_NAME\033[22m (required)"
+            echo "      The name of the branch."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_BRANCH_NAME ]]; then
-            _BRANCH_NAME=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_BRANCH_NAME ]]; then
+         _BRANCH_NAME=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_BRANCH_NAME ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter BRANCH_NAME must be specified."; return 64
-    fi
+   if [[ $_BRANCH_NAME ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter BRANCH_NAME must be specified."; return 64
+   fi
 
-    ######### git-delete-branch ######### START
+   ######### git-delete-branch ######### START
 
 git branch --delete --force $_BRANCH_NAME &&
 git fetch origin --prune &&
 git push origin --delete $_BRANCH_NAME
 
-    ######### git-delete-branch ######### END
+   ######### git-delete-branch ######### END
 }
 function __complete-git-delete-branch() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-delete-branch -- ${BASH_FUNK_PREFIX:--}git-delete-branch
 
 function -git-delete-local-branch() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... BRANCH_NAME"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... BRANCH_NAME"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-git-delete-local-branch() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _force _help _selftest _BRANCH_NAME
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _force _help _selftest _BRANCH_NAME
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... BRANCH_NAME"
-                echo
-                echo "Deletes a branch in the local repository."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mBRANCH_NAME\033[22m (required)"
-                echo "      The name of the branch."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --force\033[22m "
-                echo "        Delete the branch irrespective of its merged status."
-                echo "    -----------------------------"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... BRANCH_NAME"
+            echo
+            echo "Deletes a branch in the local repository."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mBRANCH_NAME\033[22m (required)"
+            echo "      The name of the branch."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --force\033[22m "
+            echo "        Delete the branch irrespective of its merged status."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --force)
-                _force=1
-            ;;
+         --force)
+            _force=1
+         ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_BRANCH_NAME ]]; then
-            _BRANCH_NAME=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_BRANCH_NAME ]]; then
+         _BRANCH_NAME=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_BRANCH_NAME ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter BRANCH_NAME must be specified."; return 64
-    fi
+   if [[ $_BRANCH_NAME ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter BRANCH_NAME must be specified."; return 64
+   fi
 
-    ######### git-delete-local-branch ######### START
+   ######### git-delete-local-branch ######### START
 
 if [[ $_force ]]; then
     git branch --delete --force $_BRANCH_NAME
@@ -1142,258 +1142,258 @@ else
     git branch --delete $_BRANCH_NAME
 fi
 
-    ######### git-delete-local-branch ######### END
+   ######### git-delete-local-branch ######### END
 }
 function __complete-git-delete-local-branch() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --force --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --force --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-delete-local-branch -- ${BASH_FUNK_PREFIX:--}git-delete-local-branch
 
 function -git-delete-remote-branch() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... BRANCH_NAME"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... BRANCH_NAME"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-git-delete-remote-branch() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _BRANCH_NAME
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _BRANCH_NAME
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... BRANCH_NAME"
-                echo
-                echo "Deletes a branch in the remote repository."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mBRANCH_NAME\033[22m (required)"
-                echo "      The name of the branch."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... BRANCH_NAME"
+            echo
+            echo "Deletes a branch in the remote repository."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mBRANCH_NAME\033[22m (required)"
+            echo "      The name of the branch."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_BRANCH_NAME ]]; then
-            _BRANCH_NAME=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_BRANCH_NAME ]]; then
+         _BRANCH_NAME=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_BRANCH_NAME ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter BRANCH_NAME must be specified."; return 64
-    fi
+   if [[ $_BRANCH_NAME ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter BRANCH_NAME must be specified."; return 64
+   fi
 
-    ######### git-delete-remote-branch ######### START
+   ######### git-delete-remote-branch ######### START
 
 git fetch origin --prune &&
 git push origin --delete $_BRANCH_NAME
 
-    ######### git-delete-remote-branch ######### END
+   ######### git-delete-remote-branch ######### END
 }
 function __complete-git-delete-remote-branch() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-delete-remote-branch -- ${BASH_FUNK_PREFIX:--}git-delete-remote-branch
 
 function -git-fetch-pr() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... PR_NUMBER"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... PR_NUMBER"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-git-fetch-pr() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _checkout _help _selftest _PR_NUMBER
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _checkout _help _selftest _PR_NUMBER
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... PR_NUMBER"
-                echo
-                echo "Fetches the given pull request."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mPR_NUMBER\033[22m (required, integer: 1-?)"
-                echo "      The number of the pull request to fetch."
-                echo
-                echo "Options:"
-                echo -e "\033[1m-c, --checkout\033[22m "
-                echo "        Checkout the PR branch after fetching."
-                echo "    -----------------------------"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... PR_NUMBER"
+            echo
+            echo "Fetches the given pull request."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mPR_NUMBER\033[22m (required, integer: 1-?)"
+            echo "      The number of the pull request to fetch."
+            echo
+            echo "Options:"
+            echo -e "\033[1m-c, --checkout\033[22m "
+            echo "        Checkout the PR branch after fetching."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --checkout|-c)
-                _checkout=1
-            ;;
+         --checkout|-c)
+            _checkout=1
+         ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_PR_NUMBER ]]; then
-            _PR_NUMBER=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_PR_NUMBER ]]; then
+         _PR_NUMBER=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_PR_NUMBER ]]; then
-        if [[ ! "$_PR_NUMBER" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_PR_NUMBER' for parameter PR_NUMBER is not a numeric value."; return 64; fi
-        if [[ $_PR_NUMBER -lt 1 ]]; then echo "$__fn: Error: Value '$_PR_NUMBER' for parameter PR_NUMBER is too low. Must be >= 1."; return 64; fi
-    else
-        echo "$__fn: Error: Parameter PR_NUMBER must be specified."; return 64
-    fi
+   if [[ $_PR_NUMBER ]]; then
+      if [[ ! "$_PR_NUMBER" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_PR_NUMBER' for parameter PR_NUMBER is not a numeric value."; return 64; fi
+      if [[ $_PR_NUMBER -lt 1 ]]; then echo "$__fn: Error: Value '$_PR_NUMBER' for parameter PR_NUMBER is too low. Must be >= 1."; return 64; fi
+   else
+      echo "$__fn: Error: Parameter PR_NUMBER must be specified."; return 64
+   fi
 
-    ######### git-fetch-pr ######### START
+   ######### git-fetch-pr ######### START
 
 git fetch origin pull/${_PR_NUMBER}/head:pr-${_PR_NUMBER} || return 1
 
@@ -1401,656 +1401,656 @@ if [[ $_checkout ]]; then
     git checkout pr-${_PR_NUMBER}
 fi
 
-    ######### git-fetch-pr ######### END
+   ######### git-fetch-pr ######### END
 }
 function __complete-git-fetch-pr() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --checkout -c --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --checkout -c --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-fetch-pr -- ${BASH_FUNK_PREFIX:--}git-fetch-pr
 
 function -git-log() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... [COUNT]"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... [COUNT]"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-git-log() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _COUNT
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _COUNT
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... [COUNT]"
-                echo
-                echo "Displays the git log of the current project in a pretty and compact format."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mCOUNT\033[22m (default: '10', integer: ?-?)"
-                echo "      Number of entries to be displayed."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... [COUNT]"
+            echo
+            echo "Displays the git log of the current project in a pretty and compact format."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mCOUNT\033[22m (default: '10', integer: ?-?)"
+            echo "      Number of entries to be displayed."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_COUNT && ${#__params[@]} > 0 ]]; then
-            _COUNT=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_COUNT && ${#__params[@]} > 0 ]]; then
+         _COUNT=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ ! $_COUNT ]]; then _COUNT="10"; fi
+   if [[ ! $_COUNT ]]; then _COUNT="10"; fi
 
-    if [[ $_COUNT ]]; then
-        if [[ ! "$_COUNT" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_COUNT' for parameter COUNT is not a numeric value."; return 64; fi
-    fi
+   if [[ $_COUNT ]]; then
+      if [[ ! "$_COUNT" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_COUNT' for parameter COUNT is not a numeric value."; return 64; fi
+   fi
 
-    ######### git-log ######### START
+   ######### git-log ######### START
 
 git log --graph -${_COUNT} --branches --remotes --tags --pretty=format:'%C(bold black)%h%Creset %<(70,trunc)%s %C(bold black)(%aN, %cr)%Cred%d' --date-order
 
-    ######### git-log ######### END
+   ######### git-log ######### END
 }
 function __complete-git-log() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-log -- ${BASH_FUNK_PREFIX:--}git-log
 
 function -git-ls-conflicts() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... [PATH]"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... [PATH]"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-git-ls-conflicts() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... [PATH]"
-                echo
-                echo "Prints the name of the all conflicting files in the current directory tree."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mPATH\033[22m (default: '.', directory)"
-                echo "      The path to check."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... [PATH]"
+            echo
+            echo "Prints the name of the all conflicting files in the current directory tree."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mPATH\033[22m (default: '.', directory)"
+            echo "      The path to check."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_PATH && ${#__params[@]} > 0 ]]; then
-            _PATH=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_PATH && ${#__params[@]} > 0 ]]; then
+         _PATH=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ ! $_PATH ]]; then _PATH="."; fi
+   if [[ ! $_PATH ]]; then _PATH="."; fi
 
-    if [[ $_PATH ]]; then
-        if [[ ! -e "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH does not exist."; return 64; fi
-        if [[ -e "$_PATH" && ! -d "$_PATH" ]]; then echo "$__fn: Error: Path '$_PATH' for parameter PATH is not a directory."; return 64; fi
-        if [[ ! -r "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH is not readable by user '$USER'."; return 64; fi
-    fi
+   if [[ $_PATH ]]; then
+      if [[ ! -e "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH does not exist."; return 64; fi
+      if [[ -e "$_PATH" && ! -d "$_PATH" ]]; then echo "$__fn: Error: Path '$_PATH' for parameter PATH is not a directory."; return 64; fi
+      if [[ ! -r "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH is not readable by user '$USER'."; return 64; fi
+   fi
 
-    ######### git-ls-conflicts ######### START
+   ######### git-ls-conflicts ######### START
 
 git diff --name-only --diff-filter=U "$_PATH"
 
-    ######### git-ls-conflicts ######### END
+   ######### git-ls-conflicts ######### END
 }
 function __complete-git-ls-conflicts() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-ls-conflicts -- ${BASH_FUNK_PREFIX:--}git-ls-conflicts
 
 function -git-ls-modified() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... [PATH]"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... [PATH]"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-git-ls-modified() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... [PATH]"
-                echo
-                echo "Prints the name of the all deleted, changed and newly created files in the current directory tree."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mPATH\033[22m (default: '.', directory)"
-                echo "      The path to check."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... [PATH]"
+            echo
+            echo "Prints the name of the all deleted, changed and newly created files in the current directory tree."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mPATH\033[22m (default: '.', directory)"
+            echo "      The path to check."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_PATH && ${#__params[@]} > 0 ]]; then
-            _PATH=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_PATH && ${#__params[@]} > 0 ]]; then
+         _PATH=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ ! $_PATH ]]; then _PATH="."; fi
+   if [[ ! $_PATH ]]; then _PATH="."; fi
 
-    if [[ $_PATH ]]; then
-        if [[ ! -e "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH does not exist."; return 64; fi
-        if [[ -e "$_PATH" && ! -d "$_PATH" ]]; then echo "$__fn: Error: Path '$_PATH' for parameter PATH is not a directory."; return 64; fi
-        if [[ ! -r "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH is not readable by user '$USER'."; return 64; fi
-    fi
+   if [[ $_PATH ]]; then
+      if [[ ! -e "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH does not exist."; return 64; fi
+      if [[ -e "$_PATH" && ! -d "$_PATH" ]]; then echo "$__fn: Error: Path '$_PATH' for parameter PATH is not a directory."; return 64; fi
+      if [[ ! -r "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH is not readable by user '$USER'."; return 64; fi
+   fi
 
-    ######### git-ls-modified ######### START
+   ######### git-ls-modified ######### START
 
 git -C "$_PATH" ls-files -o -m -d --exclude-standard
 
-    ######### git-ls-modified ######### END
+   ######### git-ls-modified ######### END
 }
 function __complete-git-ls-modified() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-ls-modified -- ${BASH_FUNK_PREFIX:--}git-ls-modified
 
 function -git-reset-file() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... FILE"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... FILE"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-git-reset-file() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _FILE
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _FILE
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... FILE"
-                echo
-                echo "Reverts the uncommitted changes of the given local FILE to the version of the latest commit."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mFILE\033[22m (required, file)"
-                echo "      File to reset."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... FILE"
+            echo
+            echo "Reverts the uncommitted changes of the given local FILE to the version of the latest commit."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mFILE\033[22m (required, file)"
+            echo "      File to reset."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_FILE ]]; then
-            _FILE=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_FILE ]]; then
+         _FILE=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_FILE ]]; then
-        if [[ -e "$_FILE" && ! -f "$_FILE" ]]; then echo "$__fn: Error: Path '$_FILE' for parameter FILE is not a file."; return 64; fi
-    else
-        echo "$__fn: Error: Parameter FILE must be specified."; return 64
-    fi
+   if [[ $_FILE ]]; then
+      if [[ -e "$_FILE" && ! -f "$_FILE" ]]; then echo "$__fn: Error: Path '$_FILE' for parameter FILE is not a file."; return 64; fi
+   else
+      echo "$__fn: Error: Parameter FILE must be specified."; return 64
+   fi
 
-    ######### git-reset-file ######### START
+   ######### git-reset-file ######### START
 
 git checkout -- "$_FILE"
 
-    ######### git-reset-file ######### END
+   ######### git-reset-file ######### END
 }
 function __complete-git-reset-file() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-reset-file -- ${BASH_FUNK_PREFIX:--}git-reset-file
 
 function -git-squash() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... NUM_COMMITS"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... NUM_COMMITS"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-git-squash() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _message _pull _push _help _selftest _NUM_COMMITS
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _message _pull _push _help _selftest _NUM_COMMITS
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... NUM_COMMITS"
-                echo
-                echo "Squashes the last n commits into one."
-                echo
-                echo "Requirements:"
-                echo "  + Command 'awk' must be available."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mNUM_COMMITS\033[22m (required, integer: 2-?)"
-                echo "      Number of commits to squash."
-                echo
-                echo "Options:"
-                echo -e "\033[1m-m, --message COMMIT_MESSAGE\033[22m "
-                echo "        The commit message to be used instead of the original ones."
-                echo -e "\033[1m    --pull\033[22m "
-                echo "        Execute 'git pull' before squashing."
-                echo -e "\033[1m    --push\033[22m "
-                echo "        Execute 'git push --force' after squashing."
-                echo "    -----------------------------"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... NUM_COMMITS"
+            echo
+            echo "Squashes the last n commits into one."
+            echo
+            echo "Requirements:"
+            echo "  + Command 'awk' must be available."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mNUM_COMMITS\033[22m (required, integer: 2-?)"
+            echo "      Number of commits to squash."
+            echo
+            echo "Options:"
+            echo -e "\033[1m-m, --message COMMIT_MESSAGE\033[22m "
+            echo "        The commit message to be used instead of the original ones."
+            echo -e "\033[1m    --pull\033[22m "
+            echo "        Execute 'git pull' before squashing."
+            echo -e "\033[1m    --push\033[22m "
+            echo "        Execute 'git push --force' after squashing."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --message|-m)
-                _message="@@##@@"
-                __optionWithValue=message
-            ;;
+         --message|-m)
+            _message="@@##@@"
+            __optionWithValue=message
+         ;;
 
-            --pull)
-                _pull=1
-            ;;
+         --pull)
+            _pull=1
+         ;;
 
-            --push)
-                _push=1
-            ;;
+         --push)
+            _push=1
+         ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    message)
-                        _message=$__arg
-                        __optionWithValue=
-                      ;;
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               message)
+                  _message=$__arg
+                  __optionWithValue=
+                 ;;
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_NUM_COMMITS ]]; then
-            _NUM_COMMITS=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_NUM_COMMITS ]]; then
+         _NUM_COMMITS=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_message ]]; then
-        if [[ $_message == "@@##@@" ]]; then echo "$__fn: Error: Value COMMIT_MESSAGE for option --message must be specified."; return 64; fi
-    fi
+   if [[ $_message ]]; then
+      if [[ $_message == "@@##@@" ]]; then echo "$__fn: Error: Value COMMIT_MESSAGE for option --message must be specified."; return 64; fi
+   fi
 
-    if [[ $_NUM_COMMITS ]]; then
-        if [[ ! "$_NUM_COMMITS" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_NUM_COMMITS' for parameter NUM_COMMITS is not a numeric value."; return 64; fi
-        if [[ $_NUM_COMMITS -lt 2 ]]; then echo "$__fn: Error: Value '$_NUM_COMMITS' for parameter NUM_COMMITS is too low. Must be >= 2."; return 64; fi
-    else
-        echo "$__fn: Error: Parameter NUM_COMMITS must be specified."; return 64
-    fi
+   if [[ $_NUM_COMMITS ]]; then
+      if [[ ! "$_NUM_COMMITS" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_NUM_COMMITS' for parameter NUM_COMMITS is not a numeric value."; return 64; fi
+      if [[ $_NUM_COMMITS -lt 2 ]]; then echo "$__fn: Error: Value '$_NUM_COMMITS' for parameter NUM_COMMITS is too low. Must be >= 2."; return 64; fi
+   else
+      echo "$__fn: Error: Parameter NUM_COMMITS must be specified."; return 64
+   fi
 
-    if ! hash "awk" &>/dev/null; then echo "$__fn: Error: Required command 'awk' not found on this system."; return 64; fi
+   if ! hash "awk" &>/dev/null; then echo "$__fn: Error: Required command 'awk' not found on this system."; return 64; fi
 
-    ######### git-squash ######### START
+   ######### git-squash ######### START
 
 if [[ $_pull ]]; then
     git pull || return 1
@@ -2070,138 +2070,138 @@ if [[ $_push ]]; then
     git push --force
 fi
 
-    ######### git-squash ######### END
+   ######### git-squash ######### END
 }
 function __complete-git-squash() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --message -m --pull --push --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --message -m --pull --push --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-squash -- ${BASH_FUNK_PREFIX:--}git-squash
 
 function -git-switch-remote-protocol() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... REMOTE_NAME1 [REMOTE_NAME]... PROTOCOL"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... REMOTE_NAME1 [REMOTE_NAME]... PROTOCOL"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-git-switch-remote-protocol() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _REMOTE_NAME=() _PROTOCOL
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _REMOTE_NAME=() _PROTOCOL
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... REMOTE_NAME1 [REMOTE_NAME]... PROTOCOL"
-                echo
-                echo "Switches the protocol of the given remote(s) between HTTPS and SSH."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mREMOTE_NAME\033[22m (1 or more required)"
-                echo "      The name of the remote, e.g. 'origin', 'upstream'. If not specified all remotes are changed."
-                echo -e "  \033[1mPROTOCOL\033[22m (required, one of: [https,ssh])"
-                echo "      The new protocol to use."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... REMOTE_NAME1 [REMOTE_NAME]... PROTOCOL"
+            echo
+            echo "Switches the protocol of the given remote(s) between HTTPS and SSH."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mREMOTE_NAME\033[22m (1 or more required)"
+            echo "      The name of the remote, e.g. 'origin', 'upstream'. If not specified all remotes are changed."
+            echo -e "  \033[1mPROTOCOL\033[22m (required, one of: [https,ssh])"
+            echo "      The new protocol to use."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ${#_REMOTE_NAME[@]} -lt 1 ]]; then
-            _REMOTE_NAME+=("$__param")
-            continue
-        fi
-        local __leftoverParams=$(( ${#__params[@]} - 2 - ${#_REMOTE_NAME[@]} ))
-        if [[ $__leftoverParams -gt 0 ]]; then
-            _REMOTE_NAME+=("$__param")
-            continue
-        fi
-        if [[ ! $_PROTOCOL ]]; then
-            _PROTOCOL=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ${#_REMOTE_NAME[@]} -lt 1 ]]; then
+         _REMOTE_NAME+=("$__param")
+         continue
+      fi
+      local __leftoverParams=$(( ${#__params[@]} - 2 - ${#_REMOTE_NAME[@]} ))
+      if [[ $__leftoverParams -gt 0 ]]; then
+         _REMOTE_NAME+=("$__param")
+         continue
+      fi
+      if [[ ! $_PROTOCOL ]]; then
+         _PROTOCOL=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ ${#_REMOTE_NAME[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter REMOTE_NAME at least 1 value must be specified. Found: ${#_REMOTE_NAME[@]}."; return 64; fi
-    if [[ $_PROTOCOL ]]; then
-        if [[ $_PROTOCOL != 'https' && $_PROTOCOL != 'ssh' ]]; then echo "$__fn: Error: Value '$_PROTOCOL' for parameter PROTOCOL is not one of the allowed values [https,ssh]."; return 64; fi
-    else
-        echo "$__fn: Error: Parameter PROTOCOL must be specified."; return 64
-    fi
+   if [[ ${#_REMOTE_NAME[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter REMOTE_NAME at least 1 value must be specified. Found: ${#_REMOTE_NAME[@]}."; return 64; fi
+   if [[ $_PROTOCOL ]]; then
+      if [[ $_PROTOCOL != 'https' && $_PROTOCOL != 'ssh' ]]; then echo "$__fn: Error: Value '$_PROTOCOL' for parameter PROTOCOL is not one of the allowed values [https,ssh]."; return 64; fi
+   else
+      echo "$__fn: Error: Parameter PROTOCOL must be specified."; return 64
+   fi
 
-    ######### git-switch-remote-protocol ######### START
+   ######### git-switch-remote-protocol ######### START
 
 local url remote
 
@@ -2247,154 +2247,154 @@ for remote in "${_REMOTE_NAME[@]}"; do
     fi
 done
 
-    ######### git-switch-remote-protocol ######### END
+   ######### git-switch-remote-protocol ######### END
 }
 function __complete-git-switch-remote-protocol() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-switch-remote-protocol -- ${BASH_FUNK_PREFIX:--}git-switch-remote-protocol
 
 function -git-sync-fork() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]..."
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]..."
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-git-sync-fork() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _branch _upstream_branch _merge _push _help _selftest
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _branch _upstream_branch _merge _push _help _selftest
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]..."
-                echo
-                echo "Syncs the currently checked out branch of a forked repository with it's upstream repository. Uses 'git rebase -p' instead of 'git merge' by default to prevent an extra commit for the merge operation."
-                echo
-                echo "Options:"
-                echo -e "\033[1m-b, --branch NAME\033[22m "
-                echo "        Branch in the forked repository to sync."
-                echo -e "\033[1m    --merge\033[22m "
-                echo "        Use 'git merge' instead of 'git rebase -p'."
-                echo -e "\033[1m    --push\033[22m "
-                echo "        Push updates to origin after sync."
-                echo -e "\033[1m    --upstream_branch NAME\033[22m "
-                echo "        Branch in the upstream repository to sync with."
-                echo "    -----------------------------"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]..."
+            echo
+            echo "Syncs the currently checked out branch of a forked repository with it's upstream repository. Uses 'git rebase -p' instead of 'git merge' by default to prevent an extra commit for the merge operation."
+            echo
+            echo "Options:"
+            echo -e "\033[1m-b, --branch NAME\033[22m "
+            echo "        Branch in the forked repository to sync."
+            echo -e "\033[1m    --merge\033[22m "
+            echo "        Use 'git merge' instead of 'git rebase -p'."
+            echo -e "\033[1m    --push\033[22m "
+            echo "        Push updates to origin after sync."
+            echo -e "\033[1m    --upstream_branch NAME\033[22m "
+            echo "        Branch in the upstream repository to sync with."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --branch|-b)
-                _branch="@@##@@"
-                __optionWithValue=branch
-            ;;
+         --branch|-b)
+            _branch="@@##@@"
+            __optionWithValue=branch
+         ;;
 
-            --upstream_branch)
-                _upstream_branch="@@##@@"
-                __optionWithValue=upstream_branch
-            ;;
+         --upstream_branch)
+            _upstream_branch="@@##@@"
+            __optionWithValue=upstream_branch
+         ;;
 
-            --merge)
-                _merge=1
-            ;;
+         --merge)
+            _merge=1
+         ;;
 
-            --push)
-                _push=1
-            ;;
+         --push)
+            _push=1
+         ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    branch)
-                        _branch=$__arg
-                        __optionWithValue=
-                      ;;
-                    upstream_branch)
-                        _upstream_branch=$__arg
-                        __optionWithValue=
-                      ;;
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               branch)
+                  _branch=$__arg
+                  __optionWithValue=
+                 ;;
+               upstream_branch)
+                  _upstream_branch=$__arg
+                  __optionWithValue=
+                 ;;
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_branch ]]; then
-        if [[ $_branch == "@@##@@" ]]; then echo "$__fn: Error: Value NAME for option --branch must be specified."; return 64; fi
-    fi
-    if [[ $_upstream_branch ]]; then
-        if [[ $_upstream_branch == "@@##@@" ]]; then echo "$__fn: Error: Value NAME for option --upstream_branch must be specified."; return 64; fi
-    fi
+   if [[ $_branch ]]; then
+      if [[ $_branch == "@@##@@" ]]; then echo "$__fn: Error: Value NAME for option --branch must be specified."; return 64; fi
+   fi
+   if [[ $_upstream_branch ]]; then
+      if [[ $_upstream_branch == "@@##@@" ]]; then echo "$__fn: Error: Value NAME for option --upstream_branch must be specified."; return 64; fi
+   fi
 
-    ######### git-sync-fork ######### START
+   ######### git-sync-fork ######### START
 
 local currBranch currBranch_remote currBranch_remoteURL upstreamURL
 
@@ -2440,140 +2440,140 @@ if [[ $_push ]]; then
     git push --follow-tags --force origin $currBranch
 fi
 
-    ######### git-sync-fork ######### END
+   ######### git-sync-fork ######### END
 }
 function __complete-git-sync-fork() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --branch -b --upstream_branch --merge --push --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --branch -b --upstream_branch --merge --push --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-sync-fork -- ${BASH_FUNK_PREFIX:--}git-sync-fork
 
 function -git-undo() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... [NUM_COMMITS]"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... [NUM_COMMITS]"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-git-undo() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _reset _push _help _selftest _NUM_COMMITS
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _reset _push _help _selftest _NUM_COMMITS
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... [NUM_COMMITS]"
-                echo
-                echo "Removes the last N commits from the commit history."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mNUM_COMMITS\033[22m (default: '1', integer: 1-?)"
-                echo "      Number of commits to undo."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --push\033[22m "
-                echo "        Push updates to origin after undo."
-                echo -e "\033[1m    --reset\033[22m "
-                echo "        Removes any changes from the working tree."
-                echo "    -----------------------------"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... [NUM_COMMITS]"
+            echo
+            echo "Removes the last N commits from the commit history."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mNUM_COMMITS\033[22m (default: '1', integer: 1-?)"
+            echo "      Number of commits to undo."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --push\033[22m "
+            echo "        Push updates to origin after undo."
+            echo -e "\033[1m    --reset\033[22m "
+            echo "        Removes any changes from the working tree."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --reset)
-                _reset=1
-            ;;
+         --reset)
+            _reset=1
+         ;;
 
-            --push)
-                _push=1
-            ;;
+         --push)
+            _push=1
+         ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_NUM_COMMITS && ${#__params[@]} > 0 ]]; then
-            _NUM_COMMITS=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_NUM_COMMITS && ${#__params[@]} > 0 ]]; then
+         _NUM_COMMITS=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ ! $_NUM_COMMITS ]]; then _NUM_COMMITS="1"; fi
+   if [[ ! $_NUM_COMMITS ]]; then _NUM_COMMITS="1"; fi
 
-    if [[ $_NUM_COMMITS ]]; then
-        if [[ ! "$_NUM_COMMITS" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_NUM_COMMITS' for parameter NUM_COMMITS is not a numeric value."; return 64; fi
-        if [[ $_NUM_COMMITS -lt 1 ]]; then echo "$__fn: Error: Value '$_NUM_COMMITS' for parameter NUM_COMMITS is too low. Must be >= 1."; return 64; fi
-    fi
+   if [[ $_NUM_COMMITS ]]; then
+      if [[ ! "$_NUM_COMMITS" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_NUM_COMMITS' for parameter NUM_COMMITS is not a numeric value."; return 64; fi
+      if [[ $_NUM_COMMITS -lt 1 ]]; then echo "$__fn: Error: Value '$_NUM_COMMITS' for parameter NUM_COMMITS is too low. Must be >= 1."; return 64; fi
+   fi
 
-    ######### git-undo ######### START
+   ######### git-undo ######### START
 
 if [[ $_reset ]]; then
     git reset --hard HEAD~${_NUM_COMMITS} && git clean -dfx || return 1
@@ -2585,145 +2585,145 @@ if [[ $_push ]]; then
     git push --force
 fi
 
-    ######### git-undo ######### END
+   ######### git-undo ######### END
 }
 function __complete-git-undo() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --reset --push --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --reset --push --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-undo -- ${BASH_FUNK_PREFIX:--}git-undo
 
 function -git-update-branch() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... [BRANCH] MASTER"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... [BRANCH] MASTER"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-git-update-branch() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _merge _push _help _selftest _BRANCH _MASTER
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _merge _push _help _selftest _BRANCH _MASTER
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... [BRANCH] MASTER"
-                echo
-                echo "Updates the given branch using 'git rebase -p' by default."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mBRANCH\033[22m "
-                echo "      Name of the branch to update."
-                echo -e "  \033[1mMASTER\033[22m (required)"
-                echo "      Name of the branch to get updates from."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --merge\033[22m "
-                echo "        Use 'git merge' instead of 'git rebase -p'. Rule of thumb: use 'git rebase -p' for updating personal branches and 'git merge' for updating shared branches with commits by others."
-                echo -e "\033[1m    --push\033[22m "
-                echo "        Push updates to origin after sync."
-                echo "    -----------------------------"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... [BRANCH] MASTER"
+            echo
+            echo "Updates the given branch using 'git rebase -p' by default."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mBRANCH\033[22m "
+            echo "      Name of the branch to update."
+            echo -e "  \033[1mMASTER\033[22m (required)"
+            echo "      Name of the branch to get updates from."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --merge\033[22m "
+            echo "        Use 'git merge' instead of 'git rebase -p'. Rule of thumb: use 'git rebase -p' for updating personal branches and 'git merge' for updating shared branches with commits by others."
+            echo -e "\033[1m    --push\033[22m "
+            echo "        Push updates to origin after sync."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --merge)
-                _merge=1
-            ;;
+         --merge)
+            _merge=1
+         ;;
 
-            --push)
-                _push=1
-            ;;
+         --push)
+            _push=1
+         ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_BRANCH && ${#__params[@]} > 1 ]]; then
-            _BRANCH=$__param
-            continue
-        fi
-        if [[ ! $_MASTER ]]; then
-            _MASTER=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_BRANCH && ${#__params[@]} > 1 ]]; then
+         _BRANCH=$__param
+         continue
+      fi
+      if [[ ! $_MASTER ]]; then
+         _MASTER=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_MASTER ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter MASTER must be specified."; return 64
-    fi
+   if [[ $_MASTER ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter MASTER must be specified."; return 64
+   fi
 
-    ######### git-update-branch ######### START
+   ######### git-update-branch ######### START
 
 if [[ ! ${_BRANCH:-} ]]; then
     _BRANCH=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) || return 1
@@ -2745,238 +2745,238 @@ if [[ $_push ]]; then
     git push --follow-tags --force origin $_BRANCH
 fi
 
-    ######### git-update-branch ######### END
+   ######### git-update-branch ######### END
 }
 function __complete-git-update-branch() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --merge --push --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --merge --push --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-update-branch -- ${BASH_FUNK_PREFIX:--}git-update-branch
 
 function -github-upstream-url() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... REPO"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... REPO"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-github-upstream-url() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _REPO
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _REPO
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... REPO"
-                echo
-                echo "Prints the upstream URL in case the given GitHub repository is a fork."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mREPO\033[22m (required)"
-                echo "      The github repository to check, e.g. 'vegardit/bash-funk'."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... REPO"
+            echo
+            echo "Prints the upstream URL in case the given GitHub repository is a fork."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mREPO\033[22m (required)"
+            echo "      The github repository to check, e.g. 'vegardit/bash-funk'."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_REPO ]]; then
-            _REPO=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_REPO ]]; then
+         _REPO=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_REPO ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter REPO must be specified."; return 64
-    fi
+   if [[ $_REPO ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter REPO must be specified."; return 64
+   fi
 
-    ######### github-upstream-url ######### START
+   ######### github-upstream-url ######### START
 
 hash wget &>/dev/null && local get="wget -qO-" || local get="curl -fs"
 
 $get https://api.github.com/repos/$_REPO | grep -A100 '"parent":' | grep clone_url | head -n1 | cut -d'"' -f4
 return ${PIPESTATUS[0]}
 
-    ######### github-upstream-url ######### END
+   ######### github-upstream-url ######### END
 }
 function __complete-github-upstream-url() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}github-upstream-url -- ${BASH_FUNK_PREFIX:--}github-upstream-url
 
 function -test-git() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]..."
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]..."
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-test-git() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]..."
-                echo
-                echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]..."
+            echo
+            echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    ######### test-git ######### START
+   ######### test-git ######### START
 
 ${BASH_FUNK_PREFIX:--}git-branch-name --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-change-date --selftest && echo || return 1
@@ -2999,43 +2999,43 @@ ${BASH_FUNK_PREFIX:--}git-undo --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-update-branch --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}github-upstream-url --selftest && echo || return 1
 
-    ######### test-git ######### END
+   ######### test-git ######### END
 }
 function __complete-test-git() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-git -- ${BASH_FUNK_PREFIX:--}test-git
 
 
 function -help-git() {
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-branch-name [PATH]\033[0m  -  Prints the name of the currently checked out git branch."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-change-date COMMIT_HASH NEW_DATE\033[0m  -  Changes the author and/or committer date of the given commit."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-cherry-pick COMMIT_HASHES1 [COMMIT_HASHES]...\033[0m  -  Cherry picks a commit into the currently checked out branch."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-cleanse\033[0m  -  Reverts any uncomitted changes in the local working tree including untracked files."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-clone-shallow REPO_URL [BRANCH_NAME]\033[0m  -  Creates a shallow clone of the selected branch of the given repository with a truncated history."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-create-empty-branch BRANCH_NAME\033[0m  -  Creates a new empty branch in the local repository."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-delete-branch BRANCH_NAME\033[0m  -  Deletes a branch in the local and the remote repository."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-delete-local-branch BRANCH_NAME\033[0m  -  Deletes a branch in the local repository."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-delete-remote-branch BRANCH_NAME\033[0m  -  Deletes a branch in the remote repository."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-fetch-pr PR_NUMBER\033[0m  -  Fetches the given pull request."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-log [COUNT]\033[0m  -  Displays the git log of the current project in a pretty and compact format."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-ls-conflicts [PATH]\033[0m  -  Prints the name of the all conflicting files in the current directory tree."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-ls-modified [PATH]\033[0m  -  Prints the name of the all deleted, changed and newly created files in the current directory tree."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-reset-file FILE\033[0m  -  Reverts the uncommitted changes of the given local FILE to the version of the latest commit."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-squash NUM_COMMITS\033[0m  -  Squashes the last n commits into one."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-switch-remote-protocol REMOTE_NAME1 [REMOTE_NAME]... PROTOCOL\033[0m  -  Switches the protocol of the given remote(s) between HTTPS and SSH."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-sync-fork\033[0m  -  Syncs the currently checked out branch of a forked repository with it's upstream repository. Uses 'git rebase -p' instead of 'git merge' by default to prevent an extra commit for the merge operation."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-undo [NUM_COMMITS]\033[0m  -  Removes the last N commits from the commit history."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-update-branch [BRANCH] MASTER\033[0m  -  Updates the given branch using 'git rebase -p' by default."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}github-upstream-url REPO\033[0m  -  Prints the upstream URL in case the given GitHub repository is a fork."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-git\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-branch-name [PATH]\033[0m  -  Prints the name of the currently checked out git branch."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-change-date COMMIT_HASH NEW_DATE\033[0m  -  Changes the author and/or committer date of the given commit."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-cherry-pick COMMIT_HASHES1 [COMMIT_HASHES]...\033[0m  -  Cherry picks a commit into the currently checked out branch."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-cleanse\033[0m  -  Reverts any uncomitted changes in the local working tree including untracked files."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-clone-shallow REPO_URL [BRANCH_NAME]\033[0m  -  Creates a shallow clone of the selected branch of the given repository with a truncated history."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-create-empty-branch BRANCH_NAME\033[0m  -  Creates a new empty branch in the local repository."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-delete-branch BRANCH_NAME\033[0m  -  Deletes a branch in the local and the remote repository."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-delete-local-branch BRANCH_NAME\033[0m  -  Deletes a branch in the local repository."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-delete-remote-branch BRANCH_NAME\033[0m  -  Deletes a branch in the remote repository."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-fetch-pr PR_NUMBER\033[0m  -  Fetches the given pull request."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-log [COUNT]\033[0m  -  Displays the git log of the current project in a pretty and compact format."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-ls-conflicts [PATH]\033[0m  -  Prints the name of the all conflicting files in the current directory tree."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-ls-modified [PATH]\033[0m  -  Prints the name of the all deleted, changed and newly created files in the current directory tree."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-reset-file FILE\033[0m  -  Reverts the uncommitted changes of the given local FILE to the version of the latest commit."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-squash NUM_COMMITS\033[0m  -  Squashes the last n commits into one."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-switch-remote-protocol REMOTE_NAME1 [REMOTE_NAME]... PROTOCOL\033[0m  -  Switches the protocol of the given remote(s) between HTTPS and SSH."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-sync-fork\033[0m  -  Syncs the currently checked out branch of a forked repository with it's upstream repository. Uses 'git rebase -p' instead of 'git merge' by default to prevent an extra commit for the merge operation."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-undo [NUM_COMMITS]\033[0m  -  Removes the last N commits from the commit history."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-update-branch [BRANCH] MASTER\033[0m  -  Updates the given branch using 'git rebase -p' by default."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}github-upstream-url REPO\033[0m  -  Prints the upstream URL in case the given GitHub repository is a fork."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-git\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
 __BASH_FUNK_FUNCS+=( git-branch-name git-change-date git-cherry-pick git-cleanse git-clone-shallow git-create-empty-branch git-delete-branch git-delete-local-branch git-delete-remote-branch git-fetch-pr git-log git-ls-conflicts git-ls-modified git-reset-file git-squash git-switch-remote-protocol git-sync-fork git-undo git-update-branch github-upstream-url test-git )

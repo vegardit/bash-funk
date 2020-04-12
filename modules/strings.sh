@@ -13,390 +13,390 @@
 #
 
 function -ascii2hex() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... ASCII_STRING"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... ASCII_STRING"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-ascii2hex() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _ASCII_STRING
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _ASCII_STRING
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... ASCII_STRING"
-                echo
-                echo "Prints the hexa-decimal representation of the given ASCII string."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mASCII_STRING\033[22m (required)"
-                echo "      The ASCII string to convert."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn XYZ\033[22m"
-                echo "58595A"
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... ASCII_STRING"
+            echo
+            echo "Prints the hexa-decimal representation of the given ASCII string."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mASCII_STRING\033[22m (required)"
+            echo "      The ASCII string to convert."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m$__fn XYZ\033[22m"
+            echo "58595A"
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn XYZ\033[22m"
-                __stdout="$($__fn XYZ)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^58595A$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [58595A]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn XYZ\033[22m"
+            __stdout="$($__fn XYZ)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^58595A$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [58595A]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_ASCII_STRING ]]; then
-            _ASCII_STRING=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_ASCII_STRING ]]; then
+         _ASCII_STRING=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_ASCII_STRING ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter ASCII_STRING must be specified."; return 64
-    fi
+   if [[ $_ASCII_STRING ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter ASCII_STRING must be specified."; return 64
+   fi
 
-    ######### ascii2hex ######### START
+   ######### ascii2hex ######### START
 
 printf "$_ASCII_STRING" | xxd -p | tr "[a-z]" "[A-z]"
 
-    ######### ascii2hex ######### END
+   ######### ascii2hex ######### END
 }
 function __complete-ascii2hex() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}ascii2hex -- ${BASH_FUNK_PREFIX:--}ascii2hex
 
 function -hex2ascii() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... HEX_STRING"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... HEX_STRING"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-hex2ascii() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _HEX_STRING
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _HEX_STRING
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... HEX_STRING"
-                echo
-                echo "Prints the ASCII representation of the given hexa-decimal string."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mHEX_STRING\033[22m (required)"
-                echo "      The hexa-decimal string to convert."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn 58595A\033[22m"
-                echo "XYZ"
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... HEX_STRING"
+            echo
+            echo "Prints the ASCII representation of the given hexa-decimal string."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mHEX_STRING\033[22m (required)"
+            echo "      The hexa-decimal string to convert."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m$__fn 58595A\033[22m"
+            echo "XYZ"
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn 58595A\033[22m"
-                __stdout="$($__fn 58595A)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^XYZ$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [XYZ]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn 58595A\033[22m"
+            __stdout="$($__fn 58595A)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^XYZ$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [XYZ]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_HEX_STRING ]]; then
-            _HEX_STRING=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_HEX_STRING ]]; then
+         _HEX_STRING=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_HEX_STRING ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter HEX_STRING must be specified."; return 64
-    fi
+   if [[ $_HEX_STRING ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter HEX_STRING must be specified."; return 64
+   fi
 
-    ######### hex2ascii ######### START
+   ######### hex2ascii ######### START
 
 printf "$_HEX_STRING" | xxd -r -p
 
-    ######### hex2ascii ######### END
+   ######### hex2ascii ######### END
 }
 function __complete-hex2ascii() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}hex2ascii -- ${BASH_FUNK_PREFIX:--}hex2ascii
 
 function -normalize-path() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... PATH"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... PATH"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-normalize-path() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... PATH"
-                echo
-                echo "Prints the normalized form of the given file path."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mPATH\033[22m (required)"
-                echo "      The path to normalize."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn a/./b/c/d/../e\033[22m"
-                echo "a/b/c/e"
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... PATH"
+            echo
+            echo "Prints the normalized form of the given file path."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mPATH\033[22m (required)"
+            echo "      The path to normalize."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m$__fn a/./b/c/d/../e\033[22m"
+            echo "a/b/c/e"
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn a/./b/c/d/../e\033[22m"
-                __stdout="$($__fn a/./b/c/d/../e)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^a/b/c/e$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [a/b/c/e]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn a/./b/c/d/../e\033[22m"
+            __stdout="$($__fn a/./b/c/d/../e)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^a/b/c/e$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [a/b/c/e]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_PATH ]]; then
-            _PATH=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_PATH ]]; then
+         _PATH=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_PATH ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter PATH must be specified."; return 64
-    fi
+   if [[ $_PATH ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter PATH must be specified."; return 64
+   fi
 
-    ######### normalize-path ######### START
+   ######### normalize-path ######### START
 
 # Remove all occurrences of "/./"
 local normalized=${_PATH//\/.\//\/}
@@ -407,177 +407,177 @@ while [[ ${normalized} =~ [^\/][^\/]*\/\.\.\/ ]]; do
 done
 echo $normalized
 
-    ######### normalize-path ######### END
+   ######### normalize-path ######### END
 }
 function __complete-normalize-path() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}normalize-path -- ${BASH_FUNK_PREFIX:--}normalize-path
 
 function -str-join() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... SEPARATOR [STRING]..."
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... SEPARATOR [STRING]..."
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-str-join() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEPARATOR _STRING=()
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEPARATOR _STRING=()
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... SEPARATOR [STRING]..."
-                echo
-                echo "Prints strings joined with the given separator."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mSEPARATOR\033[22m (required)"
-                echo "      The separator to join the strings."
-                echo -e "  \033[1mSTRING\033[22m "
-                echo "      The strings to join."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn , a b c\033[22m"
-                echo "a,b,c"
-                echo -e "$ \033[1m$__fn // a b c\033[22m"
-                echo "a//b//c"
-                echo -e "$ \033[1m$__fn : a b 'c d'\033[22m"
-                echo "a:b:c d"
-                echo -e "$ \033[1m$__fn , a \033[22m"
-                echo "a"
-                echo -e "$ \033[1m$__fn , \033[22m"
-                echo
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... SEPARATOR [STRING]..."
+            echo
+            echo "Prints strings joined with the given separator."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mSEPARATOR\033[22m (required)"
+            echo "      The separator to join the strings."
+            echo -e "  \033[1mSTRING\033[22m "
+            echo "      The strings to join."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m$__fn , a b c\033[22m"
+            echo "a,b,c"
+            echo -e "$ \033[1m$__fn // a b c\033[22m"
+            echo "a//b//c"
+            echo -e "$ \033[1m$__fn : a b 'c d'\033[22m"
+            echo "a:b:c d"
+            echo -e "$ \033[1m$__fn , a \033[22m"
+            echo "a"
+            echo -e "$ \033[1m$__fn , \033[22m"
+            echo
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn , a b c\033[22m"
-                __stdout="$($__fn , a b c)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^a,b,c$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [a,b,c]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn // a b c\033[22m"
-                __stdout="$($__fn // a b c)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^a//b//c$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [a//b//c]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn : a b 'c d'\033[22m"
-                __stdout="$($__fn : a b 'c d')"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^a:b:c d$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [a:b:c d]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn , a \033[22m"
-                __stdout="$($__fn , a )"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^a$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [a]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn , \033[22m"
-                __stdout="$($__fn , )"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn , a b c\033[22m"
+            __stdout="$($__fn , a b c)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^a,b,c$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [a,b,c]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn // a b c\033[22m"
+            __stdout="$($__fn // a b c)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^a//b//c$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [a//b//c]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn : a b 'c d'\033[22m"
+            __stdout="$($__fn : a b 'c d')"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^a:b:c d$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [a:b:c d]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn , a \033[22m"
+            __stdout="$($__fn , a )"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^a$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [a]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn , \033[22m"
+            __stdout="$($__fn , )"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_SEPARATOR ]]; then
-            _SEPARATOR=$__param
-            continue
-        fi
-        _STRING+=("$__param")
-        continue
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_SEPARATOR ]]; then
+         _SEPARATOR=$__param
+         continue
+      fi
+      _STRING+=("$__param")
+      continue
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_SEPARATOR ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter SEPARATOR must be specified."; return 64
-    fi
+   if [[ $_SEPARATOR ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter SEPARATOR must be specified."; return 64
+   fi
 
-    ######### str-join ######### START
+   ######### str-join ######### START
 
 if [[ ${#_STRING[@]} -lt 1 ]]; then
     return 0;
@@ -590,137 +590,137 @@ fi
 local additionalItems=("${_STRING[@]:1}")
 printf "%s" "$firstItem${additionalItems[@]/#/$_SEPARATOR}"
 
-    ######### str-join ######### END
+   ######### str-join ######### END
 }
 function __complete-str-join() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}str-join -- ${BASH_FUNK_PREFIX:--}str-join
 
 function -str-lower() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... STRING"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... STRING"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-str-lower() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... STRING"
-                echo
-                echo "Prints the given string in lower cases."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mSTRING\033[22m (required)"
-                echo "      The string to convert."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn aBcDeF\033[22m"
-                echo "abcdef"
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... STRING"
+            echo
+            echo "Prints the given string in lower cases."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mSTRING\033[22m (required)"
+            echo "      The string to convert."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m$__fn aBcDeF\033[22m"
+            echo "abcdef"
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn aBcDeF\033[22m"
-                __stdout="$($__fn aBcDeF)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^abcdef$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [abcdef]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn aBcDeF\033[22m"
+            __stdout="$($__fn aBcDeF)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^abcdef$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [abcdef]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_STRING ]]; then
-            _STRING=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_STRING ]]; then
+         _STRING=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_STRING ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter STRING must be specified."; return 64
-    fi
+   if [[ $_STRING ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter STRING must be specified."; return 64
+   fi
 
-    ######### str-lower ######### START
+   ######### str-lower ######### START
 
 if ((${BASH_VERSION::1} < 4)); then
     echo "$_STRING" | tr '[:upper:]' '[:lower:]'
@@ -728,196 +728,196 @@ else
     echo "${_STRING,,}"
 fi
 
-    ######### str-lower ######### END
+   ######### str-lower ######### END
 }
 function __complete-str-lower() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}str-lower -- ${BASH_FUNK_PREFIX:--}str-lower
 
 function -str-matches-glob() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... GLOB_PATTERN [STRING]..."
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... GLOB_PATTERN [STRING]..."
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-str-matches-glob() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _all _help _selftest _verbose _GLOB_PATTERN _STRING=()
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _all _help _selftest _verbose _GLOB_PATTERN _STRING=()
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... GLOB_PATTERN [STRING]..."
-                echo
-                echo "Matches the given string(s) against the glob pattern, prints the found matches and returns true if at least one match was found."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mGLOB_PATTERN\033[22m (required)"
-                echo "      The regex pattern to match the string(s) against."
-                echo -e "  \033[1mSTRING\033[22m "
-                echo "      The strings to check."
-                echo
-                echo "Options:"
-                echo -e "\033[1m-a, --all\033[22m "
-                echo "        Specifies that all input strings must match."
-                echo -e "\033[1m-v, --verbose\033[22m "
-                echo "        Prints additional information during command execution."
-                echo "    -----------------------------"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn c?t\033[22m"
-                echo
-                echo -e "$ \033[1m$__fn c?t cat hat\033[22m"
-                echo "cat"
-                echo -e "$ \033[1m$__fn -v c?t cat hat\033[22m"
-                echo "match: cat
+         --help)
+            echo "Usage: $__fn [OPTION]... GLOB_PATTERN [STRING]..."
+            echo
+            echo "Matches the given string(s) against the glob pattern, prints the found matches and returns true if at least one match was found."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mGLOB_PATTERN\033[22m (required)"
+            echo "      The regex pattern to match the string(s) against."
+            echo -e "  \033[1mSTRING\033[22m "
+            echo "      The strings to check."
+            echo
+            echo "Options:"
+            echo -e "\033[1m-a, --all\033[22m "
+            echo "        Specifies that all input strings must match."
+            echo -e "\033[1m-v, --verbose\033[22m "
+            echo "        Prints additional information during command execution."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m$__fn c?t\033[22m"
+            echo
+            echo -e "$ \033[1m$__fn c?t cat hat\033[22m"
+            echo "cat"
+            echo -e "$ \033[1m$__fn -v c?t cat hat\033[22m"
+            echo "match: cat
 no match: hat"
-                echo -e "$ \033[1m$__fn -a c?t cat hat\033[22m"
-                echo "cat"
-                echo -e "$ \033[1m$__fn -v -a c?t cat hat\033[22m"
-                echo "match: cat
+            echo -e "$ \033[1m$__fn -a c?t cat hat\033[22m"
+            echo "cat"
+            echo -e "$ \033[1m$__fn -v -a c?t cat hat\033[22m"
+            echo "match: cat
 no match: hat"
-                echo
-                return 0
-              ;;
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn c?t\033[22m"
-                __stdout="$($__fn c?t)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn c?t cat hat\033[22m"
-                __stdout="$($__fn c?t cat hat)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^cat$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [cat]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn -v c?t cat hat\033[22m"
-                __stdout="$($__fn -v c?t cat hat)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^match: cat
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn c?t\033[22m"
+            __stdout="$($__fn c?t)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn c?t cat hat\033[22m"
+            __stdout="$($__fn c?t cat hat)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^cat$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [cat]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn -v c?t cat hat\033[22m"
+            __stdout="$($__fn -v c?t cat hat)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^match: cat
 no match: hat$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [match: cat
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [match: cat
 no match: hat]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn -a c?t cat hat\033[22m"
-                __stdout="$($__fn -a c?t cat hat)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
-                __regex="cat"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [cat]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn -v -a c?t cat hat\033[22m"
-                __stdout="$($__fn -v -a c?t cat hat)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
-                __regex="match: cat
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn -a c?t cat hat\033[22m"
+            __stdout="$($__fn -a c?t cat hat)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
+            __regex="cat"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [cat]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn -v -a c?t cat hat\033[22m"
+            __stdout="$($__fn -v -a c?t cat hat)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
+            __regex="match: cat
 no match: hat"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [match: cat
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [match: cat
 no match: hat]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --all|-a)
-                _all=1
-            ;;
+         --all|-a)
+            _all=1
+         ;;
 
-            --verbose|-v)
-                _verbose=1
-            ;;
+         --verbose|-v)
+            _verbose=1
+         ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_GLOB_PATTERN ]]; then
-            _GLOB_PATTERN=$__param
-            continue
-        fi
-        _STRING+=("$__param")
-        continue
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_GLOB_PATTERN ]]; then
+         _GLOB_PATTERN=$__param
+         continue
+      fi
+      _STRING+=("$__param")
+      continue
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_GLOB_PATTERN ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter GLOB_PATTERN must be specified."; return 64
-    fi
+   if [[ $_GLOB_PATTERN ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter GLOB_PATTERN must be specified."; return 64
+   fi
 
-    ######### str-matches-glob ######### START
+   ######### str-matches-glob ######### START
 
 if [[ ! ${_STRING} ]]; then
     return 0
@@ -949,196 +949,196 @@ else
     [[ $matchFound ]] && return 0 || return 1
 fi
 
-    ######### str-matches-glob ######### END
+   ######### str-matches-glob ######### END
 }
 function __complete-str-matches-glob() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --all -a --help --verbose -v "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --all -a --help --verbose -v "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}str-matches-glob -- ${BASH_FUNK_PREFIX:--}str-matches-glob
 
 function -str-matches-regex() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... REGEX_PATTERN [STRING]..."
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... REGEX_PATTERN [STRING]..."
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-str-matches-regex() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _all _help _selftest _verbose _REGEX_PATTERN _STRING=()
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _all _help _selftest _verbose _REGEX_PATTERN _STRING=()
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... REGEX_PATTERN [STRING]..."
-                echo
-                echo "Matches the given string(s) against the regex pattern, prints the found matches and returns true if at least one match was found."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mREGEX_PATTERN\033[22m (required)"
-                echo "      The regex pattern to match the string(s) against."
-                echo -e "  \033[1mSTRING\033[22m "
-                echo "      The strings to check."
-                echo
-                echo "Options:"
-                echo -e "\033[1m-a, --all\033[22m "
-                echo "        Specifies that all input strings must match."
-                echo -e "\033[1m-v, --verbose\033[22m "
-                echo "        Prints additional information during command execution."
-                echo "    -----------------------------"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn c.t\033[22m"
-                echo
-                echo -e "$ \033[1m$__fn c.t cat hat\033[22m"
-                echo "cat"
-                echo -e "$ \033[1m$__fn -v c.t cat hat\033[22m"
-                echo "match: cat
+         --help)
+            echo "Usage: $__fn [OPTION]... REGEX_PATTERN [STRING]..."
+            echo
+            echo "Matches the given string(s) against the regex pattern, prints the found matches and returns true if at least one match was found."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mREGEX_PATTERN\033[22m (required)"
+            echo "      The regex pattern to match the string(s) against."
+            echo -e "  \033[1mSTRING\033[22m "
+            echo "      The strings to check."
+            echo
+            echo "Options:"
+            echo -e "\033[1m-a, --all\033[22m "
+            echo "        Specifies that all input strings must match."
+            echo -e "\033[1m-v, --verbose\033[22m "
+            echo "        Prints additional information during command execution."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m$__fn c.t\033[22m"
+            echo
+            echo -e "$ \033[1m$__fn c.t cat hat\033[22m"
+            echo "cat"
+            echo -e "$ \033[1m$__fn -v c.t cat hat\033[22m"
+            echo "match: cat
 no match: hat"
-                echo -e "$ \033[1m$__fn -a c.t cat hat\033[22m"
-                echo "cat"
-                echo -e "$ \033[1m$__fn -v -a c.t cat hat\033[22m"
-                echo "match: cat
+            echo -e "$ \033[1m$__fn -a c.t cat hat\033[22m"
+            echo "cat"
+            echo -e "$ \033[1m$__fn -v -a c.t cat hat\033[22m"
+            echo "match: cat
 no match: hat"
-                echo
-                return 0
-              ;;
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn c.t\033[22m"
-                __stdout="$($__fn c.t)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn c.t cat hat\033[22m"
-                __stdout="$($__fn c.t cat hat)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^cat$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [cat]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn -v c.t cat hat\033[22m"
-                __stdout="$($__fn -v c.t cat hat)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^match: cat
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn c.t\033[22m"
+            __stdout="$($__fn c.t)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern []."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn c.t cat hat\033[22m"
+            __stdout="$($__fn c.t cat hat)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^cat$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [cat]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn -v c.t cat hat\033[22m"
+            __stdout="$($__fn -v c.t cat hat)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^match: cat
 no match: hat$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [match: cat
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [match: cat
 no match: hat]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn -a c.t cat hat\033[22m"
-                __stdout="$($__fn -a c.t cat hat)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
-                __regex="cat"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [cat]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn -v -a c.t cat hat\033[22m"
-                __stdout="$($__fn -v -a c.t cat hat)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
-                __regex="match: cat
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn -a c.t cat hat\033[22m"
+            __stdout="$($__fn -a c.t cat hat)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
+            __regex="cat"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [cat]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn -v -a c.t cat hat\033[22m"
+            __stdout="$($__fn -v -a c.t cat hat)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 1 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [1]."; return 64; fi
+            __regex="match: cat
 no match: hat"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [match: cat
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [match: cat
 no match: hat]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --all|-a)
-                _all=1
-            ;;
+         --all|-a)
+            _all=1
+         ;;
 
-            --verbose|-v)
-                _verbose=1
-            ;;
+         --verbose|-v)
+            _verbose=1
+         ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_REGEX_PATTERN ]]; then
-            _REGEX_PATTERN=$__param
-            continue
-        fi
-        _STRING+=("$__param")
-        continue
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_REGEX_PATTERN ]]; then
+         _REGEX_PATTERN=$__param
+         continue
+      fi
+      _STRING+=("$__param")
+      continue
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_REGEX_PATTERN ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter REGEX_PATTERN must be specified."; return 64
-    fi
+   if [[ $_REGEX_PATTERN ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter REGEX_PATTERN must be specified."; return 64
+   fi
 
-    ######### str-matches-regex ######### START
+   ######### str-matches-regex ######### START
 
 if [[ ! ${_STRING} ]]; then
     return 0
@@ -1169,418 +1169,418 @@ else
     [[ $matchFound ]] && return 0 || return 1
 fi
 
-    ######### str-matches-regex ######### END
+   ######### str-matches-regex ######### END
 }
 function __complete-str-matches-regex() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --all -a --help --verbose -v "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --all -a --help --verbose -v "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}str-matches-regex -- ${BASH_FUNK_PREFIX:--}str-matches-regex
 
 function -str-repeat() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... STRING COUNT"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... STRING COUNT"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-str-repeat() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING _COUNT
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING _COUNT
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... STRING COUNT"
-                echo
-                echo "Prints the given string multiple times."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mSTRING\033[22m (required)"
-                echo "      The string to repeat."
-                echo -e "  \033[1mCOUNT\033[22m (required, integer: 1-?)"
-                echo "      Number of times to repeat the string."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn a 3\033[22m"
-                echo "aaa"
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... STRING COUNT"
+            echo
+            echo "Prints the given string multiple times."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mSTRING\033[22m (required)"
+            echo "      The string to repeat."
+            echo -e "  \033[1mCOUNT\033[22m (required, integer: 1-?)"
+            echo "      Number of times to repeat the string."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m$__fn a 3\033[22m"
+            echo "aaa"
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn a 3\033[22m"
-                __stdout="$($__fn a 3)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^aaa$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [aaa]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn a 3\033[22m"
+            __stdout="$($__fn a 3)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^aaa$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [aaa]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_STRING ]]; then
-            _STRING=$__param
-            continue
-        fi
-        if [[ ! $_COUNT ]]; then
-            _COUNT=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_STRING ]]; then
+         _STRING=$__param
+         continue
+      fi
+      if [[ ! $_COUNT ]]; then
+         _COUNT=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_STRING ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter STRING must be specified."; return 64
-    fi
-    if [[ $_COUNT ]]; then
-        if [[ ! "$_COUNT" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_COUNT' for parameter COUNT is not a numeric value."; return 64; fi
-        if [[ $_COUNT -lt 1 ]]; then echo "$__fn: Error: Value '$_COUNT' for parameter COUNT is too low. Must be >= 1."; return 64; fi
-    else
-        echo "$__fn: Error: Parameter COUNT must be specified."; return 64
-    fi
+   if [[ $_STRING ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter STRING must be specified."; return 64
+   fi
+   if [[ $_COUNT ]]; then
+      if [[ ! "$_COUNT" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_COUNT' for parameter COUNT is not a numeric value."; return 64; fi
+      if [[ $_COUNT -lt 1 ]]; then echo "$__fn: Error: Value '$_COUNT' for parameter COUNT is too low. Must be >= 1."; return 64; fi
+   else
+      echo "$__fn: Error: Parameter COUNT must be specified."; return 64
+   fi
 
-    ######### str-repeat ######### START
+   ######### str-repeat ######### START
 
 local spaces="$(printf "%${_COUNT}s" "")"
 echo "${spaces// /$_STRING}"
 
-    ######### str-repeat ######### END
+   ######### str-repeat ######### END
 }
 function __complete-str-repeat() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}str-repeat -- ${BASH_FUNK_PREFIX:--}str-repeat
 
 function -str-trim() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... STRING"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... STRING"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-str-trim() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... STRING"
-                echo
-                echo "Prints the given string without leading and trailing spaces."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mSTRING\033[22m (required)"
-                echo "      The string to trim."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn \"  abc  \"\033[22m"
-                echo "abc"
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... STRING"
+            echo
+            echo "Prints the given string without leading and trailing spaces."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mSTRING\033[22m (required)"
+            echo "      The string to trim."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m$__fn \"  abc  \"\033[22m"
+            echo "abc"
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn "  abc  "\033[22m"
-                __stdout="$($__fn "  abc  ")"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^abc$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [abc]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn "  abc  "\033[22m"
+            __stdout="$($__fn "  abc  ")"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^abc$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [abc]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_STRING ]]; then
-            _STRING=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_STRING ]]; then
+         _STRING=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_STRING ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter STRING must be specified."; return 64
-    fi
+   if [[ $_STRING ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter STRING must be specified."; return 64
+   fi
 
-    ######### str-trim ######### START
+   ######### str-trim ######### START
 
 echo $_STRING
 
-    ######### str-trim ######### END
+   ######### str-trim ######### END
 }
 function __complete-str-trim() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}str-trim -- ${BASH_FUNK_PREFIX:--}str-trim
 
 function -str-upper() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... STRING"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... STRING"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-str-upper() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... STRING"
-                echo
-                echo "Prints the given string in upper cases."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mSTRING\033[22m (required)"
-                echo "      The string to convert."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn aBcDeF\033[22m"
-                echo "ABCDEF"
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... STRING"
+            echo
+            echo "Prints the given string in upper cases."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mSTRING\033[22m (required)"
+            echo "      The string to convert."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m$__fn aBcDeF\033[22m"
+            echo "ABCDEF"
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn aBcDeF\033[22m"
-                __stdout="$($__fn aBcDeF)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^ABCDEF$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [ABCDEF]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn aBcDeF\033[22m"
+            __stdout="$($__fn aBcDeF)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^ABCDEF$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [ABCDEF]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_STRING ]]; then
-            _STRING=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_STRING ]]; then
+         _STRING=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_STRING ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter STRING must be specified."; return 64
-    fi
+   if [[ $_STRING ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter STRING must be specified."; return 64
+   fi
 
-    ######### str-upper ######### START
+   ######### str-upper ######### START
 
 if ((${BASH_VERSION::1} < 4)); then
     echo "$_STRING" | tr '[:lower:]' '[:upper:]'
@@ -1588,129 +1588,129 @@ else
     echo "${_STRING^^}"
 fi
 
-    ######### str-upper ######### END
+   ######### str-upper ######### END
 }
 function __complete-str-upper() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}str-upper -- ${BASH_FUNK_PREFIX:--}str-upper
 
 function -strip-ansi() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... [STRING]..."
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... [STRING]..."
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-strip-ansi() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING=()
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING=()
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... [STRING]..."
-                echo
-                echo "Removes any ANSI escape sequences from the given string or from stdin."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mSTRING\033[22m "
-                echo "      The strings to strip."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn $(echo -e '\033[4mThis is underlined\033[24m')\033[22m"
-                echo "This is underlined"
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... [STRING]..."
+            echo
+            echo "Removes any ANSI escape sequences from the given string or from stdin."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mSTRING\033[22m "
+            echo "      The strings to strip."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m$__fn $(echo -e '\033[4mThis is underlined\033[24m')\033[22m"
+            echo "This is underlined"
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn $(echo -e '\033[4mThis is underlined\033[24m')\033[22m"
-                __stdout="$($__fn $(echo -e '\033[4mThis is underlined\033[24m'))"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^This is underlined$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [This is underlined]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn $(echo -e '\033[4mThis is underlined\033[24m')\033[22m"
+            __stdout="$($__fn $(echo -e '\033[4mThis is underlined\033[24m'))"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^This is underlined$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [This is underlined]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        _STRING+=("$__param")
-        continue
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      _STRING+=("$__param")
+      continue
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    ######### strip-ansi ######### START
+   ######### strip-ansi ######### START
 
 local ansiColors="([0-9]{1,2}(;[0-9]{1,2})?(;[0-9]{1,2})?)?[m|K]"
 local ansiCursors1="[0-9]+[A-D]" # cursor up/down/right/left
@@ -1723,849 +1723,849 @@ else
     sed -Eu "s/${ansiPattern}//g"
 fi
 
-    ######### strip-ansi ######### END
+   ######### strip-ansi ######### END
 }
 function __complete-strip-ansi() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}strip-ansi -- ${BASH_FUNK_PREFIX:--}strip-ansi
 
 function -substr-after() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... SEARCH_IN SEARCH_FOR"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... SEARCH_IN SEARCH_FOR"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-substr-after() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... SEARCH_IN SEARCH_FOR"
-                echo
-                echo "Prints the substring after the first occurrence of SEARCH_FOR."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mSEARCH_IN\033[22m (required)"
-                echo "      The string to search."
-                echo -e "  \033[1mSEARCH_FOR\033[22m (required)"
-                echo "      The separator."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn 00aa11aa22 aa\033[22m"
-                echo "11aa22"
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... SEARCH_IN SEARCH_FOR"
+            echo
+            echo "Prints the substring after the first occurrence of SEARCH_FOR."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mSEARCH_IN\033[22m (required)"
+            echo "      The string to search."
+            echo -e "  \033[1mSEARCH_FOR\033[22m (required)"
+            echo "      The separator."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m$__fn 00aa11aa22 aa\033[22m"
+            echo "11aa22"
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn 00aa11aa22 aa\033[22m"
-                __stdout="$($__fn 00aa11aa22 aa)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^11aa22$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [11aa22]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn 00aa11aa22 aa\033[22m"
+            __stdout="$($__fn 00aa11aa22 aa)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^11aa22$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [11aa22]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_SEARCH_IN ]]; then
-            _SEARCH_IN=$__param
-            continue
-        fi
-        if [[ ! $_SEARCH_FOR ]]; then
-            _SEARCH_FOR=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_SEARCH_IN ]]; then
+         _SEARCH_IN=$__param
+         continue
+      fi
+      if [[ ! $_SEARCH_FOR ]]; then
+         _SEARCH_FOR=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_SEARCH_IN ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter SEARCH_IN must be specified."; return 64
-    fi
-    if [[ $_SEARCH_FOR ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter SEARCH_FOR must be specified."; return 64
-    fi
+   if [[ $_SEARCH_IN ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter SEARCH_IN must be specified."; return 64
+   fi
+   if [[ $_SEARCH_FOR ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter SEARCH_FOR must be specified."; return 64
+   fi
 
-    ######### substr-after ######### START
+   ######### substr-after ######### START
 
 echo ${_SEARCH_IN#*$_SEARCH_FOR}
 
-    ######### substr-after ######### END
+   ######### substr-after ######### END
 }
 function __complete-substr-after() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}substr-after -- ${BASH_FUNK_PREFIX:--}substr-after
 
 function -substr-after-last() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... SEARCH_IN SEARCH_FOR"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... SEARCH_IN SEARCH_FOR"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-substr-after-last() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... SEARCH_IN SEARCH_FOR"
-                echo
-                echo "Prints the substring after the last occurrence of SEARCH_FOR."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mSEARCH_IN\033[22m (required)"
-                echo "      The string to search."
-                echo -e "  \033[1mSEARCH_FOR\033[22m (required)"
-                echo "      The separator."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn 00aa11aa22 aa\033[22m"
-                echo "22"
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... SEARCH_IN SEARCH_FOR"
+            echo
+            echo "Prints the substring after the last occurrence of SEARCH_FOR."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mSEARCH_IN\033[22m (required)"
+            echo "      The string to search."
+            echo -e "  \033[1mSEARCH_FOR\033[22m (required)"
+            echo "      The separator."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m$__fn 00aa11aa22 aa\033[22m"
+            echo "22"
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn 00aa11aa22 aa\033[22m"
-                __stdout="$($__fn 00aa11aa22 aa)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^22$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [22]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn 00aa11aa22 aa\033[22m"
+            __stdout="$($__fn 00aa11aa22 aa)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^22$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [22]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_SEARCH_IN ]]; then
-            _SEARCH_IN=$__param
-            continue
-        fi
-        if [[ ! $_SEARCH_FOR ]]; then
-            _SEARCH_FOR=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_SEARCH_IN ]]; then
+         _SEARCH_IN=$__param
+         continue
+      fi
+      if [[ ! $_SEARCH_FOR ]]; then
+         _SEARCH_FOR=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_SEARCH_IN ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter SEARCH_IN must be specified."; return 64
-    fi
-    if [[ $_SEARCH_FOR ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter SEARCH_FOR must be specified."; return 64
-    fi
+   if [[ $_SEARCH_IN ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter SEARCH_IN must be specified."; return 64
+   fi
+   if [[ $_SEARCH_FOR ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter SEARCH_FOR must be specified."; return 64
+   fi
 
-    ######### substr-after-last ######### START
+   ######### substr-after-last ######### START
 
 echo "${_SEARCH_IN#${_SEARCH_IN%${_SEARCH_FOR}*}$_SEARCH_FOR}"
 
-    ######### substr-after-last ######### END
+   ######### substr-after-last ######### END
 }
 function __complete-substr-after-last() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}substr-after-last -- ${BASH_FUNK_PREFIX:--}substr-after-last
 
 function -substr-before() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... SEARCH_IN SEARCH_FOR"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... SEARCH_IN SEARCH_FOR"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-substr-before() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... SEARCH_IN SEARCH_FOR"
-                echo
-                echo "Prints the substring before the first occurrence of SEARCH_FOR."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mSEARCH_IN\033[22m (required)"
-                echo "      The string to search."
-                echo -e "  \033[1mSEARCH_FOR\033[22m (required)"
-                echo "      The separator."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn 00aa11aa22 aa\033[22m"
-                echo "00"
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... SEARCH_IN SEARCH_FOR"
+            echo
+            echo "Prints the substring before the first occurrence of SEARCH_FOR."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mSEARCH_IN\033[22m (required)"
+            echo "      The string to search."
+            echo -e "  \033[1mSEARCH_FOR\033[22m (required)"
+            echo "      The separator."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m$__fn 00aa11aa22 aa\033[22m"
+            echo "00"
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn 00aa11aa22 aa\033[22m"
-                __stdout="$($__fn 00aa11aa22 aa)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^00$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [00]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn 00aa11aa22 aa\033[22m"
+            __stdout="$($__fn 00aa11aa22 aa)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^00$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [00]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_SEARCH_IN ]]; then
-            _SEARCH_IN=$__param
-            continue
-        fi
-        if [[ ! $_SEARCH_FOR ]]; then
-            _SEARCH_FOR=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_SEARCH_IN ]]; then
+         _SEARCH_IN=$__param
+         continue
+      fi
+      if [[ ! $_SEARCH_FOR ]]; then
+         _SEARCH_FOR=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_SEARCH_IN ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter SEARCH_IN must be specified."; return 64
-    fi
-    if [[ $_SEARCH_FOR ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter SEARCH_FOR must be specified."; return 64
-    fi
+   if [[ $_SEARCH_IN ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter SEARCH_IN must be specified."; return 64
+   fi
+   if [[ $_SEARCH_FOR ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter SEARCH_FOR must be specified."; return 64
+   fi
 
-    ######### substr-before ######### START
+   ######### substr-before ######### START
 
 echo "${_SEARCH_IN%%${_SEARCH_FOR}*}"
 
-    ######### substr-before ######### END
+   ######### substr-before ######### END
 }
 function __complete-substr-before() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}substr-before -- ${BASH_FUNK_PREFIX:--}substr-before
 
 function -substr-before-last() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... SEARCH_IN SEARCH_FOR"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... SEARCH_IN SEARCH_FOR"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-substr-before-last() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... SEARCH_IN SEARCH_FOR"
-                echo
-                echo "Prints the substring before the last occurrence of SEARCH_FOR."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mSEARCH_IN\033[22m (required)"
-                echo "      The string to search."
-                echo -e "  \033[1mSEARCH_FOR\033[22m (required)"
-                echo "      The separator."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn 00aa11aa00 aa\033[22m"
-                echo "00aa11"
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... SEARCH_IN SEARCH_FOR"
+            echo
+            echo "Prints the substring before the last occurrence of SEARCH_FOR."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mSEARCH_IN\033[22m (required)"
+            echo "      The string to search."
+            echo -e "  \033[1mSEARCH_FOR\033[22m (required)"
+            echo "      The separator."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m$__fn 00aa11aa00 aa\033[22m"
+            echo "00aa11"
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn 00aa11aa00 aa\033[22m"
-                __stdout="$($__fn 00aa11aa00 aa)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^00aa11$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [00aa11]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn 00aa11aa00 aa\033[22m"
+            __stdout="$($__fn 00aa11aa00 aa)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^00aa11$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [00aa11]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_SEARCH_IN ]]; then
-            _SEARCH_IN=$__param
-            continue
-        fi
-        if [[ ! $_SEARCH_FOR ]]; then
-            _SEARCH_FOR=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_SEARCH_IN ]]; then
+         _SEARCH_IN=$__param
+         continue
+      fi
+      if [[ ! $_SEARCH_FOR ]]; then
+         _SEARCH_FOR=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_SEARCH_IN ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter SEARCH_IN must be specified."; return 64
-    fi
-    if [[ $_SEARCH_FOR ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter SEARCH_FOR must be specified."; return 64
-    fi
+   if [[ $_SEARCH_IN ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter SEARCH_IN must be specified."; return 64
+   fi
+   if [[ $_SEARCH_FOR ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter SEARCH_FOR must be specified."; return 64
+   fi
 
-    ######### substr-before-last ######### START
+   ######### substr-before-last ######### START
 
 echo "${_SEARCH_IN%${_SEARCH_FOR}*}"
 
-    ######### substr-before-last ######### END
+   ######### substr-before-last ######### END
 }
 function __complete-substr-before-last() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}substr-before-last -- ${BASH_FUNK_PREFIX:--}substr-before-last
 
 function -substr-between() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... SEARCH_IN PREFIX SUFFIX"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... SEARCH_IN PREFIX SUFFIX"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-substr-between() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _PREFIX _SUFFIX
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _PREFIX _SUFFIX
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... SEARCH_IN PREFIX SUFFIX"
-                echo
-                echo "Prints the substring between PREFIX and SUFFIX."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mSEARCH_IN\033[22m (required)"
-                echo "      The string to search."
-                echo -e "  \033[1mPREFIX\033[22m (required)"
-                echo "      The start separator."
-                echo -e "  \033[1mSUFFIX\033[22m (required)"
-                echo "      The end separator."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn 00aa11aa22aa00 aa aa\033[22m"
-                echo "11"
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... SEARCH_IN PREFIX SUFFIX"
+            echo
+            echo "Prints the substring between PREFIX and SUFFIX."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mSEARCH_IN\033[22m (required)"
+            echo "      The string to search."
+            echo -e "  \033[1mPREFIX\033[22m (required)"
+            echo "      The start separator."
+            echo -e "  \033[1mSUFFIX\033[22m (required)"
+            echo "      The end separator."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m$__fn 00aa11aa22aa00 aa aa\033[22m"
+            echo "11"
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn 00aa11aa22aa00 aa aa\033[22m"
-                __stdout="$($__fn 00aa11aa22aa00 aa aa)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^11$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [11]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn 00aa11aa22aa00 aa aa\033[22m"
+            __stdout="$($__fn 00aa11aa22aa00 aa aa)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^11$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [11]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_SEARCH_IN ]]; then
-            _SEARCH_IN=$__param
-            continue
-        fi
-        if [[ ! $_PREFIX ]]; then
-            _PREFIX=$__param
-            continue
-        fi
-        if [[ ! $_SUFFIX ]]; then
-            _SUFFIX=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_SEARCH_IN ]]; then
+         _SEARCH_IN=$__param
+         continue
+      fi
+      if [[ ! $_PREFIX ]]; then
+         _PREFIX=$__param
+         continue
+      fi
+      if [[ ! $_SUFFIX ]]; then
+         _SUFFIX=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_SEARCH_IN ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter SEARCH_IN must be specified."; return 64
-    fi
-    if [[ $_PREFIX ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter PREFIX must be specified."; return 64
-    fi
-    if [[ $_SUFFIX ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter SUFFIX must be specified."; return 64
-    fi
+   if [[ $_SEARCH_IN ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter SEARCH_IN must be specified."; return 64
+   fi
+   if [[ $_PREFIX ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter PREFIX must be specified."; return 64
+   fi
+   if [[ $_SUFFIX ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter SUFFIX must be specified."; return 64
+   fi
 
-    ######### substr-between ######### START
+   ######### substr-between ######### START
 
 local withoutPrefix="${_SEARCH_IN#*$_PREFIX}"
 echo "${withoutPrefix%%${_SUFFIX}*}"
 
-    ######### substr-between ######### END
+   ######### substr-between ######### END
 }
 function __complete-substr-between() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}substr-between -- ${BASH_FUNK_PREFIX:--}substr-between
 
 function -test-strings() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]..."
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]..."
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-test-strings() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]..."
-                echo
-                echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]..."
+            echo
+            echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    ######### test-strings ######### START
+   ######### test-strings ######### START
 
 ${BASH_FUNK_PREFIX:--}ascii2hex --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}hex2ascii --selftest && echo || return 1
@@ -2584,39 +2584,39 @@ ${BASH_FUNK_PREFIX:--}substr-before --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}substr-before-last --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}substr-between --selftest && echo || return 1
 
-    ######### test-strings ######### END
+   ######### test-strings ######### END
 }
 function __complete-test-strings() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-strings -- ${BASH_FUNK_PREFIX:--}test-strings
 
 
 function -help-strings() {
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ascii2hex ASCII_STRING\033[0m  -  Prints the hexa-decimal representation of the given ASCII string."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}hex2ascii HEX_STRING\033[0m  -  Prints the ASCII representation of the given hexa-decimal string."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}normalize-path PATH\033[0m  -  Prints the normalized form of the given file path."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-join SEPARATOR [STRING]...\033[0m  -  Prints strings joined with the given separator."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-lower STRING\033[0m  -  Prints the given string in lower cases."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-matches-glob GLOB_PATTERN [STRING]...\033[0m  -  Matches the given string(s) against the glob pattern, prints the found matches and returns true if at least one match was found."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-matches-regex REGEX_PATTERN [STRING]...\033[0m  -  Matches the given string(s) against the regex pattern, prints the found matches and returns true if at least one match was found."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-repeat STRING COUNT\033[0m  -  Prints the given string multiple times."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-trim STRING\033[0m  -  Prints the given string without leading and trailing spaces."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-upper STRING\033[0m  -  Prints the given string in upper cases."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}strip-ansi [STRING]...\033[0m  -  Removes any ANSI escape sequences from the given string or from stdin."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}substr-after SEARCH_IN SEARCH_FOR\033[0m  -  Prints the substring after the first occurrence of SEARCH_FOR."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}substr-after-last SEARCH_IN SEARCH_FOR\033[0m  -  Prints the substring after the last occurrence of SEARCH_FOR."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}substr-before SEARCH_IN SEARCH_FOR\033[0m  -  Prints the substring before the first occurrence of SEARCH_FOR."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}substr-before-last SEARCH_IN SEARCH_FOR\033[0m  -  Prints the substring before the last occurrence of SEARCH_FOR."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}substr-between SEARCH_IN PREFIX SUFFIX\033[0m  -  Prints the substring between PREFIX and SUFFIX."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-strings\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ascii2hex ASCII_STRING\033[0m  -  Prints the hexa-decimal representation of the given ASCII string."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}hex2ascii HEX_STRING\033[0m  -  Prints the ASCII representation of the given hexa-decimal string."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}normalize-path PATH\033[0m  -  Prints the normalized form of the given file path."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-join SEPARATOR [STRING]...\033[0m  -  Prints strings joined with the given separator."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-lower STRING\033[0m  -  Prints the given string in lower cases."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-matches-glob GLOB_PATTERN [STRING]...\033[0m  -  Matches the given string(s) against the glob pattern, prints the found matches and returns true if at least one match was found."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-matches-regex REGEX_PATTERN [STRING]...\033[0m  -  Matches the given string(s) against the regex pattern, prints the found matches and returns true if at least one match was found."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-repeat STRING COUNT\033[0m  -  Prints the given string multiple times."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-trim STRING\033[0m  -  Prints the given string without leading and trailing spaces."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-upper STRING\033[0m  -  Prints the given string in upper cases."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}strip-ansi [STRING]...\033[0m  -  Removes any ANSI escape sequences from the given string or from stdin."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}substr-after SEARCH_IN SEARCH_FOR\033[0m  -  Prints the substring after the first occurrence of SEARCH_FOR."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}substr-after-last SEARCH_IN SEARCH_FOR\033[0m  -  Prints the substring after the last occurrence of SEARCH_FOR."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}substr-before SEARCH_IN SEARCH_FOR\033[0m  -  Prints the substring before the first occurrence of SEARCH_FOR."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}substr-before-last SEARCH_IN SEARCH_FOR\033[0m  -  Prints the substring before the last occurrence of SEARCH_FOR."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}substr-between SEARCH_IN PREFIX SUFFIX\033[0m  -  Prints the substring between PREFIX and SUFFIX."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-strings\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
 __BASH_FUNK_FUNCS+=( ascii2hex hex2ascii normalize-path str-join str-lower str-matches-glob str-matches-regex str-repeat str-trim str-upper strip-ansi substr-after substr-after-last substr-before substr-before-last substr-between test-strings )

@@ -13,118 +13,118 @@
 #
 
 function -ansi-bold() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... [TEXT]"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... [TEXT]"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-ansi-bold() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _on _off _help _selftest _TEXT
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _on _off _help _selftest _TEXT
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... [TEXT]"
-                echo
-                echo "Sets bold mode or prints the given text in bold."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mTEXT\033[22m "
-                echo "      The text to print in bold."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --off\033[22m "
-                echo "        Print the ANSI escape sequence that disables sets bold attribute."
-                echo -e "\033[1m    --on\033[22m "
-                echo "        Print the ANSI escape sequence that enables sets bold attribute."
-                echo "    -----------------------------"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... [TEXT]"
+            echo
+            echo "Sets bold mode or prints the given text in bold."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mTEXT\033[22m "
+            echo "      The text to print in bold."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --off\033[22m "
+            echo "        Print the ANSI escape sequence that disables sets bold attribute."
+            echo -e "\033[1m    --on\033[22m "
+            echo "        Print the ANSI escape sequence that enables sets bold attribute."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --on)
-                _on=1
-            ;;
+         --on)
+            _on=1
+         ;;
 
-            --off)
-                _off=1
-            ;;
+         --off)
+            _off=1
+         ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_TEXT && ${#__params[@]} > 0 ]]; then
-            _TEXT=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_TEXT && ${#__params[@]} > 0 ]]; then
+         _TEXT=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    ######### ansi-bold ######### START
+   ######### ansi-bold ######### START
 
 if [[ $_TEXT ]]; then
     echo -ne "\033[1m$_TEXT\033[22m"
@@ -136,129 +136,129 @@ elif [[ $_off ]]; then
     echo -ne "\033[22m"
 fi
 
-    ######### ansi-bold ######### END
+   ######### ansi-bold ######### END
 }
 function __complete-ansi-bold() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --on --off --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --on --off --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}ansi-bold -- ${BASH_FUNK_PREFIX:--}ansi-bold
 
 function -ansi-codes() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... [PREFIX]"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... [PREFIX]"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-ansi-codes() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _escape _help _selftest _PREFIX
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _escape _help _selftest _PREFIX
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... [PREFIX]"
-                echo
-                echo "Prints commands to set variables with common ANSI codes. When used with the 'echo' command, the -e option is not required."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mPREFIX\033[22m (default: 'ANSI_')"
-                echo "      Prefix to be used for the declared variables."
-                echo
-                echo "Options:"
-                echo -e "\033[1m-e, --escape\033[22m "
-                echo "        If specified the escape code will be printed as octal value ."
-                echo "    -----------------------------"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... [PREFIX]"
+            echo
+            echo "Prints commands to set variables with common ANSI codes. When used with the 'echo' command, the -e option is not required."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mPREFIX\033[22m (default: 'ANSI_')"
+            echo "      Prefix to be used for the declared variables."
+            echo
+            echo "Options:"
+            echo -e "\033[1m-e, --escape\033[22m "
+            echo "        If specified the escape code will be printed as octal value ."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --escape|-e)
-                _escape=1
-            ;;
+         --escape|-e)
+            _escape=1
+         ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_PREFIX && ${#__params[@]} > 0 ]]; then
-            _PREFIX=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_PREFIX && ${#__params[@]} > 0 ]]; then
+         _PREFIX=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ ! $_PREFIX ]]; then _PREFIX="ANSI_"; fi
+   if [[ ! $_PREFIX ]]; then _PREFIX="ANSI_"; fi
 
-    ######### ansi-codes ######### START
+   ######### ansi-codes ######### START
 
 if [[ $_escape ]]; then
     local ESC="\033";
@@ -316,147 +316,147 @@ ${_PREFIX}BG_LIGHT_CYAN=\"$ESC[106m\"
 ${_PREFIX}BG_WHITE=\"$ESC[107m\"
 "
 
-    ######### ansi-codes ######### END
+   ######### ansi-codes ######### END
 }
 function __complete-ansi-codes() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --escape -e --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --escape -e --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}ansi-codes -- ${BASH_FUNK_PREFIX:--}ansi-codes
 
 function -ansi-colors-supported() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... [NUM_COLORS]"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... [NUM_COLORS]"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-ansi-colors-supported() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _NUM_COLORS
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _NUM_COLORS
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... [NUM_COLORS]"
-                echo
-                echo "Determines if the given number of ANSI colors is supported by the current terminal. If NUM_COLORS is specified, the exit value indicates if the color range is supported. If NUM_COLORS is not specified, the number of supported colors is printed with exit code 0."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mNUM_COLORS\033[22m "
-                echo "      Number of colors that need to be supported."
-                echo
-                echo "Options:"
-                echo -e "\033[1m-v, --verbose\033[22m "
-                echo "        Prints additional information during command execution."
-                echo "    -----------------------------"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn \033[22m"
-                echo "256"
-                echo -e "$ \033[1m$__fn -v 8\033[22m"
-                echo "Terminal 'xterm' supports 8 colors."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... [NUM_COLORS]"
+            echo
+            echo "Determines if the given number of ANSI colors is supported by the current terminal. If NUM_COLORS is specified, the exit value indicates if the color range is supported. If NUM_COLORS is not specified, the number of supported colors is printed with exit code 0."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mNUM_COLORS\033[22m "
+            echo "      Number of colors that need to be supported."
+            echo
+            echo "Options:"
+            echo -e "\033[1m-v, --verbose\033[22m "
+            echo "        Prints additional information during command execution."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m$__fn \033[22m"
+            echo "256"
+            echo -e "$ \033[1m$__fn -v 8\033[22m"
+            echo "Terminal 'xterm' supports 8 colors."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn \033[22m"
-                __stdout="$($__fn )"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^[0-9]+$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[0-9]+]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn -v 8\033[22m"
-                __stdout="$($__fn -v 8)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^Terminal '.*' supports [0-9]+ colors.$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Terminal '.*' supports [0-9]+ colors.]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn \033[22m"
+            __stdout="$($__fn )"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^[0-9]+$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[0-9]+]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn -v 8\033[22m"
+            __stdout="$($__fn -v 8)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^Terminal '.*' supports [0-9]+ colors.$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Terminal '.*' supports [0-9]+ colors.]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --verbose|-v)
-                _verbose=1
-            ;;
+         --verbose|-v)
+            _verbose=1
+         ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_NUM_COLORS && ${#__params[@]} > 0 ]]; then
-            _NUM_COLORS=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_NUM_COLORS && ${#__params[@]} > 0 ]]; then
+         _NUM_COLORS=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    ######### ansi-colors-supported ######### START
+   ######### ansi-colors-supported ######### START
 
 local numColors
 if hash tput &>/dev/null; then
@@ -487,112 +487,112 @@ else
     return 0
 fi
 
-    ######### ansi-colors-supported ######### END
+   ######### ansi-colors-supported ######### END
 }
 function __complete-ansi-colors-supported() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help --verbose -v "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help --verbose -v "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}ansi-colors-supported -- ${BASH_FUNK_PREFIX:--}ansi-colors-supported
 
 function -ansi-colors16() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]..."
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]..."
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-ansi-colors16() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]..."
-                echo
-                echo "Prints a table with 8/16 ANSI colors."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]..."
+            echo
+            echo "Prints a table with 8/16 ANSI colors."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    ######### ansi-colors16 ######### START
+   ######### ansi-colors16 ######### START
 
 
 if ! ${BASH_FUNK_PREFIX:--}ansi-colors-supported 8; then
@@ -618,112 +618,112 @@ for bg in {40..47} 49 {100..107}; do
     echo
 done
 
-    ######### ansi-colors16 ######### END
+   ######### ansi-colors16 ######### END
 }
 function __complete-ansi-colors16() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}ansi-colors16 -- ${BASH_FUNK_PREFIX:--}ansi-colors16
 
 function -ansi-colors256() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]..."
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]..."
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-ansi-colors256() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]..."
-                echo
-                echo "Prints a table with 256 ANSI colors."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]..."
+            echo
+            echo "Prints a table with 256 ANSI colors."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    ######### ansi-colors256 ######### START
+   ######### ansi-colors256 ######### START
 
 
 if ! ${BASH_FUNK_PREFIX:--}ansi-colors-supported 256; then
@@ -827,242 +827,242 @@ for i in 16 {232..255} 231;do
 done
 echo
 
-    ######### ansi-colors256 ######### END
+   ######### ansi-colors256 ######### END
 }
 function __complete-ansi-colors256() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}ansi-colors256 -- ${BASH_FUNK_PREFIX:--}ansi-colors256
 
 function -ansi-reset() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]..."
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]..."
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-ansi-reset() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]..."
-                echo
-                echo "Prints an ANSI escape sequence that reset all ANSI attributes."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]..."
+            echo
+            echo "Prints an ANSI escape sequence that reset all ANSI attributes."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    ######### ansi-reset ######### START
+   ######### ansi-reset ######### START
 
 echo -ne "\033[0m"
 
-    ######### ansi-reset ######### END
+   ######### ansi-reset ######### END
 }
 function __complete-ansi-reset() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}ansi-reset -- ${BASH_FUNK_PREFIX:--}ansi-reset
 
 function -ansi-ul() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... [TEXT]"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... [TEXT]"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-ansi-ul() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _on _off _help _selftest _TEXT
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _on _off _help _selftest _TEXT
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... [TEXT]"
-                echo
-                echo "Sets underlined mode or prints the given text underlined."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mTEXT\033[22m "
-                echo "      The text to print underlined."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --off\033[22m "
-                echo "        Print the ANSI escape sequence that disables sets underlined attribute."
-                echo -e "\033[1m    --on\033[22m "
-                echo "        Print the ANSI escape sequence that enables sets underlined attribute."
-                echo "    -----------------------------"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... [TEXT]"
+            echo
+            echo "Sets underlined mode or prints the given text underlined."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mTEXT\033[22m "
+            echo "      The text to print underlined."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --off\033[22m "
+            echo "        Print the ANSI escape sequence that disables sets underlined attribute."
+            echo -e "\033[1m    --on\033[22m "
+            echo "        Print the ANSI escape sequence that enables sets underlined attribute."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --on)
-                _on=1
-            ;;
+         --on)
+            _on=1
+         ;;
 
-            --off)
-                _off=1
-            ;;
+         --off)
+            _off=1
+         ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_TEXT && ${#__params[@]} > 0 ]]; then
-            _TEXT=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_TEXT && ${#__params[@]} > 0 ]]; then
+         _TEXT=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    ######### ansi-ul ######### START
+   ######### ansi-ul ######### START
 
 if [[ $_TEXT ]]; then
     echo -ne "\033[4m$_TEXT\033[24m"
@@ -1074,235 +1074,235 @@ elif [[ $_off ]]; then
     echo -ne "\033[24m"
 fi
 
-    ######### ansi-ul ######### END
+   ######### ansi-ul ######### END
 }
 function __complete-ansi-ul() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --on --off --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --on --off --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}ansi-ul -- ${BASH_FUNK_PREFIX:--}ansi-ul
 
 function -cursor-pos() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]..."
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]..."
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-cursor-pos() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _save _restore _up _down _left _right _assign _set _print _fd _help _selftest
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _save _restore _up _down _left _right _assign _set _print _fd _help _selftest
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]..."
-                echo
-                echo "Performs ANSI cursor operations."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --assign VARNAME\033[22m "
-                echo "        Assigns the current cursor position to the variable with the given name."
-                echo -e "\033[1m-d, --down [LINES]\033[22m (default: '1', integer: ?-?)"
-                echo "        Moves the cursor n lines down."
-                echo -e "\033[1m    --fd [NUM]\033[22m (default: '1', integer: ?-?)"
-                echo "        Send the ANSI sequences to the given file descriptor."
-                echo -e "\033[1m-l, --left [COLUMNS]\033[22m (default: '1', integer: ?-?)"
-                echo "        Move the cursor n columns forward."
-                echo -e "\033[1m    --print\033[22m "
-                echo "        Prints the current cursor position."
-                echo -e "\033[1m    --restore\033[22m "
-                echo "        Restores the last saved cursor position."
-                echo -e "\033[1m-r, --right [COLUMNS]\033[22m (default: '1', integer: ?-?)"
-                echo "        Move the cursor n columns backward."
-                echo -e "\033[1m    --save\033[22m "
-                echo "        Saves the current cursor position."
-                echo -e "\033[1m    --set ROW_AND_COL\033[22m "
-                echo "        Sets the cursor position (ROW:COL)."
-                echo -e "\033[1m-u, --up [LINES]\033[22m (default: '1', integer: ?-?)"
-                echo "        Moves the cursor n lines up."
-                echo "    -----------------------------"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]..."
+            echo
+            echo "Performs ANSI cursor operations."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --assign VARNAME\033[22m "
+            echo "        Assigns the current cursor position to the variable with the given name."
+            echo -e "\033[1m-d, --down [LINES]\033[22m (default: '1', integer: ?-?)"
+            echo "        Moves the cursor n lines down."
+            echo -e "\033[1m    --fd [NUM]\033[22m (default: '1', integer: ?-?)"
+            echo "        Send the ANSI sequences to the given file descriptor."
+            echo -e "\033[1m-l, --left [COLUMNS]\033[22m (default: '1', integer: ?-?)"
+            echo "        Move the cursor n columns forward."
+            echo -e "\033[1m    --print\033[22m "
+            echo "        Prints the current cursor position."
+            echo -e "\033[1m    --restore\033[22m "
+            echo "        Restores the last saved cursor position."
+            echo -e "\033[1m-r, --right [COLUMNS]\033[22m (default: '1', integer: ?-?)"
+            echo "        Move the cursor n columns backward."
+            echo -e "\033[1m    --save\033[22m "
+            echo "        Saves the current cursor position."
+            echo -e "\033[1m    --set ROW_AND_COL\033[22m "
+            echo "        Sets the cursor position (ROW:COL)."
+            echo -e "\033[1m-u, --up [LINES]\033[22m (default: '1', integer: ?-?)"
+            echo "        Moves the cursor n lines up."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --save)
-                _save=1
-            ;;
+         --save)
+            _save=1
+         ;;
 
-            --restore)
-                _restore=1
-            ;;
+         --restore)
+            _restore=1
+         ;;
 
-            --up|-u)
-                _up="1"
-                __optionWithValue=up
-            ;;
+         --up|-u)
+            _up="1"
+            __optionWithValue=up
+         ;;
 
-            --down|-d)
-                _down="1"
-                __optionWithValue=down
-            ;;
+         --down|-d)
+            _down="1"
+            __optionWithValue=down
+         ;;
 
-            --left|-l)
-                _left="1"
-                __optionWithValue=left
-            ;;
+         --left|-l)
+            _left="1"
+            __optionWithValue=left
+         ;;
 
-            --right|-r)
-                _right="1"
-                __optionWithValue=right
-            ;;
+         --right|-r)
+            _right="1"
+            __optionWithValue=right
+         ;;
 
-            --assign)
-                _assign="@@##@@"
-                __optionWithValue=assign
-            ;;
+         --assign)
+            _assign="@@##@@"
+            __optionWithValue=assign
+         ;;
 
-            --set)
-                _set="@@##@@"
-                __optionWithValue=set
-            ;;
+         --set)
+            _set="@@##@@"
+            __optionWithValue=set
+         ;;
 
-            --print)
-                _print=1
-            ;;
+         --print)
+            _print=1
+         ;;
 
-            --fd)
-                _fd="1"
-                __optionWithValue=fd
-            ;;
+         --fd)
+            _fd="1"
+            __optionWithValue=fd
+         ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    up)
-                        _up=$__arg
-                        __optionWithValue=
-                      ;;
-                    down)
-                        _down=$__arg
-                        __optionWithValue=
-                      ;;
-                    left)
-                        _left=$__arg
-                        __optionWithValue=
-                      ;;
-                    right)
-                        _right=$__arg
-                        __optionWithValue=
-                      ;;
-                    assign)
-                        _assign=$__arg
-                        __optionWithValue=
-                      ;;
-                    set)
-                        _set=$__arg
-                        __optionWithValue=
-                      ;;
-                    fd)
-                        _fd=$__arg
-                        __optionWithValue=
-                      ;;
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               up)
+                  _up=$__arg
+                  __optionWithValue=
+                 ;;
+               down)
+                  _down=$__arg
+                  __optionWithValue=
+                 ;;
+               left)
+                  _left=$__arg
+                  __optionWithValue=
+                 ;;
+               right)
+                  _right=$__arg
+                  __optionWithValue=
+                 ;;
+               assign)
+                  _assign=$__arg
+                  __optionWithValue=
+                 ;;
+               set)
+                  _set=$__arg
+                  __optionWithValue=
+                 ;;
+               fd)
+                  _fd=$__arg
+                  __optionWithValue=
+                 ;;
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_up ]]; then
-        if [[ $_up == "@@##@@" ]]; then echo "$__fn: Error: Value LINES for option --up must be specified."; return 64; fi
-        if [[ ! "$_up" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_up' for option --up is not a numeric value."; return 64; fi
-    fi
-    if [[ $_down ]]; then
-        if [[ $_down == "@@##@@" ]]; then echo "$__fn: Error: Value LINES for option --down must be specified."; return 64; fi
-        if [[ ! "$_down" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_down' for option --down is not a numeric value."; return 64; fi
-    fi
-    if [[ $_left ]]; then
-        if [[ $_left == "@@##@@" ]]; then echo "$__fn: Error: Value COLUMNS for option --left must be specified."; return 64; fi
-        if [[ ! "$_left" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_left' for option --left is not a numeric value."; return 64; fi
-    fi
-    if [[ $_right ]]; then
-        if [[ $_right == "@@##@@" ]]; then echo "$__fn: Error: Value COLUMNS for option --right must be specified."; return 64; fi
-        if [[ ! "$_right" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_right' for option --right is not a numeric value."; return 64; fi
-    fi
-    if [[ $_assign ]]; then
-        if [[ $_assign == "@@##@@" ]]; then echo "$__fn: Error: Value VARNAME for option --assign must be specified."; return 64; fi
-    fi
-    if [[ $_set ]]; then
-        if [[ $_set == "@@##@@" ]]; then echo "$__fn: Error: Value ROW_AND_COL for option --set must be specified."; return 64; fi
-    fi
-    if [[ $_fd ]]; then
-        if [[ $_fd == "@@##@@" ]]; then echo "$__fn: Error: Value NUM for option --fd must be specified."; return 64; fi
-        if [[ ! "$_fd" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_fd' for option --fd is not a numeric value."; return 64; fi
-    fi
+   if [[ $_up ]]; then
+      if [[ $_up == "@@##@@" ]]; then echo "$__fn: Error: Value LINES for option --up must be specified."; return 64; fi
+      if [[ ! "$_up" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_up' for option --up is not a numeric value."; return 64; fi
+   fi
+   if [[ $_down ]]; then
+      if [[ $_down == "@@##@@" ]]; then echo "$__fn: Error: Value LINES for option --down must be specified."; return 64; fi
+      if [[ ! "$_down" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_down' for option --down is not a numeric value."; return 64; fi
+   fi
+   if [[ $_left ]]; then
+      if [[ $_left == "@@##@@" ]]; then echo "$__fn: Error: Value COLUMNS for option --left must be specified."; return 64; fi
+      if [[ ! "$_left" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_left' for option --left is not a numeric value."; return 64; fi
+   fi
+   if [[ $_right ]]; then
+      if [[ $_right == "@@##@@" ]]; then echo "$__fn: Error: Value COLUMNS for option --right must be specified."; return 64; fi
+      if [[ ! "$_right" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_right' for option --right is not a numeric value."; return 64; fi
+   fi
+   if [[ $_assign ]]; then
+      if [[ $_assign == "@@##@@" ]]; then echo "$__fn: Error: Value VARNAME for option --assign must be specified."; return 64; fi
+   fi
+   if [[ $_set ]]; then
+      if [[ $_set == "@@##@@" ]]; then echo "$__fn: Error: Value ROW_AND_COL for option --set must be specified."; return 64; fi
+   fi
+   if [[ $_fd ]]; then
+      if [[ $_fd == "@@##@@" ]]; then echo "$__fn: Error: Value NUM for option --fd must be specified."; return 64; fi
+      if [[ ! "$_fd" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_fd' for option --fd is not a numeric value."; return 64; fi
+   fi
 
-    ######### cursor-pos ######### START
+   ######### cursor-pos ######### START
 
 
 if [[ $_save ]]; then
@@ -1346,112 +1346,112 @@ if [[ $_print || $_assign ]]; then
     fi
 fi
 
-    ######### cursor-pos ######### END
+   ######### cursor-pos ######### END
 }
 function __complete-cursor-pos() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --save --restore --up -u --down -d --left -l --right -r --assign --set --print --fd --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --save --restore --up -u --down -d --left -l --right -r --assign --set --print --fd --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}cursor-pos -- ${BASH_FUNK_PREFIX:--}cursor-pos
 
 function -test-ansi() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]..."
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]..."
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-test-ansi() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]..."
-                echo
-                echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]..."
+            echo
+            echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    ######### test-ansi ######### START
+   ######### test-ansi ######### START
 
 ${BASH_FUNK_PREFIX:--}ansi-bold --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-codes --selftest && echo || return 1
@@ -1462,31 +1462,31 @@ ${BASH_FUNK_PREFIX:--}ansi-reset --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-ul --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}cursor-pos --selftest && echo || return 1
 
-    ######### test-ansi ######### END
+   ######### test-ansi ######### END
 }
 function __complete-test-ansi() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-ansi -- ${BASH_FUNK_PREFIX:--}test-ansi
 
 
 function -help-ansi() {
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-bold [TEXT]\033[0m  -  Sets bold mode or prints the given text in bold."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-codes [PREFIX]\033[0m  -  Prints commands to set variables with common ANSI codes. When used with the 'echo' command, the -e option is not required."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-colors-supported [NUM_COLORS]\033[0m  -  Determines if the given number of ANSI colors is supported by the current terminal. If NUM_COLORS is specified, the exit value indicates if the color range is supported. If NUM_COLORS is not specified, the number of supported colors is printed with exit code 0."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-colors16\033[0m  -  Prints a table with 8/16 ANSI colors."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-colors256\033[0m  -  Prints a table with 256 ANSI colors."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-reset\033[0m  -  Prints an ANSI escape sequence that reset all ANSI attributes."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-ul [TEXT]\033[0m  -  Sets underlined mode or prints the given text underlined."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}cursor-pos\033[0m  -  Performs ANSI cursor operations."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-ansi\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-bold [TEXT]\033[0m  -  Sets bold mode or prints the given text in bold."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-codes [PREFIX]\033[0m  -  Prints commands to set variables with common ANSI codes. When used with the 'echo' command, the -e option is not required."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-colors-supported [NUM_COLORS]\033[0m  -  Determines if the given number of ANSI colors is supported by the current terminal. If NUM_COLORS is specified, the exit value indicates if the color range is supported. If NUM_COLORS is not specified, the number of supported colors is printed with exit code 0."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-colors16\033[0m  -  Prints a table with 8/16 ANSI colors."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-colors256\033[0m  -  Prints a table with 256 ANSI colors."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-reset\033[0m  -  Prints an ANSI escape sequence that reset all ANSI attributes."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-ul [TEXT]\033[0m  -  Sets underlined mode or prints the given text underlined."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}cursor-pos\033[0m  -  Performs ANSI cursor operations."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-ansi\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
 __BASH_FUNK_FUNCS+=( ansi-bold ansi-codes ansi-colors-supported ansi-colors16 ansi-colors256 ansi-reset ansi-ul cursor-pos test-ansi )

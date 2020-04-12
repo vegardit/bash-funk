@@ -13,245 +13,245 @@
 #
 
 function -cpu-count() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]..."
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]..."
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-cpu-count() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]..."
-                echo
-                echo "Prints the number of processors."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn \033[22m"
-                echo "4"
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]..."
+            echo
+            echo "Prints the number of processors."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m$__fn \033[22m"
+            echo "4"
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn \033[22m"
-                __stdout="$($__fn )"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^[0-9]+$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[0-9]+]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn \033[22m"
+            __stdout="$($__fn )"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^[0-9]+$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [[0-9]+]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    ######### cpu-count ######### START
+   ######### cpu-count ######### START
 
 grep processor /proc/cpuinfo | wc -l
 
-    ######### cpu-count ######### END
+   ######### cpu-count ######### END
 }
 function __complete-cpu-count() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}cpu-count -- ${BASH_FUNK_PREFIX:--}cpu-count
 
 function -cpu-perf() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]..."
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]..."
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-cpu-perf() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _mode _help _selftest
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _mode _help _selftest
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]..."
-                echo
-                echo "Performs a CPU speed test using 'openssl speed' utilizing all available processors or 'cryptsetup benchmark' / 'dd' for single threaded tests."
-                echo
-                echo "Options:"
-                echo -e "\033[1m-m, --mode MODE\033[22m (one of: [openssl-aes128,openssl-aes256,openssl-rsa1024,openssl-rsa2048,openssl-rsa4096,cryptsetup-aes128,cryptsetup-aes256,dd-md5sum,dd-sha256sum,dd-sha512sum])"
-                echo "        Select the benchmark mode."
-                echo "    -----------------------------"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn --mode dd-md5sum\033[22m"
-                echo "1073741824 bytes (1.1 GB, 1.0 GiB) copied, 2.04484 s, 525 MB/s"
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]..."
+            echo
+            echo "Performs a CPU speed test using 'openssl speed' utilizing all available processors or 'cryptsetup benchmark' / 'dd' for single threaded tests."
+            echo
+            echo "Options:"
+            echo -e "\033[1m-m, --mode MODE\033[22m (one of: [openssl-aes128,openssl-aes256,openssl-rsa1024,openssl-rsa2048,openssl-rsa4096,cryptsetup-aes128,cryptsetup-aes256,dd-md5sum,dd-sha256sum,dd-sha512sum])"
+            echo "        Select the benchmark mode."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m$__fn --mode dd-md5sum\033[22m"
+            echo "1073741824 bytes (1.1 GB, 1.0 GiB) copied, 2.04484 s, 525 MB/s"
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn --mode dd-md5sum\033[22m"
-                __stdout="$($__fn --mode dd-md5sum)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^.+$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [.+]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn --mode dd-md5sum\033[22m"
+            __stdout="$($__fn --mode dd-md5sum)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^.+$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [.+]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --mode|-m)
-                _mode="@@##@@"
-                __optionWithValue=mode
-            ;;
+         --mode|-m)
+            _mode="@@##@@"
+            __optionWithValue=mode
+         ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    mode)
-                        _mode=$__arg
-                        __optionWithValue=
-                      ;;
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               mode)
+                  _mode=$__arg
+                  __optionWithValue=
+                 ;;
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ $_mode ]]; then
-        if [[ $_mode == "@@##@@" ]]; then echo "$__fn: Error: Value MODE for option --mode must be specified."; return 64; fi
-        if [[ $_mode != 'openssl-aes128' && $_mode != 'openssl-aes256' && $_mode != 'openssl-rsa1024' && $_mode != 'openssl-rsa2048' && $_mode != 'openssl-rsa4096' && $_mode != 'cryptsetup-aes128' && $_mode != 'cryptsetup-aes256' && $_mode != 'dd-md5sum' && $_mode != 'dd-sha256sum' && $_mode != 'dd-sha512sum' ]]; then echo "$__fn: Error: Value '$_mode' for option --mode is not one of the allowed values [openssl-aes128,openssl-aes256,openssl-rsa1024,openssl-rsa2048,openssl-rsa4096,cryptsetup-aes128,cryptsetup-aes256,dd-md5sum,dd-sha256sum,dd-sha512sum]."; return 64; fi
-    fi
+   if [[ $_mode ]]; then
+      if [[ $_mode == "@@##@@" ]]; then echo "$__fn: Error: Value MODE for option --mode must be specified."; return 64; fi
+      if [[ $_mode != 'openssl-aes128' && $_mode != 'openssl-aes256' && $_mode != 'openssl-rsa1024' && $_mode != 'openssl-rsa2048' && $_mode != 'openssl-rsa4096' && $_mode != 'cryptsetup-aes128' && $_mode != 'cryptsetup-aes256' && $_mode != 'dd-md5sum' && $_mode != 'dd-sha256sum' && $_mode != 'dd-sha512sum' ]]; then echo "$__fn: Error: Value '$_mode' for option --mode is not one of the allowed values [openssl-aes128,openssl-aes256,openssl-rsa1024,openssl-rsa2048,openssl-rsa4096,cryptsetup-aes128,cryptsetup-aes256,dd-md5sum,dd-sha256sum,dd-sha512sum]."; return 64; fi
+   fi
 
-    ######### cpu-perf ######### START
+   ######### cpu-perf ######### START
 
 local _mode=${_mode:-openssl-rsa1024}
 
@@ -262,19 +262,19 @@ case $_mode in
     dd-*)         dd if=/dev/zero bs=1M count=1024 2> >(head -3 | tail -1) > >(${_mode#dd-} >/dev/null) ;;
 esac
 
-    ######### cpu-perf ######### END
+   ######### cpu-perf ######### END
 }
 function __complete-cpu-perf() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --mode -m --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        local prev="${COMP_WORDS[COMP_CWORD-1]}"
-        case $prev in
-            --mode|-m)
-                COMPREPLY=($(compgen -o default -W "openssl-aes128
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --mode -m --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      local prev="${COMP_WORDS[COMP_CWORD-1]}"
+      case $prev in
+         --mode|-m)
+            COMPREPLY=($(compgen -o default -W "openssl-aes128
 openssl-aes256
 openssl-rsa1024
 openssl-rsa2048
@@ -285,148 +285,148 @@ dd-md5sum
 dd-sha256sum
 dd-sha512sum" -- $curr))
               ;;
-            *)
-                COMPREPLY=($(compgen -o default -- $curr))
-              ;;
-        esac
-    fi
+         *)
+            COMPREPLY=($(compgen -o default -- $curr))
+           ;;
+      esac
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}cpu-perf -- ${BASH_FUNK_PREFIX:--}cpu-perf
 
 function -disk-latency() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... [PATH]"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... [PATH]"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-disk-latency() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... [PATH]"
-                echo
-                echo "Determines disk latency in milliseconds using 'dd'."
-                echo
-                echo "Requirements:"
-                echo "  + Command 'dd' must be available."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mPATH\033[22m (default: '.', directory)"
-                echo "      Path where to create the test files."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn \033[22m"
-                echo "2.34362 ms disk latency on device /dev/xvda2"
-                echo -e "$ \033[1m$__fn /tmp\033[22m"
-                echo "1.46379 ms disk latency on device /dev/xvda1"
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... [PATH]"
+            echo
+            echo "Determines disk latency in milliseconds using 'dd'."
+            echo
+            echo "Requirements:"
+            echo "  + Command 'dd' must be available."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mPATH\033[22m (default: '.', directory)"
+            echo "      Path where to create the test files."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m$__fn \033[22m"
+            echo "2.34362 ms disk latency on device /dev/xvda2"
+            echo -e "$ \033[1m$__fn /tmp\033[22m"
+            echo "1.46379 ms disk latency on device /dev/xvda1"
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn \033[22m"
-                __stdout="$($__fn )"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^.+$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [.+]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn /tmp\033[22m"
-                __stdout="$($__fn /tmp)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^.+$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [.+]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn \033[22m"
+            __stdout="$($__fn )"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^.+$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [.+]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn /tmp\033[22m"
+            __stdout="$($__fn /tmp)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^.+$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [.+]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_PATH && ${#__params[@]} > 0 ]]; then
-            _PATH=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_PATH && ${#__params[@]} > 0 ]]; then
+         _PATH=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ ! $_PATH ]]; then _PATH="."; fi
+   if [[ ! $_PATH ]]; then _PATH="."; fi
 
-    if [[ $_PATH ]]; then
-        if [[ ! -e "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH does not exist."; return 64; fi
-        if [[ -e "$_PATH" && ! -d "$_PATH" ]]; then echo "$__fn: Error: Path '$_PATH' for parameter PATH is not a directory."; return 64; fi
-        if [[ ! -r "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH is not readable by user '$USER'."; return 64; fi
-        if [[ ! -w "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH is not writeable by user '$USER'."; return 64; fi
-    fi
+   if [[ $_PATH ]]; then
+      if [[ ! -e "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH does not exist."; return 64; fi
+      if [[ -e "$_PATH" && ! -d "$_PATH" ]]; then echo "$__fn: Error: Path '$_PATH' for parameter PATH is not a directory."; return 64; fi
+      if [[ ! -r "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH is not readable by user '$USER'."; return 64; fi
+      if [[ ! -w "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH is not writeable by user '$USER'."; return 64; fi
+   fi
 
-    if ! hash "dd" &>/dev/null; then echo "$__fn: Error: Required command 'dd' not found on this system."; return 64; fi
+   if ! hash "dd" &>/dev/null; then echo "$__fn: Error: Required command 'dd' not found on this system."; return 64; fi
 
-    ######### disk-latency ######### START
+   ######### disk-latency ######### START
 
 local testFile="$(mktemp "--tmpdir=$_PATH")"
 local ddResult
@@ -440,176 +440,176 @@ else
     return 1
 fi
 
-    ######### disk-latency ######### END
+   ######### disk-latency ######### END
 }
 function __complete-disk-latency() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}disk-latency -- ${BASH_FUNK_PREFIX:--}disk-latency
 
 function -disk-perf() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... [PATH]"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... [PATH]"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-disk-perf() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _mode _size _help _selftest _PATH
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _mode _size _help _selftest _PATH
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... [PATH]"
-                echo
-                echo "Performs a I/O speed test using 'fio' utilizing all available processors or single-threaded using 'dd'."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mPATH\033[22m (default: '.', directory)"
-                echo "      Path where to create the test files."
-                echo
-                echo "Options:"
-                echo -e "\033[1m-m, --mode MODE\033[22m (one of: [dd,fio])"
-                echo "        Select the benchmark mode."
-                echo -e "\033[1m    --size SIZE\033[22m (integer: 1-?)"
-                echo "        Test file size in MB (Default is 2048MB)."
-                echo "    -----------------------------"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                echo "Examples:"
-                echo -e "$ \033[1m$__fn --mode dd --size 2\033[22m"
-                echo "Testing single-threaded sequential write performance...
+         --help)
+            echo "Usage: $__fn [OPTION]... [PATH]"
+            echo
+            echo "Performs a I/O speed test using 'fio' utilizing all available processors or single-threaded using 'dd'."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mPATH\033[22m (default: '.', directory)"
+            echo "      Path where to create the test files."
+            echo
+            echo "Options:"
+            echo -e "\033[1m-m, --mode MODE\033[22m (one of: [dd,fio])"
+            echo "        Select the benchmark mode."
+            echo -e "\033[1m    --size SIZE\033[22m (integer: 1-?)"
+            echo "        Test file size in MB (Default is 2048MB)."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m$__fn --mode dd --size 2\033[22m"
+            echo "Testing single-threaded sequential write performance...
 2097152 bytes (2.1 MB, 2.0 MiB) copied, 0.0186709 s, 112 MB/s
 
 Testing single-threaded sequential read performance...
 2097152 bytes (2.1 MB, 2.0 MiB) copied, 0.00332485 s, 631 MB/s"
-                echo
-                return 0
-              ;;
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo -e "$ \033[1m$__fn --mode dd --size 2\033[22m"
-                __stdout="$($__fn --mode dd --size 2)"; __rc=$?
-                echo "$__stdout"
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                __regex="^.+$"
-                if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [.+]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn --mode dd --size 2\033[22m"
+            __stdout="$($__fn --mode dd --size 2)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^.+$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [.+]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --mode|-m)
-                _mode="@@##@@"
-                __optionWithValue=mode
-            ;;
+         --mode|-m)
+            _mode="@@##@@"
+            __optionWithValue=mode
+         ;;
 
-            --size)
-                _size="@@##@@"
-                __optionWithValue=size
-            ;;
+         --size)
+            _size="@@##@@"
+            __optionWithValue=size
+         ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    mode)
-                        _mode=$__arg
-                        __optionWithValue=
-                      ;;
-                    size)
-                        _size=$__arg
-                        __optionWithValue=
-                      ;;
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               mode)
+                  _mode=$__arg
+                  __optionWithValue=
+                 ;;
+               size)
+                  _size=$__arg
+                  __optionWithValue=
+                 ;;
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_PATH && ${#__params[@]} > 0 ]]; then
-            _PATH=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_PATH && ${#__params[@]} > 0 ]]; then
+         _PATH=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ ! $_PATH ]]; then _PATH="."; fi
-    if [[ $_mode ]]; then
-        if [[ $_mode == "@@##@@" ]]; then echo "$__fn: Error: Value MODE for option --mode must be specified."; return 64; fi
-        if [[ $_mode != 'dd' && $_mode != 'fio' ]]; then echo "$__fn: Error: Value '$_mode' for option --mode is not one of the allowed values [dd,fio]."; return 64; fi
-    fi
-    if [[ $_size ]]; then
-        if [[ $_size == "@@##@@" ]]; then echo "$__fn: Error: Value SIZE for option --size must be specified."; return 64; fi
-        if [[ ! "$_size" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_size' for option --size is not a numeric value."; return 64; fi
-        if [[ $_size -lt 1 ]]; then echo "$__fn: Error: Value '$_size' for option --size is too low. Must be >= 1."; return 64; fi
-    fi
+   if [[ ! $_PATH ]]; then _PATH="."; fi
+   if [[ $_mode ]]; then
+      if [[ $_mode == "@@##@@" ]]; then echo "$__fn: Error: Value MODE for option --mode must be specified."; return 64; fi
+      if [[ $_mode != 'dd' && $_mode != 'fio' ]]; then echo "$__fn: Error: Value '$_mode' for option --mode is not one of the allowed values [dd,fio]."; return 64; fi
+   fi
+   if [[ $_size ]]; then
+      if [[ $_size == "@@##@@" ]]; then echo "$__fn: Error: Value SIZE for option --size must be specified."; return 64; fi
+      if [[ ! "$_size" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_size' for option --size is not a numeric value."; return 64; fi
+      if [[ $_size -lt 1 ]]; then echo "$__fn: Error: Value '$_size' for option --size is too low. Must be >= 1."; return 64; fi
+   fi
 
-    if [[ $_PATH ]]; then
-        if [[ ! -e "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH does not exist."; return 64; fi
-        if [[ -e "$_PATH" && ! -d "$_PATH" ]]; then echo "$__fn: Error: Path '$_PATH' for parameter PATH is not a directory."; return 64; fi
-        if [[ ! -r "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH is not readable by user '$USER'."; return 64; fi
-        if [[ ! -w "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH is not writeable by user '$USER'."; return 64; fi
-    fi
+   if [[ $_PATH ]]; then
+      if [[ ! -e "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH does not exist."; return 64; fi
+      if [[ -e "$_PATH" && ! -d "$_PATH" ]]; then echo "$__fn: Error: Path '$_PATH' for parameter PATH is not a directory."; return 64; fi
+      if [[ ! -r "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH is not readable by user '$USER'."; return 64; fi
+      if [[ ! -w "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH is not writeable by user '$USER'."; return 64; fi
+   fi
 
-    ######### disk-perf ######### START
+   ######### disk-perf ######### START
 
 local _size=${_size:-2048}
 local _mode=${_mode:-fio}
@@ -646,181 +646,181 @@ case $_mode in
        ;;
 esac
 
-    ######### disk-perf ######### END
+   ######### disk-perf ######### END
 }
 function __complete-disk-perf() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --mode -m --size --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        local prev="${COMP_WORDS[COMP_CWORD-1]}"
-        case $prev in
-            --mode|-m)
-                COMPREPLY=($(compgen -o default -W "dd
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --mode -m --size --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      local prev="${COMP_WORDS[COMP_CWORD-1]}"
+      case $prev in
+         --mode|-m)
+            COMPREPLY=($(compgen -o default -W "dd
 fio" -- $curr))
               ;;
-            *)
-                COMPREPLY=($(compgen -o default -- $curr))
-              ;;
-        esac
-    fi
+         *)
+            COMPREPLY=($(compgen -o default -- $curr))
+           ;;
+      esac
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}disk-perf -- ${BASH_FUNK_PREFIX:--}disk-perf
 
 function -scp-perf() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]... TARGET [SIZE_MB]"
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... TARGET [SIZE_MB]"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-scp-perf() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _port _identity_file _help _selftest _TARGET _SIZE_MB
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _port _identity_file _help _selftest _TARGET _SIZE_MB
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]... TARGET [SIZE_MB]"
-                echo
-                echo "Performs an SCP speed test."
-                echo
-                echo "Parameters:"
-                echo -e "  \033[1mTARGET\033[22m (required)"
-                echo "      [user@:]hostname."
-                echo -e "  \033[1mSIZE_MB\033[22m (default: '10', integer: ?-?)"
-                echo "      Test file size in MB."
-                echo
-                echo "Options:"
-                echo -e "\033[1m-i, --identity_file PATH\033[22m (file)"
-                echo "        Path to the private key for public key authentication."
-                echo -e "\033[1m-P, --port PORT\033[22m (integer: 0-65535)"
-                echo "        Ssh port."
-                echo "    -----------------------------"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]... TARGET [SIZE_MB]"
+            echo
+            echo "Performs an SCP speed test."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mTARGET\033[22m (required)"
+            echo "      [user@:]hostname."
+            echo -e "  \033[1mSIZE_MB\033[22m (default: '10', integer: ?-?)"
+            echo "      Test file size in MB."
+            echo
+            echo "Options:"
+            echo -e "\033[1m-i, --identity_file PATH\033[22m (file)"
+            echo "        Path to the private key for public key authentication."
+            echo -e "\033[1m-P, --port PORT\033[22m (integer: 0-65535)"
+            echo "        Ssh port."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --port|-P)
-                _port="@@##@@"
-                __optionWithValue=port
-            ;;
+         --port|-P)
+            _port="@@##@@"
+            __optionWithValue=port
+         ;;
 
-            --identity_file|-i)
-                _identity_file="@@##@@"
-                __optionWithValue=identity_file
-            ;;
+         --identity_file|-i)
+            _identity_file="@@##@@"
+            __optionWithValue=identity_file
+         ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    port)
-                        _port=$__arg
-                        __optionWithValue=
-                      ;;
-                    identity_file)
-                        _identity_file=$__arg
-                        __optionWithValue=
-                      ;;
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               port)
+                  _port=$__arg
+                  __optionWithValue=
+                 ;;
+               identity_file)
+                  _identity_file=$__arg
+                  __optionWithValue=
+                 ;;
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        if [[ ! $_TARGET ]]; then
-            _TARGET=$__param
-            continue
-        fi
-        if [[ ! $_SIZE_MB ]]; then
-            _SIZE_MB=$__param
-            continue
-        fi
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      if [[ ! $_TARGET ]]; then
+         _TARGET=$__param
+         continue
+      fi
+      if [[ ! $_SIZE_MB ]]; then
+         _SIZE_MB=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    if [[ ! $_SIZE_MB ]]; then _SIZE_MB="10"; fi
-    if [[ $_port ]]; then
-        if [[ $_port == "@@##@@" ]]; then echo "$__fn: Error: Value PORT for option --port must be specified."; return 64; fi
-        if [[ ! "$_port" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_port' for option --port is not a numeric value."; return 64; fi
-        if [[ $_port -lt 0 ]]; then echo "$__fn: Error: Value '$_port' for option --port is too low. Must be >= 0."; return 64; fi
-        if [[ $_port -gt 65535 ]]; then echo "$__fn: Error: Value '$_port' for option --port is too high. Must be <= 65535."; return 64; fi
-    fi
-    if [[ $_identity_file ]]; then
-        if [[ $_identity_file == "@@##@@" ]]; then echo "$__fn: Error: Value PATH for option --identity_file must be specified."; return 64; fi
-        if [[ ! -e "$_identity_file" ]]; then echo "$__fn: Error: File '$_identity_file' for option --identity_file does not exist."; return 64; fi
-        if [[ -e "$_identity_file" && ! -f "$_identity_file" ]]; then echo "$__fn: Error: Path '$_identity_file' for option --identity_file is not a file."; return 64; fi
-        if [[ ! -r "$_identity_file" ]]; then echo "$__fn: Error: File '$_identity_file' for option --identity_file is not readable by user '$USER'."; return 64; fi
-    fi
+   if [[ ! $_SIZE_MB ]]; then _SIZE_MB="10"; fi
+   if [[ $_port ]]; then
+      if [[ $_port == "@@##@@" ]]; then echo "$__fn: Error: Value PORT for option --port must be specified."; return 64; fi
+      if [[ ! "$_port" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_port' for option --port is not a numeric value."; return 64; fi
+      if [[ $_port -lt 0 ]]; then echo "$__fn: Error: Value '$_port' for option --port is too low. Must be >= 0."; return 64; fi
+      if [[ $_port -gt 65535 ]]; then echo "$__fn: Error: Value '$_port' for option --port is too high. Must be <= 65535."; return 64; fi
+   fi
+   if [[ $_identity_file ]]; then
+      if [[ $_identity_file == "@@##@@" ]]; then echo "$__fn: Error: Value PATH for option --identity_file must be specified."; return 64; fi
+      if [[ ! -e "$_identity_file" ]]; then echo "$__fn: Error: File '$_identity_file' for option --identity_file does not exist."; return 64; fi
+      if [[ -e "$_identity_file" && ! -f "$_identity_file" ]]; then echo "$__fn: Error: Path '$_identity_file' for option --identity_file is not a file."; return 64; fi
+      if [[ ! -r "$_identity_file" ]]; then echo "$__fn: Error: File '$_identity_file' for option --identity_file is not readable by user '$USER'."; return 64; fi
+   fi
 
-    if [[ $_TARGET ]]; then
-        true
-    else
-        echo "$__fn: Error: Parameter TARGET must be specified."; return 64
-    fi
-    if [[ $_SIZE_MB ]]; then
-        if [[ ! "$_SIZE_MB" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_SIZE_MB' for parameter SIZE_MB is not a numeric value."; return 64; fi
-    fi
+   if [[ $_TARGET ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter TARGET must be specified."; return 64
+   fi
+   if [[ $_SIZE_MB ]]; then
+      if [[ ! "$_SIZE_MB" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_SIZE_MB' for parameter SIZE_MB is not a numeric value."; return 64; fi
+   fi
 
-    ######### scp-perf ######### START
+   ######### scp-perf ######### START
 
 local dataFile=$(mktemp)
 
@@ -851,112 +851,112 @@ ssh $sshOpts "$_TARGET" "rm ${dataFile}-copy"
 echo "Removing local test data..."
 rm $dataFile
 
-    ######### scp-perf ######### END
+   ######### scp-perf ######### END
 }
 function __complete-scp-perf() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --port -P --identity_file -i --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --port -P --identity_file -i --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}scp-perf -- ${BASH_FUNK_PREFIX:--}scp-perf
 
 function -test-performance() {
-    local opts="" opt rc __fn=${FUNCNAME[0]}
-    for opt in a u H t; do
-        [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-    done
-    shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-    for opt in nullglob extglob nocasematch nocaseglob; do
-        shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-    done
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
 
-    set +auHt
-    set -o pipefail
+   set +auHt
+   set -o pipefail
 
-    __impl$__fn "$@" && rc=0 || rc=$?
+   __impl$__fn "$@" && rc=0 || rc=$?
 
-    if [[ $rc == 64 && -t 1 ]]; then
-        echo; echo "Usage: $__fn [OPTION]..."
-        echo; echo "Type '$__fn --help' for more details."
-    fi
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]..."
+      echo; echo "Type '$__fn --help' for more details."
+   fi
 
-    eval $opts
+   eval $opts
 
-    return $rc
-}
+   return $rc
+  }
 function __impl-test-performance() {
-    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
-    [ -t 1 ] && __interactive=1 || true
-        for __arg in "$@"; do
-        case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-        esac
-    done
-    for __arg in "${__args[@]}"; do
-        if [[ $__optionWithValue == "--" ]]; then
-            __params+=("$__arg")
-            continue
-        fi
-        case "$__arg" in
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
 
-            --help)
-                echo "Usage: $__fn [OPTION]..."
-                echo
-                echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-                echo
-                echo "Options:"
-                echo -e "\033[1m    --help\033[22m "
-                echo "        Prints this help."
-                echo -e "\033[1m    --selftest\033[22m "
-                echo "        Performs a self-test."
-                echo -e "    \033[1m--\033[22m"
-                echo "        Terminates the option list."
-                echo
-                return 0
-              ;;
+         --help)
+            echo "Usage: $__fn [OPTION]..."
+            echo
+            echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
 
-            --selftest)
-                echo "Testing function [$__fn]..."
-                echo -e "$ \033[1m$__fn --help\033[22m"
-                local __stdout __rc
-                __stdout="$($__fn --help)"; __rc=$?
-                if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-                echo -e "--> \033[32mOK\033[0m"
-                echo "Testing function [$__fn]...DONE"
-                return 0
-              ;;
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
 
-            --)
-                __optionWithValue="--"
-              ;;
-            -*)
-                echo "$__fn: invalid option: '$__arg'"
-                return 64
-              ;;
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
 
-            *)
-                case $__optionWithValue in
-                    *)
-                        __params+=("$__arg")
-                esac
-              ;;
-        esac
-    done
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
 
-    for __param in "${__params[@]}"; do
-        echo "$__fn: Error: too many parameters: '$__param'"
-        return 64
-    done
+   for __param in "${__params[@]}"; do
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
 
-    ######### test-performance ######### START
+   ######### test-performance ######### START
 
 ${BASH_FUNK_PREFIX:--}cpu-count --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}cpu-perf --selftest && echo || return 1
@@ -964,28 +964,28 @@ ${BASH_FUNK_PREFIX:--}disk-latency --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}disk-perf --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}scp-perf --selftest && echo || return 1
 
-    ######### test-performance ######### END
+   ######### test-performance ######### END
 }
 function __complete-test-performance() {
-    local curr=${COMP_WORDS[COMP_CWORD]}
-    if [[ ${curr} == -* ]]; then
-        local options=" --help "
-        for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-        COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-    else
-        COMPREPLY=($(compgen -o default -- $curr))
-    fi
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-performance -- ${BASH_FUNK_PREFIX:--}test-performance
 
 
 function -help-performance() {
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}cpu-count\033[0m  -  Prints the number of processors."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}cpu-perf\033[0m  -  Performs a CPU speed test using 'openssl speed' utilizing all available processors or 'cryptsetup benchmark' / 'dd' for single threaded tests."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}disk-latency [PATH]\033[0m  -  Determines disk latency in milliseconds using 'dd'."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}disk-perf [PATH]\033[0m  -  Performs a I/O speed test using 'fio' utilizing all available processors or single-threaded using 'dd'."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}scp-perf TARGET [SIZE_MB]\033[0m  -  Performs an SCP speed test."
-    echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-performance\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}cpu-count\033[0m  -  Prints the number of processors."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}cpu-perf\033[0m  -  Performs a CPU speed test using 'openssl speed' utilizing all available processors or 'cryptsetup benchmark' / 'dd' for single threaded tests."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}disk-latency [PATH]\033[0m  -  Determines disk latency in milliseconds using 'dd'."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}disk-perf [PATH]\033[0m  -  Performs a I/O speed test using 'fio' utilizing all available processors or single-threaded using 'dd'."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}scp-perf TARGET [SIZE_MB]\033[0m  -  Performs an SCP speed test."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-performance\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
 __BASH_FUNK_FUNCS+=( cpu-count cpu-perf disk-latency disk-perf scp-perf test-performance )
