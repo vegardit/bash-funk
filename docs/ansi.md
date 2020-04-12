@@ -83,7 +83,12 @@ local colorize
 case "${_color:-auto}" in
    always) colorize=1 ;;
    never) colorize=0 ;;
-   auto) [[ -t 1 ]] && colorize=1 || colorize=0 ;;
+   auto)
+      if -ansi-colors-supported 8 && [[ -t 1 ]]; then
+         colorize=1
+      else
+         colorize=0
+      fi
 esac
 
 if [[ $colorize == 1 ]]; then
