@@ -691,13 +691,6 @@ function __impl-procmem() {
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
             echo
-            echo "Examples:"
-            echo -e "$ \033[1m$__fn \033[22m"
-            echo "MemTotal:       24689452 kB
-MemFree:        13713796 kB
-MemAvailable:   16143004 kB
-..."
-            echo
             return 0
            ;;
 
@@ -707,13 +700,6 @@ MemAvailable:   16143004 kB
             local __stdout __rc
             __stdout="$($__fn --help)"; __rc=$?
             if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-            echo -e "--> \033[32mOK\033[0m"
-            echo -e "$ \033[1m$__fn \033[22m"
-            __stdout="$($__fn )"; __rc=$?
-            echo "$__stdout"
-            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-            __regex="^.*MemTotal.*MemFree.*$"
-            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [.*MemTotal.*MemFree.*]."; return 64; fi
             echo -e "--> \033[32mOK\033[0m"
             echo "Testing function [$__fn]...DONE"
             return 0

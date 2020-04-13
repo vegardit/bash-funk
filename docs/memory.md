@@ -240,13 +240,6 @@ Options:
         Performs a self-test.
     --
         Terminates the option list.
-
-Examples:
-$ -procmem 
-MemTotal:       24689452 kB
-MemFree:        13713796 kB
-MemAvailable:   16143004 kB
-...
 ```
 
 *Implementation:*
