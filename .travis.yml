@@ -11,11 +11,23 @@ matrix:
   allow_failures:
     - os: osx
 
+git:
+  depth: 1
+
 install:
   - if [[ $TRAVIS_OS_NAME == "linux" ]]; then
-       sudo apt-get --no-install-recommends -qq install rng-tools;
+      sudo apt-get --no-install-recommends -qq install rng-tools;
     fi
 
 script:
   - bash --version
-  - source bash-funk.sh && -test-all
+  - |-
+    if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+       echo "" | xargs --show-limits && \
+       source bash-funk.sh && \
+       echo "" | xargs --show-limits && \ 
+       -test-all
+    else
+      source bash-funk.sh && \
+      -test-all
+    fi
