@@ -16,6 +16,7 @@ alias -- -git-ls-tags="git tag"
 The following commands are available when this module is loaded:
 
 1. [-git-branch-name](#-git-branch-name)
+1. [-git-change-contributor](#-git-change-contributor)
 1. [-git-change-date](#-git-change-date)
 1. [-git-cherry-pick](#-git-cherry-pick)
 1. [-git-cleanse](#-git-cleanse)
@@ -84,6 +85,79 @@ git -C "$_PATH" rev-parse --symbolic-full-name --abbrev-ref HEAD
 ```
 
 
+## <a name="-git-change-contributor"></a>-git-change-contributor
+
+```
+Usage: -git-change-contributor [OPTION]... OLD_USER_EMAIL NEW_USER_NAME NEW_USER_EMAIL
+
+Updates the author and/or committer name/e-mail of ALL matching commits.
+
+Parameters:
+  OLD_USER_EMAIL (required)
+      Old user e-mail.
+  NEW_USER_NAME (required)
+      New user name to set.
+  NEW_USER_EMAIL (required)
+      New user e-mail to set.
+
+Options:
+    --author 
+        Indicates to change the author date of the commit.
+    --committer 
+        Indicates to change the committer date of the commit.
+    --global 
+        Performs the change against all tags and branches.
+    --pull 
+        Execute 'git pull' before altering the commit(s).
+    --push 
+        Execute 'git push --force' after altering the commit(s).
+    -----------------------------
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+
+Examples:
+$  -git-change-contributor --author alice@example.com bob bob@example.com
+
+$  -git-change-contributor --author --comitter alice@example.com bob bob@example.com
+```
+
+*Implementation:*
+```bash
+if [[ $_pull ]]; then
+   git pull || return 1
+fi
+
+if [[ ! $_author && ! $_comitter ]]; then
+   echo "-git-change-contributor: Error: The --author and/or --committer flag need to be specified."
+   return 1
+fi
+
+local filter="
+   if [ $_committer ] && [ \"\$GIT_COMMITTER_EMAIL\" = '$_OLD_USER_EMAIL' ]; then
+      export GIT_COMMITTER_NAME='$_NEW_USER_NAME'
+      export GIT_COMMITTER_EMAIL='$_NEW_USER_EMAIL'
+   fi
+   if [ $_author ] && [ \"\$GIT_AUTHOR_EMAIL\" = '$_OLD_USER_EMAIL' ]; then
+      export GIT_AUTHOR_NAME='$_NEW_USER_NAME'
+      export GIT_AUTHOR_EMAIL='$_NEW_USER_EMAIL'
+   fi
+"
+
+if [[ $_global ]]; then
+   git filter-branch --force --env-filter "$filter" --tag-name-filter cat -- --branches --tags
+else
+   git filter-branch --force --env-filter "$filter"
+fi
+if [[ $_push ]]; then
+   git push
+fi
+```
+
+
 ## <a name="-git-change-date"></a>-git-change-date
 
 ```
@@ -115,35 +189,35 @@ Options:
         Terminates the option list.
 
 Examples:
-$  -git-change-date --author fe65a726b8f07cbcedc1d4b76fbdbf53678a31cf $(date --date '27 days ago')
+$  -git-change-date --author fe65a726b8f07cbcedc1d4b76fbdbf53678a31cf "\$(date --date '27 days ago')"
 
-$  -git-change-date --author --comitter $(git log --format='%H' -n 1) $(date --date '15 hours ago')
+$  -git-change-date --author --comitter $(git log --format='%H' -n 1) "\$(date --date '15 hours ago')"
 ```
 
 *Implementation:*
 ```bash
 if [[ $_pull ]]; then
-    git pull || return 1
+   git pull || return 1
 fi
 
 if [[ ! $_author && ! $_comitter ]]; then
-  echo "-git-change-date: Error: The --author and/or --committer flag need to be specified."
-  return 1
+   echo "-git-change-date: Error: The --author and/or --committer flag need to be specified."
+   return 1
 fi
 
-git filter-branch -f --env-filter '
-  if [ $GIT_COMMIT = $_COMMIT_HASH ]; then
-    if [ $_author ]; then
-      export GIT_AUTHOR_DATE=$=$_NEW_DATE
-    fi
-    if [ $_committer ]; then
-      export GIT_COMMITTER_DATE=$_NEW_DATE
-    fi
-  fi
-'
+git filter-branch --force --env-filter "
+   if [ \$GIT_COMMIT = $_COMMIT_HASH ]; then
+      if [ $_author ]; then
+         export GIT_AUTHOR_DATE='$_NEW_DATE'
+      fi
+      if [ $_committer ]; then
+         export GIT_COMMITTER_DATE='$_NEW_DATE'
+      fi
+   fi
+"
 
 if [[ $_push ]]; then
-    git push
+   git push
 fi
 ```
 
@@ -178,17 +252,17 @@ Options:
 *Implementation:*
 ```bash
 if [[ $_pull ]]; then
-    git pull || return 1
+   git pull || return 1
 fi
 
 if [[ $_pr ]]; then
-    git fetch origin pull/${_pr}/head:pr-${_pr} || return 1
+   git fetch origin pull/${_pr}/head:pr-${_pr} || return 1
 fi
 
 git cherry-pick ${_COMMIT_HASHES[@]} || return 1
 
 if [[ $_push ]]; then
-    git push
+   git push
 fi
 ```
 
@@ -217,18 +291,18 @@ Options:
 *Implementation:*
 ```bash
 if [[ ! $_yes ]]; then
-    read -p "Are you sure you want to erase all uncommitted changes? (y) " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        echo "-git-cleanse: Aborting on user request."
-        return 0
-    fi
+   read -p "Are you sure you want to erase all uncommitted changes? (y) " -n 1 -r
+   echo
+   if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+      echo "-git-cleanse: Aborting on user request."
+      return 0
+   fi
 fi
 
 git reset --hard HEAD && git clean -dfx || return 1
 
 if [[ $_pull ]]; then
-    git pull
+   git pull
 fi
 ```
 
@@ -287,8 +361,8 @@ Options:
 *Implementation:*
 ```bash
 if git rev-parse --verify ${_BRANCH_NAME} &>/dev/null; then
-    echo "-git-create-empty-branch: Error: A branch named [${_BRANCH_NAME}] already exists."
-    return 1
+   echo "-git-create-empty-branch: Error: A branch named [${_BRANCH_NAME}] already exists."
+   return 1
 fi
 
 git checkout --orphan ${_BRANCH_NAME} &&
@@ -297,7 +371,7 @@ git rm -rf . &&
 git commit -am "Created empty branch." --allow-empty || return 1
 
 if [[ $_push ]]; then
-    git push --set-upstream origin ${_BRANCH_NAME}
+   git push --set-upstream origin ${_BRANCH_NAME}
 fi
 ```
 
@@ -356,10 +430,10 @@ Options:
 *Implementation:*
 ```bash
 if [[ $_force ]]; then
-    git branch --delete --force $_BRANCH_NAME
+   git branch --delete --force $_BRANCH_NAME
 else
-    git branch --delete $_BRANCH_NAME
-fi
+   git branch --delete $_BRANCH_NAME
+ fi
 ```
 
 
@@ -418,7 +492,7 @@ Options:
 git fetch origin pull/${_PR_NUMBER}/head:pr-${_PR_NUMBER} || return 1
 
 if [[ $_checkout ]]; then
-    git checkout pr-${_PR_NUMBER}
+   git checkout pr-${_PR_NUMBER}
 fi
 ```
 
@@ -560,7 +634,7 @@ Options:
 *Implementation:*
 ```bash
 if [[ $_pull ]]; then
-    git pull || return 1
+   git pull || return 1
 fi
 
 if [[ $_message ]]; then
@@ -574,7 +648,7 @@ git reset --soft HEAD~${_NUM_COMMITS} &&
 git commit --allow-empty-message -m "${commitMsg}" || return 1
 
 if [[ $_push ]]; then
-    git push --force
+   git push --force
 fi
 ```
 
@@ -606,45 +680,45 @@ Options:
 local url remote
 
 for remote in "${_REMOTE_NAME[@]}"; do
-    if url=$(git remote get-url $_REMOTE_NAME); then
-        case "$_PROTOCOL" in
-            ssh)
-                case "$url" in
-                    https://*)
-                        echo "Switching protocol of remote [$remote] to SSH..."
-                        git remote set-url origin "git@${url#https://*}" &&
-                        git remote -v | grep "^$remote"
-                      ;;
-                    git@*)
-                        echo "Remote [$remote] already uses SSH: $url"
-                      ;;
-                    *)
-                        echo "-git-switch-remote-protocol: URL [$url] for remote [$remote] starts with unknown protocol."
-                        return 1
-                      ;;
-                esac
-              ;;
+   if url=$(git remote get-url $_REMOTE_NAME); then
+      case "$_PROTOCOL" in
+         ssh)
+            case "$url" in
+               https://*)
+                  echo "Switching protocol of remote [$remote] to SSH..."
+                  git remote set-url origin "git@${url#https://*}" &&
+                  git remote -v | grep "^$remote"
+                 ;;
+               git@*)
+                  echo "Remote [$remote] already uses SSH: $url"
+                 ;;
+               *)
+                  echo "-git-switch-remote-protocol: URL [$url] for remote [$remote] starts with unknown protocol."
+                  return 1
+                 ;;
+            esac
+           ;;
 
-            https)
-                case "$url" in
-                    https://*)
-                        echo "Remote [$remote] already uses HTTPS: $url"
-                      ;;
-                    git@*)
-                        echo "Switching protocol of remote [$remote] to HTTPS..."
-                        git remote set-url origin "https://${url#git@*}" &&
-                        git remote -v | grep "^$remote"
-                      ;;
-                    *)
-                        echo "-git-switch-remote-protocol: URL [$url] for remote [$remote] starts with unknown protocol."
-                        return 1
-                      ;;
-                esac
-              ;;
-        esac
-    else
-        return 1
-    fi
+         https)
+            case "$url" in
+               https://*)
+                  echo "Remote [$remote] already uses HTTPS: $url"
+                 ;;
+               git@*)
+                  echo "Switching protocol of remote [$remote] to HTTPS..."
+                  git remote set-url origin "https://${url#git@*}" &&
+                  git remote -v | grep "^$remote"
+                 ;;
+               *)
+                  echo "-git-switch-remote-protocol: URL [$url] for remote [$remote] starts with unknown protocol."
+                  return 1
+                 ;;
+            esac
+           ;;
+      esac
+   else
+      return 1
+   fi
 done
 ```
 
@@ -680,9 +754,9 @@ local currBranch currBranch_remote currBranch_remoteURL upstreamURL
 
 # e.g. 'master'
 if [[ ${_branch:-} ]]; then
-    currBranch=$_branch
+   currBranch=$_branch
 else
-    currBranch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) || return 1
+   currBranch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) || return 1
 fi
 
 # e.g. 'origin'
@@ -691,15 +765,15 @@ currBranch_remoteURL=$(git config --get remote.$currBranch_remote.url) || return
 
 upstreamURL=$(git remote get-url "upstream" 2>/dev/null) || true
 if [[ ! $upstreamURL ]]; then
-    # if forked repo is on github try to get the upstream URL via github API
-    local githubRepo="${currBranch_remoteURL#*github.com/}"
-    githubRepo="${githubRepo%.git}"
-    if [[ ! $currBranch_remoteURL == *github.com/* ]] || ! upstreamURL="$(-github-upstream-url "${githubRepo}")"; then
-        echo "-git-sync-fork: No remote 'upstream' defined. You can add it using 'git remote add upstream [REMOTE_URL]'."
-        return 1
-    fi
-    echo "Adding remote 'upstream $upstreamURL'..."
-    git remote add upstream $upstreamURL || return 1
+   # if forked repo is on github try to get the upstream URL via github API
+   local githubRepo="${currBranch_remoteURL#*github.com/}"
+   githubRepo="${githubRepo%.git}"
+   if [[ ! $currBranch_remoteURL == *github.com/* ]] || ! upstreamURL="$(-github-upstream-url "${githubRepo}")"; then
+      echo "-git-sync-fork: No remote 'upstream' defined. You can add it using 'git remote add upstream [REMOTE_URL]'."
+      return 1
+   fi
+   echo "Adding remote 'upstream $upstreamURL'..."
+   git remote add upstream $upstreamURL || return 1
 fi
 
 local _upstream_branch=${_upstream_branch:-$currBranch}
@@ -710,14 +784,14 @@ git checkout $_branch || return 1
 
 echo "Incorporating updates from 'upstream/$_upstream_branch' into '$currBranch'..."
 if [[ $_merge ]]; then
-    git merge upstream/$_upstream_branch || return 1
+   git merge upstream/$_upstream_branch || return 1
 else
-    git rebase -p upstream/$_upstream_branch || return 1
+   git rebase -p upstream/$_upstream_branch || return 1
 fi
 
 if [[ $_push ]]; then
-    echo "Pushing updates to 'origin/$currBranch'..."
-    git push --follow-tags --force origin $currBranch
+   echo "Pushing updates to 'origin/$currBranch'..."
+   git push --follow-tags --force origin $currBranch
 fi
 ```
 
@@ -750,13 +824,13 @@ Options:
 *Implementation:*
 ```bash
 if [[ $_reset ]]; then
-    git reset --hard HEAD~${_NUM_COMMITS} && git clean -dfx || return 1
+   git reset --hard HEAD~${_NUM_COMMITS} && git clean -dfx || return 1
 else
-    git reset --soft HEAD~${_NUM_COMMITS} || return 1
+   git reset --soft HEAD~${_NUM_COMMITS} || return 1
 fi
 
 if [[ $_push ]]; then
-    git push --force
+   git push --force
 fi
 ```
 
@@ -791,7 +865,7 @@ Options:
 *Implementation:*
 ```bash
 if [[ ! ${_BRANCH:-} ]]; then
-    _BRANCH=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) || return 1
+   _BRANCH=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) || return 1
 fi
 
 git checkout $_MASTER &&
@@ -800,14 +874,14 @@ git checkout $_BRANCH || return 1
 
 echo "Incorporating updates from '$_MASTER' into '$_BRANCH'..."
 if [[ $_merge ]]; then
-    git merge $_MASTER || return 1
+   git merge $_MASTER || return 1
 else
-    git rebase -p $_MASTER || return 1
+   git rebase -p $_MASTER || return 1
 fi
 
 if [[ $_push ]]; then
-    echo "Pushing updates to 'origin/$_BRANCH'..."
-    git push --follow-tags --force origin $_BRANCH
+   echo "Pushing updates to 'origin/$_BRANCH'..."
+   git push --follow-tags --force origin $_BRANCH
 fi
 ```
 
@@ -860,6 +934,7 @@ Options:
 *Implementation:*
 ```bash
 -git-branch-name --selftest && echo || return 1
+-git-change-contributor --selftest && echo || return 1
 -git-change-date --selftest && echo || return 1
 -git-cherry-pick --selftest && echo || return 1
 -git-cleanse --selftest && echo || return 1

@@ -143,6 +143,215 @@ function __complete-git-branch-name() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-branch-name -- ${BASH_FUNK_PREFIX:--}git-branch-name
 
+function -git-change-contributor() {
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
+
+   set +auHt
+   set -o pipefail
+
+   __impl$__fn "$@" && rc=0 || rc=$?
+
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo; echo "Usage: $__fn [OPTION]... OLD_USER_EMAIL NEW_USER_NAME NEW_USER_EMAIL"
+      echo; echo "Type '$__fn --help' for more details."
+   fi
+
+   eval $opts
+
+   return $rc
+  }
+function __impl-git-change-contributor() {
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _pull _push _author _committer _global _help _selftest _OLD_USER_EMAIL _NEW_USER_NAME _NEW_USER_EMAIL
+   [ -t 1 ] && __interactive=1 || true
+      for __arg in "$@"; do
+      case "$__arg" in
+         --) __noMoreFlags=1; __args+=("--") ;;
+         -|--*) __args+=("$__arg") ;;
+         -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+         *) __args+=("$__arg") ;;
+      esac
+   done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
+
+         --help)
+            echo "Usage: $__fn [OPTION]... OLD_USER_EMAIL NEW_USER_NAME NEW_USER_EMAIL"
+            echo
+            echo "Updates the author and/or committer name/e-mail of ALL matching commits."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mOLD_USER_EMAIL\033[22m (required)"
+            echo "      Old user e-mail."
+            echo -e "  \033[1mNEW_USER_NAME\033[22m (required)"
+            echo "      New user name to set."
+            echo -e "  \033[1mNEW_USER_EMAIL\033[22m (required)"
+            echo "      New user e-mail to set."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --author\033[22m "
+            echo "        Indicates to change the author date of the commit."
+            echo -e "\033[1m    --committer\033[22m "
+            echo "        Indicates to change the committer date of the commit."
+            echo -e "\033[1m    --global\033[22m "
+            echo "        Performs the change against all tags and branches."
+            echo -e "\033[1m    --pull\033[22m "
+            echo "        Execute 'git pull' before altering the commit(s)."
+            echo -e "\033[1m    --push\033[22m "
+            echo "        Execute 'git push --force' after altering the commit(s)."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m ${BASH_FUNK_PREFIX:--}git-change-contributor --author alice@example.com bob bob@example.com\033[22m"
+            echo
+            echo -e "$ \033[1m ${BASH_FUNK_PREFIX:--}git-change-contributor --author --comitter alice@example.com bob bob@example.com\033[22m"
+            echo
+            echo
+            return 0
+           ;;
+
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
+
+         --pull)
+            _pull=1
+         ;;
+
+         --push)
+            _push=1
+         ;;
+
+         --author)
+            _author=1
+         ;;
+
+         --committer)
+            _committer=1
+         ;;
+
+         --global)
+            _global=1
+         ;;
+
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
+
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
+
+   for __param in "${__params[@]}"; do
+      if [[ ! $_OLD_USER_EMAIL ]]; then
+         _OLD_USER_EMAIL=$__param
+         continue
+      fi
+      if [[ ! $_NEW_USER_NAME ]]; then
+         _NEW_USER_NAME=$__param
+         continue
+      fi
+      if [[ ! $_NEW_USER_EMAIL ]]; then
+         _NEW_USER_EMAIL=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
+
+   if [[ $_OLD_USER_EMAIL ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter OLD_USER_EMAIL must be specified."; return 64
+   fi
+   if [[ $_NEW_USER_NAME ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter NEW_USER_NAME must be specified."; return 64
+   fi
+   if [[ $_NEW_USER_EMAIL ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter NEW_USER_EMAIL must be specified."; return 64
+   fi
+
+   ######### git-change-contributor ######### START
+
+if [[ $_pull ]]; then
+   git pull || return 1
+fi
+
+if [[ ! $_author && ! $_comitter ]]; then
+   echo "$__fn: Error: The --author and/or --committer flag need to be specified."
+   return 1
+fi
+
+local filter="
+   if [ $_committer ] && [ \"\$GIT_COMMITTER_EMAIL\" = '$_OLD_USER_EMAIL' ]; then
+      export GIT_COMMITTER_NAME='$_NEW_USER_NAME'
+      export GIT_COMMITTER_EMAIL='$_NEW_USER_EMAIL'
+   fi
+   if [ $_author ] && [ \"\$GIT_AUTHOR_EMAIL\" = '$_OLD_USER_EMAIL' ]; then
+      export GIT_AUTHOR_NAME='$_NEW_USER_NAME'
+      export GIT_AUTHOR_EMAIL='$_NEW_USER_EMAIL'
+   fi
+"
+
+if [[ $_global ]]; then
+   git filter-branch --force --env-filter "$filter" --tag-name-filter cat -- --branches --tags
+else
+   git filter-branch --force --env-filter "$filter"
+fi
+if [[ $_push ]]; then
+   git push
+fi
+
+   ######### git-change-contributor ######### END
+}
+function __complete-git-change-contributor() {
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --pull --push --author --committer --global --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}git-change-contributor -- ${BASH_FUNK_PREFIX:--}git-change-contributor
+
 function -git-change-date() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
@@ -214,9 +423,9 @@ function __impl-git-change-date() {
             echo "        Terminates the option list."
             echo
             echo "Examples:"
-            echo -e "$ \033[1m -git-change-date --author fe65a726b8f07cbcedc1d4b76fbdbf53678a31cf $(date --date '27 days ago')\033[22m"
+            echo -e "$ \033[1m ${BASH_FUNK_PREFIX:--}git-change-date --author fe65a726b8f07cbcedc1d4b76fbdbf53678a31cf \"\$(date --date '27 days ago')\"\033[22m"
             echo
-            echo -e "$ \033[1m -git-change-date --author --comitter $(git log --format='%H' -n 1) $(date --date '15 hours ago')\033[22m"
+            echo -e "$ \033[1m ${BASH_FUNK_PREFIX:--}git-change-date --author --comitter $(git log --format='%H' -n 1) \"\$(date --date '15 hours ago')\"\033[22m"
             echo
             echo
             return 0
@@ -293,27 +502,27 @@ function __impl-git-change-date() {
    ######### git-change-date ######### START
 
 if [[ $_pull ]]; then
-    git pull || return 1
+   git pull || return 1
 fi
 
 if [[ ! $_author && ! $_comitter ]]; then
-  echo "$__fn: Error: The --author and/or --committer flag need to be specified."
-  return 1
+   echo "$__fn: Error: The --author and/or --committer flag need to be specified."
+   return 1
 fi
 
-git filter-branch -f --env-filter '
-  if [ $GIT_COMMIT = $_COMMIT_HASH ]; then
-    if [ $_author ]; then
-      export GIT_AUTHOR_DATE=$=$_NEW_DATE
-    fi
-    if [ $_committer ]; then
-      export GIT_COMMITTER_DATE=$_NEW_DATE
-    fi
-  fi
-'
+git filter-branch --force --env-filter "
+   if [ \$GIT_COMMIT = $_COMMIT_HASH ]; then
+      if [ $_author ]; then
+         export GIT_AUTHOR_DATE='$_NEW_DATE'
+      fi
+      if [ $_committer ]; then
+         export GIT_COMMITTER_DATE='$_NEW_DATE'
+      fi
+   fi
+"
 
 if [[ $_push ]]; then
-    git push
+   git push
 fi
 
    ######### git-change-date ######### END
@@ -462,17 +671,17 @@ function __impl-git-cherry-pick() {
    ######### git-cherry-pick ######### START
 
 if [[ $_pull ]]; then
-    git pull || return 1
+   git pull || return 1
 fi
 
 if [[ $_pr ]]; then
-    git fetch origin pull/${_pr}/head:pr-${_pr} || return 1
+   git fetch origin pull/${_pr}/head:pr-${_pr} || return 1
 fi
 
 git cherry-pick ${_COMMIT_HASHES[@]} || return 1
 
 if [[ $_push ]]; then
-    git push
+   git push
 fi
 
    ######### git-cherry-pick ######### END
@@ -596,18 +805,18 @@ function __impl-git-cleanse() {
    ######### git-cleanse ######### START
 
 if [[ ! $_yes ]]; then
-    read -p "Are you sure you want to erase all uncommitted changes? (y) " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        echo "$__fn: Aborting on user request."
-        return 0
-    fi
+   read -p "Are you sure you want to erase all uncommitted changes? (y) " -n 1 -r
+   echo
+   if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+      echo "$__fn: Aborting on user request."
+      return 0
+   fi
 fi
 
 git reset --hard HEAD && git clean -dfx || return 1
 
 if [[ $_pull ]]; then
-    git pull
+   git pull
 fi
 
    ######### git-cleanse ######### END
@@ -870,8 +1079,8 @@ function __impl-git-create-empty-branch() {
    ######### git-create-empty-branch ######### START
 
 if git rev-parse --verify ${_BRANCH_NAME} &>/dev/null; then
-    echo "$__fn: Error: A branch named [${_BRANCH_NAME}] already exists."
-    return 1
+   echo "$__fn: Error: A branch named [${_BRANCH_NAME}] already exists."
+   return 1
 fi
 
 git checkout --orphan ${_BRANCH_NAME} &&
@@ -880,7 +1089,7 @@ git rm -rf . &&
 git commit -am "Created empty branch." --allow-empty || return 1
 
 if [[ $_push ]]; then
-    git push --set-upstream origin ${_BRANCH_NAME}
+   git push --set-upstream origin ${_BRANCH_NAME}
 fi
 
    ######### git-create-empty-branch ######### END
@@ -1137,10 +1346,10 @@ function __impl-git-delete-local-branch() {
    ######### git-delete-local-branch ######### START
 
 if [[ $_force ]]; then
-    git branch --delete --force $_BRANCH_NAME
+   git branch --delete --force $_BRANCH_NAME
 else
-    git branch --delete $_BRANCH_NAME
-fi
+   git branch --delete $_BRANCH_NAME
+ fi
 
    ######### git-delete-local-branch ######### END
 }
@@ -1398,7 +1607,7 @@ function __impl-git-fetch-pr() {
 git fetch origin pull/${_PR_NUMBER}/head:pr-${_PR_NUMBER} || return 1
 
 if [[ $_checkout ]]; then
-    git checkout pr-${_PR_NUMBER}
+   git checkout pr-${_PR_NUMBER}
 fi
 
    ######### git-fetch-pr ######### END
@@ -2053,7 +2262,7 @@ function __impl-git-squash() {
    ######### git-squash ######### START
 
 if [[ $_pull ]]; then
-    git pull || return 1
+   git pull || return 1
 fi
 
 if [[ $_message ]]; then
@@ -2067,7 +2276,7 @@ git reset --soft HEAD~${_NUM_COMMITS} &&
 git commit --allow-empty-message -m "${commitMsg}" || return 1
 
 if [[ $_push ]]; then
-    git push --force
+   git push --force
 fi
 
    ######### git-squash ######### END
@@ -2206,45 +2415,45 @@ function __impl-git-switch-remote-protocol() {
 local url remote
 
 for remote in "${_REMOTE_NAME[@]}"; do
-    if url=$(git remote get-url $_REMOTE_NAME); then
-        case "$_PROTOCOL" in
-            ssh)
-                case "$url" in
-                    https://*)
-                        echo "Switching protocol of remote [$remote] to SSH..."
-                        git remote set-url origin "git@${url#https://*}" &&
-                        git remote -v | grep "^$remote"
-                      ;;
-                    git@*)
-                        echo "Remote [$remote] already uses SSH: $url"
-                      ;;
-                    *)
-                        echo "$__fn: URL [$url] for remote [$remote] starts with unknown protocol."
-                        return 1
-                      ;;
-                esac
-              ;;
+   if url=$(git remote get-url $_REMOTE_NAME); then
+      case "$_PROTOCOL" in
+         ssh)
+            case "$url" in
+               https://*)
+                  echo "Switching protocol of remote [$remote] to SSH..."
+                  git remote set-url origin "git@${url#https://*}" &&
+                  git remote -v | grep "^$remote"
+                 ;;
+               git@*)
+                  echo "Remote [$remote] already uses SSH: $url"
+                 ;;
+               *)
+                  echo "$__fn: URL [$url] for remote [$remote] starts with unknown protocol."
+                  return 1
+                 ;;
+            esac
+           ;;
 
-            https)
-                case "$url" in
-                    https://*)
-                        echo "Remote [$remote] already uses HTTPS: $url"
-                      ;;
-                    git@*)
-                        echo "Switching protocol of remote [$remote] to HTTPS..."
-                        git remote set-url origin "https://${url#git@*}" &&
-                        git remote -v | grep "^$remote"
-                      ;;
-                    *)
-                        echo "$__fn: URL [$url] for remote [$remote] starts with unknown protocol."
-                        return 1
-                      ;;
-                esac
-              ;;
-        esac
-    else
-        return 1
-    fi
+         https)
+            case "$url" in
+               https://*)
+                  echo "Remote [$remote] already uses HTTPS: $url"
+                 ;;
+               git@*)
+                  echo "Switching protocol of remote [$remote] to HTTPS..."
+                  git remote set-url origin "https://${url#git@*}" &&
+                  git remote -v | grep "^$remote"
+                 ;;
+               *)
+                  echo "$__fn: URL [$url] for remote [$remote] starts with unknown protocol."
+                  return 1
+                 ;;
+            esac
+           ;;
+      esac
+   else
+      return 1
+   fi
 done
 
    ######### git-switch-remote-protocol ######### END
@@ -2400,9 +2609,9 @@ local currBranch currBranch_remote currBranch_remoteURL upstreamURL
 
 # e.g. 'master'
 if [[ ${_branch:-} ]]; then
-    currBranch=$_branch
+   currBranch=$_branch
 else
-    currBranch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) || return 1
+   currBranch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) || return 1
 fi
 
 # e.g. 'origin'
@@ -2411,15 +2620,15 @@ currBranch_remoteURL=$(git config --get remote.$currBranch_remote.url) || return
 
 upstreamURL=$(git remote get-url "upstream" 2>/dev/null) || true
 if [[ ! $upstreamURL ]]; then
-    # if forked repo is on github try to get the upstream URL via github API
-    local githubRepo="${currBranch_remoteURL#*github.com/}"
-    githubRepo="${githubRepo%.git}"
-    if [[ ! $currBranch_remoteURL == *github.com/* ]] || ! upstreamURL="$(${BASH_FUNK_PREFIX:--}github-upstream-url "${githubRepo}")"; then
-        echo "$__fn: No remote 'upstream' defined. You can add it using 'git remote add upstream [REMOTE_URL]'."
-        return 1
-    fi
-    echo "Adding remote 'upstream $upstreamURL'..."
-    git remote add upstream $upstreamURL || return 1
+   # if forked repo is on github try to get the upstream URL via github API
+   local githubRepo="${currBranch_remoteURL#*github.com/}"
+   githubRepo="${githubRepo%.git}"
+   if [[ ! $currBranch_remoteURL == *github.com/* ]] || ! upstreamURL="$(${BASH_FUNK_PREFIX:--}github-upstream-url "${githubRepo}")"; then
+      echo "$__fn: No remote 'upstream' defined. You can add it using 'git remote add upstream [REMOTE_URL]'."
+      return 1
+   fi
+   echo "Adding remote 'upstream $upstreamURL'..."
+   git remote add upstream $upstreamURL || return 1
 fi
 
 local _upstream_branch=${_upstream_branch:-$currBranch}
@@ -2430,14 +2639,14 @@ git checkout $_branch || return 1
 
 echo "Incorporating updates from 'upstream/$_upstream_branch' into '$currBranch'..."
 if [[ $_merge ]]; then
-    git merge upstream/$_upstream_branch || return 1
+   git merge upstream/$_upstream_branch || return 1
 else
-    git rebase -p upstream/$_upstream_branch || return 1
+   git rebase -p upstream/$_upstream_branch || return 1
 fi
 
 if [[ $_push ]]; then
-    echo "Pushing updates to 'origin/$currBranch'..."
-    git push --follow-tags --force origin $currBranch
+   echo "Pushing updates to 'origin/$currBranch'..."
+   git push --follow-tags --force origin $currBranch
 fi
 
    ######### git-sync-fork ######### END
@@ -2576,13 +2785,13 @@ function __impl-git-undo() {
    ######### git-undo ######### START
 
 if [[ $_reset ]]; then
-    git reset --hard HEAD~${_NUM_COMMITS} && git clean -dfx || return 1
+   git reset --hard HEAD~${_NUM_COMMITS} && git clean -dfx || return 1
 else
-    git reset --soft HEAD~${_NUM_COMMITS} || return 1
+   git reset --soft HEAD~${_NUM_COMMITS} || return 1
 fi
 
 if [[ $_push ]]; then
-    git push --force
+   git push --force
 fi
 
    ######### git-undo ######### END
@@ -2726,7 +2935,7 @@ function __impl-git-update-branch() {
    ######### git-update-branch ######### START
 
 if [[ ! ${_BRANCH:-} ]]; then
-    _BRANCH=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) || return 1
+   _BRANCH=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) || return 1
 fi
 
 git checkout $_MASTER &&
@@ -2735,14 +2944,14 @@ git checkout $_BRANCH || return 1
 
 echo "Incorporating updates from '$_MASTER' into '$_BRANCH'..."
 if [[ $_merge ]]; then
-    git merge $_MASTER || return 1
+   git merge $_MASTER || return 1
 else
-    git rebase -p $_MASTER || return 1
+   git rebase -p $_MASTER || return 1
 fi
 
 if [[ $_push ]]; then
-    echo "Pushing updates to 'origin/$_BRANCH'..."
-    git push --follow-tags --force origin $_BRANCH
+   echo "Pushing updates to 'origin/$_BRANCH'..."
+   git push --follow-tags --force origin $_BRANCH
 fi
 
    ######### git-update-branch ######### END
@@ -2979,6 +3188,7 @@ function __impl-test-git() {
    ######### test-git ######### START
 
 ${BASH_FUNK_PREFIX:--}git-branch-name --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}git-change-contributor --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-change-date --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-cherry-pick --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-cleanse --selftest && echo || return 1
@@ -3016,6 +3226,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-git -- ${BASH_FUNK_PREFIX:--}te
 
 function -help-git() {
    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-branch-name [PATH]\033[0m  -  Prints the name of the currently checked out git branch."
+   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-change-contributor OLD_USER_EMAIL NEW_USER_NAME NEW_USER_EMAIL\033[0m  -  Updates the author and/or committer name/e-mail of ALL matching commits."
    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-change-date COMMIT_HASH NEW_DATE\033[0m  -  Changes the author and/or committer date of the given commit."
    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-cherry-pick COMMIT_HASHES1 [COMMIT_HASHES]...\033[0m  -  Cherry picks a commit into the currently checked out branch."
    echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-cleanse\033[0m  -  Reverts any uncomitted changes in the local working tree including untracked files."
@@ -3038,7 +3249,7 @@ function -help-git() {
    echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-git\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 
 }
-__BASH_FUNK_FUNCS+=( git-branch-name git-change-date git-cherry-pick git-cleanse git-clone-shallow git-create-empty-branch git-delete-branch git-delete-local-branch git-delete-remote-branch git-fetch-pr git-log git-ls-conflicts git-ls-modified git-reset-file git-squash git-switch-remote-protocol git-sync-fork git-undo git-update-branch github-upstream-url test-git )
+__BASH_FUNK_FUNCS+=( git-branch-name git-change-contributor git-change-date git-cherry-pick git-cleanse git-clone-shallow git-create-empty-branch git-delete-branch git-delete-local-branch git-delete-remote-branch git-fetch-pr git-log git-ls-conflicts git-ls-modified git-reset-file git-squash git-switch-remote-protocol git-sync-fork git-undo git-update-branch github-upstream-url test-git )
 
 alias -- ${BASH_FUNK_PREFIX:--}git-ls-branches="git branch -a"
 alias -- ${BASH_FUNK_PREFIX:--}git-ls-remotes="git remote -v"
