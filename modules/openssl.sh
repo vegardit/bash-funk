@@ -41,7 +41,7 @@ function -gen-x509cert() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-gen-x509cert() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _CAkey _CAcert _keysize _validity _subject _aliases _dh1024 _force _help _selftest _FQ_DNS_NAME
    [ -t 1 ] && __interactive=1 || true
@@ -235,8 +235,7 @@ function __impl-gen-x509cert() {
       echo "$__fn: Error: Parameter FQ_DNS_NAME must be specified."; return 64
    fi
 
-   ######### gen-x509cert ######### START
-
+####### gen-x509cert ####### START
 if [[ ! ${_force:-} ]]; then
     if [[ -e "${_FQ_DNS_NAME}.key" ]]; then
         echo "${_FQ_DNS_NAME}.key already exists. Use option --force to overwrite."
@@ -307,8 +306,7 @@ if [[ ${_dh1024:-} ]]; then
     # will degrade website rating to B on https://www.ssllabs.com/ssltest/
     openssl dhparam 1024 >> "${_FQ_DNS_NAME}.crt"
 fi
-
-   ######### gen-x509cert ######### END
+####### gen-x509cert ####### END
 }
 function __complete-gen-x509cert() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -345,7 +343,7 @@ function -gen-x509rootca() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-gen-x509rootca() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _validity _keysize _subject _force _help _selftest _COMMON_NAME
    [ -t 1 ] && __interactive=1 || true
@@ -479,8 +477,7 @@ function __impl-gen-x509rootca() {
       echo "$__fn: Error: Parameter COMMON_NAME must be specified."; return 64
    fi
 
-   ######### gen-x509rootca ######### START
-
+####### gen-x509rootca ####### START
 if [[ ! ${_force:-} ]]; then
     if [[ -e "${_COMMON_NAME}.key" ]]; then
         echo "${_COMMON_NAME}.key already exists. Use option --force to overwrite."
@@ -500,8 +497,7 @@ echo " -> file [${_COMMON_NAME}.key] created."
 echo "Generating certificate with subject [$_subject]..."
 openssl req -x509 -new -key "${_COMMON_NAME}.key" -days ${_validity:-3650} -out "${_COMMON_NAME}.crt" -subj "${_subject}" || return 1
 echo " -> file [${_COMMON_NAME}.crt] created."
-
-   ######### gen-x509rootca ######### END
+####### gen-x509rootca ####### END
 }
 function __complete-gen-x509rootca() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -538,7 +534,7 @@ function -test-openssl() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-openssl() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -606,12 +602,10 @@ function __impl-test-openssl() {
       return 64
    done
 
-   ######### test-openssl ######### START
-
+####### test-openssl ####### START
 ${BASH_FUNK_PREFIX:--}gen-x509cert --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}gen-x509rootca --selftest && echo || return 1
-
-   ######### test-openssl ######### END
+####### test-openssl ####### END
 }
 function __complete-test-openssl() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -627,14 +621,14 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-openssl -- ${BASH_FUNK_PREFIX:-
 
 
 function -help-openssl() {
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}gen-x509cert FQ_DNS_NAME\033[0m  -  Generates a (self-signed) X509 server certificate."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}gen-x509rootca COMMON_NAME\033[0m  -  Generates a self-signed X509 root CA certificate."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-openssl\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-
+   local p="\033[1m${BASH_FUNK_PREFIX:--}"
+   echo -e "${p}gen-x509cert FQ_DNS_NAME\033[0m  -  Generates a (self-signed) X509 server certificate."
+   echo -e "${p}gen-x509rootca COMMON_NAME\033[0m  -  Generates a self-signed X509 root CA certificate."
+   echo -e "${p}test-openssl\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
 __BASH_FUNK_FUNCS+=( gen-x509cert gen-x509rootca test-openssl )
 
 else
-    echo "SKIPPED"
+   echo "SKIPPED"
 fi
 unset -f -- ${BASH_FUNK_PREFIX:--}is-loadable

@@ -35,7 +35,7 @@ function -ansi-alternate() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-ansi-alternate() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _color _skip _help _selftest _ANSI_SEQUENCE=()
    [ -t 1 ] && __interactive=1 || true
@@ -154,8 +154,7 @@ function __impl-ansi-alternate() {
       if [[ $_skip -lt 0 ]]; then echo "$__fn: Error: Value '$_skip' for option --skip is too low. Must be >= 0."; return 64; fi
    fi
 
-   ######### ansi-alternate ######### START
-
+####### ansi-alternate ####### START
 # check if stdin is opend on terminal (and thus not on a pipe)
 if [[ -t 0 ]]; then
    return 0
@@ -200,8 +199,7 @@ else
       echo "$line"
    done
 fi
-
-   ######### ansi-alternate ######### END
+####### ansi-alternate ####### END
 }
 function __complete-ansi-alternate() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -248,7 +246,7 @@ function -ansi-bold() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-ansi-bold() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _on _off _help _selftest _TEXT
    [ -t 1 ] && __interactive=1 || true
@@ -337,8 +335,7 @@ function __impl-ansi-bold() {
       return 64
    done
 
-   ######### ansi-bold ######### START
-
+####### ansi-bold ####### START
 if [[ $_TEXT ]]; then
    echo -ne "\033[1m$_TEXT\033[22m"
 fi
@@ -348,8 +345,7 @@ if [[ $_on ]]; then
 elif [[ $_off ]]; then
    echo -ne "\033[22m"
 fi
-
-   ######### ansi-bold ######### END
+####### ansi-bold ####### END
 }
 function __complete-ansi-bold() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -386,7 +382,7 @@ function -ansi-codes() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-ansi-codes() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _escape _help _selftest _PREFIX
    [ -t 1 ] && __interactive=1 || true
@@ -471,8 +467,7 @@ function __impl-ansi-codes() {
 
    if [[ ! $_PREFIX ]]; then _PREFIX="ANSI_"; fi
 
-   ######### ansi-codes ######### START
-
+####### ansi-codes ####### START
 if [[ $_escape ]]; then
    local ESC="\033";
 else
@@ -528,8 +523,7 @@ ${_PREFIX}BG_LIGHT_MAGENTA=\"$ESC[105m\"
 ${_PREFIX}BG_LIGHT_CYAN=\"$ESC[106m\"
 ${_PREFIX}BG_WHITE=\"$ESC[107m\"
 "
-
-   ######### ansi-codes ######### END
+####### ansi-codes ####### END
 }
 function __complete-ansi-codes() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -566,7 +560,7 @@ function -ansi-colors-supported() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-ansi-colors-supported() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _NUM_COLORS
    [ -t 1 ] && __interactive=1 || true
@@ -669,8 +663,7 @@ function __impl-ansi-colors-supported() {
       return 64
    done
 
-   ######### ansi-colors-supported ######### START
-
+####### ansi-colors-supported ####### START
 local numColors
 if hash tput &>/dev/null; then
    numColors=$(tput colors)
@@ -699,8 +692,7 @@ else
    echo $numColors
    return 0
 fi
-
-   ######### ansi-colors-supported ######### END
+####### ansi-colors-supported ####### END
 }
 function __complete-ansi-colors-supported() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -737,7 +729,7 @@ function -ansi-colors16() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-ansi-colors16() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -805,8 +797,7 @@ function __impl-ansi-colors16() {
       return 64
    done
 
-   ######### ansi-colors16 ######### START
-
+####### ansi-colors16 ####### START
 if ! ${BASH_FUNK_PREFIX:--}ansi-colors-supported 8; then
    echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 8 colors."
    echo
@@ -829,8 +820,7 @@ for bg in {40..47} 49 {100..107}; do
    done
    echo
 done
-
-   ######### ansi-colors16 ######### END
+####### ansi-colors16 ####### END
 }
 function __complete-ansi-colors16() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -867,7 +857,7 @@ function -ansi-colors256() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-ansi-colors256() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -935,8 +925,7 @@ function __impl-ansi-colors256() {
       return 64
    done
 
-   ######### ansi-colors256 ######### START
-
+####### ansi-colors256 ####### START
 if ! ${BASH_FUNK_PREFIX:--}ansi-colors-supported 256; then
    echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 256 colors."
    echo
@@ -1037,8 +1026,7 @@ for i in 16 {232..255} 231;do
    printf "\033[48;5;${i}m%3d \033[0m" "$i"
 done
 echo
-
-   ######### ansi-colors256 ######### END
+####### ansi-colors256 ####### END
 }
 function __complete-ansi-colors256() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1075,7 +1063,7 @@ function -ansi-reset() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-ansi-reset() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -1143,11 +1131,9 @@ function __impl-ansi-reset() {
       return 64
    done
 
-   ######### ansi-reset ######### START
-
+####### ansi-reset ####### START
 echo -ne "\033[0m"
-
-   ######### ansi-reset ######### END
+####### ansi-reset ####### END
 }
 function __complete-ansi-reset() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1184,7 +1170,7 @@ function -ansi-ul() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-ansi-ul() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _on _off _help _selftest _TEXT
    [ -t 1 ] && __interactive=1 || true
@@ -1273,8 +1259,7 @@ function __impl-ansi-ul() {
       return 64
    done
 
-   ######### ansi-ul ######### START
-
+####### ansi-ul ####### START
 if [[ $_TEXT ]]; then
    echo -ne "\033[4m$_TEXT\033[24m"
 fi
@@ -1284,8 +1269,7 @@ if [[ $_on ]]; then
 elif [[ $_off ]]; then
    echo -ne "\033[24m"
 fi
-
-   ######### ansi-ul ######### END
+####### ansi-ul ####### END
 }
 function __complete-ansi-ul() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1322,7 +1306,7 @@ function -cursor-pos() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-cursor-pos() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _save _restore _up _down _left _right _assign _set _print _fd _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -1513,8 +1497,7 @@ function __impl-cursor-pos() {
       if [[ ! "$_fd" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_fd' for option --fd is not a numeric value."; return 64; fi
    fi
 
-   ######### cursor-pos ######### START
-
+####### cursor-pos ####### START
 if [[ $_save ]]; then
    >&$_fd echo -en "\033[s"
 fi
@@ -1555,8 +1538,7 @@ if [[ $_print || $_assign ]]; then
       eval "$_assign=\"$pos\""
     fi
 fi
-
-   ######### cursor-pos ######### END
+####### cursor-pos ####### END
 }
 function __complete-cursor-pos() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1593,7 +1575,7 @@ function -test-ansi() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-ansi() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -1661,8 +1643,7 @@ function __impl-test-ansi() {
       return 64
    done
 
-   ######### test-ansi ######### START
-
+####### test-ansi ####### START
 ${BASH_FUNK_PREFIX:--}ansi-alternate --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-bold --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-codes --selftest && echo || return 1
@@ -1672,8 +1653,7 @@ ${BASH_FUNK_PREFIX:--}ansi-colors256 --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-reset --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-ul --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}cursor-pos --selftest && echo || return 1
-
-   ######### test-ansi ######### END
+####### test-ansi ####### END
 }
 function __complete-test-ansi() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1689,16 +1669,16 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-ansi -- ${BASH_FUNK_PREFIX:--}t
 
 
 function -help-ansi() {
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-alternate [ANSI_SEQUENCE]...\033[0m  -  Alternately colorizes the line read from stdin. If stdout is no terminal highlighting is disabled automatically."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-bold [TEXT]\033[0m  -  Sets bold mode or prints the given text in bold."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-codes [PREFIX]\033[0m  -  Prints commands to set variables with common ANSI codes. When used with the 'echo' command, the -e option is not required."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-colors-supported [NUM_COLORS]\033[0m  -  Determines if the given number of ANSI colors is supported by the current terminal. If NUM_COLORS is specified, the exit value indicates if the color range is supported. If NUM_COLORS is not specified, the number of supported colors is printed with exit code 0."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-colors16\033[0m  -  Prints a table with 8/16 ANSI colors."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-colors256\033[0m  -  Prints a table with 256 ANSI colors."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-reset\033[0m  -  Prints an ANSI escape sequence that reset all ANSI attributes."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ansi-ul [TEXT]\033[0m  -  Sets underlined mode or prints the given text underlined."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}cursor-pos\033[0m  -  Performs ANSI cursor operations."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-ansi\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-
+   local p="\033[1m${BASH_FUNK_PREFIX:--}"
+   echo -e "${p}ansi-alternate [ANSI_SEQUENCE]...\033[0m  -  Alternately colorizes the line read from stdin. If stdout is no terminal highlighting is disabled automatically."
+   echo -e "${p}ansi-bold [TEXT]\033[0m  -  Sets bold mode or prints the given text in bold."
+   echo -e "${p}ansi-codes [PREFIX]\033[0m  -  Prints commands to set variables with common ANSI codes. When used with the 'echo' command, the -e option is not required."
+   echo -e "${p}ansi-colors-supported [NUM_COLORS]\033[0m  -  Determines if the given number of ANSI colors is supported by the current terminal. If NUM_COLORS is specified, the exit value indicates if the color range is supported. If NUM_COLORS is not specified, the number of supported colors is printed with exit code 0."
+   echo -e "${p}ansi-colors16\033[0m  -  Prints a table with 8/16 ANSI colors."
+   echo -e "${p}ansi-colors256\033[0m  -  Prints a table with 256 ANSI colors."
+   echo -e "${p}ansi-reset\033[0m  -  Prints an ANSI escape sequence that reset all ANSI attributes."
+   echo -e "${p}ansi-ul [TEXT]\033[0m  -  Sets underlined mode or prints the given text underlined."
+   echo -e "${p}cursor-pos\033[0m  -  Performs ANSI cursor operations."
+   echo -e "${p}test-ansi\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
 __BASH_FUNK_FUNCS+=( ansi-alternate ansi-bold ansi-codes ansi-colors-supported ansi-colors16 ansi-colors256 ansi-reset ansi-ul cursor-pos test-ansi )

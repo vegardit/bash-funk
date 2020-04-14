@@ -35,7 +35,7 @@ function -block-port() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-block-port() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _duration _help _selftest _BIND_ADDRESS _PORT
    [ -t 1 ] && __interactive=1 || true
@@ -176,8 +176,7 @@ Press \[CTRL\]\+\[C\] to abort\.]."; return 64; fi
       echo "$__fn: Error: Parameter PORT must be specified."; return 64
    fi
 
-   ######### block-port ######### START
-
+####### block-port ####### START
 echo "Binding to $_BIND_ADDRESS:$_PORT..."
 
 [[ $_duration ]] && local timeout="Timeout => $_duration," || local timeout="";
@@ -196,8 +195,7 @@ perl << EOF
     while (\$client = \$server->accept()) { }
     close(\$server);
 EOF
-
-   ######### block-port ######### END
+####### block-port ####### END
 }
 function __complete-block-port() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -234,7 +232,7 @@ function -is-port-open() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-is-port-open() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _HOSTNAME _PORT _CONNECT_TIMEOUT_IN_SECONDS
    [ -t 1 ] && __interactive=1 || true
@@ -374,8 +372,7 @@ function __impl-is-port-open() {
       if [[ ! "$_CONNECT_TIMEOUT_IN_SECONDS" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_CONNECT_TIMEOUT_IN_SECONDS' for parameter CONNECT_TIMEOUT_IN_SECONDS is not a numeric value."; return 64; fi
    fi
 
-   ######### is-port-open ######### START
-
+####### is-port-open ####### START
 if hash nc &>/dev/null; then
     if nc -vz -w $_CONNECT_TIMEOUT_IN_SECONDS $_HOSTNAME $_PORT; then
         portStatus=open
@@ -406,8 +403,7 @@ else
     [[ $_verbose ]] && echo "$_HOSTNAME:$_PORT is not reachable." || true
     return 1
 fi
-
-   ######### is-port-open ######### END
+####### is-port-open ####### END
 }
 function __complete-is-port-open() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -444,7 +440,7 @@ function -my-ips() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-my-ips() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -512,15 +508,13 @@ function __impl-my-ips() {
       return 64
    done
 
-   ######### my-ips ######### START
-
+####### my-ips ####### START
 if [[ $OSTYPE == cygwin || $OSTYPE == msys ]]; then
     ipconfig /all | grep "IPv4 Address" | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
 else
     ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
 fi
-
-   ######### my-ips ######### END
+####### my-ips ####### END
 }
 function __complete-my-ips() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -557,7 +551,7 @@ function -my-public-hostname() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-my-public-hostname() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _method _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -642,8 +636,7 @@ function __impl-my-public-hostname() {
       if [[ $_method != 'finger' && $_method != 'ftp' && $_method != 'https' && $_method != 'nslookup' && $_method != 'telnet' ]]; then echo "$__fn: Error: Value '$_method' for option --method is not one of the allowed values [finger,ftp,https,nslookup,telnet]."; return 64; fi
    fi
 
-   ######### my-public-hostname ######### START
-
+####### my-public-hostname ####### START
 case ${_method:-https} in
     finger)
         if ! hash finger &>/dev/null; then
@@ -682,8 +675,7 @@ case ${_method:-https} in
         return ${PIPESTATUS[0]}
       ;;
 esac
-
-   ######### my-public-hostname ######### END
+####### my-public-hostname ####### END
 }
 function __complete-my-public-hostname() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -732,7 +724,7 @@ function -my-public-ip() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-my-public-ip() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _method _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -817,8 +809,7 @@ function __impl-my-public-ip() {
       if [[ $_method != 'dns' && $_method != 'http' && $_method != 'https' && $_method != 'nslookup' && $_method != 'telnet' ]]; then echo "$__fn: Error: Value '$_method' for option --method is not one of the allowed values [dns,http,https,nslookup,telnet]."; return 64; fi
    fi
 
-   ######### my-public-ip ######### START
-
+####### my-public-ip ####### START
 case ${_method:-http} in
     dns)
         if hash dig &>/dev/null; then
@@ -857,8 +848,7 @@ case ${_method:-http} in
         return ${PIPESTATUS[0]}
       ;;
 esac
-
-   ######### my-public-ip ######### END
+####### my-public-ip ####### END
 }
 function __complete-my-public-ip() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -907,7 +897,7 @@ function -run-echo-server() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-run-echo-server() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _stop_when _disconnect_when _help _selftest _BIND_ADDRESS _PORT
    [ -t 1 ] && __interactive=1 || true
@@ -1033,8 +1023,7 @@ function __impl-run-echo-server() {
 
    if ! hash "python" &>/dev/null; then echo "$__fn: Error: Required command 'python' not found on this system."; return 64; fi
 
-   ######### run-echo-server ######### START
-
+####### run-echo-server ####### START
 
 if [[ ! $_stop_when ]]; then
     local _stop_when=stop
@@ -1084,8 +1073,7 @@ try:
 except KeyboardInterrupt:
     pass
 "
-
-   ######### run-echo-server ######### END
+####### run-echo-server ####### END
 }
 function __complete-run-echo-server() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1122,7 +1110,7 @@ function -set-proxy() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-set-proxy() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _PROXY_URL _NO_PROXY
    [ -t 1 ] && __interactive=1 || true
@@ -1217,8 +1205,7 @@ function __impl-set-proxy() {
       echo "$__fn: Error: Parameter PROXY_URL must be specified."; return 64
    fi
 
-   ######### set-proxy ######### START
-
+####### set-proxy ####### START
 for varname in all_proxy ALL_PROXY ftp_proxy FTP_PROXY http_proxy HTTP_PROXY https_proxy HTTPS_PROXY; do
     [[ $_verbose ]] && echo "Setting $varname=$_PROXY_URL"
     export $varname=$_PROXY_URL
@@ -1241,8 +1228,7 @@ export no_proxy="$no_proxy,$_NO_PROXY"
 [[ $_verbose ]] && echo "Setting no_proxy=$no_proxy"
 [[ $_verbose ]] && echo "Setting NO_PROXY="
 export NO_PROXY=$no_proxy
-
-   ######### set-proxy ######### END
+####### set-proxy ####### END
 }
 function __complete-set-proxy() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1279,7 +1265,7 @@ function -test-network() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-network() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -1347,8 +1333,7 @@ function __impl-test-network() {
       return 64
    done
 
-   ######### test-network ######### START
-
+####### test-network ####### START
 ${BASH_FUNK_PREFIX:--}block-port --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}is-port-open --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}my-ips --selftest && echo || return 1
@@ -1356,8 +1341,7 @@ ${BASH_FUNK_PREFIX:--}my-public-hostname --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}my-public-ip --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}run-echo-server --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}set-proxy --selftest && echo || return 1
-
-   ######### test-network ######### END
+####### test-network ####### END
 }
 function __complete-test-network() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1373,14 +1357,14 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-network -- ${BASH_FUNK_PREFIX:-
 
 
 function -help-network() {
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}block-port [BIND_ADDRESS] PORT\033[0m  -  Binds to the given port and thus block other programs from binding to it."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}is-port-open HOSTNAME PORT [CONNECT_TIMEOUT_IN_SECONDS]\033[0m  -  Checks if a TCP connection can be established to the given port."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}my-ips\033[0m  -  Prints the configured IP v4 addresses of this host excluding 127.0.0.1."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}my-public-hostname\033[0m  -  Prints the public hostname of this host."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}my-public-ip\033[0m  -  Prints the public IP v4 address of this host."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}run-echo-server [BIND_ADDRESS] PORT\033[0m  -  Runs a simple single-connection TCP echo server."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}set-proxy PROXY_URL [NO_PROXY]\033[0m  -  Sets the proxy environment variables."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-network\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-
+   local p="\033[1m${BASH_FUNK_PREFIX:--}"
+   echo -e "${p}block-port [BIND_ADDRESS] PORT\033[0m  -  Binds to the given port and thus block other programs from binding to it."
+   echo -e "${p}is-port-open HOSTNAME PORT [CONNECT_TIMEOUT_IN_SECONDS]\033[0m  -  Checks if a TCP connection can be established to the given port."
+   echo -e "${p}my-ips\033[0m  -  Prints the configured IP v4 addresses of this host excluding 127.0.0.1."
+   echo -e "${p}my-public-hostname\033[0m  -  Prints the public hostname of this host."
+   echo -e "${p}my-public-ip\033[0m  -  Prints the public IP v4 address of this host."
+   echo -e "${p}run-echo-server [BIND_ADDRESS] PORT\033[0m  -  Runs a simple single-connection TCP echo server."
+   echo -e "${p}set-proxy PROXY_URL [NO_PROXY]\033[0m  -  Sets the proxy environment variables."
+   echo -e "${p}test-network\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
 __BASH_FUNK_FUNCS+=( block-port is-port-open my-ips my-public-hostname my-public-ip run-echo-server set-proxy test-network )

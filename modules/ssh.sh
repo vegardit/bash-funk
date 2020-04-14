@@ -35,7 +35,7 @@ function -ssh-agent-add-key() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-ssh-agent-add-key() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _KEY_FILE _PASSWORD
    [ -t 1 ] && __interactive=1 || true
@@ -139,8 +139,7 @@ function __impl-ssh-agent-add-key() {
    if ! hash "ssh-agent" &>/dev/null; then echo "$__fn: Error: Required command 'ssh-agent' not found on this system."; return 64; fi
    if ! hash "expect" &>/dev/null; then echo "$__fn: Error: Required command 'expect' not found on this system."; return 64; fi
 
-   ######### ssh-agent-add-key ######### START
-
+####### ssh-agent-add-key ####### START
 eval $(ssh-agent)
 
 expect << EOF
@@ -149,8 +148,7 @@ expect << EOF
   send "$_PASSWORD\r"
   expect eof
 EOF
-
-   ######### ssh-agent-add-key ######### END
+####### ssh-agent-add-key ####### END
 }
 function __complete-ssh-agent-add-key() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -187,7 +185,7 @@ function -ssh-gen-keypair() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-ssh-gen-keypair() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _comment _password _keysize _help _selftest _FILENAME
    [ -t 1 ] && __interactive=1 || true
@@ -320,8 +318,7 @@ function __impl-ssh-gen-keypair() {
 
    if ! hash "ssh-keygen" &>/dev/null; then echo "$__fn: Error: Required command 'ssh-keygen' not found on this system."; return 64; fi
 
-   ######### ssh-gen-keypair ######### START
-
+####### ssh-gen-keypair ####### START
 local opts
 
 # if password is specified and new OpenSSH key format is supported by ssh-keygen, then enable it
@@ -330,8 +327,7 @@ if [[ ${_password:-} ]] && ssh-keygen --help 2>&1 | grep -q -- " -o "; then
 fi
 
 ssh-keygen -t rsa -f $_FILENAME -N "${_password:-}" -b ${_keysize:-4096} -C "${_comment:-}" $opts
-
-   ######### ssh-gen-keypair ######### END
+####### ssh-gen-keypair ####### END
 }
 function __complete-ssh-gen-keypair() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -368,7 +364,7 @@ function -ssh-pubkey() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-ssh-pubkey() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PRIVATE_KEY_FILE
    [ -t 1 ] && __interactive=1 || true
@@ -457,11 +453,9 @@ function __impl-ssh-pubkey() {
 
    if ! hash "ssh-keygen" &>/dev/null; then echo "$__fn: Error: Required command 'ssh-keygen' not found on this system."; return 64; fi
 
-   ######### ssh-pubkey ######### START
-
+####### ssh-pubkey ####### START
 ssh-keygen -y -f $_PRIVATE_KEY_FILE
-
-   ######### ssh-pubkey ######### END
+####### ssh-pubkey ####### END
 }
 function __complete-ssh-pubkey() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -498,7 +492,7 @@ function -ssh-reconnect() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-ssh-reconnect() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _GREP_PATTERN=()
    [ -t 1 ] && __interactive=1 || true
@@ -572,8 +566,7 @@ function __impl-ssh-reconnect() {
       return 64
    done
 
-   ######### ssh-reconnect ######### START
-
+####### ssh-reconnect ####### START
 local filter=
 if [[ ${_GREP_PATTERN:-} ]]; then
     local p
@@ -593,8 +586,7 @@ read -e -p "$ " -i "$ssh_cmd" ssh_cmd
 echo -e "Executing command [\033[35m$ssh_cmd\033[0m]..."
 history -s -- "$ssh_cmd"
 eval -- $ssh_cmd
-
-   ######### ssh-reconnect ######### END
+####### ssh-reconnect ####### END
 }
 function __complete-ssh-reconnect() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -631,7 +623,7 @@ function -ssh-trust-host() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-ssh-trust-host() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _HOSTNAME _PORT
    [ -t 1 ] && __interactive=1 || true
@@ -731,13 +723,11 @@ function __impl-ssh-trust-host() {
 
    if ! hash "ssh-keyscan" &>/dev/null; then echo "$__fn: Error: Required command 'ssh-keyscan' not found on this system."; return 64; fi
 
-   ######### ssh-trust-host ######### START
-
+####### ssh-trust-host ####### START
 touch ~/.ssh/known_hosts
 ssh-keyscan -t rsa,dsa -p $_PORT $_HOSTNAME 2>/dev/null | sort -u - ~/.ssh/known_hosts > ~/.ssh/known_hosts.tmp
 mv ~/.ssh/known_hosts.tmp ~/.ssh/known_hosts
-
-   ######### ssh-trust-host ######### END
+####### ssh-trust-host ####### END
 }
 function __complete-ssh-trust-host() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -774,7 +764,7 @@ function -ssh-with-pass() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-ssh-with-pass() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _password _help _selftest _SSH_OPTION=()
    [ -t 1 ] && __interactive=1 || true
@@ -879,8 +869,7 @@ function __impl-ssh-with-pass() {
 
    if ! hash "ssh" &>/dev/null; then echo "$__fn: Error: Required command 'ssh' not found on this system."; return 64; fi
 
-   ######### ssh-with-pass ######### START
-
+####### ssh-with-pass ####### START
 local askPassPW
 if [[ ${_password:-} ]]; then
     askPassPW=$_password
@@ -899,8 +888,7 @@ echo "#!/usr/bin/env bash
 chmod 770 $askPassFile
 
 SSH_ASKPASS=$askPassFile DISPLAY=${DISPLAY:-:0} setsid -w -- ssh ${_SSH_OPTION[@]} </dev/null
-
-   ######### ssh-with-pass ######### END
+####### ssh-with-pass ####### END
 }
 function __complete-ssh-with-pass() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -937,7 +925,7 @@ function -test-ssh() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-ssh() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -1005,16 +993,14 @@ function __impl-test-ssh() {
       return 64
    done
 
-   ######### test-ssh ######### START
-
+####### test-ssh ####### START
 ${BASH_FUNK_PREFIX:--}ssh-agent-add-key --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-gen-keypair --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-pubkey --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-reconnect --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-trust-host --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-with-pass --selftest && echo || return 1
-
-   ######### test-ssh ######### END
+####### test-ssh ####### END
 }
 function __complete-test-ssh() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1030,13 +1016,13 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-ssh -- ${BASH_FUNK_PREFIX:--}te
 
 
 function -help-ssh() {
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-agent-add-key KEY_FILE PASSWORD\033[0m  -  Adds the private key to the ssh-agent."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-gen-keypair FILENAME\033[0m  -  Creates an private/public SSH keypair."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-pubkey PRIVATE_KEY_FILE\033[0m  -  Prints the public key for the given private key."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-reconnect [GREP_PATTERN]...\033[0m  -  Dialog that displays the last 10 issued SSH commands to execute one of them."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-trust-host HOSTNAME [PORT]\033[0m  -  Adds the public key of the given host to the ~/.ssh/known_hosts file."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ssh-with-pass SSH_OPTION1 [SSH_OPTION]...\033[0m  -  Executes SSH with non-interactive password-based login. The password must either specified via --password <VALUE> or is read from stdin."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-ssh\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-
+   local p="\033[1m${BASH_FUNK_PREFIX:--}"
+   echo -e "${p}ssh-agent-add-key KEY_FILE PASSWORD\033[0m  -  Adds the private key to the ssh-agent."
+   echo -e "${p}ssh-gen-keypair FILENAME\033[0m  -  Creates an private/public SSH keypair."
+   echo -e "${p}ssh-pubkey PRIVATE_KEY_FILE\033[0m  -  Prints the public key for the given private key."
+   echo -e "${p}ssh-reconnect [GREP_PATTERN]...\033[0m  -  Dialog that displays the last 10 issued SSH commands to execute one of them."
+   echo -e "${p}ssh-trust-host HOSTNAME [PORT]\033[0m  -  Adds the public key of the given host to the ~/.ssh/known_hosts file."
+   echo -e "${p}ssh-with-pass SSH_OPTION1 [SSH_OPTION]...\033[0m  -  Executes SSH with non-interactive password-based login. The password must either specified via --password <VALUE> or is read from stdin."
+   echo -e "${p}test-ssh\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
 __BASH_FUNK_FUNCS+=( ssh-agent-add-key ssh-gen-keypair ssh-pubkey ssh-reconnect ssh-trust-host ssh-with-pass test-ssh )

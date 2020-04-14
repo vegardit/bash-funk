@@ -35,7 +35,7 @@ function -get-child-pids() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-get-child-pids() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _printPPID _help _selftest _PARENT_PID
    [ -t 1 ] && __interactive=1 || true
@@ -125,8 +125,7 @@ function __impl-get-child-pids() {
       if [[ $_PARENT_PID -lt 0 ]]; then echo "$__fn: Error: Value '$_PARENT_PID' for parameter PARENT_PID is too low. Must be >= 0."; return 64; fi
    fi
 
-   ######### get-child-pids ######### START
-
+####### get-child-pids ####### START
 local childPids # intentional declaration in a separate line, see http://stackoverflow.com/a/42854176
 childPids=$(command ps -o pid --no-headers --ppid $_PARENT_PID 2>/dev/null | sed -e 's!\s!!g'; exit ${PIPESTATUS[0]})
 if [[ $? != 0 ]]; then
@@ -139,8 +138,7 @@ done
 if [[ $_printPPID ]]; then
     echo $_PARENT_PID
 fi
-
-   ######### get-child-pids ######### END
+####### get-child-pids ####### END
 }
 function __complete-get-child-pids() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -177,7 +175,7 @@ function -get-parent-pid() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-get-parent-pid() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _CHILD_PID
    [ -t 1 ] && __interactive=1 || true
@@ -260,8 +258,7 @@ function __impl-get-parent-pid() {
       if [[ $_CHILD_PID -lt 0 ]]; then echo "$__fn: Error: Value '$_CHILD_PID' for parameter CHILD_PID is too low. Must be >= 0."; return 64; fi
    fi
 
-   ######### get-parent-pid ######### START
-
+####### get-parent-pid ####### START
 local parentPid # intentional declaration in a separate line, see http://stackoverflow.com/a/42854176
 parentPid=$(cat /proc/${_CHILD_PID}/stat 2>/dev/null | awk '{print $4}'; exit ${PIPESTATUS[0]})
 if [[ $? != 0 ]]; then
@@ -269,8 +266,7 @@ if [[ $? != 0 ]]; then
     return 1
 fi
 echo $parentPid
-
-   ######### get-parent-pid ######### END
+####### get-parent-pid ####### END
 }
 function __complete-get-parent-pid() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -307,7 +303,7 @@ function -get-toplevel-parent-pid() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-get-toplevel-parent-pid() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _CHILD_PID
    [ -t 1 ] && __interactive=1 || true
@@ -390,8 +386,7 @@ function __impl-get-toplevel-parent-pid() {
       if [[ $_CHILD_PID -lt 0 ]]; then echo "$__fn: Error: Value '$_CHILD_PID' for parameter CHILD_PID is too low. Must be >= 0."; return 64; fi
    fi
 
-   ######### get-toplevel-parent-pid ######### START
-
+####### get-toplevel-parent-pid ####### START
 local pid=$_CHILD_PID
 while [[ $pid != 0 ]]; do
     pid=$(${BASH_FUNK_PREFIX:--}get-parent-pid ${pid})
@@ -401,8 +396,7 @@ while [[ $pid != 0 ]]; do
     fi
 done
 echo ${pid}
-
-   ######### get-toplevel-parent-pid ######### END
+####### get-toplevel-parent-pid ####### END
 }
 function __complete-get-toplevel-parent-pid() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -439,7 +433,7 @@ function -kill-childs() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-kill-childs() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _signal _help _selftest _PARENT_PID
    [ -t 1 ] && __interactive=1 || true
@@ -540,8 +534,7 @@ function __impl-kill-childs() {
       if [[ $_PARENT_PID -lt 0 ]]; then echo "$__fn: Error: Value '$_PARENT_PID' for parameter PARENT_PID is too low. Must be >= 0."; return 64; fi
    fi
 
-   ######### kill-childs ######### START
-
+####### kill-childs ####### START
 local signal=${_signal:-15}
 
 local childPids # intentional declaration in a separate line, see http://stackoverflow.com/a/42854176
@@ -555,8 +548,7 @@ for childPid in $childPids; do
     echo "Killing process with PID $childPid..."
     kill -s $signal $childPid 2> /dev/null || :
 done
-
-   ######### kill-childs ######### END
+####### kill-childs ####### END
 }
 function __complete-kill-childs() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -593,7 +585,7 @@ function -kill-listener() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-kill-listener() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _signal _help _selftest _PORT
    [ -t 1 ] && __interactive=1 || true
@@ -701,8 +693,7 @@ function __impl-kill-listener() {
 
    if ! hash "netstat" &>/dev/null; then echo "$__fn: Error: Required command 'netstat' not found on this system."; return 64; fi
 
-   ######### kill-listener ######### START
-
+####### kill-listener ####### START
 local signal=${_signal:-15}
 
 if hash netstat &>/dev/null; then
@@ -735,8 +726,7 @@ if [[ $listener ]]; then
     kill -$signal $pid
     return
 fi
-
-   ######### kill-listener ######### END
+####### kill-listener ####### END
 }
 function __complete-kill-listener() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -773,7 +763,7 @@ function -test-processes() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-processes() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -841,15 +831,13 @@ function __impl-test-processes() {
       return 64
    done
 
-   ######### test-processes ######### START
-
+####### test-processes ####### START
 ${BASH_FUNK_PREFIX:--}get-child-pids --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}get-parent-pid --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}get-toplevel-parent-pid --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}kill-childs --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}kill-listener --selftest && echo || return 1
-
-   ######### test-processes ######### END
+####### test-processes ####### END
 }
 function __complete-test-processes() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -865,12 +853,12 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-processes -- ${BASH_FUNK_PREFIX
 
 
 function -help-processes() {
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}get-child-pids [PARENT_PID]\033[0m  -  Recursively prints all child PIDs of the process with the given PID."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}get-parent-pid [CHILD_PID]\033[0m  -  Prints the PID of the parent process of the child process with the given PID."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}get-toplevel-parent-pid [CHILD_PID]\033[0m  -  Prints the PID of the top-level parent process of the child process with the given PID."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}kill-childs [PARENT_PID]\033[0m  -  Sends the TERM(15) signal to all child processes of the process with the given PID."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}kill-listener PORT\033[0m  -  Sends the given kill signal the process listening on the given TCP port."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-processes\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-
+   local p="\033[1m${BASH_FUNK_PREFIX:--}"
+   echo -e "${p}get-child-pids [PARENT_PID]\033[0m  -  Recursively prints all child PIDs of the process with the given PID."
+   echo -e "${p}get-parent-pid [CHILD_PID]\033[0m  -  Prints the PID of the parent process of the child process with the given PID."
+   echo -e "${p}get-toplevel-parent-pid [CHILD_PID]\033[0m  -  Prints the PID of the top-level parent process of the child process with the given PID."
+   echo -e "${p}kill-childs [PARENT_PID]\033[0m  -  Sends the TERM(15) signal to all child processes of the process with the given PID."
+   echo -e "${p}kill-listener PORT\033[0m  -  Sends the given kill signal the process listening on the given TCP port."
+   echo -e "${p}test-processes\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
 __BASH_FUNK_FUNCS+=( get-child-pids get-parent-pid get-toplevel-parent-pid kill-childs kill-listener test-processes )

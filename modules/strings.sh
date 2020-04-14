@@ -35,7 +35,7 @@ function -ascii2hex() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-ascii2hex() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _ASCII_STRING
    [ -t 1 ] && __interactive=1 || true
@@ -128,11 +128,9 @@ function __impl-ascii2hex() {
       echo "$__fn: Error: Parameter ASCII_STRING must be specified."; return 64
    fi
 
-   ######### ascii2hex ######### START
-
+####### ascii2hex ####### START
 printf "$_ASCII_STRING" | xxd -p | tr "[a-z]" "[A-z]"
-
-   ######### ascii2hex ######### END
+####### ascii2hex ####### END
 }
 function __complete-ascii2hex() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -169,7 +167,7 @@ function -hex2ascii() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-hex2ascii() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _HEX_STRING
    [ -t 1 ] && __interactive=1 || true
@@ -262,11 +260,9 @@ function __impl-hex2ascii() {
       echo "$__fn: Error: Parameter HEX_STRING must be specified."; return 64
    fi
 
-   ######### hex2ascii ######### START
-
+####### hex2ascii ####### START
 printf "$_HEX_STRING" | xxd -r -p
-
-   ######### hex2ascii ######### END
+####### hex2ascii ####### END
 }
 function __complete-hex2ascii() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -303,7 +299,7 @@ function -normalize-path() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-normalize-path() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
    [ -t 1 ] && __interactive=1 || true
@@ -396,8 +392,7 @@ function __impl-normalize-path() {
       echo "$__fn: Error: Parameter PATH must be specified."; return 64
    fi
 
-   ######### normalize-path ######### START
-
+####### normalize-path ####### START
 # Remove all occurrences of "/./"
 local normalized=${_PATH//\/.\//\/}
 
@@ -406,8 +401,7 @@ while [[ ${normalized} =~ [^\/][^\/]*\/\.\.\/ ]]; do
    normalized=${normalized/${BASH_REMATCH[0]}/}
 done
 echo $normalized
-
-   ######### normalize-path ######### END
+####### normalize-path ####### END
 }
 function __complete-normalize-path() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -444,7 +438,7 @@ function -str-join() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-str-join() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEPARATOR _STRING=()
    [ -t 1 ] && __interactive=1 || true
@@ -577,8 +571,7 @@ function __impl-str-join() {
       echo "$__fn: Error: Parameter SEPARATOR must be specified."; return 64
    fi
 
-   ######### str-join ######### START
-
+####### str-join ####### START
 if [[ ${#_STRING[@]} -lt 1 ]]; then
    return 0;
 fi
@@ -589,8 +582,7 @@ if [[ ${#_STRING[@]} -lt 2 ]]; then
 fi
 local additionalItems=("${_STRING[@]:1}")
 printf "%s" "$firstItem${additionalItems[@]/#/$_SEPARATOR}"
-
-   ######### str-join ######### END
+####### str-join ####### END
 }
 function __complete-str-join() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -627,7 +619,7 @@ function -str-lower() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-str-lower() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING
    [ -t 1 ] && __interactive=1 || true
@@ -720,15 +712,13 @@ function __impl-str-lower() {
       echo "$__fn: Error: Parameter STRING must be specified."; return 64
    fi
 
-   ######### str-lower ######### START
-
+####### str-lower ####### START
 if ((${BASH_VERSION::1} < 4)); then
    echo "$_STRING" | tr '[:upper:]' '[:lower:]'
 else
    echo "${_STRING,,}"
 fi
-
-   ######### str-lower ######### END
+####### str-lower ####### END
 }
 function __complete-str-lower() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -765,7 +755,7 @@ function -str-matches-glob() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-str-matches-glob() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _all _help _selftest _verbose _GLOB_PATTERN _STRING=()
    [ -t 1 ] && __interactive=1 || true
@@ -917,8 +907,7 @@ no match: hat]."; return 64; fi
       echo "$__fn: Error: Parameter GLOB_PATTERN must be specified."; return 64
    fi
 
-   ######### str-matches-glob ######### START
-
+####### str-matches-glob ####### START
 if [[ ! ${_STRING} ]]; then
    return 0
 fi
@@ -948,8 +937,7 @@ if [[ $_all ]]; then
 else
    [[ $matchFound ]] && return 0 || return 1
 fi
-
-   ######### str-matches-glob ######### END
+####### str-matches-glob ####### END
 }
 function __complete-str-matches-glob() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -986,7 +974,7 @@ function -str-matches-regex() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-str-matches-regex() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _all _help _selftest _verbose _REGEX_PATTERN _STRING=()
    [ -t 1 ] && __interactive=1 || true
@@ -1138,8 +1126,7 @@ no match: hat]."; return 64; fi
       echo "$__fn: Error: Parameter REGEX_PATTERN must be specified."; return 64
    fi
 
-   ######### str-matches-regex ######### START
-
+####### str-matches-regex ####### START
 if [[ ! ${_STRING} ]]; then
    return 0
 fi
@@ -1168,8 +1155,7 @@ local matchFound mismatchFound str
    else
       [[ $matchFound ]] && return 0 || return 1
    fi
-
-   ######### str-matches-regex ######### END
+####### str-matches-regex ####### END
 }
 function __complete-str-matches-regex() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1206,7 +1192,7 @@ function -str-repeat() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-str-repeat() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING _COUNT
    [ -t 1 ] && __interactive=1 || true
@@ -1311,12 +1297,10 @@ function __impl-str-repeat() {
       echo "$__fn: Error: Parameter COUNT must be specified."; return 64
    fi
 
-   ######### str-repeat ######### START
-
+####### str-repeat ####### START
 local spaces="$(printf "%${_COUNT}s" "")"
 echo "${spaces// /$_STRING}"
-
-   ######### str-repeat ######### END
+####### str-repeat ####### END
 }
 function __complete-str-repeat() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1353,7 +1337,7 @@ function -str-trim() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-str-trim() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING
    [ -t 1 ] && __interactive=1 || true
@@ -1446,11 +1430,9 @@ function __impl-str-trim() {
       echo "$__fn: Error: Parameter STRING must be specified."; return 64
    fi
 
-   ######### str-trim ######### START
-
+####### str-trim ####### START
 echo $_STRING
-
-   ######### str-trim ######### END
+####### str-trim ####### END
 }
 function __complete-str-trim() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1487,7 +1469,7 @@ function -str-upper() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-str-upper() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING
    [ -t 1 ] && __interactive=1 || true
@@ -1580,15 +1562,13 @@ function __impl-str-upper() {
       echo "$__fn: Error: Parameter STRING must be specified."; return 64
    fi
 
-   ######### str-upper ######### START
-
+####### str-upper ####### START
 if ((${BASH_VERSION::1} < 4)); then
    echo "$_STRING" | tr '[:lower:]' '[:upper:]'
 else
    echo "${_STRING^^}"
 fi
-
-   ######### str-upper ######### END
+####### str-upper ####### END
 }
 function __complete-str-upper() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1625,7 +1605,7 @@ function -strip-ansi() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-strip-ansi() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STRING=()
    [ -t 1 ] && __interactive=1 || true
@@ -1710,8 +1690,7 @@ function __impl-strip-ansi() {
       return 64
    done
 
-   ######### strip-ansi ######### START
-
+####### strip-ansi ####### START
 local ansiColors="([0-9]{1,2}(;[0-9]{1,2})?(;[0-9]{1,2})?)?[m|K]"
 local ansiCursors1="[0-9]+[A-D]" # cursor up/down/right/left
 local ansiCursors2="[su]" # save/restore cursor position
@@ -1722,8 +1701,7 @@ if [[ ${_STRING} ]]; then
 else
    sed -Eu "s/${ansiPattern}//g"
 fi
-
-   ######### strip-ansi ######### END
+####### strip-ansi ####### END
 }
 function __complete-strip-ansi() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1760,7 +1738,7 @@ function -substr-after() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-substr-after() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
    [ -t 1 ] && __interactive=1 || true
@@ -1864,11 +1842,9 @@ function __impl-substr-after() {
       echo "$__fn: Error: Parameter SEARCH_FOR must be specified."; return 64
    fi
 
-   ######### substr-after ######### START
-
+####### substr-after ####### START
 echo ${_SEARCH_IN#*$_SEARCH_FOR}
-
-   ######### substr-after ######### END
+####### substr-after ####### END
 }
 function __complete-substr-after() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1905,7 +1881,7 @@ function -substr-after-last() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-substr-after-last() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
    [ -t 1 ] && __interactive=1 || true
@@ -2009,11 +1985,9 @@ function __impl-substr-after-last() {
       echo "$__fn: Error: Parameter SEARCH_FOR must be specified."; return 64
    fi
 
-   ######### substr-after-last ######### START
-
+####### substr-after-last ####### START
 echo "${_SEARCH_IN#${_SEARCH_IN%${_SEARCH_FOR}*}$_SEARCH_FOR}"
-
-   ######### substr-after-last ######### END
+####### substr-after-last ####### END
 }
 function __complete-substr-after-last() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -2050,7 +2024,7 @@ function -substr-before() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-substr-before() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
    [ -t 1 ] && __interactive=1 || true
@@ -2154,11 +2128,9 @@ function __impl-substr-before() {
       echo "$__fn: Error: Parameter SEARCH_FOR must be specified."; return 64
    fi
 
-   ######### substr-before ######### START
-
+####### substr-before ####### START
 echo "${_SEARCH_IN%%${_SEARCH_FOR}*}"
-
-   ######### substr-before ######### END
+####### substr-before ####### END
 }
 function __complete-substr-before() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -2195,7 +2167,7 @@ function -substr-before-last() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-substr-before-last() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _SEARCH_FOR
    [ -t 1 ] && __interactive=1 || true
@@ -2299,11 +2271,9 @@ function __impl-substr-before-last() {
       echo "$__fn: Error: Parameter SEARCH_FOR must be specified."; return 64
    fi
 
-   ######### substr-before-last ######### START
-
+####### substr-before-last ####### START
 echo "${_SEARCH_IN%${_SEARCH_FOR}*}"
-
-   ######### substr-before-last ######### END
+####### substr-before-last ####### END
 }
 function __complete-substr-before-last() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -2340,7 +2310,7 @@ function -substr-between() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-substr-between() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SEARCH_IN _PREFIX _SUFFIX
    [ -t 1 ] && __interactive=1 || true
@@ -2455,12 +2425,10 @@ function __impl-substr-between() {
       echo "$__fn: Error: Parameter SUFFIX must be specified."; return 64
    fi
 
-   ######### substr-between ######### START
-
+####### substr-between ####### START
 local withoutPrefix="${_SEARCH_IN#*$_PREFIX}"
 echo "${withoutPrefix%%${_SUFFIX}*}"
-
-   ######### substr-between ######### END
+####### substr-between ####### END
 }
 function __complete-substr-between() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -2497,7 +2465,7 @@ function -test-strings() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-strings() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -2565,8 +2533,7 @@ function __impl-test-strings() {
       return 64
    done
 
-   ######### test-strings ######### START
-
+####### test-strings ####### START
 ${BASH_FUNK_PREFIX:--}ascii2hex --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}hex2ascii --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}normalize-path --selftest && echo || return 1
@@ -2583,8 +2550,7 @@ ${BASH_FUNK_PREFIX:--}substr-after-last --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}substr-before --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}substr-before-last --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}substr-between --selftest && echo || return 1
-
-   ######### test-strings ######### END
+####### test-strings ####### END
 }
 function __complete-test-strings() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -2600,23 +2566,23 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-strings -- ${BASH_FUNK_PREFIX:-
 
 
 function -help-strings() {
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ascii2hex ASCII_STRING\033[0m  -  Prints the hexa-decimal representation of the given ASCII string."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}hex2ascii HEX_STRING\033[0m  -  Prints the ASCII representation of the given hexa-decimal string."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}normalize-path PATH\033[0m  -  Prints the normalized form of the given file path."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-join SEPARATOR [STRING]...\033[0m  -  Prints strings joined with the given separator."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-lower STRING\033[0m  -  Prints the given string in lower cases."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-matches-glob GLOB_PATTERN [STRING]...\033[0m  -  Matches the given string(s) against the glob pattern, prints the found matches and returns true if at least one match was found."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-matches-regex REGEX_PATTERN [STRING]...\033[0m  -  Matches the given string(s) against the regex pattern, prints the found matches and returns true if at least one match was found."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-repeat STRING COUNT\033[0m  -  Prints the given string multiple times."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-trim STRING\033[0m  -  Prints the given string without leading and trailing spaces."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}str-upper STRING\033[0m  -  Prints the given string in upper cases."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}strip-ansi [STRING]...\033[0m  -  Removes any ANSI escape sequences from the given string or from stdin."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}substr-after SEARCH_IN SEARCH_FOR\033[0m  -  Prints the substring after the first occurrence of SEARCH_FOR."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}substr-after-last SEARCH_IN SEARCH_FOR\033[0m  -  Prints the substring after the last occurrence of SEARCH_FOR."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}substr-before SEARCH_IN SEARCH_FOR\033[0m  -  Prints the substring before the first occurrence of SEARCH_FOR."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}substr-before-last SEARCH_IN SEARCH_FOR\033[0m  -  Prints the substring before the last occurrence of SEARCH_FOR."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}substr-between SEARCH_IN PREFIX SUFFIX\033[0m  -  Prints the substring between PREFIX and SUFFIX."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-strings\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-
+   local p="\033[1m${BASH_FUNK_PREFIX:--}"
+   echo -e "${p}ascii2hex ASCII_STRING\033[0m  -  Prints the hexa-decimal representation of the given ASCII string."
+   echo -e "${p}hex2ascii HEX_STRING\033[0m  -  Prints the ASCII representation of the given hexa-decimal string."
+   echo -e "${p}normalize-path PATH\033[0m  -  Prints the normalized form of the given file path."
+   echo -e "${p}str-join SEPARATOR [STRING]...\033[0m  -  Prints strings joined with the given separator."
+   echo -e "${p}str-lower STRING\033[0m  -  Prints the given string in lower cases."
+   echo -e "${p}str-matches-glob GLOB_PATTERN [STRING]...\033[0m  -  Matches the given string(s) against the glob pattern, prints the found matches and returns true if at least one match was found."
+   echo -e "${p}str-matches-regex REGEX_PATTERN [STRING]...\033[0m  -  Matches the given string(s) against the regex pattern, prints the found matches and returns true if at least one match was found."
+   echo -e "${p}str-repeat STRING COUNT\033[0m  -  Prints the given string multiple times."
+   echo -e "${p}str-trim STRING\033[0m  -  Prints the given string without leading and trailing spaces."
+   echo -e "${p}str-upper STRING\033[0m  -  Prints the given string in upper cases."
+   echo -e "${p}strip-ansi [STRING]...\033[0m  -  Removes any ANSI escape sequences from the given string or from stdin."
+   echo -e "${p}substr-after SEARCH_IN SEARCH_FOR\033[0m  -  Prints the substring after the first occurrence of SEARCH_FOR."
+   echo -e "${p}substr-after-last SEARCH_IN SEARCH_FOR\033[0m  -  Prints the substring after the last occurrence of SEARCH_FOR."
+   echo -e "${p}substr-before SEARCH_IN SEARCH_FOR\033[0m  -  Prints the substring before the first occurrence of SEARCH_FOR."
+   echo -e "${p}substr-before-last SEARCH_IN SEARCH_FOR\033[0m  -  Prints the substring before the last occurrence of SEARCH_FOR."
+   echo -e "${p}substr-between SEARCH_IN PREFIX SUFFIX\033[0m  -  Prints the substring between PREFIX and SUFFIX."
+   echo -e "${p}test-strings\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
 __BASH_FUNK_FUNCS+=( ascii2hex hex2ascii normalize-path str-join str-lower str-matches-glob str-matches-regex str-repeat str-trim str-upper strip-ansi substr-after substr-after-last substr-before substr-before-last substr-between test-strings )

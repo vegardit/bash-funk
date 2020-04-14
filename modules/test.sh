@@ -35,7 +35,7 @@ function -test-fn-flags() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-fn-flags() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _myflag _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -139,11 +139,9 @@ function __impl-test-fn-flags() {
       return 64
    done
 
-   ######### test-fn-flags ######### START
-
+####### test-fn-flags ####### START
 [[ $_myflag ]] && echo "myflag was specified" || echo "myflag was not specified"
-
-   ######### test-fn-flags ######### END
+####### test-fn-flags ####### END
 }
 function __complete-test-fn-flags() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -180,7 +178,7 @@ function -test-fn-multi-value-options() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-fn-multi-value-options() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _aa _bb _cc _dd _ee _ff _gg _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -518,11 +516,9 @@ function __impl-test-fn-multi-value-options() {
       true
    fi
 
-   ######### test-fn-multi-value-options ######### START
-
+####### test-fn-multi-value-options ####### START
 echo "aa:${_aa[@]} bb:${_bb[@]} cc:${_cc[@]} dd:${_dd[@]} ee:${_ee[@]} ff:${_ff[@]} gg:${_gg[@]}"
-
-   ######### test-fn-multi-value-options ######### END
+####### test-fn-multi-value-options ####### END
 }
 function __complete-test-fn-multi-value-options() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -569,7 +565,7 @@ function -test-fn-multi-value-parameter-zero-or-more() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-fn-multi-value-parameter-zero-or-more() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA=()
    [ -t 1 ] && __interactive=1 || true
@@ -686,11 +682,9 @@ function __impl-test-fn-multi-value-parameter-zero-or-more() {
       done
    fi
 
-   ######### test-fn-multi-value-parameter-zero-or-more ######### START
-
+####### test-fn-multi-value-parameter-zero-or-more ####### START
 echo "AA:${_AA[@]}"
-
-   ######### test-fn-multi-value-parameter-zero-or-more ######### END
+####### test-fn-multi-value-parameter-zero-or-more ####### END
 }
 function __complete-test-fn-multi-value-parameter-zero-or-more() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -727,7 +721,7 @@ function -test-fn-multi-value-parameters() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-fn-multi-value-parameters() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA=() _BB=() _CC=() _DD=() _EE=() _FF=()
    [ -t 1 ] && __interactive=1 || true
@@ -980,11 +974,9 @@ function __impl-test-fn-multi-value-parameters() {
       done
    fi
 
-   ######### test-fn-multi-value-parameters ######### START
-
+####### test-fn-multi-value-parameters ####### START
 echo "AA:${_AA[@]} BB:${_BB[@]} CC:${_CC[@]} DD:${_DD[@]} EE:${_EE[@]} FF:${_FF[@]}"
-
-   ######### test-fn-multi-value-parameters ######### END
+####### test-fn-multi-value-parameters ####### END
 }
 function __complete-test-fn-multi-value-parameters() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1021,7 +1013,7 @@ function -test-fn-multi-value-parameters-variable-length() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-fn-multi-value-parameters-variable-length() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA=() _BB=()
    [ -t 1 ] && __interactive=1 || true
@@ -1178,11 +1170,9 @@ function __impl-test-fn-multi-value-parameters-variable-length() {
       done
    fi
 
-   ######### test-fn-multi-value-parameters-variable-length ######### START
-
+####### test-fn-multi-value-parameters-variable-length ####### START
 echo "AA:${_AA[@]} BB:${_BB[@]}"
-
-   ######### test-fn-multi-value-parameters-variable-length ######### END
+####### test-fn-multi-value-parameters-variable-length ####### END
 }
 function __complete-test-fn-multi-value-parameters-variable-length() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1219,7 +1209,7 @@ function -test-fn-noargs() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-fn-noargs() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose
    [ -t 1 ] && __interactive=1 || true
@@ -1335,11 +1325,9 @@ function __impl-test-fn-noargs() {
       return 64
    done
 
-   ######### test-fn-noargs ######### START
-
+####### test-fn-noargs ####### START
 [[ $_verbose ]] && echo "verbose mode" || :
-
-   ######### test-fn-noargs ######### END
+####### test-fn-noargs ####### END
 }
 function __complete-test-fn-noargs() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1376,7 +1364,7 @@ function -test-fn-requires-existing() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-fn-requires-existing() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose
    [ -t 1 ] && __interactive=1 || true
@@ -1467,11 +1455,9 @@ function __impl-test-fn-requires-existing() {
 
    if ! hash "hash" &>/dev/null; then echo "$__fn: Error: Required command 'hash' not found on this system."; return 64; fi
 
-   ######### test-fn-requires-existing ######### START
-
+####### test-fn-requires-existing ####### START
 [[ $_verbose ]] && echo "verbose mode" || :
-
-   ######### test-fn-requires-existing ######### END
+####### test-fn-requires-existing ####### END
 }
 function __complete-test-fn-requires-existing() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1508,7 +1494,7 @@ function -test-fn-requires-nonexistent() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-fn-requires-nonexistent() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose
    [ -t 1 ] && __interactive=1 || true
@@ -1595,11 +1581,9 @@ function __impl-test-fn-requires-nonexistent() {
 
    if ! hash "some_random_nonexistent_command" &>/dev/null; then echo "$__fn: Error: Required command 'some_random_nonexistent_command' not found on this system."; return 64; fi
 
-   ######### test-fn-requires-nonexistent ######### START
-
+####### test-fn-requires-nonexistent ####### START
 [[ $_verbose ]] && echo "verbose mode" || :
-
-   ######### test-fn-requires-nonexistent ######### END
+####### test-fn-requires-nonexistent ####### END
 }
 function __complete-test-fn-requires-nonexistent() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1636,7 +1620,7 @@ function -test-fn-single-value-options() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-fn-single-value-options() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _aa _bb _cc _dd _ee _ff _gg _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -1940,11 +1924,9 @@ function __impl-test-fn-single-value-options() {
       if [[ ! "$_gg" =~ ^[a-z]+$ ]]; then echo "$__fn: Error: Value '$_gg' for option --gg must only contain characters a-z."; return 64; fi
    fi
 
-   ######### test-fn-single-value-options ######### START
-
+####### test-fn-single-value-options ####### START
 echo "aa:$_aa bb:$_bb cc:$_cc dd:$_dd ee:$_ee ff:$_ff gg:$_gg"
-
-   ######### test-fn-single-value-options ######### END
+####### test-fn-single-value-options ####### END
 }
 function __complete-test-fn-single-value-options() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1991,7 +1973,7 @@ function -test-fn-single-value-parameters() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-fn-single-value-parameters() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA _BB _CC _DD _EE _FF
    [ -t 1 ] && __interactive=1 || true
@@ -2227,11 +2209,9 @@ function __impl-test-fn-single-value-parameters() {
       if [[ ! "$_FF" =~ ^[a-z]+$ ]]; then echo "$__fn: Error: Value '$_FF' for parameter FF must only contain characters a-z."; return 64; fi
    fi
 
-   ######### test-fn-single-value-parameters ######### START
-
+####### test-fn-single-value-parameters ####### START
 echo "AA:$_AA BB:$_BB CC:$_CC DD:$_DD EE:$_EE FF:$_FF"
-
-   ######### test-fn-single-value-parameters ######### END
+####### test-fn-single-value-parameters ####### END
 }
 function __complete-test-fn-single-value-parameters() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -2268,7 +2248,7 @@ function -test-fn-single-value-parameters-first-optional() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-fn-single-value-parameters-first-optional() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA _BB
    [ -t 1 ] && __interactive=1 || true
@@ -2400,11 +2380,9 @@ function __impl-test-fn-single-value-parameters-first-optional() {
       echo "$__fn: Error: Parameter BB must be specified."; return 64
    fi
 
-   ######### test-fn-single-value-parameters-first-optional ######### START
-
+####### test-fn-single-value-parameters-first-optional ####### START
 echo "AA:$_AA BB:$_BB"
-
-   ######### test-fn-single-value-parameters-first-optional ######### END
+####### test-fn-single-value-parameters-first-optional ####### END
 }
 function __complete-test-fn-single-value-parameters-first-optional() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -2441,7 +2419,7 @@ function -test-test() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-test() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -2509,8 +2487,7 @@ function __impl-test-test() {
       return 64
    done
 
-   ######### test-test ######### START
-
+####### test-test ####### START
 ${BASH_FUNK_PREFIX:--}test-fn-flags --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}test-fn-multi-value-options --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}test-fn-multi-value-parameter-zero-or-more --selftest && echo || return 1
@@ -2522,8 +2499,7 @@ ${BASH_FUNK_PREFIX:--}test-fn-requires-nonexistent --selftest && echo || return 
 ${BASH_FUNK_PREFIX:--}test-fn-single-value-options --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}test-fn-single-value-parameters --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}test-fn-single-value-parameters-first-optional --selftest && echo || return 1
-
-   ######### test-test ######### END
+####### test-test ####### END
 }
 function __complete-test-test() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -2539,18 +2515,18 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-test -- ${BASH_FUNK_PREFIX:--}t
 
 
 function -help-test() {
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-fn-flags\033[0m  -  Test function with custom flags."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-fn-multi-value-options\033[0m  -  Test function with multi value options."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-fn-multi-value-parameter-zero-or-more [AA]...\033[0m  -  Test function with multi value parameters."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-fn-multi-value-parameters AA1 AA2 BB1 BB2 CC1 CC2 DD1 DD2 EE1 EE2 [FF]...\033[0m  -  Test function with multi value parameters."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-fn-multi-value-parameters-variable-length [AA1..2] BB1 BB2\033[0m  -  Test function with multi value parameters."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-fn-noargs\033[0m  -  Test function with no arguments."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-fn-requires-existing\033[0m  -  Test function that requires presence of an existing command - thus always succeeds."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-fn-requires-nonexistent\033[0m  -  Test function that requires presence of a nonexistent command - thus always fails."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-fn-single-value-options\033[0m  -  Test function with single value options."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-fn-single-value-parameters AA BB CC DD EE [FF]\033[0m  -  Test function with single value parameters."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-fn-single-value-parameters-first-optional [AA] BB\033[0m  -  Test function with single value parameters where the first one is optional."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-test\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-
+   local p="\033[1m${BASH_FUNK_PREFIX:--}"
+   echo -e "${p}test-fn-flags\033[0m  -  Test function with custom flags."
+   echo -e "${p}test-fn-multi-value-options\033[0m  -  Test function with multi value options."
+   echo -e "${p}test-fn-multi-value-parameter-zero-or-more [AA]...\033[0m  -  Test function with multi value parameters."
+   echo -e "${p}test-fn-multi-value-parameters AA1 AA2 BB1 BB2 CC1 CC2 DD1 DD2 EE1 EE2 [FF]...\033[0m  -  Test function with multi value parameters."
+   echo -e "${p}test-fn-multi-value-parameters-variable-length [AA1..2] BB1 BB2\033[0m  -  Test function with multi value parameters."
+   echo -e "${p}test-fn-noargs\033[0m  -  Test function with no arguments."
+   echo -e "${p}test-fn-requires-existing\033[0m  -  Test function that requires presence of an existing command - thus always succeeds."
+   echo -e "${p}test-fn-requires-nonexistent\033[0m  -  Test function that requires presence of a nonexistent command - thus always fails."
+   echo -e "${p}test-fn-single-value-options\033[0m  -  Test function with single value options."
+   echo -e "${p}test-fn-single-value-parameters AA BB CC DD EE [FF]\033[0m  -  Test function with single value parameters."
+   echo -e "${p}test-fn-single-value-parameters-first-optional [AA] BB\033[0m  -  Test function with single value parameters where the first one is optional."
+   echo -e "${p}test-test\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
 __BASH_FUNK_FUNCS+=( test-fn-flags test-fn-multi-value-options test-fn-multi-value-parameter-zero-or-more test-fn-multi-value-parameters test-fn-multi-value-parameters-variable-length test-fn-noargs test-fn-requires-existing test-fn-requires-nonexistent test-fn-single-value-options test-fn-single-value-parameters test-fn-single-value-parameters-first-optional test-test )

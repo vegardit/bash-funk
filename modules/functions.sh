@@ -35,7 +35,7 @@ function -fn-copy() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-fn-copy() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _OLD_FUNC_NAME _NEW_FUNC_NAME
    [ -t 1 ] && __interactive=1 || true
@@ -128,15 +128,13 @@ function __impl-fn-copy() {
       echo "$__fn: Error: Parameter NEW_FUNC_NAME must be specified."; return 64
    fi
 
-   ######### fn-copy ######### START
-
+####### fn-copy ####### START
 if ! declare -F -- $_OLD_FUNC_NAME > /dev/null; then
     echo "Error: A function with the name $_OLD_FUNC_NAME does not exist."
     return 1
 fi
 eval "$(echo "$_NEW_FUNC_NAME()"; declare -f $_OLD_FUNC_NAME | tail -n +2)"
-
-   ######### fn-copy ######### END
+####### fn-copy ####### END
 }
 function __complete-fn-copy() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -173,7 +171,7 @@ function -fn-exists() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-fn-exists() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _FUNC_NAME
    [ -t 1 ] && __interactive=1 || true
@@ -282,8 +280,7 @@ function __impl-fn-exists() {
       echo "$__fn: Error: Parameter FUNC_NAME must be specified."; return 64
    fi
 
-   ######### fn-exists ######### START
-
+####### fn-exists ####### START
 if declare -F -- $_FUNC_NAME &>/dev/null; then
     [[ $_verbose ]] && echo "A function with the name '$_FUNC_NAME' exists." || :
     return 0
@@ -291,8 +288,7 @@ else
     [[ $_verbose ]] && echo "A function with the name '$_FUNC_NAME' does not exist." || :
     return 1
 fi
-
-   ######### fn-exists ######### END
+####### fn-exists ####### END
 }
 function __complete-fn-exists() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -329,7 +325,7 @@ function -fn-rename() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-fn-rename() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _OLD_FUNC_NAME _NEW_FUNC_NAME
    [ -t 1 ] && __interactive=1 || true
@@ -422,8 +418,7 @@ function __impl-fn-rename() {
       echo "$__fn: Error: Parameter NEW_FUNC_NAME must be specified."; return 64
    fi
 
-   ######### fn-rename ######### START
-
+####### fn-rename ####### START
 if ! declare -F -- $_OLD_FUNC_NAME > /dev/null; then
     echo "Error: A function with the name $_OLD_FUNC_NAME does not exist."
     return 1
@@ -432,8 +427,7 @@ fi
 eval "$(echo "$_NEW_FUNC_NAME()"; declare -f $_OLD_FUNC_NAME | tail -n +2)"
 
 unset -f $_OLD_FUNC_NAME
-
-   ######### fn-rename ######### END
+####### fn-rename ####### END
 }
 function __complete-fn-rename() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -470,7 +464,7 @@ function -fn-unload() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-fn-unload() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _FUNC_NAME
    [ -t 1 ] && __interactive=1 || true
@@ -559,16 +553,14 @@ function __impl-fn-unload() {
       echo "$__fn: Error: Parameter FUNC_NAME must be specified."; return 64
    fi
 
-   ######### fn-unload ######### START
-
+####### fn-unload ####### START
 if ! declare -F -- $_FUNC_NAME > /dev/null; then
     [[ $_verbose ]] && echo "A function with the name '$_FUNC_NAME' does not exist." || :
     return 0
 fi
 
 unset -f $_FUNC_NAME
-
-   ######### fn-unload ######### END
+####### fn-unload ####### END
 }
 function __complete-fn-unload() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -605,7 +597,7 @@ function -test-functions() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-functions() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -673,14 +665,12 @@ function __impl-test-functions() {
       return 64
    done
 
-   ######### test-functions ######### START
-
+####### test-functions ####### START
 ${BASH_FUNK_PREFIX:--}fn-copy --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}fn-exists --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}fn-rename --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}fn-unload --selftest && echo || return 1
-
-   ######### test-functions ######### END
+####### test-functions ####### END
 }
 function __complete-test-functions() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -696,11 +686,11 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-functions -- ${BASH_FUNK_PREFIX
 
 
 function -help-functions() {
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}fn-copy OLD_FUNC_NAME NEW_FUNC_NAME\033[0m  -  Creates an in-memory copy of the Bash function with the given name."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}fn-exists FUNC_NAME\033[0m  -  Determines if a Bash function with the given name exists."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}fn-rename OLD_FUNC_NAME NEW_FUNC_NAME\033[0m  -  Renames the Bash function with the given name."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}fn-unload FUNC_NAME\033[0m  -  Unloads the Bash function with the given name."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-functions\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-
+   local p="\033[1m${BASH_FUNK_PREFIX:--}"
+   echo -e "${p}fn-copy OLD_FUNC_NAME NEW_FUNC_NAME\033[0m  -  Creates an in-memory copy of the Bash function with the given name."
+   echo -e "${p}fn-exists FUNC_NAME\033[0m  -  Determines if a Bash function with the given name exists."
+   echo -e "${p}fn-rename OLD_FUNC_NAME NEW_FUNC_NAME\033[0m  -  Renames the Bash function with the given name."
+   echo -e "${p}fn-unload FUNC_NAME\033[0m  -  Unloads the Bash function with the given name."
+   echo -e "${p}test-functions\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
 __BASH_FUNK_FUNCS+=( fn-copy fn-exists fn-rename fn-unload test-functions )

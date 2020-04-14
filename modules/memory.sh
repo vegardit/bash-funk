@@ -35,7 +35,7 @@ function -alloc-mem() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-alloc-mem() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _MEMORY_IN_MB
    [ -t 1 ] && __interactive=1 || true
@@ -123,16 +123,14 @@ function __impl-alloc-mem() {
 
    if ! hash "python" &>/dev/null; then echo "$__fn: Error: Required command 'python' not found on this system."; return 64; fi
 
-   ######### alloc-mem ######### START
-
+####### alloc-mem ####### START
 echo -n "Allocating ${_MEMORY_IN_MB} MB of memory (may take a moment)..."
 python -c "
 a='1'*1024*1024*${_MEMORY_IN_MB}
 print('DONE')
 raw_input('Press enter to exit...')
 "
-
-   ######### alloc-mem ######### END
+####### alloc-mem ####### END
 }
 function __complete-alloc-mem() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -169,7 +167,7 @@ function -memfree() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-memfree() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _MEMORY_UNIT
    [ -t 1 ] && __interactive=1 || true
@@ -280,8 +278,7 @@ function __impl-memfree() {
       if [[ $_MEMORY_UNIT != 'KB' && $_MEMORY_UNIT != 'MB' && $_MEMORY_UNIT != 'GB' ]]; then echo "$__fn: Error: Value '$_MEMORY_UNIT' for parameter MEMORY_UNIT is not one of the allowed values [KB,MB,GB]."; return 64; fi
    fi
 
-   ######### memfree ######### START
-
+####### memfree ####### START
 local totalMem=$(awk '/MemFree/ {print $2}' /proc/meminfo)
 local totalMemUnit=$(awk '/MemFree/ {print $3}' /proc/meminfo)
 
@@ -312,8 +309,7 @@ case $_MEMORY_UNIT in
       echo $(( memTotalKB / 1024 / 1024 ))
      ;;
 esac
-
-   ######### memfree ######### END
+####### memfree ####### END
 }
 function __complete-memfree() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -350,7 +346,7 @@ function -meminfo() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-meminfo() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -432,11 +428,9 @@ MemAvailable:   16143004 kB
       return 64
    done
 
-   ######### meminfo ######### START
-
+####### meminfo ####### START
 cat /proc/meminfo
-
-   ######### meminfo ######### END
+####### meminfo ####### END
 }
 function __complete-meminfo() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -473,7 +467,7 @@ function -memtotal() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-memtotal() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _MEMORY_UNIT
    [ -t 1 ] && __interactive=1 || true
@@ -584,8 +578,7 @@ function __impl-memtotal() {
       if [[ $_MEMORY_UNIT != 'KB' && $_MEMORY_UNIT != 'MB' && $_MEMORY_UNIT != 'GB' ]]; then echo "$__fn: Error: Value '$_MEMORY_UNIT' for parameter MEMORY_UNIT is not one of the allowed values [KB,MB,GB]."; return 64; fi
    fi
 
-   ######### memtotal ######### START
-
+####### memtotal ####### START
 local totalMem=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
 local totalMemUnit=$(awk '/MemTotal/ {print $3}' /proc/meminfo)
 
@@ -616,8 +609,7 @@ case $_MEMORY_UNIT in
       echo $(( memTotalKB / 1024 / 1024 ))
      ;;
 esac
-
-   ######### memtotal ######### END
+####### memtotal ####### END
 }
 function __complete-memtotal() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -654,7 +646,7 @@ function -procmem() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-procmem() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _group _color _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -745,8 +737,7 @@ function __impl-procmem() {
       if [[ $_color != 'always' && $_color != 'auto' && $_color != 'never' ]]; then echo "$__fn: Error: Value '$_color' for option --color is not one of the allowed values [always,auto,never]."; return 64; fi
    fi
 
-   ######### procmem ######### START
-
+####### procmem ####### START
 if [[ $_group ]]; then
 
    echo "  PHYS. MEM   VIRT. MEM  USER     #  PROCESS"
@@ -792,8 +783,7 @@ else
    done | -ansi-alternate --color ${_color:-auto}
 
 fi
-
-   ######### procmem ######### END
+####### procmem ####### END
 }
 function __complete-procmem() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -840,7 +830,7 @@ function -test-memory() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-memory() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -908,15 +898,13 @@ function __impl-test-memory() {
       return 64
    done
 
-   ######### test-memory ######### START
-
+####### test-memory ####### START
 ${BASH_FUNK_PREFIX:--}alloc-mem --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}memfree --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}meminfo --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}memtotal --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}procmem --selftest && echo || return 1
-
-   ######### test-memory ######### END
+####### test-memory ####### END
 }
 function __complete-test-memory() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -932,12 +920,12 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-memory -- ${BASH_FUNK_PREFIX:--
 
 
 function -help-memory() {
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}alloc-mem MEMORY_IN_MB\033[0m  -  Allocates the given amount of RAM."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}memfree [MEMORY_UNIT]\033[0m  -  Prints the free memory (in KB by default)."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}meminfo\033[0m  -  Prints memory information from /proc/meminfo."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}memtotal [MEMORY_UNIT]\033[0m  -  Prints the total memory (in KB by default)."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}procmem\033[0m  -  Prints memory consumption information of all running processes."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-memory\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-
+   local p="\033[1m${BASH_FUNK_PREFIX:--}"
+   echo -e "${p}alloc-mem MEMORY_IN_MB\033[0m  -  Allocates the given amount of RAM."
+   echo -e "${p}memfree [MEMORY_UNIT]\033[0m  -  Prints the free memory (in KB by default)."
+   echo -e "${p}meminfo\033[0m  -  Prints memory information from /proc/meminfo."
+   echo -e "${p}memtotal [MEMORY_UNIT]\033[0m  -  Prints the total memory (in KB by default)."
+   echo -e "${p}procmem\033[0m  -  Prints memory consumption information of all running processes."
+   echo -e "${p}test-memory\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
 __BASH_FUNK_FUNCS+=( alloc-mem memfree meminfo memtotal procmem test-memory )

@@ -41,7 +41,7 @@ function -aws-account-id() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-aws-account-id() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -109,13 +109,11 @@ function __impl-aws-account-id() {
       return 64
    done
 
-   ######### aws-account-id ######### START
-
+####### aws-account-id ####### START
 hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
 $http_get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/accountId/ {print $4}'
-
-   ######### aws-account-id ######### END
+####### aws-account-id ####### END
 }
 function __complete-aws-account-id() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -152,7 +150,7 @@ function -aws-az() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-aws-az() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -220,13 +218,11 @@ function __impl-aws-az() {
       return 64
    done
 
-   ######### aws-az ######### START
-
+####### aws-az ####### START
 hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
 $http_get http://169.254.169.254/latest/meta-data/placement/availability-zone
-
-   ######### aws-az ######### END
+####### aws-az ####### END
 }
 function __complete-aws-az() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -263,7 +259,7 @@ function -aws-describe-stack() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-aws-describe-stack() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _region _help _selftest _STACK_NAME
    [ -t 1 ] && __interactive=1 || true
@@ -360,8 +356,7 @@ function __impl-aws-describe-stack() {
 
    if ! hash "aws" &>/dev/null; then echo "$__fn: Error: Required command 'aws' not found on this system."; return 64; fi
 
-   ######### aws-describe-stack ######### START
-
+####### aws-describe-stack ####### START
 hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
 if [[ ! $_region ]]; then
@@ -374,8 +369,7 @@ if [[ ! $_STACK_NAME ]]; then
 fi
 
 aws --region $_region cloudformation describe-stacks --stack-name $_STACK_NAME 2>&1
-
-   ######### aws-describe-stack ######### END
+####### aws-describe-stack ####### END
 }
 function __complete-aws-describe-stack() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -412,7 +406,7 @@ function -aws-instance-id() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-aws-instance-id() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -480,13 +474,11 @@ function __impl-aws-instance-id() {
       return 64
    done
 
-   ######### aws-instance-id ######### START
-
+####### aws-instance-id ####### START
 hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
 $http_get http://169.254.169.254/latest/meta-data/instance-id
-
-   ######### aws-instance-id ######### END
+####### aws-instance-id ####### END
 }
 function __complete-aws-instance-id() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -523,7 +515,7 @@ function -aws-is-ec2() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-aws-is-ec2() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose
    [ -t 1 ] && __interactive=1 || true
@@ -598,8 +590,7 @@ function __impl-aws-is-ec2() {
       return 64
    done
 
-   ######### aws-is-ec2 ######### START
-
+####### aws-is-ec2 ####### START
 if [[ -f /sys/hypervisor/uuid && $(head -c 3 /sys/hypervisor/uuid) == "ec2" ]]; then
     [[ $_verbose ]] && echo "This is an AWS EC2 instance." || true
     return 0
@@ -607,8 +598,7 @@ else
     [[ $_verbose ]] && echo "This is no AWS EC2 instance." || true
     return 1
 fi
-
-   ######### aws-is-ec2 ######### END
+####### aws-is-ec2 ####### END
 }
 function __complete-aws-is-ec2() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -645,7 +635,7 @@ function -aws-private-ip() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-aws-private-ip() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -713,13 +703,11 @@ function __impl-aws-private-ip() {
       return 64
    done
 
-   ######### aws-private-ip ######### START
-
+####### aws-private-ip ####### START
 hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
 $http_get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/privateIp/ {print $4}'
-
-   ######### aws-private-ip ######### END
+####### aws-private-ip ####### END
 }
 function __complete-aws-private-ip() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -756,7 +744,7 @@ function -aws-region() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-aws-region() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -824,13 +812,11 @@ function __impl-aws-region() {
       return 64
    done
 
-   ######### aws-region ######### START
-
+####### aws-region ####### START
 hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
 $http_get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/region/ {print $4}'
-
-   ######### aws-region ######### END
+####### aws-region ####### END
 }
 function __complete-aws-region() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -867,7 +853,7 @@ function -aws-stack-name() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-aws-stack-name() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -940,15 +926,13 @@ function __impl-aws-stack-name() {
 
    if ! hash "aws" &>/dev/null; then echo "$__fn: Error: Required command 'aws' not found on this system."; return 64; fi
 
-   ######### aws-stack-name ######### START
-
+####### aws-stack-name ####### START
 hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
 local region=$($http_get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/region/ {print $4}')
 local instanceId=$($http_get http://169.254.169.254/latest/meta-data/instance-id)
 aws ec2 describe-instances --region $region --instance-id $instanceId --query 'Reservations[*].Instances[*].Tags[?Key==`aws:cloudformation:stack-name`].Value' --output text
-
-   ######### aws-stack-name ######### END
+####### aws-stack-name ####### END
 }
 function __complete-aws-stack-name() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -985,7 +969,7 @@ function -aws-vpc-cidr-block() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-aws-vpc-cidr-block() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -1053,14 +1037,12 @@ function __impl-aws-vpc-cidr-block() {
       return 64
    done
 
-   ######### aws-vpc-cidr-block ######### START
-
+####### aws-vpc-cidr-block ####### START
 hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
 local mac=$($http_get http://169.254.169.254/latest/meta-data/mac)
 $http_get http://169.254.169.254/latest/meta-data/network/interfaces/macs/$mac/vpc-ipv4-cidr-block
-
-   ######### aws-vpc-cidr-block ######### END
+####### aws-vpc-cidr-block ####### END
 }
 function __complete-aws-vpc-cidr-block() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1097,7 +1079,7 @@ function -aws-vpc-id() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-aws-vpc-id() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -1165,14 +1147,12 @@ function __impl-aws-vpc-id() {
       return 64
    done
 
-   ######### aws-vpc-id ######### START
-
+####### aws-vpc-id ####### START
 hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
 local mac=$($http_get http://169.254.169.254/latest/meta-data/mac)
 $http_get http://169.254.169.254/latest/meta-data/network/interfaces/macs/$mac/vpc-id
-
-   ######### aws-vpc-id ######### END
+####### aws-vpc-id ####### END
 }
 function __complete-aws-vpc-id() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1209,7 +1189,7 @@ function -test-aws() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-aws() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -1277,8 +1257,7 @@ function __impl-test-aws() {
       return 64
    done
 
-   ######### test-aws ######### START
-
+####### test-aws ####### START
 ${BASH_FUNK_PREFIX:--}aws-account-id --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}aws-az --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}aws-describe-stack --selftest && echo || return 1
@@ -1289,8 +1268,7 @@ ${BASH_FUNK_PREFIX:--}aws-region --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}aws-stack-name --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}aws-vpc-cidr-block --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}aws-vpc-id --selftest && echo || return 1
-
-   ######### test-aws ######### END
+####### test-aws ####### END
 }
 function __complete-test-aws() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1306,22 +1284,22 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-aws -- ${BASH_FUNK_PREFIX:--}te
 
 
 function -help-aws() {
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}aws-account-id\033[0m  -  Prints this server's AWS account ID."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}aws-az\033[0m  -  Prints this server's AWS availability zone."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}aws-describe-stack [STACK_NAME]\033[0m  -  Prints this server's AWS stack name. The server requires 'AmazonEC2ReadOnlyAccess' permission."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}aws-instance-id\033[0m  -  Prints this server's AWS instance ID."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}aws-is-ec2\033[0m  -  Determins if this server is an EC2 instance."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}aws-private-ip\033[0m  -  Prints this server's AWS private IP address."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}aws-region\033[0m  -  Prints this server's AWS region."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}aws-stack-name\033[0m  -  Prints this server's AWS stack name. The server requires 'AmazonEC2ReadOnlyAccess' permission."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}aws-vpc-cidr-block\033[0m  -  Prints this server's AWS VPC CIDR Block."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}aws-vpc-id\033[0m  -  Prints this server's AWS VPC ID."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-aws\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-
+   local p="\033[1m${BASH_FUNK_PREFIX:--}"
+   echo -e "${p}aws-account-id\033[0m  -  Prints this server's AWS account ID."
+   echo -e "${p}aws-az\033[0m  -  Prints this server's AWS availability zone."
+   echo -e "${p}aws-describe-stack [STACK_NAME]\033[0m  -  Prints this server's AWS stack name. The server requires 'AmazonEC2ReadOnlyAccess' permission."
+   echo -e "${p}aws-instance-id\033[0m  -  Prints this server's AWS instance ID."
+   echo -e "${p}aws-is-ec2\033[0m  -  Determins if this server is an EC2 instance."
+   echo -e "${p}aws-private-ip\033[0m  -  Prints this server's AWS private IP address."
+   echo -e "${p}aws-region\033[0m  -  Prints this server's AWS region."
+   echo -e "${p}aws-stack-name\033[0m  -  Prints this server's AWS stack name. The server requires 'AmazonEC2ReadOnlyAccess' permission."
+   echo -e "${p}aws-vpc-cidr-block\033[0m  -  Prints this server's AWS VPC CIDR Block."
+   echo -e "${p}aws-vpc-id\033[0m  -  Prints this server's AWS VPC ID."
+   echo -e "${p}test-aws\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
 __BASH_FUNK_FUNCS+=( aws-account-id aws-az aws-describe-stack aws-instance-id aws-is-ec2 aws-private-ip aws-region aws-stack-name aws-vpc-cidr-block aws-vpc-id test-aws )
 
 else
-    echo "SKIPPED"
+   echo "SKIPPED"
 fi
 unset -f -- ${BASH_FUNK_PREFIX:--}is-loadable

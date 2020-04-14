@@ -35,7 +35,7 @@ function -cpu-count() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-cpu-count() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -114,11 +114,9 @@ function __impl-cpu-count() {
       return 64
    done
 
-   ######### cpu-count ######### START
-
+####### cpu-count ####### START
 grep processor /proc/cpuinfo | wc -l
-
-   ######### cpu-count ######### END
+####### cpu-count ####### END
 }
 function __complete-cpu-count() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -155,7 +153,7 @@ function -cpu-perf() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-cpu-perf() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _mode _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -251,8 +249,7 @@ function __impl-cpu-perf() {
       if [[ $_mode != 'openssl-aes128' && $_mode != 'openssl-aes256' && $_mode != 'openssl-rsa1024' && $_mode != 'openssl-rsa2048' && $_mode != 'openssl-rsa4096' && $_mode != 'cryptsetup-aes128' && $_mode != 'cryptsetup-aes256' && $_mode != 'dd-md5sum' && $_mode != 'dd-sha256sum' && $_mode != 'dd-sha512sum' ]]; then echo "$__fn: Error: Value '$_mode' for option --mode is not one of the allowed values [openssl-aes128,openssl-aes256,openssl-rsa1024,openssl-rsa2048,openssl-rsa4096,cryptsetup-aes128,cryptsetup-aes256,dd-md5sum,dd-sha256sum,dd-sha512sum]."; return 64; fi
    fi
 
-   ######### cpu-perf ######### START
-
+####### cpu-perf ####### START
 local _mode=${_mode:-openssl-rsa1024}
 
 case $_mode in
@@ -261,8 +258,7 @@ case $_mode in
     cryptsetup-*) cryptsetup benchmark --cipher aes-cbc --key-size ${_mode#cryptsetup-} ;;
     dd-*)         dd if=/dev/zero bs=1M count=1024 2> >(head -3 | tail -1) > >(${_mode#dd-} >/dev/null) ;;
 esac
-
-   ######### cpu-perf ######### END
+####### cpu-perf ####### END
 }
 function __complete-cpu-perf() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -316,7 +312,7 @@ function -disk-latency() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-disk-latency() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
    [ -t 1 ] && __interactive=1 || true
@@ -426,8 +422,7 @@ function __impl-disk-latency() {
 
    if ! hash "dd" &>/dev/null; then echo "$__fn: Error: Required command 'dd' not found on this system."; return 64; fi
 
-   ######### disk-latency ######### START
-
+####### disk-latency ####### START
 local testFile="$(mktemp "--tmpdir=$_PATH")"
 local ddResult
 if ddResult=$(set -o pipefail; dd if=/dev/zero "of=$testFile" bs=512 count=1000 oflag=dsync 2>&1 | tail -1 | sed -E 's/.*copied, ([0-9.]+) .+/\1 ms/'); then
@@ -439,8 +434,7 @@ else
     echo $ddResult
     return 1
 fi
-
-   ######### disk-latency ######### END
+####### disk-latency ####### END
 }
 function __complete-disk-latency() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -477,7 +471,7 @@ function -disk-perf() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-disk-perf() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _mode _size _help _selftest _PATH
    [ -t 1 ] && __interactive=1 || true
@@ -609,8 +603,7 @@ Testing single-threaded sequential read performance...
       if [[ ! -w "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH is not writeable by user '$USER'."; return 64; fi
    fi
 
-   ######### disk-perf ######### START
-
+####### disk-perf ####### START
 local _size=${_size:-2048}
 local _mode=${_mode:-fio}
 
@@ -645,8 +638,7 @@ case $_mode in
         fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(grep processor /proc/cpuinfo | wc -l) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randrw --rwmixread=75
        ;;
 esac
-
-   ######### disk-perf ######### END
+####### disk-perf ####### END
 }
 function __complete-disk-perf() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -692,7 +684,7 @@ function -scp-perf() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-scp-perf() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _port _identity_file _help _selftest _TARGET _SIZE_MB
    [ -t 1 ] && __interactive=1 || true
@@ -820,8 +812,7 @@ function __impl-scp-perf() {
       if [[ ! "$_SIZE_MB" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_SIZE_MB' for parameter SIZE_MB is not a numeric value."; return 64; fi
    fi
 
-   ######### scp-perf ######### START
-
+####### scp-perf ####### START
 local dataFile=$(mktemp)
 
 local sshOpts=""
@@ -850,8 +841,7 @@ echo "Removing test data on $_TARGET..."
 ssh $sshOpts "$_TARGET" "rm ${dataFile}-copy"
 echo "Removing local test data..."
 rm $dataFile
-
-   ######### scp-perf ######### END
+####### scp-perf ####### END
 }
 function __complete-scp-perf() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -888,7 +878,7 @@ function -test-performance() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-performance() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -956,15 +946,13 @@ function __impl-test-performance() {
       return 64
    done
 
-   ######### test-performance ######### START
-
+####### test-performance ####### START
 ${BASH_FUNK_PREFIX:--}cpu-count --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}cpu-perf --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}disk-latency --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}disk-perf --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}scp-perf --selftest && echo || return 1
-
-   ######### test-performance ######### END
+####### test-performance ####### END
 }
 function __complete-test-performance() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -980,12 +968,12 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-performance -- ${BASH_FUNK_PREF
 
 
 function -help-performance() {
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}cpu-count\033[0m  -  Prints the number of processors."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}cpu-perf\033[0m  -  Performs a CPU speed test using 'openssl speed' utilizing all available processors or 'cryptsetup benchmark' / 'dd' for single threaded tests."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}disk-latency [PATH]\033[0m  -  Determines disk latency in milliseconds using 'dd'."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}disk-perf [PATH]\033[0m  -  Performs a I/O speed test using 'fio' utilizing all available processors or single-threaded using 'dd'."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}scp-perf TARGET [SIZE_MB]\033[0m  -  Performs an SCP speed test."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-performance\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-
+   local p="\033[1m${BASH_FUNK_PREFIX:--}"
+   echo -e "${p}cpu-count\033[0m  -  Prints the number of processors."
+   echo -e "${p}cpu-perf\033[0m  -  Performs a CPU speed test using 'openssl speed' utilizing all available processors or 'cryptsetup benchmark' / 'dd' for single threaded tests."
+   echo -e "${p}disk-latency [PATH]\033[0m  -  Determines disk latency in milliseconds using 'dd'."
+   echo -e "${p}disk-perf [PATH]\033[0m  -  Performs a I/O speed test using 'fio' utilizing all available processors or single-threaded using 'dd'."
+   echo -e "${p}scp-perf TARGET [SIZE_MB]\033[0m  -  Performs an SCP speed test."
+   echo -e "${p}test-performance\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
 __BASH_FUNK_FUNCS+=( cpu-count cpu-perf disk-latency disk-perf scp-perf test-performance )

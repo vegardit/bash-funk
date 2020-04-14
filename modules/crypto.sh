@@ -35,7 +35,7 @@ function -md5sum() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-md5sum() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH_TO_FILE
    [ -t 1 ] && __interactive=1 || true
@@ -119,8 +119,7 @@ function __impl-md5sum() {
       echo "$__fn: Error: Parameter PATH_TO_FILE must be specified."; return 64
    fi
 
-   ######### md5sum ######### START
-
+####### md5sum ####### START
 
 # use md5sum if available
 if hash md5sum &>/dev/null; then
@@ -141,8 +140,7 @@ else
     python -c "import hashlib
 print(hashlib.md5(open('$_PATH_TO_FILE').read()).hexdigest())"
 fi
-
-   ######### md5sum ######### END
+####### md5sum ####### END
 }
 function __complete-md5sum() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -179,7 +177,7 @@ function -sha256sum() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-sha256sum() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH_TO_FILE
    [ -t 1 ] && __interactive=1 || true
@@ -263,8 +261,7 @@ function __impl-sha256sum() {
       echo "$__fn: Error: Parameter PATH_TO_FILE must be specified."; return 64
    fi
 
-   ######### sha256sum ######### START
-
+####### sha256sum ####### START
 
 # use sha256 if available
 if hash sha256 &>/dev/null; then
@@ -285,8 +282,7 @@ else
     python -c "import hashlib
 print(hashlib.sha256(open('$_PATH_TO_FILE').read()).hexdigest())"
 fi
-
-   ######### sha256sum ######### END
+####### sha256sum ####### END
 }
 function __complete-sha256sum() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -323,7 +319,7 @@ function -test-crypto() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-crypto() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -391,13 +387,11 @@ function __impl-test-crypto() {
       return 64
    done
 
-   ######### test-crypto ######### START
-
+####### test-crypto ####### START
 ${BASH_FUNK_PREFIX:--}md5sum --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}sha256sum --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}verify-tar-md5 --selftest && echo || return 1
-
-   ######### test-crypto ######### END
+####### test-crypto ####### END
 }
 function __complete-test-crypto() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -434,7 +428,7 @@ function -verify-tar-md5() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-verify-tar-md5() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH_TO_ARCHIVE=()
    [ -t 1 ] && __interactive=1 || true
@@ -517,8 +511,7 @@ function __impl-verify-tar-md5() {
       done
    fi
 
-   ######### verify-tar-md5 ######### START
-
+####### verify-tar-md5 ####### START
 local path mismatch=0
 echo "Verifying..."
 for path in "${_PATH_TO_ARCHIVE[@]}"; do
@@ -538,8 +531,7 @@ done
 if [[ $mismatch == 1 ]]; then
     return 1
 fi
-
-   ######### verify-tar-md5 ######### END
+####### verify-tar-md5 ####### END
 }
 function __complete-verify-tar-md5() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -555,10 +547,10 @@ complete -F __complete${BASH_FUNK_PREFIX:--}verify-tar-md5 -- ${BASH_FUNK_PREFIX
 
 
 function -help-crypto() {
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}md5sum PATH_TO_FILE\033[0m  -  Calculates the MD5 hash of the given file."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}sha256sum PATH_TO_FILE\033[0m  -  Calculates the SHA256 hash of the given file."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-crypto\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}verify-tar-md5 [PATH_TO_ARCHIVE]...\033[0m  -  Verifies the MD5 sum of tar files with embedded checksum information. Usually Android firmware archives, see https://fileinfo.com/extension/tar.md5."
-
+   local p="\033[1m${BASH_FUNK_PREFIX:--}"
+   echo -e "${p}md5sum PATH_TO_FILE\033[0m  -  Calculates the MD5 hash of the given file."
+   echo -e "${p}sha256sum PATH_TO_FILE\033[0m  -  Calculates the SHA256 hash of the given file."
+   echo -e "${p}test-crypto\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "${p}verify-tar-md5 [PATH_TO_ARCHIVE]...\033[0m  -  Verifies the MD5 sum of tar files with embedded checksum information. Usually Android firmware archives, see https://fileinfo.com/extension/tar.md5."
 }
 __BASH_FUNK_FUNCS+=( md5sum sha256sum test-crypto verify-tar-md5 )

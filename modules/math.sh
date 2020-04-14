@@ -35,7 +35,7 @@ function -calc() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-calc() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _round _help _selftest _FORMULA=()
    [ -t 1 ] && __interactive=1 || true
@@ -188,8 +188,7 @@ function __impl-calc() {
 
    if ! hash "awk" &>/dev/null; then echo "$__fn: Error: Required command 'awk' not found on this system."; return 64; fi
 
-   ######### calc ######### START
-
+####### calc ####### START
 if [[ ! ${_FORMULA:-} ]]; then
     "$__fn: Formula is missing."
     return 1
@@ -205,8 +204,7 @@ if [[ ${_round:-} ]]; then
 else
     LC_ALL=C awk "BEGIN{print ($formula)}"
 fi
-
-   ######### calc ######### END
+####### calc ####### END
 }
 function __complete-calc() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -243,7 +241,7 @@ function -round() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-round() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _VALUE _PRECISION
    [ -t 1 ] && __interactive=1 || true
@@ -366,11 +364,9 @@ function __impl-round() {
       echo "$__fn: Error: Parameter PRECISION must be specified."; return 64
    fi
 
-   ######### round ######### START
-
+####### round ####### START
 LC_ALL=C builtin printf "%.*f\n" $_PRECISION $_VALUE
-
-   ######### round ######### END
+####### round ####### END
 }
 function __complete-round() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -407,7 +403,7 @@ function -simple-calc() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-simple-calc() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _round _using _help _selftest _FORMULA
    [ -t 1 ] && __interactive=1 || true
@@ -746,8 +742,7 @@ function __impl-simple-calc() {
       echo "$__fn: Error: Parameter FORMULA must be specified."; return 64
    fi
 
-   ######### simple-calc ######### START
-
+####### simple-calc ####### START
 if [[ $_FORMULA =~ ^([+-]?[0-9]*\.?[0-9]+)([/*^+-])([0-9]*\.?[0-9]+)$ ]]; then
     local leftNumber=${BASH_REMATCH[1]}
     local operator=${BASH_REMATCH[2]}
@@ -837,8 +832,7 @@ print(result)
       ;;
 
 esac
-
-   ######### simple-calc ######### END
+####### simple-calc ####### END
 }
 function __complete-simple-calc() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -886,7 +880,7 @@ function -test-math() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-math() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -954,13 +948,11 @@ function __impl-test-math() {
       return 64
    done
 
-   ######### test-math ######### START
-
+####### test-math ####### START
 ${BASH_FUNK_PREFIX:--}calc --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}round --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}simple-calc --selftest && echo || return 1
-
-   ######### test-math ######### END
+####### test-math ####### END
 }
 function __complete-test-math() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -976,10 +968,10 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-math -- ${BASH_FUNK_PREFIX:--}t
 
 
 function -help-math() {
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}calc [FORMULA]...\033[0m  -  Performs calculations using awk. See https://www.gnu.org/software/gawk/manual/html_node/Arithmetic-Ops.html."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}round VALUE PRECISION\033[0m  -  Rounds the given decimal value using 'printf' builtin.."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}simple-calc FORMULA\033[0m  -  Performs simple floating point operations using awk, perl, python or bc - depending on which command is available."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-math\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-
+   local p="\033[1m${BASH_FUNK_PREFIX:--}"
+   echo -e "${p}calc [FORMULA]...\033[0m  -  Performs calculations using awk. See https://www.gnu.org/software/gawk/manual/html_node/Arithmetic-Ops.html."
+   echo -e "${p}round VALUE PRECISION\033[0m  -  Rounds the given decimal value using 'printf' builtin.."
+   echo -e "${p}simple-calc FORMULA\033[0m  -  Performs simple floating point operations using awk, perl, python or bc - depending on which command is available."
+   echo -e "${p}test-math\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
 __BASH_FUNK_FUNCS+=( calc round simple-calc test-math )

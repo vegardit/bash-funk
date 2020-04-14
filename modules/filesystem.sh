@@ -35,7 +35,7 @@ function -abspath() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-abspath() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
    [ -t 1 ] && __interactive=1 || true
@@ -113,8 +113,7 @@ function __impl-abspath() {
 
    if [[ ! $_PATH ]]; then _PATH="."; fi
 
-   ######### abspath ######### START
-
+####### abspath ####### START
 
 # use realpath if available
 if hash realpath &>/dev/null; then
@@ -125,8 +124,7 @@ else
    python -c "import os
 print(os.path.abspath('$_PATH'))"
 fi
-
-   ######### abspath ######### END
+####### abspath ####### END
 }
 function __complete-abspath() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -163,7 +161,7 @@ function -cd-down() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-cd-down() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _START_AT _DIR_NAME
    [ -t 1 ] && __interactive=1 || true
@@ -253,8 +251,7 @@ function __impl-cd-down() {
       echo "$__fn: Error: Parameter DIR_NAME must be specified."; return 64
    fi
 
-   ######### cd-down ######### START
-
+####### cd-down ####### START
 local path=$(find $_START_AT -name "$_DIR_NAME" -type d -print -quit 2>/dev/null || true);
 if [[ $path ]]; then
    echo "$path"
@@ -263,8 +260,7 @@ else
    echo "$__fn: $_DIR_NAME: No such directory"
    return 1
 fi
-
-   ######### cd-down ######### END
+####### cd-down ####### END
 }
 function __complete-cd-down() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -301,7 +297,7 @@ function -cd-hist() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-cd-hist() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STEPS_OR_DIRNAME
    [ -t 1 ] && __interactive=1 || true
@@ -377,8 +373,7 @@ function __impl-cd-hist() {
       return 64
    done
 
-   ######### cd-hist ######### START
-
+####### cd-hist ####### START
 if [[ ! $_STEPS_OR_DIRNAME ]]; then
    echo "Directory history:"
    for (( __idx=2; __idx<${#DIRSTACK[*]}; __idx++ )); do
@@ -410,8 +405,7 @@ else
    echo "$__fn: $_STEPS_OR_DIRNAME: No such directory in history"
    return 1
 fi
-
-   ######### cd-hist ######### END
+####### cd-hist ####### END
 }
 function __complete-cd-hist() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -448,7 +442,7 @@ function -cd-up() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-cd-up() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _LEVEL_OR_PATTERN
    [ -t 1 ] && __interactive=1 || true
@@ -526,8 +520,7 @@ function __impl-cd-up() {
 
    if [[ ! $_LEVEL_OR_PATTERN ]]; then _LEVEL_OR_PATTERN=".."; fi
 
-   ######### cd-up ######### START
-
+####### cd-up ####### START
 if [[ $_LEVEL_OR_PATTERN == ".." ]]; then
    cd ..
    return 0
@@ -563,8 +556,7 @@ else
    echo "$__fn: $_LEVEL_OR_PATTERN: No such directory"
    return 1
 fi
-
-   ######### cd-up ######### END
+####### cd-up ####### END
 }
 function __complete-cd-up() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -601,7 +593,7 @@ function -count-words() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-count-words() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _sort _file _help _selftest _WORD=()
    [ -t 1 ] && __interactive=1 || true
@@ -711,8 +703,7 @@ function __impl-count-words() {
 
    if [[ ${#_WORD[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter WORD at least 1 value must be specified. Found: ${#_WORD[@]}."; return 64; fi
 
-   ######### count-words ######### START
-
+####### count-words ####### START
 local sedCmds grepCmds
 for word in "${_WORD[@]}"; do
    sedCmds="s/$word/\n$word\n/g; $sedCmds"
@@ -737,8 +728,7 @@ else
       cat /dev/fd/0 | sed "$sedCmds" | grep $grepCmds | sort | uniq -c
    fi
 fi
-
-   ######### count-words ######### END
+####### count-words ####### END
 }
 function __complete-count-words() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -784,7 +774,7 @@ function -du() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-du() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH=()
    [ -t 1 ] && __interactive=1 || true
@@ -858,13 +848,11 @@ function __impl-du() {
       return 64
    done
 
-   ######### du ######### START
-
+####### du ####### START
 [[ ! $_PATH ]] && _PATH=(.) || true
 
 du -s -h "${_PATH[@]}"
-
-   ######### du ######### END
+####### du ####### END
 }
 function __complete-du() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -901,7 +889,7 @@ function -extract() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-extract() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _ARCHIVE _TO_DIR
    [ -t 1 ] && __interactive=1 || true
@@ -991,8 +979,7 @@ function __impl-extract() {
       echo "$__fn: Error: Parameter ARCHIVE must be specified."; return 64
    fi
 
-   ######### extract ######### START
-
+####### extract ####### START
 if [[ $_TO_DIR ]]; then
    local origPWD="$PWD"
    mkdir "$_TO_DIR"
@@ -1022,8 +1009,7 @@ esac
 if [[ $_TO_DIR ]]; then
    cd "$origPWD"
 fi
-
-   ######### extract ######### END
+####### extract ####### END
 }
 function __complete-extract() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1060,7 +1046,7 @@ function -find-up() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-find-up() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _type _help _selftest _FILENAME
    [ -t 1 ] && __interactive=1 || true
@@ -1159,8 +1145,7 @@ function __impl-find-up() {
       echo "$__fn: Error: Parameter FILENAME must be specified."; return 64
    fi
 
-   ######### find-up ######### START
-
+####### find-up ####### START
 local path=$PWD
 while [[ $path ]]; do
    case $_type in
@@ -1172,8 +1157,7 @@ while [[ $path ]]; do
 done
 echo "$__fn: '$_FILENAME': No such file or directory"
 return 1
-
-   ######### find-up ######### END
+####### find-up ####### END
 }
 function __complete-find-up() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1221,7 +1205,7 @@ function -findfiles() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-findfiles() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _lines _unpack _maxdepth _mindepth _name _help _selftest _verbose _START_PATH _SEARCH_STRING
    [ -t 1 ] && __interactive=1 || true
@@ -1374,8 +1358,7 @@ function __impl-findfiles() {
       echo "$__fn: Error: Parameter SEARCH_STRING must be specified."; return 64
    fi
 
-   ######### findfiles ######### START
-
+####### findfiles ####### START
 if [[ ! -e "$_START_PATH" ]]; then
    echo "Error: Path [$_START_PATH] does not exist."
    return 1
@@ -1463,8 +1446,7 @@ else
       fi
    fi
 fi
-
-   ######### findfiles ######### END
+####### findfiles ####### END
 }
 function __complete-findfiles() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1501,7 +1483,7 @@ function -ll() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-ll() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH=()
    [ -t 1 ] && __interactive=1 || true
@@ -1575,8 +1557,7 @@ function __impl-ll() {
       return 64
    done
 
-   ######### ll ######### START
-
+####### ll ####### START
 [[ ! $_PATH ]] && _PATH=(.) || true
 
 local _ls="command ls -lAph \"${_PATH[@]}\""
@@ -1595,8 +1576,7 @@ eval $_ls | awk '
    /^l[rwxXst+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m)?[.].+[^\/]/            { dotFiles = dotFiles "\n" $0 };  # capture hidden sym-links to files
    /^l[rwxXst+-]+ .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m[^.]|[^\033^.]).*[^\/]$/ { files    = files    "\n" $0 };  # capture normal sym-links to files
    END { print total dotDirs dirs dotFiles files }'
-
-   ######### ll ######### END
+####### ll ####### END
 }
 function __complete-ll() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1633,7 +1613,7 @@ function -mkcd() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-mkcd() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _mode _parents _help _selftest _verbose _PATH
    [ -t 1 ] && __interactive=1 || true
@@ -1744,8 +1724,7 @@ function __impl-mkcd() {
       echo "$__fn: Error: Parameter PATH must be specified."; return 64
    fi
 
-   ######### mkcd ######### START
-
+####### mkcd ####### START
 local mkdirOpts
 
 [[ $_mode    ]] && mkdirOpts="$mkdirOpts -m $_mode" || true
@@ -1753,8 +1732,7 @@ local mkdirOpts
 [[ $_verbose ]] && mkdirOpts="$mkdirOpts -v" || true
 
 mkdir "$_PATH" && cd "$_PATH"
-
-   ######### mkcd ######### END
+####### mkcd ####### END
 }
 function __complete-mkcd() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1791,7 +1769,7 @@ function -modified() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-modified() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _format _help _selftest _PATH
    [ -t 1 ] && __interactive=1 || true
@@ -1891,8 +1869,7 @@ function __impl-modified() {
       if [[ ! -r "$_PATH" ]]; then echo "$__fn: Error: Path '$_PATH' for parameter PATH is not readable by user '$USER'."; return 64; fi
    fi
 
-   ######### modified ######### START
-
+####### modified ####### START
 local _format=${_format:-timestamp}
 
 case $_format in
@@ -1939,8 +1916,7 @@ print(datetime.datetime.fromtimestamp(int(os.path.getmtime('$_PATH'))).isoformat
       fi
      ;;
 esac
-
-   ######### modified ######### END
+####### modified ####### END
 }
 function __complete-modified() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1987,7 +1963,7 @@ function -owner() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-owner() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
    [ -t 1 ] && __interactive=1 || true
@@ -2071,8 +2047,7 @@ function __impl-owner() {
       if [[ ! -r "$_PATH" ]]; then echo "$__fn: Error: Path '$_PATH' for parameter PATH is not readable by user '$USER'."; return 64; fi
    fi
 
-   ######### owner ######### START
-
+####### owner ####### START
 # use stat if available
 if hash stat &>/dev/null; then
    echo $(stat -c %U "$_PATH")
@@ -2089,8 +2064,7 @@ else
    python -c "import os, pwd
 print(pwd.getpwuid(os.stat('$_PATH').st_uid).pw_name)"
 fi
-
-   ######### owner ######### END
+####### owner ####### END
 }
 function __complete-owner() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -2127,7 +2101,7 @@ function -realpath() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-realpath() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
    [ -t 1 ] && __interactive=1 || true
@@ -2209,8 +2183,7 @@ function __impl-realpath() {
    true
    fi
 
-   ######### realpath ######### START
-
+####### realpath ####### START
 # use readlink if available
 if hash readlink &>/dev/null; then
    readlink -m "$_PATH"
@@ -2227,8 +2200,7 @@ else
    python -c "import os
 print(os.path.realpath('$_PATH'))"
 fi
-
-   ######### realpath ######### END
+####### realpath ####### END
 }
 function __complete-realpath() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -2265,7 +2237,7 @@ function -sudo-append() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-sudo-append() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _FILE_PATH _CONTENT
    [ -t 1 ] && __interactive=1 || true
@@ -2375,12 +2347,10 @@ function __impl-sudo-append() {
    if ! hash "sudo" &>/dev/null; then echo "$__fn: Error: Required command 'sudo' not found on this system."; return 64; fi
    if ! sudo -l -- tee -a &>/dev/null; then echo "$__fn: Error: User $USER misses required sudo permission for 'tee -a'"; return 64; fi
 
-   ######### sudo-append ######### START
-
+####### sudo-append ####### START
 echo "Appending to [$_FILE_PATH]..."
 echo "$_CONTENT" | sudo tee -a "$_FILE_PATH" > /dev/null
-
-   ######### sudo-append ######### END
+####### sudo-append ####### END
 }
 function __complete-sudo-append() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -2417,7 +2387,7 @@ function -sudo-write() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-sudo-write() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _FILE_PATH _OWNER _CONTENT
    [ -t 1 ] && __interactive=1 || true
@@ -2541,12 +2511,10 @@ function __impl-sudo-write() {
    if ! hash "sudo" &>/dev/null; then echo "$__fn: Error: Required command 'sudo' not found on this system."; return 64; fi
    if ! sudo -l -- sh chown &>/dev/null; then echo "$__fn: Error: User $USER misses required sudo permission for 'sh chown'"; return 64; fi
 
-   ######### sudo-write ######### START
-
+####### sudo-write ####### START
 echo "Writing [$_FILE_PATH]..."
 sudo sh -c "echo '$_CONTENT' > '$_FILE_PATH'" && sudo chown "$_OWNER" "$_FILE_PATH"
-
-   ######### sudo-write ######### END
+####### sudo-write ####### END
 }
 function __complete-sudo-write() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -2583,7 +2551,7 @@ function -tail-reverse() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-tail-reverse() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _unique _lines _help _selftest _FILE
    [ -t 1 ] && __interactive=1 || true
@@ -2690,8 +2658,7 @@ function __impl-tail-reverse() {
       echo "$__fn: Error: Parameter FILE must be specified."; return 64
    fi
 
-   ######### tail-reverse ######### START
-
+####### tail-reverse ####### START
 if [[ $_unique ]]; then
    if [[ $_lines ]]; then
       awk "{lines[len++]=\$0} END {for(i=len-1;i>=0;i--) if (occurrences[lines[i]]++ == 0) { print lines[i]; count++; if (count>=$_lines) break}}" $_FILE
@@ -2705,8 +2672,7 @@ if [[ $_unique ]]; then
       awk "{lines[len++]=\$0} END {for(i=len-1;i>=0;i--) print lines[i]}" $_FILE
    fi
 fi
-
-   ######### tail-reverse ######### END
+####### tail-reverse ####### END
 }
 function __complete-tail-reverse() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -2743,7 +2709,7 @@ function -test-filesystem() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-filesystem() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -2811,8 +2777,7 @@ function __impl-test-filesystem() {
       return 64
    done
 
-   ######### test-filesystem ######### START
-
+####### test-filesystem ####### START
 ${BASH_FUNK_PREFIX:--}abspath --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}cd-down --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}cd-hist --selftest && echo || return 1
@@ -2830,8 +2795,7 @@ ${BASH_FUNK_PREFIX:--}realpath --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}sudo-append --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}sudo-write --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}tail-reverse --selftest && echo || return 1
-
-   ######### test-filesystem ######### END
+####### test-filesystem ####### END
 }
 function __complete-test-filesystem() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -2847,24 +2811,24 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-filesystem -- ${BASH_FUNK_PREFI
 
 
 function -help-filesystem() {
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}abspath [PATH]\033[0m  -  Prints the normalized path of the given path WITHOUT resolving symbolic links. The path is not required to exist."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}cd-down [START_AT] DIR_NAME\033[0m  -  Jumps down in the tree of the current directory to the first sub directory found with the given name."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}cd-hist [STEPS_OR_DIRNAME]\033[0m  -  Navigates back in the directory history which can be managed via pushd/popd/dirs and is automatically populated if the Bash Funk bash-prompt is installed."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}cd-up [LEVEL_OR_PATTERN]\033[0m  -  Navigates up in the current directory tree to the first parent directory found with the given namen or the given number of levels. Bash completion will auto-complete the names of the parent directories."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}count-words WORD1 [WORD]...\033[0m  -  Counts the number of occurences of the word(s) in the text read from stdin."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}du [PATH]...\033[0m  -  Prints disk usage information."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}extract ARCHIVE [TO_DIR]\033[0m  -  Extracts the given archive using the compatible extractor."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}find-up FILENAME\033[0m  -  Traverses the directory upward to find the given file."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}findfiles [START_PATH] SEARCH_STRING\033[0m  -  Recursively finds all files containing the given string and displays their path."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}ll [PATH]...\033[0m  -  Alternative version of 'ls -lt' that prints directories (and sym-links to directories) before files and hidden entries before non-hidden entries."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}mkcd PATH\033[0m  -  Creates a directory and changes into it."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}modified [PATH]\033[0m  -  Prints the modification timestamp of the given file or directory."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}owner [PATH]\033[0m  -  Prints the owner of the given file or directory."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}realpath [PATH]\033[0m  -  Prints the normalized path of the given path resolving any symbolic links. The path is not required to exist."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}sudo-append FILE_PATH CONTENT\033[0m  -  Creates a file with the given content."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}sudo-write FILE_PATH OWNER CONTENT\033[0m  -  Creates a file with the given content."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}tail-reverse FILE\033[0m  -  Prints the last N lines of the given text file in reverse order."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-filesystem\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-
+   local p="\033[1m${BASH_FUNK_PREFIX:--}"
+   echo -e "${p}abspath [PATH]\033[0m  -  Prints the normalized path of the given path WITHOUT resolving symbolic links. The path is not required to exist."
+   echo -e "${p}cd-down [START_AT] DIR_NAME\033[0m  -  Jumps down in the tree of the current directory to the first sub directory found with the given name."
+   echo -e "${p}cd-hist [STEPS_OR_DIRNAME]\033[0m  -  Navigates back in the directory history which can be managed via pushd/popd/dirs and is automatically populated if the Bash Funk bash-prompt is installed."
+   echo -e "${p}cd-up [LEVEL_OR_PATTERN]\033[0m  -  Navigates up in the current directory tree to the first parent directory found with the given namen or the given number of levels. Bash completion will auto-complete the names of the parent directories."
+   echo -e "${p}count-words WORD1 [WORD]...\033[0m  -  Counts the number of occurences of the word(s) in the text read from stdin."
+   echo -e "${p}du [PATH]...\033[0m  -  Prints disk usage information."
+   echo -e "${p}extract ARCHIVE [TO_DIR]\033[0m  -  Extracts the given archive using the compatible extractor."
+   echo -e "${p}find-up FILENAME\033[0m  -  Traverses the directory upward to find the given file."
+   echo -e "${p}findfiles [START_PATH] SEARCH_STRING\033[0m  -  Recursively finds all files containing the given string and displays their path."
+   echo -e "${p}ll [PATH]...\033[0m  -  Alternative version of 'ls -lt' that prints directories (and sym-links to directories) before files and hidden entries before non-hidden entries."
+   echo -e "${p}mkcd PATH\033[0m  -  Creates a directory and changes into it."
+   echo -e "${p}modified [PATH]\033[0m  -  Prints the modification timestamp of the given file or directory."
+   echo -e "${p}owner [PATH]\033[0m  -  Prints the owner of the given file or directory."
+   echo -e "${p}realpath [PATH]\033[0m  -  Prints the normalized path of the given path resolving any symbolic links. The path is not required to exist."
+   echo -e "${p}sudo-append FILE_PATH CONTENT\033[0m  -  Creates a file with the given content."
+   echo -e "${p}sudo-write FILE_PATH OWNER CONTENT\033[0m  -  Creates a file with the given content."
+   echo -e "${p}tail-reverse FILE\033[0m  -  Prints the last N lines of the given text file in reverse order."
+   echo -e "${p}test-filesystem\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
 __BASH_FUNK_FUNCS+=( abspath cd-down cd-hist cd-up count-words du extract find-up findfiles ll mkcd modified owner realpath sudo-append sudo-write tail-reverse test-filesystem )

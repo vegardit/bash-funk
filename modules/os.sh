@@ -35,7 +35,7 @@ function -command-exists() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-command-exists() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _COMMAND
    [ -t 1 ] && __interactive=1 || true
@@ -162,8 +162,7 @@ function __impl-command-exists() {
       echo "$__fn: Error: Parameter COMMAND must be specified."; return 64
    fi
 
-   ######### command-exists ######### START
-
+####### command-exists ####### START
 if hash "$_COMMAND" &>/dev/null; then
     [[ $_verbose ]] && echo "'${_COMMAND}' is available." || :
     return 0
@@ -171,8 +170,7 @@ else
     [[ $_verbose ]] && echo "'${_COMMAND}' not found." || :
     return 1
 fi
-
-   ######### command-exists ######### END
+####### command-exists ####### END
 }
 function __complete-command-exists() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -209,7 +207,7 @@ function -pkg-installed() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-pkg-installed() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _PACKAGE_NAME
    [ -t 1 ] && __interactive=1 || true
@@ -298,8 +296,7 @@ function __impl-pkg-installed() {
       echo "$__fn: Error: Parameter PACKAGE_NAME must be specified."; return 64
    fi
 
-   ######### pkg-installed ######### START
-
+####### pkg-installed ####### START
 if hash "yum" &>/dev/null; then
     if yum list installed "${_PACKAGE_NAME}" &>/dev/null; then
         [[ $_verbose ]] && echo "${_PACKAGE_NAME} is installed." || :
@@ -331,8 +328,7 @@ fi
 
 [[ $_verbose ]] && echo "${_PACKAGE_NAME} is NOT installed." || :
 return 1
-
-   ######### pkg-installed ######### END
+####### pkg-installed ####### END
 }
 function __complete-pkg-installed() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -369,7 +365,7 @@ function -test-os() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-os() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -437,12 +433,10 @@ function __impl-test-os() {
       return 64
    done
 
-   ######### test-os ######### START
-
+####### test-os ####### START
 ${BASH_FUNK_PREFIX:--}command-exists --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}pkg-installed --selftest && echo || return 1
-
-   ######### test-os ######### END
+####### test-os ####### END
 }
 function __complete-test-os() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -458,9 +452,9 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-os -- ${BASH_FUNK_PREFIX:--}tes
 
 
 function -help-os() {
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}command-exists COMMAND\033[0m  -  Checks if the given program or function is available."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}pkg-installed PACKAGE_NAME\033[0m  -  Determines if the given software package is installed."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-os\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-
+   local p="\033[1m${BASH_FUNK_PREFIX:--}"
+   echo -e "${p}command-exists COMMAND\033[0m  -  Checks if the given program or function is available."
+   echo -e "${p}pkg-installed PACKAGE_NAME\033[0m  -  Determines if the given software package is installed."
+   echo -e "${p}test-os\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
 __BASH_FUNK_FUNCS+=( command-exists pkg-installed test-os )

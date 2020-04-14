@@ -35,7 +35,7 @@ function -tar-gz() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-tar-gz() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _checkpoint _help _selftest _ARCHIVE _PATH=()
    [ -t 1 ] && __interactive=1 || true
@@ -148,8 +148,7 @@ function __impl-tar-gz() {
    if ! hash "tar" &>/dev/null; then echo "$__fn: Error: Required command 'tar' not found on this system."; return 64; fi
    if ! hash "gzip" &>/dev/null; then echo "$__fn: Error: Required command 'gzip' not found on this system."; return 64; fi
 
-   ######### tar-gz ######### START
-
+####### tar-gz ####### START
 if hash pv && [[ ! $_checkpoint ]]; then
     local total_bytes=$(du -csb "${_PATH[@]}" | tail -1 | cut -f1) &&
     tar -cf - "${_PATH[@]}" | pv -s $total_bytes | gzip > "$_ARCHIVE"
@@ -158,8 +157,7 @@ else
     local total_kb=$(du -csk "${_PATH[@]}" | tail -1 | cut -f1) &&
     tar cfvz "${_ARCHIVE}" "${_PATH[@]}" --record-size=1K --checkpoint="$(($total_kb/100))" --checkpoint-action=exec=" printf '%3d/100%%\r' \$((100*\$TAR_CHECKPOINT/$total_kb)) " --totals
 fi
-
-   ######### tar-gz ######### END
+####### tar-gz ####### END
 }
 function __complete-tar-gz() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -196,7 +194,7 @@ function -tar-zstd() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-tar-zstd() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _checkpoint _help _selftest _ARCHIVE _PATH=()
    [ -t 1 ] && __interactive=1 || true
@@ -309,8 +307,7 @@ function __impl-tar-zstd() {
    if ! hash "tar" &>/dev/null; then echo "$__fn: Error: Required command 'tar' not found on this system."; return 64; fi
    if ! hash "zstd" &>/dev/null; then echo "$__fn: Error: Required command 'zstd' not found on this system."; return 64; fi
 
-   ######### tar-zstd ######### START
-
+####### tar-zstd ####### START
 if hash pv && [[ ! $_checkpoint ]]; then
     printf '=> %s\n' "${_PATH[@]}"
     local total_bytes=$(du -csb "${_PATH[@]}" | tail -1 | cut -f1) &&
@@ -319,8 +316,7 @@ else
     local total_kb=$(du -csk "${_PATH[@]}" | tail -1 | cut -f1) &&
     tar cfv "${_ARCHIVE}" "${_PATH[@]}" -Izstd --record-size=1K --checkpoint="$(($total_kb/100))" --checkpoint-action=exec=" printf '%3d/100%%\r' \$((100*\$TAR_CHECKPOINT/$total_kb)) " --totals
 fi
-
-   ######### tar-zstd ######### END
+####### tar-zstd ####### END
 }
 function __complete-tar-zstd() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -357,7 +353,7 @@ function -test-compression() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-compression() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -425,14 +421,12 @@ function __impl-test-compression() {
       return 64
    done
 
-   ######### test-compression ######### START
-
+####### test-compression ####### START
 ${BASH_FUNK_PREFIX:--}tar-gz --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}tar-zstd --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}untar-gz --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}untar-zstd --selftest && echo || return 1
-
-   ######### test-compression ######### END
+####### test-compression ####### END
 }
 function __complete-test-compression() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -469,7 +463,7 @@ function -untar-gz() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-untar-gz() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _checkpoint _help _selftest _ARCHIVE _TARGET_DIR
    [ -t 1 ] && __interactive=1 || true
@@ -585,16 +579,14 @@ function __impl-untar-gz() {
    if ! hash "tar" &>/dev/null; then echo "$__fn: Error: Required command 'tar' not found on this system."; return 64; fi
    if ! hash "gzip" &>/dev/null; then echo "$__fn: Error: Required command 'gzip' not found on this system."; return 64; fi
 
-   ######### untar-gz ######### START
-
+####### untar-gz ####### START
 if hash pv && [[ ! $_checkpoint ]]; then
     pv "${_ARCHIVE}" --interval 0.5 | tar xzfv - -C "$_TARGET_DIR"
 else
     local total_kb=$(du -k "${_ARCHIVE}" | cut -f1) &&
     tar xzfv "${_ARCHIVE}" -C "$_TARGET_DIR" --record-size=1K --checkpoint="$(($total_kb/100))" --checkpoint-action=exec=" printf '%3d/100%%\r' \$((100*\$TAR_CHECKPOINT/$total_kb)) " --totals
 fi
-
-   ######### untar-gz ######### END
+####### untar-gz ####### END
 }
 function __complete-untar-gz() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -631,7 +623,7 @@ function -untar-zstd() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-untar-zstd() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _checkpoint _help _selftest _ARCHIVE _TARGET_DIR
    [ -t 1 ] && __interactive=1 || true
@@ -747,16 +739,14 @@ function __impl-untar-zstd() {
    if ! hash "tar" &>/dev/null; then echo "$__fn: Error: Required command 'tar' not found on this system."; return 64; fi
    if ! hash "zstd" &>/dev/null; then echo "$__fn: Error: Required command 'zstd' not found on this system."; return 64; fi
 
-   ######### untar-zstd ######### START
-
+####### untar-zstd ####### START
 if hash pv && [[ ! $_checkpoint ]]; then
     pv "${_ARCHIVE}" --interval 0.5 | zstd -d | tar xfv - -C "$_TARGET_DIR"
 else
     local total_kb=$(du -k "${_ARCHIVE}" | cut -f1) &&
     tar xfv "${_ARCHIVE}" -C "$_TARGET_DIR" -Izstd --record-size=1K --checkpoint="$(($total_kb/100))" --checkpoint-action=exec=" printf '%3d/100%%\r' \$((100*\$TAR_CHECKPOINT/$total_kb)) " --totals
 fi
-
-   ######### untar-zstd ######### END
+####### untar-zstd ####### END
 }
 function __complete-untar-zstd() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -772,12 +762,12 @@ complete -F __complete${BASH_FUNK_PREFIX:--}untar-zstd -- ${BASH_FUNK_PREFIX:--}
 
 
 function -help-compression() {
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}tar-gz ARCHIVE PATH1 [PATH]...\033[0m  -  Compresses the given files using tar and gzip displaying a real-time progress bar."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}tar-zstd ARCHIVE PATH1 [PATH]...\033[0m  -  Compresses the given files using tar and zstd (https://github.com/facebook/zstd) displaying a real-time progress bar."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-compression\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}untar-gz ARCHIVE [TARGET_DIR]\033[0m  -  Decompresses the given archive using gzip and tar displaying a real-time progress bar."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}untar-zstd ARCHIVE [TARGET_DIR]\033[0m  -  Decompresses the given archive using zstd (https://github.com/facebook/zstd) and tar displaying a real-time progress bar."
-
+   local p="\033[1m${BASH_FUNK_PREFIX:--}"
+   echo -e "${p}tar-gz ARCHIVE PATH1 [PATH]...\033[0m  -  Compresses the given files using tar and gzip displaying a real-time progress bar."
+   echo -e "${p}tar-zstd ARCHIVE PATH1 [PATH]...\033[0m  -  Compresses the given files using tar and zstd (https://github.com/facebook/zstd) displaying a real-time progress bar."
+   echo -e "${p}test-compression\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "${p}untar-gz ARCHIVE [TARGET_DIR]\033[0m  -  Decompresses the given archive using gzip and tar displaying a real-time progress bar."
+   echo -e "${p}untar-zstd ARCHIVE [TARGET_DIR]\033[0m  -  Decompresses the given archive using zstd (https://github.com/facebook/zstd) and tar displaying a real-time progress bar."
 }
 __BASH_FUNK_FUNCS+=( tar-gz tar-zstd test-compression untar-gz untar-zstd )
 

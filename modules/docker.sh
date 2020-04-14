@@ -41,7 +41,7 @@ function -docker-debug() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-docker-debug() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -109,11 +109,9 @@ function __impl-docker-debug() {
       return 64
    done
 
-   ######### docker-debug ######### START
-
+####### docker-debug ####### START
 sudo journalctl -u docker.service -f -n20
-
-   ######### docker-debug ######### END
+####### docker-debug ####### END
 }
 function __complete-docker-debug() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -150,7 +148,7 @@ function -docker-log() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-docker-log() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -218,11 +216,9 @@ function __impl-docker-log() {
       return 64
    done
 
-   ######### docker-log ######### START
-
+####### docker-log ####### START
 sudo journalctl -u docker.service -f -n20
-
-   ######### docker-log ######### END
+####### docker-log ####### END
 }
 function __complete-docker-log() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -259,7 +255,7 @@ function -docker-netshoot() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-docker-netshoot() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -327,8 +323,7 @@ function __impl-docker-netshoot() {
       return 64
    done
 
-   ######### docker-netshoot ######### START
-
+####### docker-netshoot ####### START
 echo "Select a network to troubleshoot:"
 local containers=$(sudo docker container ls --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.ID}}' | sort)
 echo "   $containers" | head -1
@@ -342,8 +337,7 @@ else
    echo "Attaching to network of container [$containerId]..."
    sudo docker run -it --rm --net container:$containerId nicolaka/netshoot
 fi
-
-   ######### docker-netshoot ######### END
+####### docker-netshoot ####### END
 }
 function __complete-docker-netshoot() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -380,7 +374,7 @@ function -docker-sh() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-docker-sh() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _user _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -464,8 +458,7 @@ function __impl-docker-sh() {
       if [[ $_user == "@@##@@" ]]; then echo "$__fn: Error: Value USER for option --user must be specified."; return 64; fi
    fi
 
-   ######### docker-sh ######### START
-
+####### docker-sh ####### START
 echo "Select a container to enter:"
 local containers=$(sudo docker container ls --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.ID}}' | sort)
 echo "   $containers" | head -1
@@ -477,8 +470,7 @@ if [[ $_user ]]; then
 else
     sudo docker exec -it $(${BASH_FUNK_PREFIX:--}substr-after-last "$selection" " ") /bin/sh
 fi
-
-   ######### docker-sh ######### END
+####### docker-sh ####### END
 }
 function __complete-docker-sh() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -515,7 +507,7 @@ function -docker-top() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-docker-top() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -583,11 +575,9 @@ function __impl-docker-top() {
       return 64
    done
 
-   ######### docker-top ######### START
-
+####### docker-top ####### START
 sudo docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock lirantal/dockly
-
-   ######### docker-top ######### END
+####### docker-top ####### END
 }
 function __complete-docker-top() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -624,7 +614,7 @@ function -swarm-cluster-id() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-swarm-cluster-id() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -692,11 +682,9 @@ function __impl-swarm-cluster-id() {
       return 64
    done
 
-   ######### swarm-cluster-id ######### START
-
+####### swarm-cluster-id ####### START
 sudo docker info 2>/dev/null | grep --color=never -oP '(?<=ClusterID: ).*'
-
-   ######### swarm-cluster-id ######### END
+####### swarm-cluster-id ####### END
 }
 function __complete-swarm-cluster-id() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -733,7 +721,7 @@ function -test-docker() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-docker() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -801,16 +789,14 @@ function __impl-test-docker() {
       return 64
    done
 
-   ######### test-docker ######### START
-
+####### test-docker ####### START
 ${BASH_FUNK_PREFIX:--}docker-debug --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}docker-log --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}docker-netshoot --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}docker-sh --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}docker-top --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}swarm-cluster-id --selftest && echo || return 1
-
-   ######### test-docker ######### END
+####### test-docker ####### END
 }
 function __complete-test-docker() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -826,14 +812,14 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-docker -- ${BASH_FUNK_PREFIX:--
 
 
 function -help-docker() {
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}docker-debug\033[0m  -  Installs and executes the docker-debug tool (https://github.com/zeromake/docker-debug)."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}docker-log\033[0m  -  Displays dockerd's log messages in realtime."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}docker-netshoot\033[0m  -  Starts Netshoot (https://github.com/nicolaka/netshoot) - a network trouble-shooting container."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}docker-sh\033[0m  -  Displays a list of all running containers and starts an interactive shell (/bin/sh) for the selected one."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}docker-top\033[0m  -  Starts Dockly (https://lirantal.github.io/dockly/)."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}swarm-cluster-id\033[0m  -  Prints the Swarm cluster ID."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-docker\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-
+   local p="\033[1m${BASH_FUNK_PREFIX:--}"
+   echo -e "${p}docker-debug\033[0m  -  Installs and executes the docker-debug tool (https://github.com/zeromake/docker-debug)."
+   echo -e "${p}docker-log\033[0m  -  Displays dockerd's log messages in realtime."
+   echo -e "${p}docker-netshoot\033[0m  -  Starts Netshoot (https://github.com/nicolaka/netshoot) - a network trouble-shooting container."
+   echo -e "${p}docker-sh\033[0m  -  Displays a list of all running containers and starts an interactive shell (/bin/sh) for the selected one."
+   echo -e "${p}docker-top\033[0m  -  Starts Dockly (https://lirantal.github.io/dockly/)."
+   echo -e "${p}swarm-cluster-id\033[0m  -  Prints the Swarm cluster ID."
+   echo -e "${p}test-docker\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
 __BASH_FUNK_FUNCS+=( docker-debug docker-log docker-netshoot docker-sh docker-top swarm-cluster-id test-docker )
 
@@ -871,6 +857,6 @@ function -docker-slim() {
 }
 
 else
-    echo "SKIPPED"
+   echo "SKIPPED"
 fi
 unset -f -- ${BASH_FUNK_PREFIX:--}is-loadable

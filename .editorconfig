@@ -3,15 +3,16 @@
 # top-most EditorConfig file
 root = true
 
-[*.{sh,md,yml}]
+[*]
 charset = utf-8
 end_of_line = lf
 insert_final_newline = true
-
-[*.sh]
+trim_trailing_whitespace = true
 indent_style = space
 indent_size = 3
 
-[.travis.yml]
-indent_style = space
+[*.{bat,cmd}]
+end_of_line = crlf
+
+[*.{yml,yaml}]
 indent_size = 2

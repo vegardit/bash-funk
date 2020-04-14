@@ -35,7 +35,7 @@ function -entropy-available() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-entropy-available() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -115,8 +115,7 @@ function __impl-entropy-available() {
       return 64
    done
 
-   ######### entropy-available ######### START
-
+####### entropy-available ####### START
 if [[ ! -e /proc/sys/kernel/random/read_wakeup_threshold ]]; then
     echo "$__fn: Warning: Kernel parameter /proc/sys/kernel/random/read_wakeup_threshold is not present, assuming sufficient entropy is available."
     return 0
@@ -127,8 +126,7 @@ local required=$(cat /proc/sys/kernel/random/read_wakeup_threshold)
 echo "/proc/sys/kernel/random/entropy_avail: $avail"
 echo "/proc/sys/kernel/random/read_wakeup_threshold: $required"
 (( avail > required ))
-
-   ######### entropy-available ######### END
+####### entropy-available ####### END
 }
 function __complete-entropy-available() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -165,7 +163,7 @@ function -fill-entropy() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-fill-entropy() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _DURATION
    [ -t 1 ] && __interactive=1 || true
@@ -280,8 +278,7 @@ Available entropy bits after: 1039"
    if ! hash "sudo" &>/dev/null; then echo "$__fn: Error: Required command 'sudo' not found on this system."; return 64; fi
    if ! sudo -l -- rngd &>/dev/null; then echo "$__fn: Error: User $USER misses required sudo permission for 'rngd'"; return 64; fi
 
-   ######### fill-entropy ######### START
-
+####### fill-entropy ####### START
 echo -n "Available entropy bits before: "
 cat /proc/sys/kernel/random/entropy_avail
 
@@ -294,8 +291,7 @@ fi
 
 echo -n "Available entropy bits after: "
 cat /proc/sys/kernel/random/entropy_avail
-
-   ######### fill-entropy ######### END
+####### fill-entropy ####### END
 }
 function __complete-fill-entropy() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -332,7 +328,7 @@ function -random-number() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-random-number() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _RANGE
    [ -t 1 ] && __interactive=1 || true
@@ -443,11 +439,9 @@ function __impl-random-number() {
       echo "$__fn: Error: Parameter RANGE must be specified."; return 64
    fi
 
-   ######### random-number ######### START
-
+####### random-number ####### START
 shuf -i ${_RANGE} -n 1
-
-   ######### random-number ######### END
+####### random-number ####### END
 }
 function __complete-random-number() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -484,7 +478,7 @@ function -random-string() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-random-string() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _LENGTH _CHARS
    [ -t 1 ] && __interactive=1 || true
@@ -613,16 +607,14 @@ function __impl-random-string() {
       echo "$__fn: Error: Parameter LENGTH must be specified."; return 64
    fi
 
-   ######### random-string ######### START
-
+####### random-string ####### START
 local rc
 env LC_CTYPE=C tr -dc "$_CHARS" < /dev/urandom | fold -w ${_LENGTH} | head -n 1
 
 # https://stackoverflow.com/questions/19120263/why-exit-code-141-with-grep-q
 rc=$?
 (( rc == 141 )) && return 0 || return $rc
-
-   ######### random-string ######### END
+####### random-string ####### END
 }
 function __complete-random-string() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -659,7 +651,7 @@ function -test-random() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-random() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -727,14 +719,12 @@ function __impl-test-random() {
       return 64
    done
 
-   ######### test-random ######### START
-
+####### test-random ####### START
 ${BASH_FUNK_PREFIX:--}entropy-available --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}fill-entropy --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}random-number --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}random-string --selftest && echo || return 1
-
-   ######### test-random ######### END
+####### test-random ####### END
 }
 function __complete-test-random() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -750,11 +740,11 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-random -- ${BASH_FUNK_PREFIX:--
 
 
 function -help-random() {
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}entropy-available\033[0m  -  Determines if enough entropy bits are available perform a non-blocking read from /dev/random. Exit code 1 indicates entropy pool is not sufficiently filled."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}fill-entropy [DURATION]\033[0m  -  Fills /dev/random with pseudo-random values from /dev/urandom."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}random-number RANGE\033[0m  -  Generates a random number of the given range. The range is inclusive."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}random-string LENGTH [CHARS]\033[0m  -  Prints a random string of the given length containing the given characters."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-random\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-
+   local p="\033[1m${BASH_FUNK_PREFIX:--}"
+   echo -e "${p}entropy-available\033[0m  -  Determines if enough entropy bits are available perform a non-blocking read from /dev/random. Exit code 1 indicates entropy pool is not sufficiently filled."
+   echo -e "${p}fill-entropy [DURATION]\033[0m  -  Fills /dev/random with pseudo-random values from /dev/urandom."
+   echo -e "${p}random-number RANGE\033[0m  -  Generates a random number of the given range. The range is inclusive."
+   echo -e "${p}random-string LENGTH [CHARS]\033[0m  -  Prints a random string of the given length containing the given characters."
+   echo -e "${p}test-random\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
 __BASH_FUNK_FUNCS+=( entropy-available fill-entropy random-number random-string test-random )

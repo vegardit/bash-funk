@@ -41,7 +41,7 @@ function -git-branch-name() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-git-branch-name() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
    [ -t 1 ] && __interactive=1 || true
@@ -125,11 +125,9 @@ function __impl-git-branch-name() {
       if [[ ! -r "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH is not readable by user '$USER'."; return 64; fi
    fi
 
-   ######### git-branch-name ######### START
-
+####### git-branch-name ####### START
 git -C "$_PATH" rev-parse --symbolic-full-name --abbrev-ref HEAD
-
-   ######### git-branch-name ######### END
+####### git-branch-name ####### END
 }
 function __complete-git-branch-name() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -166,7 +164,7 @@ function -git-change-contributor() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-git-change-contributor() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _pull _push _author _committer _global _help _selftest _OLD_USER_EMAIL _NEW_USER_NAME _NEW_USER_EMAIL
    [ -t 1 ] && __interactive=1 || true
@@ -307,8 +305,7 @@ function __impl-git-change-contributor() {
       echo "$__fn: Error: Parameter NEW_USER_EMAIL must be specified."; return 64
    fi
 
-   ######### git-change-contributor ######### START
-
+####### git-change-contributor ####### START
 if [[ $_pull ]]; then
    git pull || return 1
 fi
@@ -337,8 +334,7 @@ fi
 if [[ $_push ]]; then
    git push
 fi
-
-   ######### git-change-contributor ######### END
+####### git-change-contributor ####### END
 }
 function __complete-git-change-contributor() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -375,7 +371,7 @@ function -git-change-date() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-git-change-date() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _pull _push _author _committer _help _selftest _COMMIT_HASH _NEW_DATE
    [ -t 1 ] && __interactive=1 || true
@@ -499,8 +495,7 @@ function __impl-git-change-date() {
       echo "$__fn: Error: Parameter NEW_DATE must be specified."; return 64
    fi
 
-   ######### git-change-date ######### START
-
+####### git-change-date ####### START
 if [[ $_pull ]]; then
    git pull || return 1
 fi
@@ -524,8 +519,7 @@ git filter-branch --force --env-filter "
 if [[ $_push ]]; then
    git push
 fi
-
-   ######### git-change-date ######### END
+####### git-change-date ####### END
 }
 function __complete-git-change-date() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -562,7 +556,7 @@ function -git-cherry-pick() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-git-cherry-pick() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _pr _pull _push _help _selftest _COMMIT_HASHES=()
    [ -t 1 ] && __interactive=1 || true
@@ -668,8 +662,7 @@ function __impl-git-cherry-pick() {
 
    if [[ ${#_COMMIT_HASHES[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter COMMIT_HASHES at least 1 value must be specified. Found: ${#_COMMIT_HASHES[@]}."; return 64; fi
 
-   ######### git-cherry-pick ######### START
-
+####### git-cherry-pick ####### START
 if [[ $_pull ]]; then
    git pull || return 1
 fi
@@ -683,8 +676,7 @@ git cherry-pick ${_COMMIT_HASHES[@]} || return 1
 if [[ $_push ]]; then
    git push
 fi
-
-   ######### git-cherry-pick ######### END
+####### git-cherry-pick ####### END
 }
 function __complete-git-cherry-pick() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -721,7 +713,7 @@ function -git-cleanse() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-git-cleanse() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _pull _yes _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -802,8 +794,7 @@ function __impl-git-cleanse() {
       return 64
    done
 
-   ######### git-cleanse ######### START
-
+####### git-cleanse ####### START
 if [[ ! $_yes ]]; then
    read -p "Are you sure you want to erase all uncommitted changes? (y) " -n 1 -r
    echo
@@ -818,8 +809,7 @@ git reset --hard HEAD && git clean -dfx || return 1
 if [[ $_pull ]]; then
    git pull
 fi
-
-   ######### git-cleanse ######### END
+####### git-cleanse ####### END
 }
 function __complete-git-cleanse() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -856,7 +846,7 @@ function -git-clone-shallow() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-git-clone-shallow() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _REPO_URL _BRANCH_NAME
    [ -t 1 ] && __interactive=1 || true
@@ -946,11 +936,9 @@ function __impl-git-clone-shallow() {
       echo "$__fn: Error: Parameter REPO_URL must be specified."; return 64
    fi
 
-   ######### git-clone-shallow ######### START
-
+####### git-clone-shallow ####### START
 git clone --depth 1 $_REPO_URL -b $_BRANCH_NAME
-
-   ######### git-clone-shallow ######### END
+####### git-clone-shallow ####### END
 }
 function __complete-git-clone-shallow() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -987,7 +975,7 @@ function -git-create-empty-branch() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-git-create-empty-branch() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _push _help _selftest _BRANCH_NAME
    [ -t 1 ] && __interactive=1 || true
@@ -1076,8 +1064,7 @@ function __impl-git-create-empty-branch() {
       echo "$__fn: Error: Parameter BRANCH_NAME must be specified."; return 64
    fi
 
-   ######### git-create-empty-branch ######### START
-
+####### git-create-empty-branch ####### START
 if git rev-parse --verify ${_BRANCH_NAME} &>/dev/null; then
    echo "$__fn: Error: A branch named [${_BRANCH_NAME}] already exists."
    return 1
@@ -1091,8 +1078,7 @@ git commit -am "Created empty branch." --allow-empty || return 1
 if [[ $_push ]]; then
    git push --set-upstream origin ${_BRANCH_NAME}
 fi
-
-   ######### git-create-empty-branch ######### END
+####### git-create-empty-branch ####### END
 }
 function __complete-git-create-empty-branch() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1129,7 +1115,7 @@ function -git-delete-branch() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-git-delete-branch() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _BRANCH_NAME
    [ -t 1 ] && __interactive=1 || true
@@ -1211,13 +1197,11 @@ function __impl-git-delete-branch() {
       echo "$__fn: Error: Parameter BRANCH_NAME must be specified."; return 64
    fi
 
-   ######### git-delete-branch ######### START
-
+####### git-delete-branch ####### START
 git branch --delete --force $_BRANCH_NAME &&
 git fetch origin --prune &&
 git push origin --delete $_BRANCH_NAME
-
-   ######### git-delete-branch ######### END
+####### git-delete-branch ####### END
 }
 function __complete-git-delete-branch() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1254,7 +1238,7 @@ function -git-delete-local-branch() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-git-delete-local-branch() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _force _help _selftest _BRANCH_NAME
    [ -t 1 ] && __interactive=1 || true
@@ -1343,15 +1327,13 @@ function __impl-git-delete-local-branch() {
       echo "$__fn: Error: Parameter BRANCH_NAME must be specified."; return 64
    fi
 
-   ######### git-delete-local-branch ######### START
-
+####### git-delete-local-branch ####### START
 if [[ $_force ]]; then
    git branch --delete --force $_BRANCH_NAME
 else
    git branch --delete $_BRANCH_NAME
  fi
-
-   ######### git-delete-local-branch ######### END
+####### git-delete-local-branch ####### END
 }
 function __complete-git-delete-local-branch() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1388,7 +1370,7 @@ function -git-delete-remote-branch() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-git-delete-remote-branch() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _BRANCH_NAME
    [ -t 1 ] && __interactive=1 || true
@@ -1470,12 +1452,10 @@ function __impl-git-delete-remote-branch() {
       echo "$__fn: Error: Parameter BRANCH_NAME must be specified."; return 64
    fi
 
-   ######### git-delete-remote-branch ######### START
-
+####### git-delete-remote-branch ####### START
 git fetch origin --prune &&
 git push origin --delete $_BRANCH_NAME
-
-   ######### git-delete-remote-branch ######### END
+####### git-delete-remote-branch ####### END
 }
 function __complete-git-delete-remote-branch() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1512,7 +1492,7 @@ function -git-fetch-pr() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-git-fetch-pr() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _checkout _help _selftest _PR_NUMBER
    [ -t 1 ] && __interactive=1 || true
@@ -1602,15 +1582,13 @@ function __impl-git-fetch-pr() {
       echo "$__fn: Error: Parameter PR_NUMBER must be specified."; return 64
    fi
 
-   ######### git-fetch-pr ######### START
-
+####### git-fetch-pr ####### START
 git fetch origin pull/${_PR_NUMBER}/head:pr-${_PR_NUMBER} || return 1
 
 if [[ $_checkout ]]; then
    git checkout pr-${_PR_NUMBER}
 fi
-
-   ######### git-fetch-pr ######### END
+####### git-fetch-pr ####### END
 }
 function __complete-git-fetch-pr() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1647,7 +1625,7 @@ function -git-log() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-git-log() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _COUNT
    [ -t 1 ] && __interactive=1 || true
@@ -1729,11 +1707,9 @@ function __impl-git-log() {
       if [[ ! "$_COUNT" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_COUNT' for parameter COUNT is not a numeric value."; return 64; fi
    fi
 
-   ######### git-log ######### START
-
+####### git-log ####### START
 git log --graph -${_COUNT} --branches --remotes --tags --pretty=format:'%C(bold black)%h%Creset %<(70,trunc)%s %C(bold black)(%aN, %cr)%Cred%d' --date-order
-
-   ######### git-log ######### END
+####### git-log ####### END
 }
 function __complete-git-log() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1770,7 +1746,7 @@ function -git-ls-conflicts() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-git-ls-conflicts() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
    [ -t 1 ] && __interactive=1 || true
@@ -1854,11 +1830,9 @@ function __impl-git-ls-conflicts() {
       if [[ ! -r "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH is not readable by user '$USER'."; return 64; fi
    fi
 
-   ######### git-ls-conflicts ######### START
-
+####### git-ls-conflicts ####### START
 git diff --name-only --diff-filter=U "$_PATH"
-
-   ######### git-ls-conflicts ######### END
+####### git-ls-conflicts ####### END
 }
 function __complete-git-ls-conflicts() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1895,7 +1869,7 @@ function -git-ls-modified() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-git-ls-modified() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
    [ -t 1 ] && __interactive=1 || true
@@ -1979,11 +1953,9 @@ function __impl-git-ls-modified() {
       if [[ ! -r "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH is not readable by user '$USER'."; return 64; fi
    fi
 
-   ######### git-ls-modified ######### START
-
+####### git-ls-modified ####### START
 git -C "$_PATH" ls-files -o -m -d --exclude-standard
-
-   ######### git-ls-modified ######### END
+####### git-ls-modified ####### END
 }
 function __complete-git-ls-modified() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -2020,7 +1992,7 @@ function -git-reset-file() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-git-reset-file() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _FILE
    [ -t 1 ] && __interactive=1 || true
@@ -2102,11 +2074,9 @@ function __impl-git-reset-file() {
       echo "$__fn: Error: Parameter FILE must be specified."; return 64
    fi
 
-   ######### git-reset-file ######### START
-
+####### git-reset-file ####### START
 git checkout -- "$_FILE"
-
-   ######### git-reset-file ######### END
+####### git-reset-file ####### END
 }
 function __complete-git-reset-file() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -2143,7 +2113,7 @@ function -git-squash() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-git-squash() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _message _pull _push _help _selftest _NUM_COMMITS
    [ -t 1 ] && __interactive=1 || true
@@ -2259,8 +2229,7 @@ function __impl-git-squash() {
 
    if ! hash "awk" &>/dev/null; then echo "$__fn: Error: Required command 'awk' not found on this system."; return 64; fi
 
-   ######### git-squash ######### START
-
+####### git-squash ####### START
 if [[ $_pull ]]; then
    git pull || return 1
 fi
@@ -2278,8 +2247,7 @@ git commit --allow-empty-message -m "${commitMsg}" || return 1
 if [[ $_push ]]; then
    git push --force
 fi
-
-   ######### git-squash ######### END
+####### git-squash ####### END
 }
 function __complete-git-squash() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -2316,7 +2284,7 @@ function -git-switch-remote-protocol() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-git-switch-remote-protocol() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _REMOTE_NAME=() _PROTOCOL
    [ -t 1 ] && __interactive=1 || true
@@ -2410,8 +2378,7 @@ function __impl-git-switch-remote-protocol() {
       echo "$__fn: Error: Parameter PROTOCOL must be specified."; return 64
    fi
 
-   ######### git-switch-remote-protocol ######### START
-
+####### git-switch-remote-protocol ####### START
 local url remote
 
 for remote in "${_REMOTE_NAME[@]}"; do
@@ -2455,8 +2422,7 @@ for remote in "${_REMOTE_NAME[@]}"; do
       return 1
    fi
 done
-
-   ######### git-switch-remote-protocol ######### END
+####### git-switch-remote-protocol ####### END
 }
 function __complete-git-switch-remote-protocol() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -2493,7 +2459,7 @@ function -git-sync-fork() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-git-sync-fork() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _branch _upstream_branch _merge _push _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -2603,8 +2569,7 @@ function __impl-git-sync-fork() {
       if [[ $_upstream_branch == "@@##@@" ]]; then echo "$__fn: Error: Value NAME for option --upstream_branch must be specified."; return 64; fi
    fi
 
-   ######### git-sync-fork ######### START
-
+####### git-sync-fork ####### START
 local currBranch currBranch_remote currBranch_remoteURL upstreamURL
 
 # e.g. 'master'
@@ -2648,8 +2613,7 @@ if [[ $_push ]]; then
    echo "Pushing updates to 'origin/$currBranch'..."
    git push --follow-tags --force origin $currBranch
 fi
-
-   ######### git-sync-fork ######### END
+####### git-sync-fork ####### END
 }
 function __complete-git-sync-fork() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -2686,7 +2650,7 @@ function -git-undo() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-git-undo() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _reset _push _help _selftest _NUM_COMMITS
    [ -t 1 ] && __interactive=1 || true
@@ -2782,8 +2746,7 @@ function __impl-git-undo() {
       if [[ $_NUM_COMMITS -lt 1 ]]; then echo "$__fn: Error: Value '$_NUM_COMMITS' for parameter NUM_COMMITS is too low. Must be >= 1."; return 64; fi
    fi
 
-   ######### git-undo ######### START
-
+####### git-undo ####### START
 if [[ $_reset ]]; then
    git reset --hard HEAD~${_NUM_COMMITS} && git clean -dfx || return 1
 else
@@ -2793,8 +2756,7 @@ fi
 if [[ $_push ]]; then
    git push --force
 fi
-
-   ######### git-undo ######### END
+####### git-undo ####### END
 }
 function __complete-git-undo() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -2831,7 +2793,7 @@ function -git-update-branch() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-git-update-branch() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _merge _push _help _selftest _BRANCH _MASTER
    [ -t 1 ] && __interactive=1 || true
@@ -2932,8 +2894,7 @@ function __impl-git-update-branch() {
       echo "$__fn: Error: Parameter MASTER must be specified."; return 64
    fi
 
-   ######### git-update-branch ######### START
-
+####### git-update-branch ####### START
 if [[ ! ${_BRANCH:-} ]]; then
    _BRANCH=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) || return 1
 fi
@@ -2953,8 +2914,7 @@ if [[ $_push ]]; then
    echo "Pushing updates to 'origin/$_BRANCH'..."
    git push --follow-tags --force origin $_BRANCH
 fi
-
-   ######### git-update-branch ######### END
+####### git-update-branch ####### END
 }
 function __complete-git-update-branch() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -2991,7 +2951,7 @@ function -github-upstream-url() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-github-upstream-url() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _REPO
    [ -t 1 ] && __interactive=1 || true
@@ -3073,14 +3033,12 @@ function __impl-github-upstream-url() {
       echo "$__fn: Error: Parameter REPO must be specified."; return 64
    fi
 
-   ######### github-upstream-url ######### START
-
+####### github-upstream-url ####### START
 hash wget &>/dev/null && local get="wget -qO-" || local get="curl -fs"
 
 $get https://api.github.com/repos/$_REPO | grep -A100 '"parent":' | grep clone_url | head -n1 | cut -d'"' -f4
 return ${PIPESTATUS[0]}
-
-   ######### github-upstream-url ######### END
+####### github-upstream-url ####### END
 }
 function __complete-github-upstream-url() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -3117,7 +3075,7 @@ function -test-git() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-git() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -3185,8 +3143,7 @@ function __impl-test-git() {
       return 64
    done
 
-   ######### test-git ######### START
-
+####### test-git ####### START
 ${BASH_FUNK_PREFIX:--}git-branch-name --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-change-contributor --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-change-date --selftest && echo || return 1
@@ -3208,8 +3165,7 @@ ${BASH_FUNK_PREFIX:--}git-sync-fork --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-undo --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-update-branch --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}github-upstream-url --selftest && echo || return 1
-
-   ######### test-git ######### END
+####### test-git ####### END
 }
 function __complete-test-git() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -3225,29 +3181,29 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-git -- ${BASH_FUNK_PREFIX:--}te
 
 
 function -help-git() {
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-branch-name [PATH]\033[0m  -  Prints the name of the currently checked out git branch."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-change-contributor OLD_USER_EMAIL NEW_USER_NAME NEW_USER_EMAIL\033[0m  -  Updates the author and/or committer name/e-mail of ALL matching commits."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-change-date COMMIT_HASH NEW_DATE\033[0m  -  Changes the author and/or committer date of the given commit."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-cherry-pick COMMIT_HASHES1 [COMMIT_HASHES]...\033[0m  -  Cherry picks a commit into the currently checked out branch."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-cleanse\033[0m  -  Reverts any uncomitted changes in the local working tree including untracked files."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-clone-shallow REPO_URL [BRANCH_NAME]\033[0m  -  Creates a shallow clone of the selected branch of the given repository with a truncated history."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-create-empty-branch BRANCH_NAME\033[0m  -  Creates a new empty branch in the local repository."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-delete-branch BRANCH_NAME\033[0m  -  Deletes a branch in the local and the remote repository."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-delete-local-branch BRANCH_NAME\033[0m  -  Deletes a branch in the local repository."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-delete-remote-branch BRANCH_NAME\033[0m  -  Deletes a branch in the remote repository."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-fetch-pr PR_NUMBER\033[0m  -  Fetches the given pull request."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-log [COUNT]\033[0m  -  Displays the git log of the current project in a pretty and compact format."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-ls-conflicts [PATH]\033[0m  -  Prints the name of the all conflicting files in the current directory tree."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-ls-modified [PATH]\033[0m  -  Prints the name of the all deleted, changed and newly created files in the current directory tree."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-reset-file FILE\033[0m  -  Reverts the uncommitted changes of the given local FILE to the version of the latest commit."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-squash NUM_COMMITS\033[0m  -  Squashes the last n commits into one."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-switch-remote-protocol REMOTE_NAME1 [REMOTE_NAME]... PROTOCOL\033[0m  -  Switches the protocol of the given remote(s) between HTTPS and SSH."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-sync-fork\033[0m  -  Syncs the currently checked out branch of a forked repository with it's upstream repository. Uses 'git rebase -p' instead of 'git merge' by default to prevent an extra commit for the merge operation."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-undo [NUM_COMMITS]\033[0m  -  Removes the last N commits from the commit history."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}git-update-branch [BRANCH] MASTER\033[0m  -  Updates the given branch using 'git rebase -p' by default."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}github-upstream-url REPO\033[0m  -  Prints the upstream URL in case the given GitHub repository is a fork."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-git\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-
+   local p="\033[1m${BASH_FUNK_PREFIX:--}"
+   echo -e "${p}git-branch-name [PATH]\033[0m  -  Prints the name of the currently checked out git branch."
+   echo -e "${p}git-change-contributor OLD_USER_EMAIL NEW_USER_NAME NEW_USER_EMAIL\033[0m  -  Updates the author and/or committer name/e-mail of ALL matching commits."
+   echo -e "${p}git-change-date COMMIT_HASH NEW_DATE\033[0m  -  Changes the author and/or committer date of the given commit."
+   echo -e "${p}git-cherry-pick COMMIT_HASHES1 [COMMIT_HASHES]...\033[0m  -  Cherry picks a commit into the currently checked out branch."
+   echo -e "${p}git-cleanse\033[0m  -  Reverts any uncomitted changes in the local working tree including untracked files."
+   echo -e "${p}git-clone-shallow REPO_URL [BRANCH_NAME]\033[0m  -  Creates a shallow clone of the selected branch of the given repository with a truncated history."
+   echo -e "${p}git-create-empty-branch BRANCH_NAME\033[0m  -  Creates a new empty branch in the local repository."
+   echo -e "${p}git-delete-branch BRANCH_NAME\033[0m  -  Deletes a branch in the local and the remote repository."
+   echo -e "${p}git-delete-local-branch BRANCH_NAME\033[0m  -  Deletes a branch in the local repository."
+   echo -e "${p}git-delete-remote-branch BRANCH_NAME\033[0m  -  Deletes a branch in the remote repository."
+   echo -e "${p}git-fetch-pr PR_NUMBER\033[0m  -  Fetches the given pull request."
+   echo -e "${p}git-log [COUNT]\033[0m  -  Displays the git log of the current project in a pretty and compact format."
+   echo -e "${p}git-ls-conflicts [PATH]\033[0m  -  Prints the name of the all conflicting files in the current directory tree."
+   echo -e "${p}git-ls-modified [PATH]\033[0m  -  Prints the name of the all deleted, changed and newly created files in the current directory tree."
+   echo -e "${p}git-reset-file FILE\033[0m  -  Reverts the uncommitted changes of the given local FILE to the version of the latest commit."
+   echo -e "${p}git-squash NUM_COMMITS\033[0m  -  Squashes the last n commits into one."
+   echo -e "${p}git-switch-remote-protocol REMOTE_NAME1 [REMOTE_NAME]... PROTOCOL\033[0m  -  Switches the protocol of the given remote(s) between HTTPS and SSH."
+   echo -e "${p}git-sync-fork\033[0m  -  Syncs the currently checked out branch of a forked repository with it's upstream repository. Uses 'git rebase -p' instead of 'git merge' by default to prevent an extra commit for the merge operation."
+   echo -e "${p}git-undo [NUM_COMMITS]\033[0m  -  Removes the last N commits from the commit history."
+   echo -e "${p}git-update-branch [BRANCH] MASTER\033[0m  -  Updates the given branch using 'git rebase -p' by default."
+   echo -e "${p}github-upstream-url REPO\033[0m  -  Prints the upstream URL in case the given GitHub repository is a fork."
+   echo -e "${p}test-git\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
 __BASH_FUNK_FUNCS+=( git-branch-name git-change-contributor git-change-date git-cherry-pick git-cleanse git-clone-shallow git-create-empty-branch git-delete-branch git-delete-local-branch git-delete-remote-branch git-fetch-pr git-log git-ls-conflicts git-ls-modified git-reset-file git-squash git-switch-remote-protocol git-sync-fork git-undo git-update-branch github-upstream-url test-git )
 
@@ -3257,6 +3213,6 @@ alias -- ${BASH_FUNK_PREFIX:--}git-ls-stashes="git stash list"
 alias -- ${BASH_FUNK_PREFIX:--}git-ls-tags="git tag"
 
 else
-    echo "SKIPPED"
+   echo "SKIPPED"
 fi
 unset -f -- ${BASH_FUNK_PREFIX:--}is-loadable

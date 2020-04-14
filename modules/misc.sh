@@ -35,7 +35,7 @@ function -choose() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-choose() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _assign _default _help _selftest _OPTION=()
    [ -t 1 ] && __interactive=1 || true
@@ -141,8 +141,7 @@ function __impl-choose() {
 
    if [[ ${#_OPTION[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter OPTION at least 1 value must be specified. Found: ${#_OPTION[@]}."; return 64; fi
 
-   ######### choose ######### START
-
+####### choose ####### START
 local selectedIndex=0 ESC=$(echo -e "\033") redraw=1 index dialogFD option
 
 # when in a subshell use stderr to render the dialog, so capturing stdout will only contain the selected value
@@ -212,8 +211,7 @@ while true; do
         ${BASH_FUNK_PREFIX:--}cursor-pos --fd $dialogFD --up "$(( ${#_OPTION[@]} ))"
     fi
 done
-
-   ######### choose ######### END
+####### choose ####### END
 }
 function __complete-choose() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -250,7 +248,7 @@ function -help() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-help() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -318,13 +316,11 @@ function __impl-help() {
       return 64
    done
 
-   ######### help ######### START
-
+####### help ####### START
 for helpfunc in $(compgen -A function -- ${BASH_FUNK_PREFIX:--}help-); do
     $helpfunc
 done | sort
-
-   ######### help ######### END
+####### help ####### END
 }
 function __complete-help() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -361,7 +357,7 @@ function -please() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-please() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -434,8 +430,7 @@ function __impl-please() {
 
    if ! hash "sudo" &>/dev/null; then echo "$__fn: Error: Required command 'sudo' not found on this system."; return 64; fi
 
-   ######### please ######### START
-
+####### please ####### START
 local cmd="$(echo $(fc -ln -1))"
 
 if [[ $cmd == sudo* ]]; then
@@ -448,8 +443,7 @@ fi
 
 [[ $__interactive ]] && echo -e "Executing last command [\033[35m$cmd\033[0m] with sudo..." || true
 sudo "$BASH" -c "$cmd"
-
-   ######### please ######### END
+####### please ####### END
 }
 function __complete-please() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -486,7 +480,7 @@ function -reload() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-reload() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -554,8 +548,7 @@ function __impl-reload() {
       return 64
    done
 
-   ######### reload ######### START
-
+####### reload ####### START
 if [[ ! ${BASH_FUNK_ROOT} ]]; then
     echo "$__fn: Error: BASH_FUNK_ROOT variable is not defined."
     return 1
@@ -567,8 +560,7 @@ if [[ ! -r ${BASH_FUNK_ROOT}/bash-funk.sh ]]; then
 fi
 
 source ${BASH_FUNK_ROOT}/bash-funk.sh
-
-   ######### reload ######### END
+####### reload ####### END
 }
 function __complete-reload() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -605,7 +597,7 @@ function -root() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-root() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -673,11 +665,9 @@ function __impl-root() {
       return 64
    done
 
-   ######### root ######### START
-
+####### root ####### START
 sudo -i
-
-   ######### root ######### END
+####### root ####### END
 }
 function __complete-root() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -714,7 +704,7 @@ function -test-all() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-all() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -782,15 +772,13 @@ function __impl-test-all() {
       return 64
    done
 
-   ######### test-all ######### START
-
+####### test-all ####### START
 for testfunc in $(compgen -A function -- ${BASH_FUNK_PREFIX:--}test-); do
     if [[ $testfunc != "${BASH_FUNK_PREFIX:--}test-all" ]]; then
         $testfunc || return 1
     fi
 done
-
-   ######### test-all ######### END
+####### test-all ####### END
 }
 function __complete-test-all() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -827,7 +815,7 @@ function -test-misc() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-test-misc() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -895,8 +883,7 @@ function __impl-test-misc() {
       return 64
    done
 
-   ######### test-misc ######### START
-
+####### test-misc ####### START
 ${BASH_FUNK_PREFIX:--}choose --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}help --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}please --selftest && echo || return 1
@@ -907,8 +894,7 @@ ${BASH_FUNK_PREFIX:--}tweak-bash --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}update --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}var-exists --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}wait --selftest && echo || return 1
-
-   ######### test-misc ######### END
+####### test-misc ####### END
 }
 function __complete-test-misc() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -945,7 +931,7 @@ function -tweak-bash() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-tweak-bash() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose
    [ -t 1 ] && __interactive=1 || true
@@ -1020,8 +1006,7 @@ function __impl-tweak-bash() {
       return 64
    done
 
-   ######### tweak-bash ######### START
-
+####### tweak-bash ####### START
 
 #
 # enable and configure command history
@@ -1110,8 +1095,7 @@ case "$OSTYPE" in
         fi
       ;;
 esac
-
-   ######### tweak-bash ######### END
+####### tweak-bash ####### END
 }
 function __complete-tweak-bash() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1148,7 +1132,7 @@ function -update() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-update() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _yes _reload _help _selftest
    [ -t 1 ] && __interactive=1 || true
@@ -1229,8 +1213,7 @@ function __impl-update() {
       return 64
    done
 
-   ######### update ######### START
-
+####### update ####### START
 if [[ ! ${BASH_FUNK_ROOT} ]]; then
     echo "$__fn: Error: BASH_FUNK_ROOT variable is not defined."
     return 1
@@ -1279,8 +1262,7 @@ fi
 ( cd "${BASH_FUNK_ROOT}" && $get https://github.com/vegardit/bash-funk/tarball/master | tar -xzv --strip-components 1 ) || return
 [[ $_reload ]] && ${BASH_FUNK_PREFIX:--}reload || true
 return
-
-   ######### update ######### END
+####### update ####### END
 }
 function __complete-update() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1317,7 +1299,7 @@ function -var-exists() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-var-exists() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _VARIABLE_NAME
    [ -t 1 ] && __interactive=1 || true
@@ -1435,8 +1417,7 @@ function __impl-var-exists() {
       echo "$__fn: Error: Parameter VARIABLE_NAME must be specified."; return 64
    fi
 
-   ######### var-exists ######### START
-
+####### var-exists ####### START
 if ${!_VARIABLE_NAME+false}; then
     [[ $_verbose ]] && echo "Bash variable '$_VARIABLE_NAME' does not exist." || true
     return 1
@@ -1444,8 +1425,7 @@ else
     [[ $_verbose ]] && echo "Bash variable '$_VARIABLE_NAME' exists." || true
     return 0
 fi
-
-   ######### var-exists ######### END
+####### var-exists ####### END
 }
 function __complete-var-exists() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1482,7 +1462,7 @@ function -wait() {
    eval $opts
 
    return $rc
-  }
+}
 function __impl-wait() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _SECONDS
    [ -t 1 ] && __interactive=1 || true
@@ -1564,8 +1544,7 @@ function __impl-wait() {
       echo "$__fn: Error: Parameter SECONDS must be specified."; return 64
    fi
 
-   ######### wait ######### START
-
+####### wait ####### START
 local green="\033[1;32m"
 local reset="\033[0m"
 local saveCursor="\033[s"
@@ -1587,8 +1566,7 @@ for (( i = 0; i < _SECONDS; i++ )); do
     [[ $char == "s" ]] && break
 done
 echo
-
-   ######### wait ######### END
+####### wait ####### END
 }
 function __complete-wait() {
    local curr=${COMP_WORDS[COMP_CWORD]}
@@ -1604,18 +1582,18 @@ complete -F __complete${BASH_FUNK_PREFIX:--}wait -- ${BASH_FUNK_PREFIX:--}wait
 
 
 function -help-misc() {
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}choose OPTION1 [OPTION]...\033[0m  -  Prompts the user to choose one entry of the given list of options."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}help\033[0m  -  Prints the online help of all bash-funk commands."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}please\033[0m  -  Re-runs the previously entered command with sudo."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}reload\033[0m  -  Reloads bash-funk."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}root\033[0m  -  Starts an interactive shell as root user. Same as 'sudo -i'."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-all\033[0m  -  Executes the selftests of all loaded bash-funk commands."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}test-misc\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}tweak-bash\033[0m  -  Performs some usability configurations of Bash."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}update\033[0m  -  Updates bash-funk to the latest code from github (https://github.com/vegardit/bash-funk). All local modifications are overwritten."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}var-exists VARIABLE_NAME\033[0m  -  Determines if the given variable is declared."
-   echo -e "\033[1m${BASH_FUNK_PREFIX:--}wait SECONDS\033[0m  -  Waits for the given number of seconds or until the key 's' pressed."
-
+   local p="\033[1m${BASH_FUNK_PREFIX:--}"
+   echo -e "${p}choose OPTION1 [OPTION]...\033[0m  -  Prompts the user to choose one entry of the given list of options."
+   echo -e "${p}help\033[0m  -  Prints the online help of all bash-funk commands."
+   echo -e "${p}please\033[0m  -  Re-runs the previously entered command with sudo."
+   echo -e "${p}reload\033[0m  -  Reloads bash-funk."
+   echo -e "${p}root\033[0m  -  Starts an interactive shell as root user. Same as 'sudo -i'."
+   echo -e "${p}test-all\033[0m  -  Executes the selftests of all loaded bash-funk commands."
+   echo -e "${p}test-misc\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "${p}tweak-bash\033[0m  -  Performs some usability configurations of Bash."
+   echo -e "${p}update\033[0m  -  Updates bash-funk to the latest code from github (https://github.com/vegardit/bash-funk). All local modifications are overwritten."
+   echo -e "${p}var-exists VARIABLE_NAME\033[0m  -  Determines if the given variable is declared."
+   echo -e "${p}wait SECONDS\033[0m  -  Waits for the given number of seconds or until the key 's' pressed."
 }
 __BASH_FUNK_FUNCS+=( choose help please reload root test-all test-misc tweak-bash update var-exists wait )
 
