@@ -608,12 +608,8 @@ function __impl-random-string() {
    fi
 
 ####### random-string ####### START
-local rc
-env LC_CTYPE=C tr -dc "$_CHARS" < /dev/urandom | fold -w ${_LENGTH} | head -n 1
-
-# https://stackoverflow.com/questions/19120263/why-exit-code-141-with-grep-q
-rc=$?
-(( rc == 141 )) && return 0 || return $rc
+# "2>/dev/null" and "|| true" to mitigate "tr: write error: Broken pipe" on e.g. GitHub Actions
+env LC_CTYPE=C tr -dc "$_CHARS" </dev/urandom 2>/dev/null | head -c ${_LENGTH} || true
 ####### random-string ####### END
 }
 function __complete-random-string() {

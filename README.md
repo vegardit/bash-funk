@@ -1,5 +1,6 @@
 # bash-funk - Spice up your Bash! <a href="https://github.com/vegardit/bash-funk/" title="GitHub Repo"><img height="30" src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/github.svg?sanitize=true"></a>
 
+[![Build Status](https://github.com/vegardit/bash-funk/workflows/Build/badge.svg "GitHub Actions")](https://github.com/vegardit/bash-funk/actions?query=workflow%3ABuild)
 [![Build Status](https://travis-ci.com/vegardit/bash-funk.svg?branch=master)](https://travis-ci.com/vegardit/bash-funk)
 [![License](https://img.shields.io/github/license/vegardit/bash-funk.svg?label=license)](#license)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
