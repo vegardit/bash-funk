@@ -74,18 +74,18 @@ echo "Binding to $_BIND_ADDRESS:$_PORT..."
 [[ $_duration ]] && local timeout="Timeout => $_duration," || local timeout="";
 
 perl << EOF
-    use IO::Socket;
-    \$server = IO::Socket::INET->new(
-        LocalAddr => '$_BIND_ADDRESS',
-        LocalPort => $_PORT,
-        Type => SOCK_STREAM,
-        ReuseAddr => 1,
-        $timeout
-        Listen => 10
-    ) or die "Couldn't bind to $_BIND_ADDRESS:$_PORT: \$@\n";
-    print("Press [CTRL]+[C] to abort.\n");
-    while (\$client = \$server->accept()) { }
-    close(\$server);
+   use IO::Socket;
+   \$server = IO::Socket::INET->new(
+      LocalAddr => '$_BIND_ADDRESS',
+      LocalPort => $_PORT,
+      Type => SOCK_STREAM,
+      ReuseAddr => 1,
+      $timeout
+      Listen => 10
+   ) or die "Couldn't bind to $_BIND_ADDRESS:$_PORT: \$@\n";
+   print("Press [CTRL]+[C] to abort.\n");
+   while (\$client = \$server->accept()) { }
+   close(\$server);
 EOF
 ```
 
@@ -126,34 +126,34 @@ localhost:12345 is not reachable.
 *Implementation:*
 ```bash
 if hash nc &>/dev/null; then
-    if nc -vz -w $_CONNECT_TIMEOUT_IN_SECONDS $_HOSTNAME $_PORT; then
-        portStatus=open
-    else
-        portStatus=
-    fi
+   if nc -vz -w $_CONNECT_TIMEOUT_IN_SECONDS $_HOSTNAME $_PORT; then
+      portStatus=open
+   else
+      portStatus=
+   fi
 else
-    local portStatus=$(perl << EOF
-        use IO::Socket;
-        my \$socket=IO::Socket::INET->new(
-            PeerAddr => "$_HOSTNAME",
-            PeerPort => $_PORT,
-            Timeout => $_CONNECT_TIMEOUT_IN_SECONDS
-        );
+   local portStatus=$(perl << EOF
+      use IO::Socket;
+      my \$socket=IO::Socket::INET->new(
+         PeerAddr => "$_HOSTNAME",
+         PeerPort => $_PORT,
+         Timeout => $_CONNECT_TIMEOUT_IN_SECONDS
+      );
 
-        if (defined \$socket) {
-            sleep 1;
-            (defined \$socket->connected ? print("open") : q{});
-        }
+      if (defined \$socket) {
+         sleep 1;
+         (defined \$socket->connected ? print("open") : q{});
+      }
 EOF
-    )
+   )
 fi
 
 if [[ $portStatus == "open" ]]; then
-    [[ $_verbose ]] && echo "$_HOSTNAME:$_PORT is open." || true
-    return 0
+   [[ $_verbose ]] && echo "$_HOSTNAME:$_PORT is open." || true
+   return 0
 else
-    [[ $_verbose ]] && echo "$_HOSTNAME:$_PORT is not reachable." || true
-    return 1
+   [[ $_verbose ]] && echo "$_HOSTNAME:$_PORT is not reachable." || true
+   return 1
 fi
 ```
 
@@ -177,9 +177,9 @@ Options:
 *Implementation:*
 ```bash
 if [[ $OSTYPE == cygwin || $OSTYPE == msys ]]; then
-    ipconfig /all | grep "IPv4 Address" | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+   ipconfig /all | grep "IPv4 Address" | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
 else
-    ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+   ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
 fi
 ```
 
@@ -206,42 +206,42 @@ Options:
 *Implementation:*
 ```bash
 case ${_method:-https} in
-    finger)
-        if ! hash finger &>/dev/null; then
-            echo "Required command 'ftp' is not available."
-            return 1
-        fi
-        finger @4.ifcfg.me 2>/dev/null | sed -nE 's/Your Host is (.*)/\1/p'
-        return ${PIPESTATUS[0]}
-      ;;
-    ftp)
-        if ! hash ftp &>/dev/null; then
-            echo "Required command 'ftp' is not available."
-            return 1
-        fi
-        echo close | ftp 4.ifcfg.me 2>/dev/null | sed -nE 's/.*[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+ \((.*)\)/\1/p'
-        return ${PIPESTATUS[0]}
-      ;;
-    https)
-        hash wget &>/dev/null && local get="wget -qO- --user-agent=curl" || local get="curl -s"
-        $get https://4.ifcfg.me/h
-      ;;
-    nslookup)
-        if ! hash nslookup &>/dev/null; then
-            echo "Required command 'nslookup' is not available."
-            return 1
-        fi
-        nslookup . 4.ifcfg.me 2>/dev/null | sed -nE 's/Name:\t(.*)/\1//p'
-        return ${PIPESTATUS[0]}
-      ;;
-    telnet)
-        if ! hash telnet &>/dev/null; then
-            echo "Required command 'telnet' is not available."
-            return 1
-        fi
-        telnet 4.ifcfg.me 2>/dev/null | sed -nE 's/Your Host is (.*)/\1/p'
-        return ${PIPESTATUS[0]}
-      ;;
+   finger)
+      if ! hash finger &>/dev/null; then
+         echo "Required command 'ftp' is not available."
+         return 1
+      fi
+      finger @4.ifcfg.me 2>/dev/null | sed -nE 's/Your Host is (.*)/\1/p'
+      return ${PIPESTATUS[0]}
+     ;;
+   ftp)
+      if ! hash ftp &>/dev/null; then
+         echo "Required command 'ftp' is not available."
+          return 1
+      fi
+      echo close | ftp 4.ifcfg.me 2>/dev/null | sed -nE 's/.*[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+ \((.*)\)/\1/p'
+      return ${PIPESTATUS[0]}
+     ;;
+   https)
+      hash wget &>/dev/null && local get="wget -qO- --user-agent=curl" || local get="curl -s"
+      $get https://4.ifcfg.me/h
+     ;;
+   nslookup)
+      if ! hash nslookup &>/dev/null; then
+         echo "Required command 'nslookup' is not available."
+         return 1
+      fi
+      nslookup . 4.ifcfg.me 2>/dev/null | sed -nE 's/Name:\t(.*)/\1//p'
+      return ${PIPESTATUS[0]}
+     ;;
+   telnet)
+      if ! hash telnet &>/dev/null; then
+         echo "Required command 'telnet' is not available."
+         return 1
+      fi
+      telnet 4.ifcfg.me 2>/dev/null | sed -nE 's/Your Host is (.*)/\1/p'
+      return ${PIPESTATUS[0]}
+     ;;
 esac
 ```
 
@@ -268,42 +268,42 @@ Options:
 *Implementation:*
 ```bash
 case ${_method:-http} in
-    dns)
-        if hash dig &>/dev/null; then
-            dig @resolver1.opendns.com -4 myip.opendns.com +short
-        elif ! hash host &>/dev/null; then
-            echo "Required command 'dig' or 'host' is not available."
-            return 1
-        else
-            host myip.opendns.com resolver1.opendns.com | grep --color=never -oP '(?<=myip.opendns.com has address )[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+'
-        fi
-      ;;
-    http)
-        hash wget &>/dev/null && local get="wget -qO- --user-agent=curl" || local get="curl -s"
-        # alternatives: icanhazip.com, ifconfig.co, ifconfig.me, ipecho.net
-        $get http://whatismyip.akamai.com/
-      ;;
-    https)
-        hash wget &>/dev/null && local get="wget -qO- --user-agent=curl" || local get="curl -s"
-        # alternatives: icanhazip.com, ifconfig.co, ifconfig.me
-        $get https://ipecho.net/plain
-      ;;
-    nslookup)
-        if ! hash nslookup &>/dev/null; then
-            echo "Required command 'nslookup' is not available."
-            return 1
-        fi
-        nslookup myip.opendns.com resolver1.opendns.com | grep -oP '(?<=Address: )[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+'
-        return ${PIPESTATUS[0]}
-      ;;
-    telnet)
-        if ! hash telnet &>/dev/null; then
-            echo "Required command 'telnet' is not available."
-            return 1
-        fi
-        telnet telnetmyip.com 2>/dev/null | sed -nE 's/.*ip\": \"([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+).+/\1/p'
-        return ${PIPESTATUS[0]}
-      ;;
+   dns)
+      if hash dig &>/dev/null; then
+         dig @resolver1.opendns.com -4 myip.opendns.com +short
+      elif ! hash host &>/dev/null; then
+         echo "Required command 'dig' or 'host' is not available."
+         return 1
+      else
+         host myip.opendns.com resolver1.opendns.com | grep --color=never -oP '(?<=myip.opendns.com has address )[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+'
+      fi
+     ;;
+   http)
+      hash wget &>/dev/null && local get="wget -qO- --user-agent=curl" || local get="curl -s"
+      # alternatives: icanhazip.com, ifconfig.co, ifconfig.me, ipecho.net
+      $get http://whatismyip.akamai.com/
+     ;;
+   https)
+      hash wget &>/dev/null && local get="wget -qO- --user-agent=curl" || local get="curl -s"
+      # alternatives: icanhazip.com, ifconfig.co, ifconfig.me
+      $get https://ipecho.net/plain
+     ;;
+   nslookup)
+      if ! hash nslookup &>/dev/null; then
+         echo "Required command 'nslookup' is not available."
+         return 1
+      fi
+      nslookup myip.opendns.com resolver1.opendns.com | grep -oP '(?<=Address: )[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+'
+      return ${PIPESTATUS[0]}
+     ;;
+   telnet)
+      if ! hash telnet &>/dev/null; then
+         echo "Required command 'telnet' is not available."
+         return 1
+      fi
+      telnet telnetmyip.com 2>/dev/null | sed -nE 's/.*ip\": \"([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+).+/\1/p'
+      return ${PIPESTATUS[0]}
+     ;;
 esac
 ```
 
@@ -340,54 +340,47 @@ Options:
 
 *Implementation:*
 ```bash
-
 if [[ ! $_stop_when ]]; then
-    local _stop_when=stop
+   local _stop_when=stop
 fi
 
 if [[ ! $_disconnect_when ]]; then
-    local _disconnect_when=quit
+   local _disconnect_when=quit
 fi
 
 python -c "
 import socket, sys
 
 def run():
-    srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    srv.bind(('$_BIND_ADDRESS', $_PORT))
-    srv.listen(0)
+   srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+   srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+   srv.bind(('$_BIND_ADDRESS', $_PORT))
+   srv.listen(0)
 
-    print('Running TCP echo server on $_BIND_ADDRESS:$_PORT...')
+   print('Running TCP echo server on $_BIND_ADDRESS:$_PORT...')
 
-    while 1:
-        conn, src_addr = srv.accept()
-        print('[CONNECT] %s' % src_addr)
-
-        while 1:
-            data, src_addr = conn.recvfrom(256)
-
-            if not data:
-                continue
-
-            if data == '$_stop_when\r\n':
-                print('[SHUTDOWN] %s' % src_addr)
-                sys.exit(0)
-
-            if data == '$_disconnect_when\r\n':
-                print('[DISCONNECT] %s' % src_addr)
-                conn.shutdown(1)
-                conn.close()
-                break
-
-            conn.sendall(data)
-            sys.stdout.write(data)
-            sys.stdout.flush()
-
+   while 1:
+      conn, src_addr = srv.accept()
+      print('[CONNECT] %s' % src_addr)
+      while 1:
+         data, src_addr = conn.recvfrom(256)
+         if not data:
+            continue
+         if data == '$_stop_when\r\n':
+            print('[SHUTDOWN] %s' % src_addr)
+            sys.exit(0)
+         if data == '$_disconnect_when\r\n':
+            print('[DISCONNECT] %s' % src_addr)
+            conn.shutdown(1)
+            conn.close()
+            break
+         conn.sendall(data)
+         sys.stdout.write(data)
+         sys.stdout.flush()
 try:
-    run()
+   run()
 except KeyboardInterrupt:
-    pass
+   pass
 "
 ```
 
@@ -420,21 +413,21 @@ Options:
 *Implementation:*
 ```bash
 for varname in all_proxy ALL_PROXY ftp_proxy FTP_PROXY http_proxy HTTP_PROXY https_proxy HTTPS_PROXY; do
-    [[ $_verbose ]] && echo "Setting $varname=$_PROXY_URL"
-    export $varname=$_PROXY_URL
+   [[ $_verbose ]] && echo "Setting $varname=$_PROXY_URL"
+   export $varname=$_PROXY_URL
 done
 
 # exclude local IPs from proxy
 if hash ifconfig &>/dev/null; then
-    local my_ips=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*')
+   local my_ips=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*')
 else
-    local my_ips=::1,127.0.0.1
+   local my_ips=::1,127.0.0.1
 fi
 no_proxy=localhost,${my_ips//$'\n'/,}
 
 # exclude metadata IP if AWS EC2 server
 if [[ -f /sys/hypervisor/uuid && $(head -c 3 /sys/hypervisor/uuid) == "ec2" ]]; then
-    no_proxy="$no_proxy,169.254.169.254"
+   no_proxy="$no_proxy,169.254.169.254"
 fi
 
 export no_proxy="$no_proxy,$_NO_PROXY"

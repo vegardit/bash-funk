@@ -60,14 +60,14 @@ Options:
 local childPids # intentional declaration in a separate line, see http://stackoverflow.com/a/42854176
 childPids=$(command ps -o pid --no-headers --ppid $_PARENT_PID 2>/dev/null | sed -e 's!\s!!g'; exit ${PIPESTATUS[0]})
 if [[ $? != 0 ]]; then
-    echo "No process with PID ${1} found"'!'
-    return 1
+   echo "No process with PID ${1} found"'!'
+   return 1
 fi
 for childPid in $childPids; do
-    -get-child-pids --printPPID $childPid
+   -get-child-pids --printPPID $childPid
 done
 if [[ $_printPPID ]]; then
-    echo $_PARENT_PID
+   echo $_PARENT_PID
 fi
 ```
 
@@ -97,8 +97,8 @@ Options:
 local parentPid # intentional declaration in a separate line, see http://stackoverflow.com/a/42854176
 parentPid=$(cat /proc/${_CHILD_PID}/stat 2>/dev/null | awk '{print $4}'; exit ${PIPESTATUS[0]})
 if [[ $? != 0 ]]; then
-    echo "No process with PID ${_CHILD_PID} found"'!'
-    return 1
+   echo "No process with PID ${_CHILD_PID} found"'!'
+   return 1
 fi
 echo $parentPid
 ```
@@ -128,11 +128,11 @@ Options:
 ```bash
 local pid=$_CHILD_PID
 while [[ $pid != 0 ]]; do
-    pid=$(-get-parent-pid ${pid})
-    if [[ $? != 0 ]]; then
-        echo $pid
-        return 1
-    fi
+   pid=$(-get-parent-pid ${pid})
+   if [[ $? != 0 ]]; then
+      echo $pid
+      return 1
+   fi
 done
 echo ${pid}
 ```
@@ -168,13 +168,13 @@ local signal=${_signal:-15}
 local childPids # intentional declaration in a separate line, see http://stackoverflow.com/a/42854176
 childPids=$(-get-child-pids $_PARENT_PID)
 if [[ $? != 0 ]]; then
-    echo $childPids
-    return 1
+   echo $childPids
+   return 1
 fi
 
 for childPid in $childPids; do
-    echo "Killing process with PID $childPid..."
-    kill -s $signal $childPid 2> /dev/null || :
+   echo "Killing process with PID $childPid..."
+   kill -s $signal $childPid 2> /dev/null || :
 done
 ```
 
@@ -208,36 +208,33 @@ Options:
 *Implementation:*
 ```bash
 local signal=${_signal:-15}
-
 if hash netstat &>/dev/null; then
-    local listener=$(netstat -lantp 2>/dev/null | sed -En "s/^tcp\s+[0-9]+\s+[0-9]+ .*:$_PORT .* (-|[0-9]+\/[^ ]*)\s+$/\1/p" | uniq || :)
-
-    if [[ $listener == "-" ]]; then
-        echo "-kill-listener: Could not determine PID of processs listening on TCP port $_PORT. Try using sudo."
-        return 1
-    else
-        echo "-kill-listener: No listening process on TCP port $_PORT found."
-        return 0
-    fi
+   local listener=$(netstat -lantp 2>/dev/null | sed -En "s/^tcp\s+[0-9]+\s+[0-9]+ .*:$_PORT .* (-|[0-9]+\/[^ ]*)\s+$/\1/p" | uniq || :)
+   if [[ $listener == "-" ]]; then
+      echo "-kill-listener: Could not determine PID of processs listening on TCP port $_PORT. Try using sudo."
+      return 1
+   else
+      echo "-kill-listener: No listening process on TCP port $_PORT found."
+      return 0
+   fi
 else
-    local listener=$(lsof -iTCP:$_PORT | sed -En "s/([^ ]+)\s+([0-9]+).*\s+/\2\/\1/p" | uniq || :)
-
-    if [[ ! $listener ]]; then
-        if [[ $EUID -eq 0 ]]; then
-            echo "-kill-listener: No listening process on TCP port $_PORT found."
-            return 1
-        else
-            echo "-kill-listener: Could not determine if a processs is listening on TCP port $_PORT. Try using sudo."
-            return 1
-        fi
-    fi
+   local listener=$(lsof -iTCP:$_PORT | sed -En "s/([^ ]+)\s+([0-9]+).*\s+/\2\/\1/p" | uniq || :)
+   if [[ ! $listener ]]; then
+      if [[ $EUID -eq 0 ]]; then
+         echo "-kill-listener: No listening process on TCP port $_PORT found."
+         return 1
+      else
+         echo "-kill-listener: Could not determine if a processs is listening on TCP port $_PORT. Try using sudo."
+         return 1
+      fi
+   fi
 fi
 
 if [[ $listener ]]; then
-    local pid=${listener%%/*}
-    echo "-kill-listener: Sending kill signal $signal to process $process..."
-    kill -$signal $pid
-    return
+   local pid=${listener%%/*}
+   echo "-kill-listener: Sending kill signal $signal to process $process..."
+   kill -$signal $pid
+   return
 fi
 ```
 

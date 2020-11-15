@@ -69,28 +69,28 @@ Options:
 *Implementation:*
 ```bash
 if [[ ! ${_force:-} ]]; then
-    if [[ -e "${_FQ_DNS_NAME}.key" ]]; then
-        echo "${_FQ_DNS_NAME}.key already exists. Use option --force to overwrite."
-        return 1
-    fi
-    if [[ -e "${_FQ_DNS_NAME}.csr" ]]; then
-        echo "${_FQ_DNS_NAME}.csr already exists. Use option --force to overwrite."
-        return 1
-    fi
-    if [[ -e "${_FQ_DNS_NAME}.crt" ]]; then
-        echo "${_FQ_DNS_NAME}.crt already exists. Use option --force to overwrite."
-        return 1
-    fi
+   if [[ -e "${_FQ_DNS_NAME}.key" ]]; then
+      echo "${_FQ_DNS_NAME}.key already exists. Use option --force to overwrite."
+      return 1
+   fi
+   if [[ -e "${_FQ_DNS_NAME}.csr" ]]; then
+      echo "${_FQ_DNS_NAME}.csr already exists. Use option --force to overwrite."
+      return 1
+   fi
+   if [[ -e "${_FQ_DNS_NAME}.crt" ]]; then
+      echo "${_FQ_DNS_NAME}.crt already exists. Use option --force to overwrite."
+      return 1
+   fi
 fi
 
 if [[ ${_CAkey:-} && ! ${_CAcert:-} ]]; then
-    echo "Using option --CAkey requires option --CAcert";
-    return 1
+   echo "Using option --CAkey requires option --CAcert";
+   return 1
 fi
 
 if [[ ${_CAcert:-} && ! ${_CAkey:-} ]]; then
-    echo "Using option --CAcert requires option --CAkey";
-    return 1
+   echo "Using option --CAcert requires option --CAkey";
+   return 1
 fi
 
 local _subject=${_subject:-/CN=${_FQ_DNS_NAME}}
@@ -104,39 +104,39 @@ echo " -> file [${_FQ_DNS_NAME}.csr] created."
 echo "Generating certificate with subject [$_subject]..."
 local opts="x509 -req -sha256 -days ${_validity:-1095} -in \"${_FQ_DNS_NAME}.csr\" -out \"${_FQ_DNS_NAME}.crt\""
 if [[ ${_CAcert:-} ]]; then
-    opts="$opts -CA \"$_CAcert\" -CAkey \"$_CAkey\" "
-    local caSerialFile="${_CAcert%.*}.srl"
-    if [[ -e $caSerialFile ]]; then
-        opts="$opts -CAserial \"$caSerialFile\" "
-    else
-        opts="$opts -CAcreateserial "
-    fi
+   opts="$opts -CA \"$_CAcert\" -CAkey \"$_CAkey\" "
+   local caSerialFile="${_CAcert%.*}.srl"
+   if [[ -e $caSerialFile ]]; then
+      opts="$opts -CAserial \"$caSerialFile\" "
+   else
+      opts="$opts -CAcreateserial "
+   fi
 else
-    opts="$opts -set_serial 01 -signkey \"${_FQ_DNS_NAME}.key\" "
+   opts="$opts -set_serial 01 -signkey \"${_FQ_DNS_NAME}.key\" "
 fi
 
 if [[ ${_aliases:-} ]]; then
-    local altName altNames
-    for altName in "${_aliases[@]}"; do
-        if [[ $altNames ]]; then
-            altNames="$altNames, DNS:$altName"
-        else
-            altNames="DNS:$altName"
-        fi
-    done
-    local extfile="$(mktemp)"
-    echo subjectAltName="$altNames" > $extfile
-    eval "openssl $opts -extfile $extfile" || return 1
-    rm $extfile
+   local altName altNames
+   for altName in "${_aliases[@]}"; do
+      if [[ $altNames ]]; then
+         altNames="$altNames, DNS:$altName"
+      else
+         altNames="DNS:$altName"
+      fi
+   done
+   local extfile="$(mktemp)"
+   echo subjectAltName="$altNames" > $extfile
+   eval "openssl $opts -extfile $extfile" || return 1
+   rm $extfile
 else
-    eval "openssl $opts" || return 1
+   eval "openssl $opts" || return 1
 fi
 echo " -> file [${_FQ_DNS_NAME}.crt] created."
 
 if [[ ${_dh1024:-} ]]; then
-    # http://httpd.apache.org/docs/current/ssl/ssl_faq.html#javadh
-    # will degrade website rating to B on https://www.ssllabs.com/ssltest/
-    openssl dhparam 1024 >> "${_FQ_DNS_NAME}.crt"
+   # http://httpd.apache.org/docs/current/ssl/ssl_faq.html#javadh
+   # will degrade website rating to B on https://www.ssllabs.com/ssltest/
+   openssl dhparam 1024 >> "${_FQ_DNS_NAME}.crt"
 fi
 ```
 
@@ -173,14 +173,14 @@ Options:
 *Implementation:*
 ```bash
 if [[ ! ${_force:-} ]]; then
-    if [[ -e "${_COMMON_NAME}.key" ]]; then
-        echo "${_COMMON_NAME}.key already exists. Use option --force to overwrite."
-        return 1
-    fi
-    if [[ -e "${_COMMON_NAME}.crt" ]]; then
-        echo "${_COMMON_NAME}.crt already exists. Use option --force to overwrite."
-        return 1
-    fi
+   if [[ -e "${_COMMON_NAME}.key" ]]; then
+      echo "${_COMMON_NAME}.key already exists. Use option --force to overwrite."
+      return 1
+   fi
+   if [[ -e "${_COMMON_NAME}.crt" ]]; then
+      echo "${_COMMON_NAME}.crt already exists. Use option --force to overwrite."
+      return 1
+   fi
 fi
 
 local _subject=${_subject:-/CN=${_COMMON_NAME}}

@@ -55,12 +55,9 @@ EOL
       esac
 
       case "${BASH_FUNK_ROOT}" in
-         /*)
-            BASH_FUNK_ROOT="${BASH_FUNK_ROOT%/*}" ;;
-         */*)
-            BASH_FUNK_ROOT="$PWD/${BASH_FUNK_ROOT%/*}" ;;
-         *)
-            BASH_FUNK_ROOT="$PWD" ;;
+         /*) BASH_FUNK_ROOT="${BASH_FUNK_ROOT%/*}" ;;
+         */*)BASH_FUNK_ROOT="$PWD/${BASH_FUNK_ROOT%/*}" ;;
+         *)  BASH_FUNK_ROOT="$PWD" ;;
       esac
       export BASH_FUNK_ROOT
 
@@ -121,8 +118,7 @@ EOL
          else
             eval "$(sed -E "s/function -/function ${BASH_FUNK_PREFIX}/g; s/function __([^-]*)-/function __\1${BASH_FUNK_PREFIX}/g" ${__module})"
          fi
-         echo
-         echo -en "\033[1A" # cursor up
+         echo -en "\n\033[1A" # cursor up
       done
       unset __module
       echo "* Finished loading applicable modules."
@@ -148,7 +144,6 @@ EOL
 
          # load directory history from ~/.bash_funk_dirs
          if [[ -s ~/.bash_funk_dirs ]]; then
-
             # the awk command corresponds to '-tail-reverse -u -n 100 ~/.bash_funk_dirs'
             IFS=$'\n' read -rd '' -a __dirs <<<"$(awk "{lines[len++]=\$0} END {for(i=len-1;i>=0;i--) if(occurrences[lines[i]]++ == 0) {print lines[i]; count++; if (count>=100) break}}" ~/.bash_funk_dirs)"
             # $_dirs now contains the latest used directory first

@@ -37,7 +37,7 @@ limitations under the License.
 ```
 Usage: -cpu-count [OPTION]...
 
-Prints the number of processors.
+Prints the number of logical processors.
 
 Options:
     --help 
@@ -54,7 +54,7 @@ $ -cpu-count
 
 *Implementation:*
 ```bash
-grep processor /proc/cpuinfo | wc -l
+[[ "$OSTYPE" != "darwin"* ]] && grep processor /proc/cpuinfo | wc -l || sysctl -n hw.logicalcpu
 ```
 
 
@@ -84,12 +84,14 @@ $ -cpu-perf --mode dd-md5sum
 *Implementation:*
 ```bash
 local _mode=${_mode:-openssl-rsa1024}
-
 case $_mode in
-    openssl-aes*) openssl speed -multi $(grep processor /proc/cpuinfo | wc -l) aes-${_mode#*aes}-cbc ;;
-    openssl-rsa*) openssl speed -multi $(grep processor /proc/cpuinfo | wc -l) ${_mode#*-} ;;
-    cryptsetup-*) cryptsetup benchmark --cipher aes-cbc --key-size ${_mode#cryptsetup-} ;;
-    dd-*)         dd if=/dev/zero bs=1M count=1024 2> >(head -3 | tail -1) > >(${_mode#dd-} >/dev/null) ;;
+   openssl-aes*) openssl speed -multi $(grep processor /proc/cpuinfo | wc -l) aes-${_mode#*aes}-cbc ;;
+   openssl-rsa*) openssl speed -multi $(grep processor /proc/cpuinfo | wc -l) ${_mode#*-} ;;
+   cryptsetup-*) cryptsetup benchmark --cipher aes-cbc --key-size ${_mode#cryptsetup-} ;;
+   dd-*)
+      [[ "$OSTYPE" == "darwin"* ]] && local _bs=1m || local _bs=1M
+      dd if=/dev/zero bs=$_bs count=1024 2> >(head -3 | tail -1) > >(${_mode#dd-} >/dev/null)
+     ;;
 esac
 ```
 
@@ -128,13 +130,13 @@ $ -disk-latency /tmp
 local testFile="$(mktemp "--tmpdir=$_PATH")"
 local ddResult
 if ddResult=$(set -o pipefail; dd if=/dev/zero "of=$testFile" bs=512 count=1000 oflag=dsync 2>&1 | tail -1 | sed -E 's/.*copied, ([0-9.]+) .+/\1 ms/'); then
-    rm "$testFile"
-    echo "$ddResult disk latency on device $(df -P "$_PATH" | tail -1 | cut -d' ' -f1)"
-    return 0
+   rm "$testFile"
+   echo "$ddResult disk latency on device $(df -P "$_PATH" | tail -1 | cut -d' ' -f1)"
+   return 0
 else
-    rm "$testFile"
-    echo $ddResult
-    return 1
+   rm "$testFile"
+   echo $ddResult
+   return 1
 fi
 ```
 
@@ -176,37 +178,34 @@ Testing single-threaded sequential read performance...
 ```bash
 local _size=${_size:-2048}
 local _mode=${_mode:-fio}
-
 case $_mode in
-    dd) if ! hash dd &>/dev/null; then
-            echo "-disk-perf: Required command 'dd' is not available."
-            return 1
-        fi
-
-        local testFile="$(mktemp --tmpdir="$_PATH")"
-        echo "Testing single-threaded sequential write performance..."
-        dd if=/dev/zero of="${testFile}" bs=1M count=${_size} conv=fdatasync 2>&1 | head -3 | tail -1
-        echo
-        echo "Testing single-threaded sequential read performance..."
-        dd if="${testFile}" of=/dev/null bs=4k 2>&1 | head -3 | tail -1
-
-        rm $testFile
-       ;;
-    *)  if ! hash fio &>/dev/null; then
-            echo "-disk-perf: Required command 'fio' is not available. You can also try with option '--mode dd'."
-            return 1
-        fi
-
-        local testFile=$(basename $(mktemp --dry-run --tmpdir="$_PATH"))
-        echo "Testing multi-threaded random write performance..."
-        fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(grep processor /proc/cpuinfo | wc -l) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randwrite
-        echo
-        echo "Testing multi-threaded random read performance..."
-        fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(grep processor /proc/cpuinfo | wc -l) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randread
-        echo
-        echo "Testing multi-threaded random read-write (3:1) performance..."
-        fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(grep processor /proc/cpuinfo | wc -l) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randrw --rwmixread=75
-       ;;
+   dd)
+      if ! hash dd &>/dev/null; then
+         echo "-disk-perf: Required command 'dd' is not available."
+         return 1
+      fi
+      local testFile="$(mktemp --tmpdir="$_PATH")"
+      echo "Testing single-threaded sequential write performance..."
+      dd if=/dev/zero of="${testFile}" bs=1M count=${_size} conv=fdatasync 2>&1 | head -3 | tail -1
+      echo
+      echo "Testing single-threaded sequential read performance..."
+      dd if="${testFile}" of=/dev/null bs=4k 2>&1 | head -3 | tail -1
+      rm $testFile
+     ;;
+   *) if ! hash fio &>/dev/null; then
+         echo "-disk-perf: Required command 'fio' is not available. You can also try with option '--mode dd'."
+         return 1
+      fi
+      local testFile=$(basename $(mktemp --dry-run --tmpdir="$_PATH"))
+      echo "Testing multi-threaded random write performance..."
+      fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(grep processor /proc/cpuinfo | wc -l) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randwrite
+      echo
+      echo "Testing multi-threaded random read performance..."
+      fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(grep processor /proc/cpuinfo | wc -l) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randread
+      echo
+      echo "Testing multi-threaded random read-write (3:1) performance..."
+      fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(grep processor /proc/cpuinfo | wc -l) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randrw --rwmixread=75
+     ;;
 esac
 ```
 
@@ -244,10 +243,10 @@ local dataFile=$(mktemp)
 
 local sshOpts=""
 if [[ ${_port} ]]; then
-    sshOpts="$sshOpts -P $_port"
+   sshOpts="$sshOpts -P $_port"
 fi
 if [[ ${_identity_file} ]]; then
-    sshOpts="$sshOpts -i $_identity_file"
+   sshOpts="$sshOpts -i $_identity_file"
 fi
 
 local _SIZE_MB=${_SIZE_MB:-10}

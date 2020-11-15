@@ -6,13 +6,13 @@ The following statements are automatically executed when this module loads:
 
 ```bash
 function -timeout() {
-    if [[ $# < 2 || ${1:-} == "--help" ]]; then
-        echo "Usage: ${FUNCNAME[0]} TIMEOUT COMMAND [ARG]..."
-        echo "Executes the COMMAND and aborts if it does not finish within the given TIMEOUT in seconds."
-        [[ ${1:-} == "--help" ]] && return 0 || return 1
-    fi
-    # see: http://mywiki.wooledge.org/BashFAQ/068
-    perl -e 'alarm shift; exec @ARGV' "$@";
+   if [[ $# < 2 || ${1:-} == "--help" ]]; then
+      echo "Usage: ${FUNCNAME[0]} TIMEOUT COMMAND [ARG]..."
+      echo "Executes the COMMAND and aborts if it does not finish within the given TIMEOUT in seconds."
+      [[ ${1:-} == "--help" ]] && return 0 || return 1
+   fi
+   # see: http://mywiki.wooledge.org/BashFAQ/068
+   perl -e 'alarm shift; exec @ARGV' "$@";
 }
 ```
 
@@ -85,25 +85,25 @@ local selectedIndex=0 ESC=$(echo -e "\033") redraw=1 index dialogFD option
 
 # pre-select if default value was given
 if [[ ${_default:-} ]]; then
-    for index in "${!_OPTION[@]}"; do
-        if [[ $_default == ${_OPTION[$index]} ]]; then
-            selectedIndex=$index
-        fi
-    done
+   for index in "${!_OPTION[@]}"; do
+      if [[ $_default == ${_OPTION[$index]} ]]; then
+         selectedIndex=$index
+      fi
+   done
 fi
 
 while true; do
-    if [[ $redraw ]]; then
-        for index in "${!_OPTION[@]}"; do
-            option="${_OPTION[$index]}"
-            option="${option//$'\n'/\\n}"
-            option="${option:0:$(( COLUMNS - 6 ))}"
-            if (( index == selectedIndex )); then
-                >&$dialogFD echo -e " \033[1m* $option\033[22m"
-            else
-                >&$dialogFD echo "   $option"
-            fi
-        done
+   if [[ $redraw ]]; then
+      for index in "${!_OPTION[@]}"; do
+         option="${_OPTION[$index]}"
+         option="${option//$'\n'/\\n}"
+         option="${option:0:$(( COLUMNS - 6 ))}"
+         if (( index == selectedIndex )); then
+            >&$dialogFD echo -e " \033[1m* $option\033[22m"
+         else
+            >&$dialogFD echo "   $option"
+         fi
+      done
     fi
     local key= key2= key3= key4=
     read -sN1 key && \
@@ -113,39 +113,39 @@ while true; do
     key=${key}${key2}${key3}${key4}
 
     case $key in
-        ${ESC}*A)
-            if (( selectedIndex > 0 )); then
-                (( selectedIndex-- ))
-                redraw=1
+      ${ESC}*A)
+         if (( selectedIndex > 0 )); then
+            (( selectedIndex-- ))
+            redraw=1
+         fi
+        ;;
+      ${ESC}*B)
+         if (( selectedIndex + 1 < ${#_OPTION[@]} )); then
+            (( selectedIndex++ ))
+            redraw=1
+         fi
+        ;;
+      $ESC)
+         echo >&2
+         echo "Aborting on user request" >&2
+         return 1
+        ;;
+      *)
+         if [[ $key == "" || $key == $'\n' ]]; then
+            if [[ $_assign ]]; then
+               eval "$_assign=\"${_OPTION[$selectedIndex]//\"/\\\"}\""
+            else
+               echo "${_OPTION[$selectedIndex]}";
             fi
-          ;;
-        ${ESC}*B)
-            if (( selectedIndex + 1 < ${#_OPTION[@]} )); then
-                (( selectedIndex++ ))
-                redraw=1
-            fi
-          ;;
-        $ESC)
-            echo >&2
-            echo "Aborting on user request" >&2
-            return 1
-          ;;
-        *)
-            if [[ $key == "" || $key == $'\n' ]]; then
-                if [[ $_assign ]]; then
-                    eval "$_assign=\"${_OPTION[$selectedIndex]//\"/\\\"}\""
-                else
-                    echo "${_OPTION[$selectedIndex]}";
-                fi
-                return 0
-            fi
-            redraw=
-          ;;
-    esac
+            return 0
+         fi
+         redraw=
+        ;;
+   esac
 
-    if [[ $redraw ]]; then
-        -cursor-pos --fd $dialogFD --up "$(( ${#_OPTION[@]} ))"
-    fi
+   if [[ $redraw ]]; then
+      -cursor-pos --fd $dialogFD --up "$(( ${#_OPTION[@]} ))"
+   fi
 done
 ```
 
@@ -169,7 +169,7 @@ Options:
 *Implementation:*
 ```bash
 for helpfunc in $(compgen -A function -- -help-); do
-    $helpfunc
+   $helpfunc
 done | sort
 ```
 
@@ -198,11 +198,11 @@ Options:
 local cmd="$(echo $(fc -ln -1))"
 
 if [[ $cmd == sudo* ]]; then
-    echo "-please: Last command '$cmd' was already executed with sudo."
-    return 1
+   echo "-please: Last command '$cmd' was already executed with sudo."
+   return 1
 elif [[ $cmd == -please* ]]; then
-    echo "-please: Executing last command '$cmd' with sudo has no use."
-    return 1
+   echo "-please: Executing last command '$cmd' with sudo has no use."
+   return 1
 fi
 
 [[ $__interactive ]] && echo -e "Executing last command [\033[35m$cmd\033[0m] with sudo..." || true
@@ -229,13 +229,13 @@ Options:
 *Implementation:*
 ```bash
 if [[ ! ${BASH_FUNK_ROOT} ]]; then
-    echo "-reload: Error: BASH_FUNK_ROOT variable is not defined."
-    return 1
+   echo "-reload: Error: BASH_FUNK_ROOT variable is not defined."
+   return 1
 fi
 
 if [[ ! -r ${BASH_FUNK_ROOT}/bash-funk.sh ]]; then
-    echo "-reload: Error: File [${BASH_FUNK_ROOT}/bash-funk.sh] is not readable by user [$USER]."
-    return 1
+   echo "-reload: Error: File [${BASH_FUNK_ROOT}/bash-funk.sh] is not readable by user [$USER]."
+   return 1
 fi
 
 source ${BASH_FUNK_ROOT}/bash-funk.sh
@@ -283,9 +283,9 @@ Options:
 *Implementation:*
 ```bash
 for testfunc in $(compgen -A function -- -test-); do
-    if [[ $testfunc != "-test-all" ]]; then
-        $testfunc || return 1
-    fi
+   if [[ $testfunc != "-test-all" ]]; then
+      $testfunc || return 1
+   fi
 done
 ```
 
@@ -342,7 +342,6 @@ Options:
 
 *Implementation:*
 ```bash
-
 #
 # enable and configure command history
 #
@@ -359,12 +358,12 @@ history -r
 # Readline productivity tweaks, see https://www.gnu.org/software/bash/manual/html_node/Readline-Init-File-Syntax.html
 #
 if [[ $- == *i* ]]; then
-    bind '"\e[A": history-search-backward' # enable history searching backward using arrow-up
-    bind '"\e[B": history-search-forward'  # enable history searching forward using arrow-down
-    set show-all-if-ambiguous on    # show words which have more than one possible completion immediately instead of ringing the bell
-    set show-all-if-unmodified on   # show words which have more than one possible completion without any possible partial completion immediately instead of ringing the bell.
-    set completion-ignore-case on   # perform case-insensitive filename matching and completion
-    set enable-keypad on            # try to enable the application keypad
+   bind '"\e[A": history-search-backward' # enable history searching backward using arrow-up
+   bind '"\e[B": history-search-forward'  # enable history searching forward using arrow-down
+   set show-all-if-ambiguous on    # show words which have more than one possible completion immediately instead of ringing the bell
+   set show-all-if-unmodified on   # show words which have more than one possible completion without any possible partial completion immediately instead of ringing the bell.
+   set completion-ignore-case on   # perform case-insensitive filename matching and completion
+   set enable-keypad on            # try to enable the application keypad
 fi
 
 # make ls colorful by default except on MacOS where it is not supported
@@ -383,52 +382,48 @@ alias -- ..="-cd-up"
 alias -- ...="command cd ../.."
 alias -- -="command cd -"
 if hash mc 2>/dev/null && [[ -e /usr/lib/mc/mc-wrapper.sh ]]; then
-    # see https://stackoverflow.com/questions/39017391/how-to-make-midnight-commander-exit-to-its-current-directory
-    alias mc='. /usr/lib/mc/mc-wrapper.sh'
+   # see https://stackoverflow.com/questions/39017391/how-to-make-midnight-commander-exit-to-its-current-directory
+   alias mc='. /usr/lib/mc/mc-wrapper.sh'
 fi
-
 
 #
 # Bash productivity options, see http://wiki.bash-hackers.org/internals/shell_options
 #
 local opt opts=(autocd checkwinsize dirspell direxpand extglob globstar histappend)
 for opt in ${opts[@]}; do
-    if shopt -s $opt &>/dev/null; then
-        [[ $_verbose ]] && echo "shopt -s $opt => ENABLED"
-    else
-        [[ $_verbose ]] && echo "shopt -s $opt => UNSUPPORTED"
-    fi
+   if shopt -s $opt &>/dev/null; then
+      [[ $_verbose ]] && echo "shopt -s $opt => ENABLED"
+   else
+      [[ $_verbose ]] && echo "shopt -s $opt => UNSUPPORTED"
+   fi
 done
-
 
 #
 # cygwin/msys tweaks
 #
 case "$OSTYPE" in
-    cygwin)
-        for drive in {a..z}; do
-            if [[ -e /cygdrive/${drive} ]]; then
-                alias -- "${drive}:"="cd /cygdrive/${drive}"
-                alias -- "${drive^^}:"="cd /cygdrive/${drive}"
-            fi
-        done
-
-        if ! hash sudo &>/dev/null; then
-            alias -- sudo="cygstart --action=runas"
-        fi
-      ;;
-    msys)
-        for drive in {a..z}; do
-            if [[ -e /${drive} ]]; then
-                alias -- "${drive}:"="cd /${drive}"
-                alias -- "${drive^^}:"="cd /${drive}"
-            fi
-        done
-
-        if ! hash sudo &>/dev/null; then
-            alias -- sudo="cygstart --action=runas"
-        fi
-      ;;
+   cygwin)
+      for drive in {a..z}; do
+         if [[ -e /cygdrive/${drive} ]]; then
+            alias -- "${drive}:"="cd /cygdrive/${drive}"
+            alias -- "${drive^^}:"="cd /cygdrive/${drive}"
+         fi
+      done
+      if ! hash sudo &>/dev/null; then
+         alias -- sudo="cygstart --action=runas"
+      fi
+     ;;
+   msys)
+      for drive in {a..z}; do
+         if [[ -e /${drive} ]]; then
+            alias -- "${drive}:"="cd /${drive}"
+            alias -- "${drive^^}:"="cd /${drive}"
+         fi
+      done
+      if ! hash sudo &>/dev/null; then
+         alias -- sudo="cygstart --action=runas"
+      fi
+     ;;
 esac
 ```
 
@@ -457,49 +452,49 @@ Options:
 *Implementation:*
 ```bash
 if [[ ! ${BASH_FUNK_ROOT} ]]; then
-    echo "-update: Error: BASH_FUNK_ROOT variable is not defined."
-    return 1
+   echo "-update: Error: BASH_FUNK_ROOT variable is not defined."
+   return 1
 fi
 
 if [[ ! -w ${BASH_FUNK_ROOT} ]]; then
-    echo "-update: Error: Directory [${BASH_FUNK_ROOT}] is not writeable by user [$USER]."
-    return 1
+   echo "-update: Error: Directory [${BASH_FUNK_ROOT}] is not writeable by user [$USER]."
+   return 1
 fi
 
 if [[ ! $_yes ]]; then
-    read -p "Are you sure you want to update bash-funk located in [${BASH_FUNK_ROOT}]? (y) " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        echo "-update: Aborting on user request."
-        return 0
-    fi
+   read -p "Are you sure you want to update bash-funk located in [${BASH_FUNK_ROOT}]? (y) " -n 1 -r
+   echo
+   if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+      echo "-update: Aborting on user request."
+      return 0
+   fi
 fi
 
 # update via SVN
 if [[ -e "${BASH_FUNK_ROOT}/.svn" ]]; then
-    svn revert -R "${BASH_FUNK_ROOT}" || return
-    svn update "${BASH_FUNK_ROOT}" || return
-    [[ $_reload ]] && -reload || true
-    return
+   svn revert -R "${BASH_FUNK_ROOT}" || return
+   svn update "${BASH_FUNK_ROOT}" || return
+   [[ $_reload ]] && -reload || true
+   return
 fi
 
 # update via Git
 if [[ -e "${BASH_FUNK_ROOT}/.git" ]]; then
-    ( cd "${BASH_FUNK_ROOT}" && git config core.autocrlf false && git fetch && git reset origin/master --hard && git pull ) || return
-    [[ $_reload ]] && -reload || true
-    return
+   ( cd "${BASH_FUNK_ROOT}" && git config core.autocrlf false && git fetch && git reset origin/master --hard && git pull ) || return
+   [[ $_reload ]] && -reload || true
+   return
 fi
 
 # update via curl/wget
 local get
 if hash curl &>/dev/null; then
-    get="curl -#L"
+   get="curl -#L"
 else
-    if wget --help | grep -- --show-progress &>/dev/null; then
-        get="wget -qO- --show-progress"
-    else
-        get="wget -qO-"
-    fi
+   if wget --help | grep -- --show-progress &>/dev/null; then
+      get="wget -qO- --show-progress"
+   else
+      get="wget -qO-"
+   fi
 fi
 ( cd "${BASH_FUNK_ROOT}" && $get https://github.com/vegardit/bash-funk/tarball/master | tar -xzv --strip-components 1 ) || return
 [[ $_reload ]] && -reload || true
@@ -541,11 +536,11 @@ Bash variable 'NON_EXISTANT_VARIABLE' does not exist.
 *Implementation:*
 ```bash
 if ${!_VARIABLE_NAME+false}; then
-    [[ $_verbose ]] && echo "Bash variable '$_VARIABLE_NAME' does not exist." || true
-    return 1
+   [[ $_verbose ]] && echo "Bash variable '$_VARIABLE_NAME' does not exist." || true
+   return 1
 else
-    [[ $_verbose ]] && echo "Bash variable '$_VARIABLE_NAME' exists." || true
-    return 0
+   [[ $_verbose ]] && echo "Bash variable '$_VARIABLE_NAME' exists." || true
+   return 0
 fi
 ```
 
@@ -581,16 +576,16 @@ local cursor9Left="\033[9D"
 
 echo -ne "Waiting for [$(date +%T --date=@$(($_SECONDS - 3600)))] until $(date +%T --date=@$(($(date +%s) + $_SECONDS))). Press [s] to skip: $cursor9Right"
 for (( i = 0; i < _SECONDS; i++ )); do
-    if [[ $__interactive ]]; then
-        local newLine=
-    else
-        # adding a \n new line character to the end of the line to make the output parseable by sed which is line oriented
-        local newLine="$saveCursor\n$restoreCursor"
-    fi
-    echo -ne "$cursor9Left$green$(date +%T --date=@$(($_SECONDS - ${i} - 3600))) $reset$newLine"
-    local char=
-    read -s -n1 -t1 char || :
-    [[ $char == "s" ]] && break
+   if [[ $__interactive ]]; then
+      local newLine=
+   else
+      # adding a \n new line character to the end of the line to make the output parseable by sed which is line oriented
+      local newLine="$saveCursor\n$restoreCursor"
+   fi
+   echo -ne "$cursor9Left$green$(date +%T --date=@$(($_SECONDS - ${i} - 3600))) $reset$newLine"
+   local char=
+   read -s -n1 -t1 char || :
+   [[ $char == "s" ]] && break
 done
 echo
 ```

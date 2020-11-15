@@ -73,19 +73,19 @@ $ -calc 2^1.2 --round 1
 *Implementation:*
 ```bash
 if [[ ! ${_FORMULA:-} ]]; then
-    "-calc: Formula is missing."
-    return 1
+   "-calc: Formula is missing."
+   return 1
 fi
 
 local formula=""
 for part in "${_FORMULA[@]}"; do
-    formula="$formula $part"
+   formula="$formula $part"
 done
 
 if [[ ${_round:-} ]]; then
-    LC_ALL=C awk "BEGIN{printf \"%.${_round}f\n\", ($formula)}"
+   LC_ALL=C awk "BEGIN{printf \"%.${_round}f\n\", ($formula)}"
 else
-    LC_ALL=C awk "BEGIN{print ($formula)}"
+   LC_ALL=C awk "BEGIN{print ($formula)}"
 fi
 ```
 
@@ -168,76 +168,72 @@ $ -simple-calc 2^1.2 --round 1
 *Implementation:*
 ```bash
 if [[ $_FORMULA =~ ^([+-]?[0-9]*\.?[0-9]+)([/*^+-])([0-9]*\.?[0-9]+)$ ]]; then
-    local leftNumber=${BASH_REMATCH[1]}
-    local operator=${BASH_REMATCH[2]}
-    local rightNumber=${BASH_REMATCH[3]}
+   local leftNumber=${BASH_REMATCH[1]}
+   local operator=${BASH_REMATCH[2]}
+   local rightNumber=${BASH_REMATCH[3]}
 else
-    echo "$_fn: Invalid formula."
-    return 1
+   echo "$_fn: Invalid formula."
+   return 1
 fi
 
 if [[ ! ${_using:-} ]]; then
-    if hash awk &>/dev/null; then
-        local _using=awk
-    elif hash perl &>/dev/null; then
-        local _using=perl
-    elif hash python &>/dev/null; then
-        local _using=python
-    elif hash bc &>/dev/null; then
-        local _using=bc
-    else
-        echo "$_fn: No supported command for floating operations available."
-        return 1
-    fi
+   if hash awk &>/dev/null; then
+      local _using=awk
+   elif hash perl &>/dev/null; then
+      local _using=perl
+   elif hash python &>/dev/null; then
+      local _using=python
+   elif hash bc &>/dev/null; then
+      local _using=bc
+   else
+      echo "$_fn: No supported command for floating operations available."
+      return 1
+   fi
 fi
 
 case $_using in
 
-    awk)
-        if [[ ${_round:-} ]]; then
-            LC_ALL=C awk "BEGIN{printf \"%.${_round}f\n\", $leftNumber$operator$rightNumber}"
-        else
-            LC_ALL=C awk "BEGIN{print $leftNumber$operator$rightNumber}"
-        fi
-      ;;
-    bc)
-        if [[ ${_round:-} ]]; then
-            # https://stackoverflow.com/questions/16164925/using-fractional-exponent-with-bc
-            if [[ $operator == "^" && $rightNumber == *.* ]]; then
-                LC_ALL=C builtin printf "%.${_round}f\n" $(bc -l <<< "e($rightNumber*l($leftNumber))")
-            else
-                LC_ALL=C builtin printf "%.${_round}f\n" $(bc -l <<< "$leftNumber$operator$rightNumber")
-            fi
-        else
-            # https://stackoverflow.com/questions/16164925/using-fractional-exponent-with-bc
-            if [[ $operator == "^" && $rightNumber == *.* ]]; then
-                LC_ALL=C bc -l <<< "e($rightNumber*l($leftNumber))"
-            else
-                LC_ALL=C bc -l <<< "$leftNumber$operator$rightNumber"
-            fi
-        fi
-      ;;
-
-
-    perl)
-        if [[ ${_round:-} ]]; then
-            if [[ $operator == "^" ]]; then
-                LC_ALL=C perl <<< "printf(\"%.${_round}f\", $leftNumber ** $rightNumber)"
-            else
-                LC_ALL=C perl <<< "printf(\"%.${_round}f\", $leftNumber $operator $rightNumber)"
-            fi
-        else
-            if [[ $operator == "^" ]]; then
-                LC_ALL=C perl <<< "print $leftNumber ** $rightNumber"
-            else
-                LC_ALL=C perl <<< "print $leftNumber $operator $rightNumber"
-            fi
-        fi
-      ;;
-
-
-    python)
-        LC_ALL=C python -c "import math
+   awk)
+      if [[ ${_round:-} ]]; then
+         LC_ALL=C awk "BEGIN{printf \"%.${_round}f\n\", $leftNumber$operator$rightNumber}"
+      else
+         LC_ALL=C awk "BEGIN{print $leftNumber$operator$rightNumber}"
+      fi
+     ;;
+   bc)
+      if [[ ${_round:-} ]]; then
+         # https://stackoverflow.com/questions/16164925/using-fractional-exponent-with-bc
+         if [[ $operator == "^" && $rightNumber == *.* ]]; then
+            LC_ALL=C builtin printf "%.${_round}f\n" $(bc -l <<< "e($rightNumber*l($leftNumber))")
+         else
+            LC_ALL=C builtin printf "%.${_round}f\n" $(bc -l <<< "$leftNumber$operator$rightNumber")
+         fi
+      else
+         # https://stackoverflow.com/questions/16164925/using-fractional-exponent-with-bc
+         if [[ $operator == "^" && $rightNumber == *.* ]]; then
+            LC_ALL=C bc -l <<< "e($rightNumber*l($leftNumber))"
+         else
+            LC_ALL=C bc -l <<< "$leftNumber$operator$rightNumber"
+         fi
+      fi
+     ;;
+   perl)
+      if [[ ${_round:-} ]]; then
+         if [[ $operator == "^" ]]; then
+            LC_ALL=C perl <<< "printf(\"%.${_round}f\", $leftNumber ** $rightNumber)"
+         else
+            LC_ALL=C perl <<< "printf(\"%.${_round}f\", $leftNumber $operator $rightNumber)"
+         fi
+      else
+         if [[ $operator == "^" ]]; then
+            LC_ALL=C perl <<< "print $leftNumber ** $rightNumber"
+         else
+            LC_ALL=C perl <<< "print $leftNumber $operator $rightNumber"
+         fi
+      fi
+     ;;
+   python)
+      LC_ALL=C python -c "import math
 if '$operator' == '^':
    result=math.pow($leftNumber, $rightNumber)
 else:
@@ -249,12 +245,11 @@ if ${_round:--1} > -1:
 result=str(result)
 
 if result.endswith('.0'):
-  result=result[:-2]
+   result=result[:-2]
 
 print(result)
 "
-      ;;
-
+    ;;
 esac
 ```
 

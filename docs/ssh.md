@@ -65,10 +65,10 @@ Options:
 eval $(ssh-agent)
 
 expect << EOF
-  spawn ssh-add $_KEY_FILE
-  expect "Enter passphrase"
-  send "$_PASSWORD\r"
-  expect eof
+   spawn ssh-add $_KEY_FILE
+   expect "Enter passphrase"
+   send "$_PASSWORD\r"
+   expect eof
 EOF
 ```
 
@@ -106,12 +106,10 @@ Options:
 *Implementation:*
 ```bash
 local opts
-
 # if password is specified and new OpenSSH key format is supported by ssh-keygen, then enable it
 if [[ ${_password:-} ]] && ssh-keygen --help 2>&1 | grep -q -- " -o "; then
-    opts=-o -a 500
+   opts=-o -a 500
 fi
-
 ssh-keygen -t rsa -f $_FILENAME -N "${_password:-}" -b ${_keysize:-4096} -C "${_comment:-}" $opts
 ```
 
@@ -169,10 +167,10 @@ Options:
 ```bash
 local filter=
 if [[ ${_GREP_PATTERN:-} ]]; then
-    local p
-    for p in "${_GREP_PATTERN[@]}"; do
-        filter="$filter | grep \"$p\""
-    done
+   local p
+   for p in "${_GREP_PATTERN[@]}"; do
+      filter="$filter | grep \"$p\""
+   done
 fi
 ssh_hist="$(eval -- "-tail-reverse "$HISTFILE" -u | grep \"^ssh \" $filter | head -10")"
 ssh_hist="${ssh_hist//\"/\\\"}"
@@ -260,18 +258,18 @@ user1
 ```bash
 local askPassPW
 if [[ ${_password:-} ]]; then
-    askPassPW=$_password
+   askPassPW=$_password
 else
-    if ! read -s -t 2 askPassPW; then
-        echo 'No password provided!'
-        return 1
-    fi
+   if ! read -s -t 2 askPassPW; then
+      echo 'No password provided!'
+      return 1
+   fi
 fi
 
 local askPassFile=~/.ssh-askpass-$(-random-string 8 [:alnum:]).sh
 echo "#!/usr/bin/env bash
-    echo '$askPassPW'
-    rm -f $askPassFile >/dev/null
+   echo '$askPassPW'
+   rm -f $askPassFile >/dev/null
 " > $askPassFile
 chmod 770 $askPassFile
 

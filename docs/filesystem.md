@@ -461,15 +461,9 @@ else
 fi
 
 local findOpts="-type f"
-if [[ $_name ]]; then
-   findOpts="$findOpts -name $_name"
-fi
-if [[ $_maxdepth ]]; then
-   findOpts="$findOpts -maxdepth $_maxdepth"
-fi
-if [[ $_mindepth ]]; then
-   findOpts="$findOpts -mindepth $_mindepth"
-fi
+if [[ $_name ]];     then findOpts="$findOpts -name $_name"; fi
+if [[ $_maxdepth ]]; then findOpts="$findOpts -maxdepth $_maxdepth"; fi
+if [[ $_mindepth ]]; then findOpts="$findOpts -mindepth $_mindepth"; fi
 
 # turn off verbose if part of pipe or subshell
 [[ ! $__interactive ]] && _verbose= || true
@@ -503,7 +497,6 @@ if [[ $_verbose ]]; then
 else
 
    if [[ $_unpack ]]; then
-
       find "$_START_PATH" $findOpts 2>/dev/null | while read file; do
          if [[ $file == *.zip || $file == *.jar || $file == *.ear || $file == *.war ]]; then
             unzip -p "$file" | LC_ALL=C $grepCmd "$_SEARCH_STRING" "$file" 2>/dev/null || true
@@ -511,9 +504,7 @@ else
             LC_ALL=C $grepCmd "$_SEARCH_STRING" "$file" 2>/dev/null
          fi
       done
-
    else
-
       # to avoid "xargs: environment is too large for exec" on cygwin/msys
       local xargsWorks=1
       if [[ $OSTYPE == cygwin || $OSTYPE == msys ]]; then
@@ -521,7 +512,6 @@ else
             local xargsWorks=
          fi
       fi
-
       if [[ $xargsWorks ]]; then
          find "$_START_PATH" $findOpts -print0 | LC_ALL=C xargs -r -0 -P2 $grepCmd "$_SEARCH_STRING" 2>/dev/null
       else

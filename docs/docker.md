@@ -178,9 +178,9 @@ local selection
 eval -- "-choose --assign selection $(echo "$containers" | tail +2 | while read line; do printf "%s" "'$line' "; done)" || return 1
 echo "Entering [$(-substr-before "$selection" " ")]..."
 if [[ $_user ]]; then
-    sudo docker exec -u $_user -it $(-substr-after-last "$selection" " ") /bin/sh
+   sudo docker exec -u $_user -it $(-substr-after-last "$selection" " ") /bin/sh
 else
-    sudo docker exec -it $(-substr-after-last "$selection" " ") /bin/sh
+   sudo docker exec -it $(-substr-after-last "$selection" " ") /bin/sh
 fi
 ```
 

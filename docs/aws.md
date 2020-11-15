@@ -118,12 +118,12 @@ Options:
 hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
 if [[ ! $_region ]]; then
-    local _region=$($http_get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/region/ {print $4}')
+   local _region=$($http_get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/region/ {print $4}')
 fi
 
 if [[ ! $_STACK_NAME ]]; then
-    local instanceId=$($http_get http://169.254.169.254/latest/meta-data/instance-id)
-    local _STACK_NAME=$(aws ec2 describe-instances --region $_region --instance-id $instanceId --query 'Reservations[*].Instances[*].Tags[?Key==`aws:cloudformation:stack-name`].Value' --output text)
+   local instanceId=$($http_get http://169.254.169.254/latest/meta-data/instance-id)
+   local _STACK_NAME=$(aws ec2 describe-instances --region $_region --instance-id $instanceId --query 'Reservations[*].Instances[*].Tags[?Key==`aws:cloudformation:stack-name`].Value' --output text)
 fi
 
 aws --region $_region cloudformation describe-stacks --stack-name $_STACK_NAME 2>&1
@@ -176,11 +176,11 @@ Options:
 *Implementation:*
 ```bash
 if [[ -f /sys/hypervisor/uuid && $(head -c 3 /sys/hypervisor/uuid) == "ec2" ]]; then
-    [[ $_verbose ]] && echo "This is an AWS EC2 instance." || true
-    return 0
+   [[ $_verbose ]] && echo "This is an AWS EC2 instance." || true
+   return 0
 else
-    [[ $_verbose ]] && echo "This is no AWS EC2 instance." || true
-    return 1
+   [[ $_verbose ]] && echo "This is no AWS EC2 instance." || true
+   return 1
 fi
 ```
 

@@ -65,11 +65,11 @@ $ -command-exists -v name-of-nonexistant-command
 *Implementation:*
 ```bash
 if hash "$_COMMAND" &>/dev/null; then
-    [[ $_verbose ]] && echo "'${_COMMAND}' is available." || :
-    return 0
+   [[ $_verbose ]] && echo "'${_COMMAND}' is available." || :
+   return 0
 else
-    [[ $_verbose ]] && echo "'${_COMMAND}' not found." || :
-    return 1
+   [[ $_verbose ]] && echo "'${_COMMAND}' not found." || :
+   return 1
 fi
 ```
 
@@ -100,32 +100,32 @@ Options:
 *Implementation:*
 ```bash
 if hash "yum" &>/dev/null; then
-    if yum list installed "${_PACKAGE_NAME}" &>/dev/null; then
-        [[ $_verbose ]] && echo "${_PACKAGE_NAME} is installed." || :
-        return 0
-    fi
+   if yum list installed "${_PACKAGE_NAME}" &>/dev/null; then
+      [[ $_verbose ]] && echo "${_PACKAGE_NAME} is installed." || :
+      return 0
+   fi
 
 elif hash "dpkg-query" &>/dev/null; then
-    if dpkg-query -Wf'${Status}' "${_PACKAGE_NAME}" 2>/dev/null | grep "install ok installed" &>/dev/null; then
-        [[ $_verbose ]] && echo "${_PACKAGE_NAME} is installed." || :
-        return 0
-    fi
+   if dpkg-query -Wf'${Status}' "${_PACKAGE_NAME}" 2>/dev/null | grep "install ok installed" &>/dev/null; then
+      [[ $_verbose ]] && echo "${_PACKAGE_NAME} is installed." || :
+      return 0
+   fi
 
 elif hash "cygcheck" &>/dev/null; then
-    if cygcheck "${_PACKAGE_NAME}" &>/dev/null; then
-        [[ $_verbose ]] && echo "${_PACKAGE_NAME} is installed." || :
-        return 0
-    fi
+   if cygcheck "${_PACKAGE_NAME}" &>/dev/null; then
+      [[ $_verbose ]] && echo "${_PACKAGE_NAME} is installed." || :
+      return 0
+   fi
 
 elif hash "rpm" &>/dev/null; then
-    if rpm -q openssh &>/dev/null; then
-        [[ $_verbose ]] && echo "${_PACKAGE_NAME} is installed." || :
-        return 0
-    fi
+   if rpm -q openssh &>/dev/null; then
+      [[ $_verbose ]] && echo "${_PACKAGE_NAME} is installed." || :
+      return 0
+   fi
 
 else
-    echo "Error: Unable to determine installation status of ${_PACKAGE_NAME}. No supported package manager found." || :
-    return 2
+   echo "Error: Unable to determine installation status of ${_PACKAGE_NAME}. No supported package manager found." || :
+   return 2
 fi
 
 [[ $_verbose ]] && echo "${_PACKAGE_NAME} is NOT installed." || :

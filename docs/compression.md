@@ -75,12 +75,12 @@ Options:
 *Implementation:*
 ```bash
 if hash pv && [[ ! $_checkpoint ]]; then
-    local total_bytes=$(du -csb "${_PATH[@]}" | tail -1 | cut -f1) &&
-    tar -cf - "${_PATH[@]}" | pv -s $total_bytes | gzip > "$_ARCHIVE"
+   local total_bytes=$(du -csb "${_PATH[@]}" | tail -1 | cut -f1) &&
+   tar -cf - "${_PATH[@]}" | pv -s $total_bytes | gzip > "$_ARCHIVE"
 else
-    printf '=> %s\n' "${_PATH[@]}"
-    local total_kb=$(du -csk "${_PATH[@]}" | tail -1 | cut -f1) &&
-    tar cfvz "${_ARCHIVE}" "${_PATH[@]}" --record-size=1K --checkpoint="$(($total_kb/100))" --checkpoint-action=exec=" printf '%3d/100%%\r' \$((100*\$TAR_CHECKPOINT/$total_kb)) " --totals
+   printf '=> %s\n' "${_PATH[@]}"
+   local total_kb=$(du -csk "${_PATH[@]}" | tail -1 | cut -f1) &&
+   tar cfvz "${_ARCHIVE}" "${_PATH[@]}" --record-size=1K --checkpoint="$(($total_kb/100))" --checkpoint-action=exec=" printf '%3d/100%%\r' \$((100*\$TAR_CHECKPOINT/$total_kb)) " --totals
 fi
 ```
 
@@ -120,12 +120,12 @@ Options:
 *Implementation:*
 ```bash
 if hash pv && [[ ! $_checkpoint ]]; then
-    printf '=> %s\n' "${_PATH[@]}"
-    local total_bytes=$(du -csb "${_PATH[@]}" | tail -1 | cut -f1) &&
-    tar -cf - "${_PATH[@]}" | pv -s $total_bytes | zstd > "$_ARCHIVE"
+   printf '=> %s\n' "${_PATH[@]}"
+   local total_bytes=$(du -csb "${_PATH[@]}" | tail -1 | cut -f1) &&
+   tar -cf - "${_PATH[@]}" | pv -s $total_bytes | zstd > "$_ARCHIVE"
 else
-    local total_kb=$(du -csk "${_PATH[@]}" | tail -1 | cut -f1) &&
-    tar cfv "${_ARCHIVE}" "${_PATH[@]}" -Izstd --record-size=1K --checkpoint="$(($total_kb/100))" --checkpoint-action=exec=" printf '%3d/100%%\r' \$((100*\$TAR_CHECKPOINT/$total_kb)) " --totals
+   local total_kb=$(du -csk "${_PATH[@]}" | tail -1 | cut -f1) &&
+   tar cfv "${_ARCHIVE}" "${_PATH[@]}" -Izstd --record-size=1K --checkpoint="$(($total_kb/100))" --checkpoint-action=exec=" printf '%3d/100%%\r' \$((100*\$TAR_CHECKPOINT/$total_kb)) " --totals
 fi
 ```
 
@@ -189,10 +189,10 @@ Options:
 *Implementation:*
 ```bash
 if hash pv && [[ ! $_checkpoint ]]; then
-    pv "${_ARCHIVE}" --interval 0.5 | tar xzfv - -C "$_TARGET_DIR"
+   pv "${_ARCHIVE}" --interval 0.5 | tar xzfv - -C "$_TARGET_DIR"
 else
-    local total_kb=$(du -k "${_ARCHIVE}" | cut -f1) &&
-    tar xzfv "${_ARCHIVE}" -C "$_TARGET_DIR" --record-size=1K --checkpoint="$(($total_kb/100))" --checkpoint-action=exec=" printf '%3d/100%%\r' \$((100*\$TAR_CHECKPOINT/$total_kb)) " --totals
+   local total_kb=$(du -k "${_ARCHIVE}" | cut -f1) &&
+   tar xzfv "${_ARCHIVE}" -C "$_TARGET_DIR" --record-size=1K --checkpoint="$(($total_kb/100))" --checkpoint-action=exec=" printf '%3d/100%%\r' \$((100*\$TAR_CHECKPOINT/$total_kb)) " --totals
 fi
 ```
 
@@ -231,9 +231,9 @@ Options:
 *Implementation:*
 ```bash
 if hash pv && [[ ! $_checkpoint ]]; then
-    pv "${_ARCHIVE}" --interval 0.5 | zstd -d | tar xfv - -C "$_TARGET_DIR"
+   pv "${_ARCHIVE}" --interval 0.5 | zstd -d | tar xfv - -C "$_TARGET_DIR"
 else
-    local total_kb=$(du -k "${_ARCHIVE}" | cut -f1) &&
-    tar xfv "${_ARCHIVE}" -C "$_TARGET_DIR" -Izstd --record-size=1K --checkpoint="$(($total_kb/100))" --checkpoint-action=exec=" printf '%3d/100%%\r' \$((100*\$TAR_CHECKPOINT/$total_kb)) " --totals
+   local total_kb=$(du -k "${_ARCHIVE}" | cut -f1) &&
+   tar xfv "${_ARCHIVE}" -C "$_TARGET_DIR" -Izstd --record-size=1K --checkpoint="$(($total_kb/100))" --checkpoint-action=exec=" printf '%3d/100%%\r' \$((100*\$TAR_CHECKPOINT/$total_kb)) " --totals
 fi
 ```

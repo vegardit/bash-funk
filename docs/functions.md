@@ -56,8 +56,8 @@ Options:
 *Implementation:*
 ```bash
 if ! declare -F -- $_OLD_FUNC_NAME > /dev/null; then
-    echo "Error: A function with the name $_OLD_FUNC_NAME does not exist."
-    return 1
+   echo "Error: A function with the name $_OLD_FUNC_NAME does not exist."
+   return 1
 fi
 eval "$(echo "$_NEW_FUNC_NAME()"; declare -f $_OLD_FUNC_NAME | tail -n +2)"
 ```
@@ -86,20 +86,20 @@ Options:
         Terminates the option list.
 
 Examples:
-$ -fn-exists name-of-nonexistant-function
+$ -fn-exists name-of-nonexistent-function
 
-$ -fn-exists -v name-of-nonexistant-function
-A function with the name 'name-of-nonexistant-function' does not exist.
+$ -fn-exists -v name-of-nonexistent-function
+A function with the name 'name-of-nonexistent-function' does not exist.
 ```
 
 *Implementation:*
 ```bash
 if declare -F -- $_FUNC_NAME &>/dev/null; then
-    [[ $_verbose ]] && echo "A function with the name '$_FUNC_NAME' exists." || :
-    return 0
+   [[ $_verbose ]] && echo "A function with the name '$_FUNC_NAME' exists." || :
+   return 0
 else
-    [[ $_verbose ]] && echo "A function with the name '$_FUNC_NAME' does not exist." || :
-    return 1
+   [[ $_verbose ]] && echo "A function with the name '$_FUNC_NAME' does not exist." || :
+   return 1
 fi
 ```
 
@@ -129,8 +129,8 @@ Options:
 *Implementation:*
 ```bash
 if ! declare -F -- $_OLD_FUNC_NAME > /dev/null; then
-    echo "Error: A function with the name $_OLD_FUNC_NAME does not exist."
-    return 1
+   echo "Error: A function with the name $_OLD_FUNC_NAME does not exist."
+   return 1
 fi
 
 eval "$(echo "$_NEW_FUNC_NAME()"; declare -f $_OLD_FUNC_NAME | tail -n +2)"
@@ -165,8 +165,8 @@ Options:
 *Implementation:*
 ```bash
 if ! declare -F -- $_FUNC_NAME > /dev/null; then
-    [[ $_verbose ]] && echo "A function with the name '$_FUNC_NAME' does not exist." || :
-    return 0
+   [[ $_verbose ]] && echo "A function with the name '$_FUNC_NAME' does not exist." || :
+   return 0
 fi
 
 unset -f $_FUNC_NAME

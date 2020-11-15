@@ -52,14 +52,13 @@ Options:
 
 *Implementation:*
 ```bash
-
 # use md5sum if available
 if hash md5sum &>/dev/null; then
-    md5sum $_PATH_TO_FILE | cut -d ' ' -f1
+   md5sum $_PATH_TO_FILE | cut -d ' ' -f1
 
 # use perl if available
 elif hash perl &>/dev/null; then
-    perl << EOF
+   perl << EOF
 use Digest::MD5;
 open(my \$FILE, '$_PATH_TO_FILE');
 binmode(\$FILE);
@@ -69,7 +68,7 @@ EOF
 
 # use python as last resort
 else
-    python -c "import hashlib
+   python -c "import hashlib
 print(hashlib.md5(open('$_PATH_TO_FILE').read()).hexdigest())"
 fi
 ```
@@ -97,14 +96,13 @@ Options:
 
 *Implementation:*
 ```bash
-
 # use sha256 if available
 if hash sha256 &>/dev/null; then
-    sha256 $_PATH_TO_FILE | cut -d ' ' -f1
+   sha256 $_PATH_TO_FILE | cut -d ' ' -f1
 
 # use perl if available
 elif hash perl &>/dev/null; then
-    perl << EOF
+   perl << EOF
 use Digest::SHA;
 open(my \$FILE, '$_PATH_TO_FILE');
 binmode(\$FILE);
@@ -114,7 +112,7 @@ EOF
 
 # use python as last resort
 else
-    python -c "import hashlib
+   python -c "import hashlib
 print(hashlib.sha256(open('$_PATH_TO_FILE').read()).hexdigest())"
 fi
 ```
@@ -169,20 +167,20 @@ Options:
 local path mismatch=0
 echo "Verifying..."
 for path in "${_PATH_TO_ARCHIVE[@]}"; do
-    echo -n "$path "
-    local embedded_md5=$(tail -1 "$path" | cut -f1 -d' ' | tr '[:upper:]' '[:lower:]')
-    local actual_md5=$(head -n -1 "$path" | md5sum | cut -f1 -d' ')
-    if [[ $embedded_md5 == $actual_md5 ]]; then
-        echo "OK"
-    else
-        echo "FAILED"
-        mismatch=1
-        echo "  -> embedded MD5 sum: $embedded_md5"
-        echo "  ->   actual MD5 sum: $actual_md5"
-    fi
+   echo -n "$path "
+   local embedded_md5=$(tail -1 "$path" | cut -f1 -d' ' | tr '[:upper:]' '[:lower:]')
+   local actual_md5=$(head -n -1 "$path" | md5sum | cut -f1 -d' ')
+   if [[ $embedded_md5 == $actual_md5 ]]; then
+      echo "OK"
+   else
+      echo "FAILED"
+      mismatch=1
+      echo "  -> embedded MD5 sum: $embedded_md5"
+      echo "  ->   actual MD5 sum: $actual_md5"
+   fi
 done
 
 if [[ $mismatch == 1 ]]; then
-    return 1
+   return 1
 fi
 ```

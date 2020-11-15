@@ -100,31 +100,18 @@ local totalMem=$(awk '/MemFree/ {print $2}' /proc/meminfo)
 local totalMemUnit=$(awk '/MemFree/ {print $3}' /proc/meminfo)
 
 case ${totalMemUnit} in
-   [Kk][Bb])
-      local memTotalKB=$totalMem
-     ;;
-   [Mm][Bb])
-      local memTotalKB=$(( totalMem * 1024 ))
-     ;;
-   [Gg][Bb])
-      local memTotalKB=$(( totalMem * 1024 * 1024 ))
-     ;;
-   *)
-      echo "Error: Unsupported memory unit ${totalMemUnit} encountered."
+   [Kk][Bb]) local memTotalKB=$totalMem ;;
+   [Mm][Bb]) local memTotalKB=$(( totalMem * 1024 )) ;;
+   [Gg][Bb]) local memTotalKB=$(( totalMem * 1024 * 1024 )) ;;
+   *) echo "Error: Unsupported memory unit ${totalMemUnit} encountered."
       return 1
      ;;
 esac
 
 case $_MEMORY_UNIT in
-   KB)
-      echo $memTotalKB
-     ;;
-   MB)
-      echo $(( memTotalKB / 1024 ))
-     ;;
-   GB)
-      echo $(( memTotalKB / 1024 / 1024 ))
-     ;;
+   KB) echo $memTotalKB ;;
+   MB) echo $(( memTotalKB / 1024 )) ;;
+   GB) echo $(( memTotalKB / 1024 / 1024 )) ;;
 esac
 ```
 
@@ -192,31 +179,18 @@ local totalMem=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
 local totalMemUnit=$(awk '/MemTotal/ {print $3}' /proc/meminfo)
 
 case ${totalMemUnit} in
-   [Kk][Bb])
-      local memTotalKB=$totalMem
-     ;;
-   [Mm][Bb])
-      local memTotalKB=$(( totalMem * 1024 ))
-     ;;
-   [Gg][Bb])
-      local memTotalKB=$(( totalMem * 1024 * 1024 ))
-     ;;
-   *)
-      echo "Error: Unsupported memory unit ${totalMemUnit} encountered."
+   [Kk][Bb]) local memTotalKB=$totalMem ;;
+   [Mm][Bb]) local memTotalKB=$(( totalMem * 1024 )) ;;
+   [Gg][Bb]) local memTotalKB=$(( totalMem * 1024 * 1024 )) ;;
+   *) echo "Error: Unsupported memory unit ${totalMemUnit} encountered."
       return 1
      ;;
 esac
 
 case $_MEMORY_UNIT in
-   KB)
-      echo $memTotalKB
-     ;;
-   MB)
-      echo $(( memTotalKB / 1024 ))
-     ;;
-   GB)
-      echo $(( memTotalKB / 1024 / 1024 ))
-     ;;
+   KB) echo $memTotalKB ;;
+   MB) echo $(( memTotalKB / 1024 )) ;;
+   GB) echo $(( memTotalKB / 1024 / 1024 )) ;;
 esac
 ```
 
