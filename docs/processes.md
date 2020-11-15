@@ -9,7 +9,7 @@ The following commands are available when this module is loaded:
 1. [-get-toplevel-parent-pid](#-get-toplevel-parent-pid)
 1. [-kill-childs](#-kill-childs)
 1. [-kill-listener](#-kill-listener)
-1. [-test-processes](#-test-processes)
+1. [-test-all-processes](#-test-all-processes)
 
 
 ## <a name="license"></a>License
@@ -239,10 +239,10 @@ fi
 ```
 
 
-## <a name="-test-processes"></a>-test-processes
+## <a name="-test-all-processes"></a>-test-all-processes
 
 ```
-Usage: -test-processes [OPTION]...
+Usage: -test-all-processes [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

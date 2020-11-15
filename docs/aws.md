@@ -16,7 +16,7 @@ The following commands are available when this module is loaded:
 1. [-aws-stack-name](#-aws-stack-name)
 1. [-aws-vpc-cidr-block](#-aws-vpc-cidr-block)
 1. [-aws-vpc-id](#-aws-vpc-id)
-1. [-test-aws](#-test-aws)
+1. [-test-all-aws](#-test-all-aws)
 
 
 ## <a name="license"></a>License
@@ -312,10 +312,10 @@ $http_get http://169.254.169.254/latest/meta-data/network/interfaces/macs/$mac/v
 ```
 
 
-## <a name="-test-aws"></a>-test-aws
+## <a name="-test-all-aws"></a>-test-all-aws
 
 ```
-Usage: -test-aws [OPTION]...
+Usage: -test-all-aws [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

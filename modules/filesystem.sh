@@ -2607,7 +2607,7 @@ function __complete-tail-reverse() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}tail-reverse -- ${BASH_FUNK_PREFIX:--}tail-reverse
 
-function -test-filesystem() {
+function -test-all-filesystem() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
@@ -2627,7 +2627,7 @@ function -test-filesystem() {
    eval $opts
    return $rc
 }
-function __impl-test-filesystem() {
+function __impl-test-all-filesystem() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
@@ -2694,7 +2694,7 @@ function __impl-test-filesystem() {
       return 64
    done
 
-####### test-filesystem ####### START
+####### test-all-filesystem ####### START
 ${BASH_FUNK_PREFIX:--}abspath --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}cd-down --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}cd-hist --selftest && echo || return 1
@@ -2712,9 +2712,9 @@ ${BASH_FUNK_PREFIX:--}realpath --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}sudo-append --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}sudo-write --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}tail-reverse --selftest && echo || return 1
-####### test-filesystem ####### END
+####### test-all-filesystem ####### END
 }
-function __complete-test-filesystem() {
+function __complete-test-all-filesystem() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
       local options=" --help "
@@ -2724,7 +2724,7 @@ function __complete-test-filesystem() {
       COMPREPLY=($(compgen -o default -- $curr))
    fi
 }
-complete -F __complete${BASH_FUNK_PREFIX:--}test-filesystem -- ${BASH_FUNK_PREFIX:--}test-filesystem
+complete -F __complete${BASH_FUNK_PREFIX:--}test-all-filesystem -- ${BASH_FUNK_PREFIX:--}test-all-filesystem
 
 
 function -help-filesystem() {
@@ -2746,6 +2746,6 @@ function -help-filesystem() {
    echo -e "${p}sudo-append FILE_PATH CONTENT\033[0m  -  Creates a file with the given content."
    echo -e "${p}sudo-write FILE_PATH OWNER CONTENT\033[0m  -  Creates a file with the given content."
    echo -e "${p}tail-reverse FILE\033[0m  -  Prints the last N lines of the given text file in reverse order."
-   echo -e "${p}test-filesystem\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "${p}test-all-filesystem\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
-__BASH_FUNK_FUNCS+=( abspath cd-down cd-hist cd-up count-words du extract find-up findfiles ll mkcd modified owner realpath sudo-append sudo-write tail-reverse test-filesystem )
+__BASH_FUNK_FUNCS+=( abspath cd-down cd-hist cd-up count-words du extract find-up findfiles ll mkcd modified owner realpath sudo-append sudo-write tail-reverse test-all-filesystem )

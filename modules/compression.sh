@@ -321,7 +321,7 @@ function __complete-tar-zstd() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}tar-zstd -- ${BASH_FUNK_PREFIX:--}tar-zstd
 
-function -test-compression() {
+function -test-all-compression() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
@@ -341,7 +341,7 @@ function -test-compression() {
    eval $opts
    return $rc
 }
-function __impl-test-compression() {
+function __impl-test-all-compression() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
@@ -408,14 +408,14 @@ function __impl-test-compression() {
       return 64
    done
 
-####### test-compression ####### START
+####### test-all-compression ####### START
 ${BASH_FUNK_PREFIX:--}tar-gz --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}tar-zstd --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}untar-gz --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}untar-zstd --selftest && echo || return 1
-####### test-compression ####### END
+####### test-all-compression ####### END
 }
-function __complete-test-compression() {
+function __complete-test-all-compression() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
       local options=" --help "
@@ -425,7 +425,7 @@ function __complete-test-compression() {
       COMPREPLY=($(compgen -o default -- $curr))
    fi
 }
-complete -F __complete${BASH_FUNK_PREFIX:--}test-compression -- ${BASH_FUNK_PREFIX:--}test-compression
+complete -F __complete${BASH_FUNK_PREFIX:--}test-all-compression -- ${BASH_FUNK_PREFIX:--}test-all-compression
 
 function -untar-gz() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
@@ -744,11 +744,11 @@ function -help-compression() {
    local p="\033[1m${BASH_FUNK_PREFIX:--}"
    echo -e "${p}tar-gz ARCHIVE PATH1 [PATH]...\033[0m  -  Compresses the given files using tar and gzip displaying a real-time progress bar."
    echo -e "${p}tar-zstd ARCHIVE PATH1 [PATH]...\033[0m  -  Compresses the given files using tar and zstd (https://github.com/facebook/zstd) displaying a real-time progress bar."
-   echo -e "${p}test-compression\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "${p}test-all-compression\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
    echo -e "${p}untar-gz ARCHIVE [TARGET_DIR]\033[0m  -  Decompresses the given archive using gzip and tar displaying a real-time progress bar."
    echo -e "${p}untar-zstd ARCHIVE [TARGET_DIR]\033[0m  -  Decompresses the given archive using zstd (https://github.com/facebook/zstd) and tar displaying a real-time progress bar."
 }
-__BASH_FUNK_FUNCS+=( tar-gz tar-zstd test-compression untar-gz untar-zstd )
+__BASH_FUNK_FUNCS+=( tar-gz tar-zstd test-all-compression untar-gz untar-zstd )
 
 alias -- ${BASH_FUNK_PREFIX:--}tgz="${BASH_FUNK_PREFIX:--}tar-gz"
 alias -- ${BASH_FUNK_PREFIX:--}tzst="${BASH_FUNK_PREFIX:--}tar-zstd"

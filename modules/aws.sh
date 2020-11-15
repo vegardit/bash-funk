@@ -1125,7 +1125,7 @@ function __complete-aws-vpc-id() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}aws-vpc-id -- ${BASH_FUNK_PREFIX:--}aws-vpc-id
 
-function -test-aws() {
+function -test-all-aws() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
@@ -1145,7 +1145,7 @@ function -test-aws() {
    eval $opts
    return $rc
 }
-function __impl-test-aws() {
+function __impl-test-all-aws() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
@@ -1212,7 +1212,7 @@ function __impl-test-aws() {
       return 64
    done
 
-####### test-aws ####### START
+####### test-all-aws ####### START
 ${BASH_FUNK_PREFIX:--}aws-account-id --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}aws-az --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}aws-describe-stack --selftest && echo || return 1
@@ -1223,9 +1223,9 @@ ${BASH_FUNK_PREFIX:--}aws-region --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}aws-stack-name --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}aws-vpc-cidr-block --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}aws-vpc-id --selftest && echo || return 1
-####### test-aws ####### END
+####### test-all-aws ####### END
 }
-function __complete-test-aws() {
+function __complete-test-all-aws() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
       local options=" --help "
@@ -1235,7 +1235,7 @@ function __complete-test-aws() {
       COMPREPLY=($(compgen -o default -- $curr))
    fi
 }
-complete -F __complete${BASH_FUNK_PREFIX:--}test-aws -- ${BASH_FUNK_PREFIX:--}test-aws
+complete -F __complete${BASH_FUNK_PREFIX:--}test-all-aws -- ${BASH_FUNK_PREFIX:--}test-all-aws
 
 
 function -help-aws() {
@@ -1250,9 +1250,9 @@ function -help-aws() {
    echo -e "${p}aws-stack-name\033[0m  -  Prints this server's AWS stack name. The server requires 'AmazonEC2ReadOnlyAccess' permission."
    echo -e "${p}aws-vpc-cidr-block\033[0m  -  Prints this server's AWS VPC CIDR Block."
    echo -e "${p}aws-vpc-id\033[0m  -  Prints this server's AWS VPC ID."
-   echo -e "${p}test-aws\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "${p}test-all-aws\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
-__BASH_FUNK_FUNCS+=( aws-account-id aws-az aws-describe-stack aws-instance-id aws-is-ec2 aws-private-ip aws-region aws-stack-name aws-vpc-cidr-block aws-vpc-id test-aws )
+__BASH_FUNK_FUNCS+=( aws-account-id aws-az aws-describe-stack aws-instance-id aws-is-ec2 aws-private-ip aws-region aws-stack-name aws-vpc-cidr-block aws-vpc-id test-all-aws )
 
 else
    echo "SKIPPED"

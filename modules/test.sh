@@ -11,6 +11,225 @@
 # documentation: https://github.com/vegardit/bash-funk/tree/master/docs/test.md
 #
 
+function -test-all() {
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
+
+   set +auHt -o pipefail
+
+   __impl$__fn "$@" && rc=0 || rc=$?
+
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
+   fi
+   eval $opts
+   return $rc
+}
+function __impl-test-all() {
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   [ -t 1 ] && __interactive=1 || true
+         for __arg in "$@"; do
+         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
+            -|--*) __args+=("$__arg") ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+         esac
+      done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
+
+         --help)
+            echo "Usage: $__fn [OPTION]..."
+            echo
+            echo "Executes the selftests of all loaded bash-funk commands."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
+
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
+
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
+
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
+
+   for __param in "${__params[@]}"; do
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
+
+####### test-all ####### START
+for testfunc in $(compgen -A function -- ${BASH_FUNK_PREFIX:--}test-all-); do
+   $testfunc || return 1
+done
+####### test-all ####### END
+}
+function __complete-test-all() {
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}test-all -- ${BASH_FUNK_PREFIX:--}test-all
+
+function -test-all-test() {
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
+
+   set +auHt -o pipefail
+
+   __impl$__fn "$@" && rc=0 || rc=$?
+
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
+   fi
+   eval $opts
+   return $rc
+}
+function __impl-test-all-test() {
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   [ -t 1 ] && __interactive=1 || true
+         for __arg in "$@"; do
+         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
+            -|--*) __args+=("$__arg") ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+         esac
+      done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
+
+         --help)
+            echo "Usage: $__fn [OPTION]..."
+            echo
+            echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m "
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m "
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
+
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
+
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
+
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
+
+   for __param in "${__params[@]}"; do
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
+
+####### test-all-test ####### START
+${BASH_FUNK_PREFIX:--}test-all --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}test-fn-flags --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}test-fn-multi-value-options --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}test-fn-multi-value-parameter-zero-or-more --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}test-fn-multi-value-parameters --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}test-fn-multi-value-parameters-variable-length --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}test-fn-noargs --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}test-fn-requires-existing --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}test-fn-requires-nonexistent --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}test-fn-single-value-options --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}test-fn-single-value-parameters --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}test-fn-single-value-parameters-first-optional --selftest && echo || return 1
+####### test-all-test ####### END
+}
+function __complete-test-all-test() {
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}test-all-test -- ${BASH_FUNK_PREFIX:--}test-all-test
+
 function -test-fn-flags() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
@@ -278,8 +497,8 @@ function __impl-test-fn-multi-value-options() {
             __stdout="$($__fn --bb)"; __rc=$?
             echo "$__stdout"
             if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
-            __regex="Error: For option --bb a list with at least 1 value\(s\) must be specified. Found: 0."
-            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: For option --bb a list with at least 1 value\(s\) must be specified. Found: 0.]."; return 64; fi
+            __regex="Error: For option --bb a list with at least 1 value must be specified. Found: 0."
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: For option --bb a list with at least 1 value must be specified. Found: 0.]."; return 64; fi
             echo -e "--> \033[32mOK\033[0m"
             echo -e "$ \033[1m$__fn --bb foo,bar\033[22m"
             __stdout="$($__fn --bb foo,bar)"; __rc=$?
@@ -292,8 +511,8 @@ function __impl-test-fn-multi-value-options() {
             __stdout="$($__fn --bb foo,bar,fb)"; __rc=$?
             echo "$__stdout"
             if [[ $__rc != 64 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [64]."; return 64; fi
-            __regex="Error: For option --bb a list with no more than 2 values must be specified. Found: 3."
-            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: For option --bb a list with no more than 2 values must be specified. Found: 3.]."; return 64; fi
+            __regex="Error: Too many values for option --bb specified. Maximum number is 2. Found: 3."
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Error: Too many values for option --bb specified. Maximum number is 2. Found: 3.]."; return 64; fi
             echo -e "--> \033[32mOK\033[0m"
             echo -e "$ \033[1m$__fn --cc 123,45\033[22m"
             __stdout="$($__fn --cc 123,45)"; __rc=$?
@@ -2349,122 +2568,11 @@ function __complete-test-fn-single-value-parameters-first-optional() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-single-value-parameters-first-optional -- ${BASH_FUNK_PREFIX:--}test-fn-single-value-parameters-first-optional
 
-function -test-test() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
-   for opt in a u H t; do
-      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
-   done
-   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
-   for opt in nullglob extglob nocasematch nocaseglob; do
-      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
-   done
-
-   set +auHt -o pipefail
-
-   __impl$__fn "$@" && rc=0 || rc=$?
-
-   if [[ $rc == 64 && -t 1 ]]; then
-      echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
-   fi
-   eval $opts
-   return $rc
-}
-function __impl-test-test() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
-   [ -t 1 ] && __interactive=1 || true
-         for __arg in "$@"; do
-         case "$__arg" in
-            --) __noMoreFlags=1; __args+=("--") ;;
-            -|--*) __args+=("$__arg") ;;
-            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
-            *) __args+=("$__arg") ;;
-         esac
-      done
-   for __arg in "${__args[@]}"; do
-      if [[ $__optionWithValue == "--" ]]; then
-         __params+=("$__arg")
-         continue
-      fi
-      case "$__arg" in
-
-         --help)
-            echo "Usage: $__fn [OPTION]..."
-            echo
-            echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
-            echo
-            echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
-            echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
-            echo "        Performs a self-test."
-            echo -e "    \033[1m--\033[22m"
-            echo "        Terminates the option list."
-            echo
-            return 0
-           ;;
-
-         --selftest)
-            echo "Testing function [$__fn]..."
-            echo -e "$ \033[1m$__fn --help\033[22m"
-            local __stdout __rc
-            __stdout="$($__fn --help)"; __rc=$?
-            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-            echo -e "--> \033[32mOK\033[0m"
-            echo "Testing function [$__fn]...DONE"
-            return 0
-           ;;
-
-         --)
-            __optionWithValue="--"
-           ;;
-         -*)
-            echo "$__fn: invalid option: '$__arg'"
-            return 64
-           ;;
-
-         *)
-            case $__optionWithValue in
-               *)
-                  __params+=("$__arg")
-            esac
-           ;;
-      esac
-   done
-
-   for __param in "${__params[@]}"; do
-      echo "$__fn: Error: too many parameters: '$__param'"
-      return 64
-   done
-
-####### test-test ####### START
-${BASH_FUNK_PREFIX:--}test-fn-flags --selftest && echo || return 1
-${BASH_FUNK_PREFIX:--}test-fn-multi-value-options --selftest && echo || return 1
-${BASH_FUNK_PREFIX:--}test-fn-multi-value-parameter-zero-or-more --selftest && echo || return 1
-${BASH_FUNK_PREFIX:--}test-fn-multi-value-parameters --selftest && echo || return 1
-${BASH_FUNK_PREFIX:--}test-fn-multi-value-parameters-variable-length --selftest && echo || return 1
-${BASH_FUNK_PREFIX:--}test-fn-noargs --selftest && echo || return 1
-${BASH_FUNK_PREFIX:--}test-fn-requires-existing --selftest && echo || return 1
-${BASH_FUNK_PREFIX:--}test-fn-requires-nonexistent --selftest && echo || return 1
-${BASH_FUNK_PREFIX:--}test-fn-single-value-options --selftest && echo || return 1
-${BASH_FUNK_PREFIX:--}test-fn-single-value-parameters --selftest && echo || return 1
-${BASH_FUNK_PREFIX:--}test-fn-single-value-parameters-first-optional --selftest && echo || return 1
-####### test-test ####### END
-}
-function __complete-test-test() {
-   local curr=${COMP_WORDS[COMP_CWORD]}
-   if [[ ${curr} == -* ]]; then
-      local options=" --help "
-      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
-      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
-   else
-      COMPREPLY=($(compgen -o default -- $curr))
-   fi
-}
-complete -F __complete${BASH_FUNK_PREFIX:--}test-test -- ${BASH_FUNK_PREFIX:--}test-test
-
 
 function -help-test() {
    local p="\033[1m${BASH_FUNK_PREFIX:--}"
+   echo -e "${p}test-all\033[0m  -  Executes the selftests of all loaded bash-funk commands."
+   echo -e "${p}test-all-test\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
    echo -e "${p}test-fn-flags\033[0m  -  Test function with custom flags."
    echo -e "${p}test-fn-multi-value-options\033[0m  -  Test function with multi value options."
    echo -e "${p}test-fn-multi-value-parameter-zero-or-more [AA]...\033[0m  -  Test function with multi value parameters."
@@ -2476,6 +2584,5 @@ function -help-test() {
    echo -e "${p}test-fn-single-value-options\033[0m  -  Test function with single value options."
    echo -e "${p}test-fn-single-value-parameters AA BB CC DD EE [FF]\033[0m  -  Test function with single value parameters."
    echo -e "${p}test-fn-single-value-parameters-first-optional [AA] BB\033[0m  -  Test function with single value parameters where the first one is optional."
-   echo -e "${p}test-test\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
-__BASH_FUNK_FUNCS+=( test-fn-flags test-fn-multi-value-options test-fn-multi-value-parameter-zero-or-more test-fn-multi-value-parameters test-fn-multi-value-parameters-variable-length test-fn-noargs test-fn-requires-existing test-fn-requires-nonexistent test-fn-single-value-options test-fn-single-value-parameters test-fn-single-value-parameters-first-optional test-test )
+__BASH_FUNK_FUNCS+=( test-all test-all-test test-fn-flags test-fn-multi-value-options test-fn-multi-value-parameter-zero-or-more test-fn-multi-value-parameters test-fn-multi-value-parameters-variable-length test-fn-noargs test-fn-requires-existing test-fn-requires-nonexistent test-fn-single-value-options test-fn-single-value-parameters test-fn-single-value-parameters-first-optional )

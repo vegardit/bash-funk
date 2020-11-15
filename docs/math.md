@@ -7,7 +7,7 @@ The following commands are available when this module is loaded:
 1. [-calc](#-calc)
 1. [-round](#-round)
 1. [-simple-calc](#-simple-calc)
-1. [-test-math](#-test-math)
+1. [-test-all-math](#-test-all-math)
 
 
 ## <a name="license"></a>License
@@ -254,10 +254,10 @@ esac
 ```
 
 
-## <a name="-test-math"></a>-test-math
+## <a name="-test-all-math"></a>-test-all-math
 
 ```
-Usage: -test-math [OPTION]...
+Usage: -test-all-math [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

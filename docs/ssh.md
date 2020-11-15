@@ -10,7 +10,7 @@ The following commands are available when this module is loaded:
 1. [-ssh-reconnect](#-ssh-reconnect)
 1. [-ssh-trust-host](#-ssh-trust-host)
 1. [-ssh-with-pass](#-ssh-with-pass)
-1. [-test-ssh](#-test-ssh)
+1. [-test-all-ssh](#-test-all-ssh)
 
 
 ## <a name="license"></a>License
@@ -277,10 +277,10 @@ SSH_ASKPASS=$askPassFile DISPLAY=${DISPLAY:-:0} setsid -w -- ssh ${_SSH_OPTION[@
 ```
 
 
-## <a name="-test-ssh"></a>-test-ssh
+## <a name="-test-all-ssh"></a>-test-all-ssh
 
 ```
-Usage: -test-ssh [OPTION]...
+Usage: -test-all-ssh [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

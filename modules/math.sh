@@ -839,7 +839,7 @@ python" -- $curr))
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}simple-calc -- ${BASH_FUNK_PREFIX:--}simple-calc
 
-function -test-math() {
+function -test-all-math() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
@@ -859,7 +859,7 @@ function -test-math() {
    eval $opts
    return $rc
 }
-function __impl-test-math() {
+function __impl-test-all-math() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
@@ -926,13 +926,13 @@ function __impl-test-math() {
       return 64
    done
 
-####### test-math ####### START
+####### test-all-math ####### START
 ${BASH_FUNK_PREFIX:--}calc --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}round --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}simple-calc --selftest && echo || return 1
-####### test-math ####### END
+####### test-all-math ####### END
 }
-function __complete-test-math() {
+function __complete-test-all-math() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
       local options=" --help "
@@ -942,7 +942,7 @@ function __complete-test-math() {
       COMPREPLY=($(compgen -o default -- $curr))
    fi
 }
-complete -F __complete${BASH_FUNK_PREFIX:--}test-math -- ${BASH_FUNK_PREFIX:--}test-math
+complete -F __complete${BASH_FUNK_PREFIX:--}test-all-math -- ${BASH_FUNK_PREFIX:--}test-all-math
 
 
 function -help-math() {
@@ -950,6 +950,6 @@ function -help-math() {
    echo -e "${p}calc [FORMULA]...\033[0m  -  Performs calculations using awk. See https://www.gnu.org/software/gawk/manual/html_node/Arithmetic-Ops.html."
    echo -e "${p}round VALUE PRECISION\033[0m  -  Rounds the given decimal value using 'printf' builtin.."
    echo -e "${p}simple-calc FORMULA\033[0m  -  Performs simple floating point operations using awk, perl, python or bc - depending on which command is available."
-   echo -e "${p}test-math\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "${p}test-all-math\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
-__BASH_FUNK_FUNCS+=( calc round simple-calc test-math )
+__BASH_FUNK_FUNCS+=( calc round simple-calc test-all-math )

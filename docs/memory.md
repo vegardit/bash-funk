@@ -9,7 +9,7 @@ The following commands are available when this module is loaded:
 1. [-meminfo](#-meminfo)
 1. [-memtotal](#-memtotal)
 1. [-procmem](#-procmem)
-1. [-test-memory](#-test-memory)
+1. [-test-all-memory](#-test-all-memory)
 
 
 ## <a name="license"></a>License
@@ -266,10 +266,10 @@ fi
 ```
 
 
-## <a name="-test-memory"></a>-test-memory
+## <a name="-test-all-memory"></a>-test-all-memory
 
 ```
-Usage: -test-memory [OPTION]...
+Usage: -test-all-memory [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

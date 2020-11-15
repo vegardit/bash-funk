@@ -502,7 +502,7 @@ function __complete-gen-x509rootca() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}gen-x509rootca -- ${BASH_FUNK_PREFIX:--}gen-x509rootca
 
-function -test-openssl() {
+function -test-all-openssl() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
@@ -522,7 +522,7 @@ function -test-openssl() {
    eval $opts
    return $rc
 }
-function __impl-test-openssl() {
+function __impl-test-all-openssl() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
@@ -589,12 +589,12 @@ function __impl-test-openssl() {
       return 64
    done
 
-####### test-openssl ####### START
+####### test-all-openssl ####### START
 ${BASH_FUNK_PREFIX:--}gen-x509cert --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}gen-x509rootca --selftest && echo || return 1
-####### test-openssl ####### END
+####### test-all-openssl ####### END
 }
-function __complete-test-openssl() {
+function __complete-test-all-openssl() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
       local options=" --help "
@@ -604,16 +604,16 @@ function __complete-test-openssl() {
       COMPREPLY=($(compgen -o default -- $curr))
    fi
 }
-complete -F __complete${BASH_FUNK_PREFIX:--}test-openssl -- ${BASH_FUNK_PREFIX:--}test-openssl
+complete -F __complete${BASH_FUNK_PREFIX:--}test-all-openssl -- ${BASH_FUNK_PREFIX:--}test-all-openssl
 
 
 function -help-openssl() {
    local p="\033[1m${BASH_FUNK_PREFIX:--}"
    echo -e "${p}gen-x509cert FQ_DNS_NAME\033[0m  -  Generates a (self-signed) X509 server certificate."
    echo -e "${p}gen-x509rootca COMMON_NAME\033[0m  -  Generates a self-signed X509 root CA certificate."
-   echo -e "${p}test-openssl\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "${p}test-all-openssl\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
-__BASH_FUNK_FUNCS+=( gen-x509cert gen-x509rootca test-openssl )
+__BASH_FUNK_FUNCS+=( gen-x509cert gen-x509rootca test-all-openssl )
 
 else
    echo "SKIPPED"

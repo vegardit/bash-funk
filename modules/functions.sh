@@ -556,7 +556,7 @@ function __complete-fn-unload() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}fn-unload -- ${BASH_FUNK_PREFIX:--}fn-unload
 
-function -test-functions() {
+function -test-all-functions() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
@@ -576,7 +576,7 @@ function -test-functions() {
    eval $opts
    return $rc
 }
-function __impl-test-functions() {
+function __impl-test-all-functions() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
@@ -643,14 +643,14 @@ function __impl-test-functions() {
       return 64
    done
 
-####### test-functions ####### START
+####### test-all-functions ####### START
 ${BASH_FUNK_PREFIX:--}fn-copy --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}fn-exists --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}fn-rename --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}fn-unload --selftest && echo || return 1
-####### test-functions ####### END
+####### test-all-functions ####### END
 }
-function __complete-test-functions() {
+function __complete-test-all-functions() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
       local options=" --help "
@@ -660,7 +660,7 @@ function __complete-test-functions() {
       COMPREPLY=($(compgen -o default -- $curr))
    fi
 }
-complete -F __complete${BASH_FUNK_PREFIX:--}test-functions -- ${BASH_FUNK_PREFIX:--}test-functions
+complete -F __complete${BASH_FUNK_PREFIX:--}test-all-functions -- ${BASH_FUNK_PREFIX:--}test-all-functions
 
 
 function -help-functions() {
@@ -669,6 +669,6 @@ function -help-functions() {
    echo -e "${p}fn-exists FUNC_NAME\033[0m  -  Determines if a Bash function with the given name exists."
    echo -e "${p}fn-rename OLD_FUNC_NAME NEW_FUNC_NAME\033[0m  -  Renames the Bash function with the given name."
    echo -e "${p}fn-unload FUNC_NAME\033[0m  -  Unloads the Bash function with the given name."
-   echo -e "${p}test-functions\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "${p}test-all-functions\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
-__BASH_FUNK_FUNCS+=( fn-copy fn-exists fn-rename fn-unload test-functions )
+__BASH_FUNK_FUNCS+=( fn-copy fn-exists fn-rename fn-unload test-all-functions )

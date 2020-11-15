@@ -20,7 +20,7 @@ The following commands are available when this module is loaded:
 1. [-substr-before](#-substr-before)
 1. [-substr-before-last](#-substr-before-last)
 1. [-substr-between](#-substr-between)
-1. [-test-strings](#-test-strings)
+1. [-test-all-strings](#-test-all-strings)
 
 
 ## <a name="license"></a>License
@@ -670,10 +670,10 @@ echo "${withoutPrefix%%${_SUFFIX}*}"
 ```
 
 
-## <a name="-test-strings"></a>-test-strings
+## <a name="-test-all-strings"></a>-test-all-strings
 
 ```
-Usage: -test-strings [OPTION]...
+Usage: -test-all-strings [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

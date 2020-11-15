@@ -15,7 +15,7 @@ The following commands are available when this module is loaded:
 
 1. [-tar-gz](#-tar-gz)
 1. [-tar-zstd](#-tar-zstd)
-1. [-test-compression](#-test-compression)
+1. [-test-all-compression](#-test-all-compression)
 1. [-untar-gz](#-untar-gz)
 1. [-untar-zstd](#-untar-zstd)
 
@@ -130,10 +130,10 @@ fi
 ```
 
 
-## <a name="-test-compression"></a>-test-compression
+## <a name="-test-all-compression"></a>-test-all-compression
 
 ```
-Usage: -test-compression [OPTION]...
+Usage: -test-all-compression [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

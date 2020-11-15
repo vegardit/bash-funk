@@ -332,7 +332,7 @@ function __complete-pkg-installed() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}pkg-installed -- ${BASH_FUNK_PREFIX:--}pkg-installed
 
-function -test-os() {
+function -test-all-os() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
@@ -352,7 +352,7 @@ function -test-os() {
    eval $opts
    return $rc
 }
-function __impl-test-os() {
+function __impl-test-all-os() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
@@ -419,12 +419,12 @@ function __impl-test-os() {
       return 64
    done
 
-####### test-os ####### START
+####### test-all-os ####### START
 ${BASH_FUNK_PREFIX:--}command-exists --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}pkg-installed --selftest && echo || return 1
-####### test-os ####### END
+####### test-all-os ####### END
 }
-function __complete-test-os() {
+function __complete-test-all-os() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
       local options=" --help "
@@ -434,13 +434,13 @@ function __complete-test-os() {
       COMPREPLY=($(compgen -o default -- $curr))
    fi
 }
-complete -F __complete${BASH_FUNK_PREFIX:--}test-os -- ${BASH_FUNK_PREFIX:--}test-os
+complete -F __complete${BASH_FUNK_PREFIX:--}test-all-os -- ${BASH_FUNK_PREFIX:--}test-all-os
 
 
 function -help-os() {
    local p="\033[1m${BASH_FUNK_PREFIX:--}"
    echo -e "${p}command-exists COMMAND\033[0m  -  Checks if the given program or function is available."
    echo -e "${p}pkg-installed PACKAGE_NAME\033[0m  -  Determines if the given software package is installed."
-   echo -e "${p}test-os\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "${p}test-all-os\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
-__BASH_FUNK_FUNCS+=( command-exists pkg-installed test-os )
+__BASH_FUNK_FUNCS+=( command-exists pkg-installed test-all-os )

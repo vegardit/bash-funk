@@ -716,7 +716,7 @@ function __complete-kill-listener() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}kill-listener -- ${BASH_FUNK_PREFIX:--}kill-listener
 
-function -test-processes() {
+function -test-all-processes() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
@@ -736,7 +736,7 @@ function -test-processes() {
    eval $opts
    return $rc
 }
-function __impl-test-processes() {
+function __impl-test-all-processes() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
@@ -803,15 +803,15 @@ function __impl-test-processes() {
       return 64
    done
 
-####### test-processes ####### START
+####### test-all-processes ####### START
 ${BASH_FUNK_PREFIX:--}get-child-pids --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}get-parent-pid --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}get-toplevel-parent-pid --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}kill-childs --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}kill-listener --selftest && echo || return 1
-####### test-processes ####### END
+####### test-all-processes ####### END
 }
-function __complete-test-processes() {
+function __complete-test-all-processes() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
       local options=" --help "
@@ -821,7 +821,7 @@ function __complete-test-processes() {
       COMPREPLY=($(compgen -o default -- $curr))
    fi
 }
-complete -F __complete${BASH_FUNK_PREFIX:--}test-processes -- ${BASH_FUNK_PREFIX:--}test-processes
+complete -F __complete${BASH_FUNK_PREFIX:--}test-all-processes -- ${BASH_FUNK_PREFIX:--}test-all-processes
 
 
 function -help-processes() {
@@ -831,6 +831,6 @@ function -help-processes() {
    echo -e "${p}get-toplevel-parent-pid [CHILD_PID]\033[0m  -  Prints the PID of the top-level parent process of the child process with the given PID."
    echo -e "${p}kill-childs [PARENT_PID]\033[0m  -  Sends the TERM(15) signal to all child processes of the process with the given PID."
    echo -e "${p}kill-listener PORT\033[0m  -  Sends the given kill signal the process listening on the given TCP port."
-   echo -e "${p}test-processes\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "${p}test-all-processes\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
-__BASH_FUNK_FUNCS+=( get-child-pids get-parent-pid get-toplevel-parent-pid kill-childs kill-listener test-processes )
+__BASH_FUNK_FUNCS+=( get-child-pids get-parent-pid get-toplevel-parent-pid kill-childs kill-listener test-all-processes )

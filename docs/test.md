@@ -6,6 +6,8 @@ This module contains internal functions to test commandline parsing.
 
 The following commands are available when this module is loaded:
 
+1. [-test-all](#-test-all)
+1. [-test-all-test](#-test-all-test)
 1. [-test-fn-flags](#-test-fn-flags)
 1. [-test-fn-multi-value-options](#-test-fn-multi-value-options)
 1. [-test-fn-multi-value-parameter-zero-or-more](#-test-fn-multi-value-parameter-zero-or-more)
@@ -17,7 +19,6 @@ The following commands are available when this module is loaded:
 1. [-test-fn-single-value-options](#-test-fn-single-value-options)
 1. [-test-fn-single-value-parameters](#-test-fn-single-value-parameters)
 1. [-test-fn-single-value-parameters-first-optional](#-test-fn-single-value-parameters-first-optional)
-1. [-test-test](#-test-test)
 
 
 ## <a name="license"></a>License
@@ -37,6 +38,63 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+```
+
+
+## <a name="-test-all"></a>-test-all
+
+```
+Usage: -test-all [OPTION]...
+
+Executes the selftests of all loaded bash-funk commands.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+for testfunc in $(compgen -A function -- -test-all-); do
+   $testfunc || return 1
+done
+```
+
+
+## <a name="-test-all-test"></a>-test-all-test
+
+```
+Usage: -test-all-test [OPTION]...
+
+Performs a selftest of all functions of this module by executing each function with option '--selftest'.
+
+Options:
+    --help 
+        Prints this help.
+    --selftest 
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+-test-all --selftest && echo || return 1
+-test-fn-flags --selftest && echo || return 1
+-test-fn-multi-value-options --selftest && echo || return 1
+-test-fn-multi-value-parameter-zero-or-more --selftest && echo || return 1
+-test-fn-multi-value-parameters --selftest && echo || return 1
+-test-fn-multi-value-parameters-variable-length --selftest && echo || return 1
+-test-fn-noargs --selftest && echo || return 1
+-test-fn-requires-existing --selftest && echo || return 1
+-test-fn-requires-nonexistent --selftest && echo || return 1
+-test-fn-single-value-options --selftest && echo || return 1
+-test-fn-single-value-parameters --selftest && echo || return 1
+-test-fn-single-value-parameters-first-optional --selftest && echo || return 1
 ```
 
 
@@ -458,36 +516,4 @@ AA:11 BB:22
 *Implementation:*
 ```bash
 echo "AA:$_AA BB:$_BB"
-```
-
-
-## <a name="-test-test"></a>-test-test
-
-```
-Usage: -test-test [OPTION]...
-
-Performs a selftest of all functions of this module by executing each function with option '--selftest'.
-
-Options:
-    --help 
-        Prints this help.
-    --selftest 
-        Performs a self-test.
-    --
-        Terminates the option list.
-```
-
-*Implementation:*
-```bash
--test-fn-flags --selftest && echo || return 1
--test-fn-multi-value-options --selftest && echo || return 1
--test-fn-multi-value-parameter-zero-or-more --selftest && echo || return 1
--test-fn-multi-value-parameters --selftest && echo || return 1
--test-fn-multi-value-parameters-variable-length --selftest && echo || return 1
--test-fn-noargs --selftest && echo || return 1
--test-fn-requires-existing --selftest && echo || return 1
--test-fn-requires-nonexistent --selftest && echo || return 1
--test-fn-single-value-options --selftest && echo || return 1
--test-fn-single-value-parameters --selftest && echo || return 1
--test-fn-single-value-parameters-first-optional --selftest && echo || return 1
 ```

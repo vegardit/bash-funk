@@ -11,7 +11,7 @@ The following commands are available when this module is loaded:
 1. [-my-public-ip](#-my-public-ip)
 1. [-run-echo-server](#-run-echo-server)
 1. [-set-proxy](#-set-proxy)
-1. [-test-network](#-test-network)
+1. [-test-all-network](#-test-all-network)
 
 
 ## <a name="license"></a>License
@@ -437,10 +437,10 @@ export NO_PROXY=$no_proxy
 ```
 
 
-## <a name="-test-network"></a>-test-network
+## <a name="-test-all-network"></a>-test-all-network
 
 ```
-Usage: -test-network [OPTION]...
+Usage: -test-all-network [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

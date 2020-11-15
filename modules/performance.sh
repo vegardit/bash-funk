@@ -833,7 +833,7 @@ function __complete-scp-perf() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}scp-perf -- ${BASH_FUNK_PREFIX:--}scp-perf
 
-function -test-performance() {
+function -test-all-performance() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
@@ -853,7 +853,7 @@ function -test-performance() {
    eval $opts
    return $rc
 }
-function __impl-test-performance() {
+function __impl-test-all-performance() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
@@ -920,15 +920,15 @@ function __impl-test-performance() {
       return 64
    done
 
-####### test-performance ####### START
+####### test-all-performance ####### START
 ${BASH_FUNK_PREFIX:--}cpu-count --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}cpu-perf --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}disk-latency --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}disk-perf --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}scp-perf --selftest && echo || return 1
-####### test-performance ####### END
+####### test-all-performance ####### END
 }
-function __complete-test-performance() {
+function __complete-test-all-performance() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
       local options=" --help "
@@ -938,7 +938,7 @@ function __complete-test-performance() {
       COMPREPLY=($(compgen -o default -- $curr))
    fi
 }
-complete -F __complete${BASH_FUNK_PREFIX:--}test-performance -- ${BASH_FUNK_PREFIX:--}test-performance
+complete -F __complete${BASH_FUNK_PREFIX:--}test-all-performance -- ${BASH_FUNK_PREFIX:--}test-all-performance
 
 
 function -help-performance() {
@@ -948,6 +948,6 @@ function -help-performance() {
    echo -e "${p}disk-latency [PATH]\033[0m  -  Determines disk latency in milliseconds using 'dd'."
    echo -e "${p}disk-perf [PATH]\033[0m  -  Performs a I/O speed test using 'fio' utilizing all available processors or single-threaded using 'dd'."
    echo -e "${p}scp-perf TARGET [SIZE_MB]\033[0m  -  Performs an SCP speed test."
-   echo -e "${p}test-performance\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "${p}test-all-performance\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
-__BASH_FUNK_FUNCS+=( cpu-count cpu-perf disk-latency disk-perf scp-perf test-performance )
+__BASH_FUNK_FUNCS+=( cpu-count cpu-perf disk-latency disk-perf scp-perf test-all-performance )

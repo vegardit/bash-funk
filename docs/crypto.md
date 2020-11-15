@@ -6,7 +6,7 @@ The following commands are available when this module is loaded:
 
 1. [-md5sum](#-md5sum)
 1. [-sha256sum](#-sha256sum)
-1. [-test-crypto](#-test-crypto)
+1. [-test-all-crypto](#-test-all-crypto)
 1. [-verify-tar-md5](#-verify-tar-md5)
 
 
@@ -118,10 +118,10 @@ fi
 ```
 
 
-## <a name="-test-crypto"></a>-test-crypto
+## <a name="-test-all-crypto"></a>-test-all-crypto
 
 ```
-Usage: -test-crypto [OPTION]...
+Usage: -test-all-crypto [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

@@ -9,7 +9,7 @@ The following commands are available when this module is loaded:
 1. [-disk-latency](#-disk-latency)
 1. [-disk-perf](#-disk-perf)
 1. [-scp-perf](#-scp-perf)
-1. [-test-performance](#-test-performance)
+1. [-test-all-performance](#-test-all-performance)
 
 
 ## <a name="license"></a>License
@@ -270,10 +270,10 @@ rm $dataFile
 ```
 
 
-## <a name="-test-performance"></a>-test-performance
+## <a name="-test-all-performance"></a>-test-all-performance
 
 ```
-Usage: -test-performance [OPTION]...
+Usage: -test-all-performance [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

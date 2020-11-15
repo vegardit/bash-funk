@@ -21,7 +21,7 @@ The following commands are available when this module is loaded:
 1. [-sudo-append](#-sudo-append)
 1. [-sudo-write](#-sudo-write)
 1. [-tail-reverse](#-tail-reverse)
-1. [-test-filesystem](#-test-filesystem)
+1. [-test-all-filesystem](#-test-all-filesystem)
 
 
 ## <a name="license"></a>License
@@ -880,10 +880,10 @@ fi
 ```
 
 
-## <a name="-test-filesystem"></a>-test-filesystem
+## <a name="-test-all-filesystem"></a>-test-all-filesystem
 
 ```
-Usage: -test-filesystem [OPTION]...
+Usage: -test-all-filesystem [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

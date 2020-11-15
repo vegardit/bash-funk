@@ -1515,7 +1515,7 @@ function __complete-cursor-pos() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}cursor-pos -- ${BASH_FUNK_PREFIX:--}cursor-pos
 
-function -test-ansi() {
+function -test-all-ansi() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
@@ -1535,7 +1535,7 @@ function -test-ansi() {
    eval $opts
    return $rc
 }
-function __impl-test-ansi() {
+function __impl-test-all-ansi() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
@@ -1602,7 +1602,7 @@ function __impl-test-ansi() {
       return 64
    done
 
-####### test-ansi ####### START
+####### test-all-ansi ####### START
 ${BASH_FUNK_PREFIX:--}ansi-alternate --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-bold --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-codes --selftest && echo || return 1
@@ -1612,9 +1612,9 @@ ${BASH_FUNK_PREFIX:--}ansi-colors256 --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-reset --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-ul --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}cursor-pos --selftest && echo || return 1
-####### test-ansi ####### END
+####### test-all-ansi ####### END
 }
-function __complete-test-ansi() {
+function __complete-test-all-ansi() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
       local options=" --help "
@@ -1624,7 +1624,7 @@ function __complete-test-ansi() {
       COMPREPLY=($(compgen -o default -- $curr))
    fi
 }
-complete -F __complete${BASH_FUNK_PREFIX:--}test-ansi -- ${BASH_FUNK_PREFIX:--}test-ansi
+complete -F __complete${BASH_FUNK_PREFIX:--}test-all-ansi -- ${BASH_FUNK_PREFIX:--}test-all-ansi
 
 
 function -help-ansi() {
@@ -1638,6 +1638,6 @@ function -help-ansi() {
    echo -e "${p}ansi-reset\033[0m  -  Prints an ANSI escape sequence that reset all ANSI attributes."
    echo -e "${p}ansi-ul [TEXT]\033[0m  -  Sets underlined mode or prints the given text underlined."
    echo -e "${p}cursor-pos\033[0m  -  Performs ANSI cursor operations."
-   echo -e "${p}test-ansi\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "${p}test-all-ansi\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
-__BASH_FUNK_FUNCS+=( ansi-alternate ansi-bold ansi-codes ansi-colors-supported ansi-colors16 ansi-colors256 ansi-reset ansi-ul cursor-pos test-ansi )
+__BASH_FUNK_FUNCS+=( ansi-alternate ansi-bold ansi-codes ansi-colors-supported ansi-colors16 ansi-colors256 ansi-reset ansi-ul cursor-pos test-all-ansi )

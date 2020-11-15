@@ -49,7 +49,7 @@ The following commands are available when this module is loaded:
 1. [-docker-sh](#-docker-sh)
 1. [-docker-top](#-docker-top)
 1. [-swarm-cluster-id](#-swarm-cluster-id)
-1. [-test-docker](#-test-docker)
+1. [-test-all-docker](#-test-all-docker)
 
 
 ## <a name="license"></a>License
@@ -229,10 +229,10 @@ sudo docker info 2>/dev/null | grep --color=never -oP '(?<=ClusterID: ).*'
 ```
 
 
-## <a name="-test-docker"></a>-test-docker
+## <a name="-test-all-docker"></a>-test-all-docker
 
 ```
-Usage: -test-docker [OPTION]...
+Usage: -test-all-docker [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

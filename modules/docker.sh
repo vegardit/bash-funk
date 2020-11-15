@@ -673,7 +673,7 @@ function __complete-swarm-cluster-id() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}swarm-cluster-id -- ${BASH_FUNK_PREFIX:--}swarm-cluster-id
 
-function -test-docker() {
+function -test-all-docker() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
@@ -693,7 +693,7 @@ function -test-docker() {
    eval $opts
    return $rc
 }
-function __impl-test-docker() {
+function __impl-test-all-docker() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
@@ -760,16 +760,16 @@ function __impl-test-docker() {
       return 64
    done
 
-####### test-docker ####### START
+####### test-all-docker ####### START
 ${BASH_FUNK_PREFIX:--}docker-debug --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}docker-log --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}docker-netshoot --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}docker-sh --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}docker-top --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}swarm-cluster-id --selftest && echo || return 1
-####### test-docker ####### END
+####### test-all-docker ####### END
 }
-function __complete-test-docker() {
+function __complete-test-all-docker() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
       local options=" --help "
@@ -779,7 +779,7 @@ function __complete-test-docker() {
       COMPREPLY=($(compgen -o default -- $curr))
    fi
 }
-complete -F __complete${BASH_FUNK_PREFIX:--}test-docker -- ${BASH_FUNK_PREFIX:--}test-docker
+complete -F __complete${BASH_FUNK_PREFIX:--}test-all-docker -- ${BASH_FUNK_PREFIX:--}test-all-docker
 
 
 function -help-docker() {
@@ -790,9 +790,9 @@ function -help-docker() {
    echo -e "${p}docker-sh\033[0m  -  Displays a list of all running containers and starts an interactive shell (/bin/sh) for the selected one."
    echo -e "${p}docker-top\033[0m  -  Starts Dockly (https://lirantal.github.io/dockly/)."
    echo -e "${p}swarm-cluster-id\033[0m  -  Prints the Swarm cluster ID."
-   echo -e "${p}test-docker\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "${p}test-all-docker\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
-__BASH_FUNK_FUNCS+=( docker-debug docker-log docker-netshoot docker-sh docker-top swarm-cluster-id test-docker )
+__BASH_FUNK_FUNCS+=( docker-debug docker-log docker-netshoot docker-sh docker-top swarm-cluster-id test-all-docker )
 
 function -docker-debug() {
    if hash docker-debug &>/dev/null; then

@@ -607,7 +607,7 @@ function __complete-random-string() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}random-string -- ${BASH_FUNK_PREFIX:--}random-string
 
-function -test-random() {
+function -test-all-random() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
@@ -627,7 +627,7 @@ function -test-random() {
    eval $opts
    return $rc
 }
-function __impl-test-random() {
+function __impl-test-all-random() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
@@ -694,14 +694,14 @@ function __impl-test-random() {
       return 64
    done
 
-####### test-random ####### START
+####### test-all-random ####### START
 ${BASH_FUNK_PREFIX:--}entropy-available --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}fill-entropy --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}random-number --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}random-string --selftest && echo || return 1
-####### test-random ####### END
+####### test-all-random ####### END
 }
-function __complete-test-random() {
+function __complete-test-all-random() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
       local options=" --help "
@@ -711,7 +711,7 @@ function __complete-test-random() {
       COMPREPLY=($(compgen -o default -- $curr))
    fi
 }
-complete -F __complete${BASH_FUNK_PREFIX:--}test-random -- ${BASH_FUNK_PREFIX:--}test-random
+complete -F __complete${BASH_FUNK_PREFIX:--}test-all-random -- ${BASH_FUNK_PREFIX:--}test-all-random
 
 
 function -help-random() {
@@ -720,6 +720,6 @@ function -help-random() {
    echo -e "${p}fill-entropy [DURATION]\033[0m  -  Fills /dev/random with pseudo-random values from /dev/urandom."
    echo -e "${p}random-number RANGE\033[0m  -  Generates a random number of the given range. The range is inclusive."
    echo -e "${p}random-string LENGTH [CHARS]\033[0m  -  Prints a random string of the given length containing the given characters."
-   echo -e "${p}test-random\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "${p}test-all-random\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
-__BASH_FUNK_FUNCS+=( entropy-available fill-entropy random-number random-string test-random )
+__BASH_FUNK_FUNCS+=( entropy-available fill-entropy random-number random-string test-all-random )

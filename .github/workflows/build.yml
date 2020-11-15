@@ -42,4 +42,5 @@ jobs:
         TERM: xterm
       run: |
         source bash-funk.sh
+        source modules/test.sh
         -test-all

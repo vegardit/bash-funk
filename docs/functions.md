@@ -8,7 +8,7 @@ The following commands are available when this module is loaded:
 1. [-fn-exists](#-fn-exists)
 1. [-fn-rename](#-fn-rename)
 1. [-fn-unload](#-fn-unload)
-1. [-test-functions](#-test-functions)
+1. [-test-all-functions](#-test-all-functions)
 
 
 ## <a name="license"></a>License
@@ -173,10 +173,10 @@ unset -f $_FUNC_NAME
 ```
 
 
-## <a name="-test-functions"></a>-test-functions
+## <a name="-test-all-functions"></a>-test-all-functions
 
 ```
-Usage: -test-functions [OPTION]...
+Usage: -test-all-functions [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

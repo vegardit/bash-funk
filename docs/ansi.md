@@ -13,7 +13,7 @@ The following commands are available when this module is loaded:
 1. [-ansi-reset](#-ansi-reset)
 1. [-ansi-ul](#-ansi-ul)
 1. [-cursor-pos](#-cursor-pos)
-1. [-test-ansi](#-test-ansi)
+1. [-test-all-ansi](#-test-all-ansi)
 
 
 ## <a name="license"></a>License
@@ -612,10 +612,10 @@ fi
 ```
 
 
-## <a name="-test-ansi"></a>-test-ansi
+## <a name="-test-all-ansi"></a>-test-all-ansi
 
 ```
-Usage: -test-ansi [OPTION]...
+Usage: -test-all-ansi [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

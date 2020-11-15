@@ -23,8 +23,7 @@ The following commands are available when this module is loaded:
 1. [-please](#-please)
 1. [-reload](#-reload)
 1. [-root](#-root)
-1. [-test-all](#-test-all)
-1. [-test-misc](#-test-misc)
+1. [-test-all-misc](#-test-all-misc)
 1. [-tweak-bash](#-tweak-bash)
 1. [-update](#-update)
 1. [-var-exists](#-var-exists)
@@ -264,36 +263,10 @@ sudo -i
 ```
 
 
-## <a name="-test-all"></a>-test-all
+## <a name="-test-all-misc"></a>-test-all-misc
 
 ```
-Usage: -test-all [OPTION]...
-
-Executes the selftests of all loaded bash-funk commands.
-
-Options:
-    --help 
-        Prints this help.
-    --selftest 
-        Performs a self-test.
-    --
-        Terminates the option list.
-```
-
-*Implementation:*
-```bash
-for testfunc in $(compgen -A function -- -test-); do
-   if [[ $testfunc != "-test-all" ]]; then
-      $testfunc || return 1
-   fi
-done
-```
-
-
-## <a name="-test-misc"></a>-test-misc
-
-```
-Usage: -test-misc [OPTION]...
+Usage: -test-all-misc [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
@@ -313,7 +286,6 @@ Options:
 -please --selftest && echo || return 1
 -reload --selftest && echo || return 1
 -root --selftest && echo || return 1
--test-all --selftest && echo || return 1
 -tweak-bash --selftest && echo || return 1
 -update --selftest && echo || return 1
 -var-exists --selftest && echo || return 1

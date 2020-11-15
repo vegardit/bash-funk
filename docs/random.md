@@ -8,7 +8,7 @@ The following commands are available when this module is loaded:
 1. [-fill-entropy](#-fill-entropy)
 1. [-random-number](#-random-number)
 1. [-random-string](#-random-string)
-1. [-test-random](#-test-random)
+1. [-test-all-random](#-test-all-random)
 
 
 ## <a name="license"></a>License
@@ -191,10 +191,10 @@ env LC_CTYPE=C tr -dc "$_CHARS" </dev/urandom 2>/dev/null | head -c ${_LENGTH} |
 ```
 
 
-## <a name="-test-random"></a>-test-random
+## <a name="-test-all-random"></a>-test-all-random
 
 ```
-Usage: -test-random [OPTION]...
+Usage: -test-all-random [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

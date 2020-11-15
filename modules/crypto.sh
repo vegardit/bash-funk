@@ -285,7 +285,7 @@ function __complete-sha256sum() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}sha256sum -- ${BASH_FUNK_PREFIX:--}sha256sum
 
-function -test-crypto() {
+function -test-all-crypto() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
@@ -305,7 +305,7 @@ function -test-crypto() {
    eval $opts
    return $rc
 }
-function __impl-test-crypto() {
+function __impl-test-all-crypto() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
@@ -372,13 +372,13 @@ function __impl-test-crypto() {
       return 64
    done
 
-####### test-crypto ####### START
+####### test-all-crypto ####### START
 ${BASH_FUNK_PREFIX:--}md5sum --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}sha256sum --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}verify-tar-md5 --selftest && echo || return 1
-####### test-crypto ####### END
+####### test-all-crypto ####### END
 }
-function __complete-test-crypto() {
+function __complete-test-all-crypto() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
       local options=" --help "
@@ -388,7 +388,7 @@ function __complete-test-crypto() {
       COMPREPLY=($(compgen -o default -- $curr))
    fi
 }
-complete -F __complete${BASH_FUNK_PREFIX:--}test-crypto -- ${BASH_FUNK_PREFIX:--}test-crypto
+complete -F __complete${BASH_FUNK_PREFIX:--}test-all-crypto -- ${BASH_FUNK_PREFIX:--}test-all-crypto
 
 function -verify-tar-md5() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
@@ -531,7 +531,7 @@ function -help-crypto() {
    local p="\033[1m${BASH_FUNK_PREFIX:--}"
    echo -e "${p}md5sum PATH_TO_FILE\033[0m  -  Calculates the MD5 hash of the given file."
    echo -e "${p}sha256sum PATH_TO_FILE\033[0m  -  Calculates the SHA256 hash of the given file."
-   echo -e "${p}test-crypto\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "${p}test-all-crypto\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
    echo -e "${p}verify-tar-md5 [PATH_TO_ARCHIVE]...\033[0m  -  Verifies the MD5 sum of tar files with embedded checksum information. Usually Android firmware archives, see https://fileinfo.com/extension/tar.md5."
 }
-__BASH_FUNK_FUNCS+=( md5sum sha256sum test-crypto verify-tar-md5 )
+__BASH_FUNK_FUNCS+=( md5sum sha256sum test-all-crypto verify-tar-md5 )

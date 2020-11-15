@@ -6,7 +6,7 @@ The following commands are available when this module is loaded:
 
 1. [-gen-x509cert](#-gen-x509cert)
 1. [-gen-x509rootca](#-gen-x509rootca)
-1. [-test-openssl](#-test-openssl)
+1. [-test-all-openssl](#-test-all-openssl)
 
 
 ## <a name="license"></a>License
@@ -194,10 +194,10 @@ echo " -> file [${_COMMON_NAME}.crt] created."
 ```
 
 
-## <a name="-test-openssl"></a>-test-openssl
+## <a name="-test-all-openssl"></a>-test-all-openssl
 
 ```
-Usage: -test-openssl [OPTION]...
+Usage: -test-all-openssl [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

@@ -2967,7 +2967,7 @@ function __complete-github-upstream-url() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}github-upstream-url -- ${BASH_FUNK_PREFIX:--}github-upstream-url
 
-function -test-git() {
+function -test-all-git() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
@@ -2987,7 +2987,7 @@ function -test-git() {
    eval $opts
    return $rc
 }
-function __impl-test-git() {
+function __impl-test-all-git() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
@@ -3054,7 +3054,7 @@ function __impl-test-git() {
       return 64
    done
 
-####### test-git ####### START
+####### test-all-git ####### START
 ${BASH_FUNK_PREFIX:--}git-branch-name --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-change-contributor --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-change-date --selftest && echo || return 1
@@ -3076,9 +3076,9 @@ ${BASH_FUNK_PREFIX:--}git-sync-fork --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-undo --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-update-branch --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}github-upstream-url --selftest && echo || return 1
-####### test-git ####### END
+####### test-all-git ####### END
 }
-function __complete-test-git() {
+function __complete-test-all-git() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
       local options=" --help "
@@ -3088,7 +3088,7 @@ function __complete-test-git() {
       COMPREPLY=($(compgen -o default -- $curr))
    fi
 }
-complete -F __complete${BASH_FUNK_PREFIX:--}test-git -- ${BASH_FUNK_PREFIX:--}test-git
+complete -F __complete${BASH_FUNK_PREFIX:--}test-all-git -- ${BASH_FUNK_PREFIX:--}test-all-git
 
 
 function -help-git() {
@@ -3114,9 +3114,9 @@ function -help-git() {
    echo -e "${p}git-undo [NUM_COMMITS]\033[0m  -  Removes the last N commits from the commit history."
    echo -e "${p}git-update-branch [BRANCH] MASTER\033[0m  -  Updates the given branch using 'git rebase -p' by default."
    echo -e "${p}github-upstream-url REPO\033[0m  -  Prints the upstream URL in case the given GitHub repository is a fork."
-   echo -e "${p}test-git\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "${p}test-all-git\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
-__BASH_FUNK_FUNCS+=( git-branch-name git-change-contributor git-change-date git-cherry-pick git-cleanse git-clone-shallow git-create-empty-branch git-delete-branch git-delete-local-branch git-delete-remote-branch git-fetch-pr git-log git-ls-conflicts git-ls-modified git-reset-file git-squash git-switch-remote-protocol git-sync-fork git-undo git-update-branch github-upstream-url test-git )
+__BASH_FUNK_FUNCS+=( git-branch-name git-change-contributor git-change-date git-cherry-pick git-cleanse git-clone-shallow git-create-empty-branch git-delete-branch git-delete-local-branch git-delete-remote-branch git-fetch-pr git-log git-ls-conflicts git-ls-modified git-reset-file git-squash git-switch-remote-protocol git-sync-fork git-undo git-update-branch github-upstream-url test-all-git )
 
 alias -- ${BASH_FUNK_PREFIX:--}git-ls-branches="git branch -a"
 alias -- ${BASH_FUNK_PREFIX:--}git-ls-remotes="git remote -v"

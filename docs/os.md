@@ -6,7 +6,7 @@ The following commands are available when this module is loaded:
 
 1. [-command-exists](#-command-exists)
 1. [-pkg-installed](#-pkg-installed)
-1. [-test-os](#-test-os)
+1. [-test-all-os](#-test-all-os)
 
 
 ## <a name="license"></a>License
@@ -133,10 +133,10 @@ return 1
 ```
 
 
-## <a name="-test-os"></a>-test-os
+## <a name="-test-all-os"></a>-test-all-os
 
 ```
-Usage: -test-os [OPTION]...
+Usage: -test-all-os [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

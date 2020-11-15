@@ -2374,7 +2374,7 @@ function __complete-substr-between() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}substr-between -- ${BASH_FUNK_PREFIX:--}substr-between
 
-function -test-strings() {
+function -test-all-strings() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
@@ -2394,7 +2394,7 @@ function -test-strings() {
    eval $opts
    return $rc
 }
-function __impl-test-strings() {
+function __impl-test-all-strings() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
@@ -2461,7 +2461,7 @@ function __impl-test-strings() {
       return 64
    done
 
-####### test-strings ####### START
+####### test-all-strings ####### START
 ${BASH_FUNK_PREFIX:--}ascii2hex --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}hex2ascii --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}normalize-path --selftest && echo || return 1
@@ -2478,9 +2478,9 @@ ${BASH_FUNK_PREFIX:--}substr-after-last --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}substr-before --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}substr-before-last --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}substr-between --selftest && echo || return 1
-####### test-strings ####### END
+####### test-all-strings ####### END
 }
-function __complete-test-strings() {
+function __complete-test-all-strings() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
       local options=" --help "
@@ -2490,7 +2490,7 @@ function __complete-test-strings() {
       COMPREPLY=($(compgen -o default -- $curr))
    fi
 }
-complete -F __complete${BASH_FUNK_PREFIX:--}test-strings -- ${BASH_FUNK_PREFIX:--}test-strings
+complete -F __complete${BASH_FUNK_PREFIX:--}test-all-strings -- ${BASH_FUNK_PREFIX:--}test-all-strings
 
 
 function -help-strings() {
@@ -2511,6 +2511,6 @@ function -help-strings() {
    echo -e "${p}substr-before SEARCH_IN SEARCH_FOR\033[0m  -  Prints the substring before the first occurrence of SEARCH_FOR."
    echo -e "${p}substr-before-last SEARCH_IN SEARCH_FOR\033[0m  -  Prints the substring before the last occurrence of SEARCH_FOR."
    echo -e "${p}substr-between SEARCH_IN PREFIX SUFFIX\033[0m  -  Prints the substring between PREFIX and SUFFIX."
-   echo -e "${p}test-strings\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "${p}test-all-strings\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
-__BASH_FUNK_FUNCS+=( ascii2hex hex2ascii normalize-path str-join str-lower str-matches-glob str-matches-regex str-repeat str-trim str-upper strip-ansi substr-after substr-after-last substr-before substr-before-last substr-between test-strings )
+__BASH_FUNK_FUNCS+=( ascii2hex hex2ascii normalize-path str-join str-lower str-matches-glob str-matches-regex str-repeat str-trim str-upper strip-ansi substr-after substr-after-last substr-before substr-before-last substr-between test-all-strings )

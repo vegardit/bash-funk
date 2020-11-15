@@ -766,7 +766,7 @@ never" -- $curr))
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}procmem -- ${BASH_FUNK_PREFIX:--}procmem
 
-function -test-memory() {
+function -test-all-memory() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
@@ -786,7 +786,7 @@ function -test-memory() {
    eval $opts
    return $rc
 }
-function __impl-test-memory() {
+function __impl-test-all-memory() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
@@ -853,15 +853,15 @@ function __impl-test-memory() {
       return 64
    done
 
-####### test-memory ####### START
+####### test-all-memory ####### START
 ${BASH_FUNK_PREFIX:--}alloc-mem --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}memfree --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}meminfo --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}memtotal --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}procmem --selftest && echo || return 1
-####### test-memory ####### END
+####### test-all-memory ####### END
 }
-function __complete-test-memory() {
+function __complete-test-all-memory() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
       local options=" --help "
@@ -871,7 +871,7 @@ function __complete-test-memory() {
       COMPREPLY=($(compgen -o default -- $curr))
    fi
 }
-complete -F __complete${BASH_FUNK_PREFIX:--}test-memory -- ${BASH_FUNK_PREFIX:--}test-memory
+complete -F __complete${BASH_FUNK_PREFIX:--}test-all-memory -- ${BASH_FUNK_PREFIX:--}test-all-memory
 
 
 function -help-memory() {
@@ -881,9 +881,9 @@ function -help-memory() {
    echo -e "${p}meminfo\033[0m  -  Prints memory information from /proc/meminfo."
    echo -e "${p}memtotal [MEMORY_UNIT]\033[0m  -  Prints the total memory (in KB by default)."
    echo -e "${p}procmem\033[0m  -  Prints memory consumption information of all running processes."
-   echo -e "${p}test-memory\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "${p}test-all-memory\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
-__BASH_FUNK_FUNCS+=( alloc-mem memfree meminfo memtotal procmem test-memory )
+__BASH_FUNK_FUNCS+=( alloc-mem memfree meminfo memtotal procmem test-all-memory )
 
 else
    echo "SKIPPED"

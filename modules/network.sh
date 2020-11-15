@@ -1205,7 +1205,7 @@ function __complete-set-proxy() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}set-proxy -- ${BASH_FUNK_PREFIX:--}set-proxy
 
-function -test-network() {
+function -test-all-network() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
@@ -1225,7 +1225,7 @@ function -test-network() {
    eval $opts
    return $rc
 }
-function __impl-test-network() {
+function __impl-test-all-network() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
@@ -1292,7 +1292,7 @@ function __impl-test-network() {
       return 64
    done
 
-####### test-network ####### START
+####### test-all-network ####### START
 ${BASH_FUNK_PREFIX:--}block-port --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}is-port-open --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}my-ips --selftest && echo || return 1
@@ -1300,9 +1300,9 @@ ${BASH_FUNK_PREFIX:--}my-public-hostname --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}my-public-ip --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}run-echo-server --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}set-proxy --selftest && echo || return 1
-####### test-network ####### END
+####### test-all-network ####### END
 }
-function __complete-test-network() {
+function __complete-test-all-network() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
       local options=" --help "
@@ -1312,7 +1312,7 @@ function __complete-test-network() {
       COMPREPLY=($(compgen -o default -- $curr))
    fi
 }
-complete -F __complete${BASH_FUNK_PREFIX:--}test-network -- ${BASH_FUNK_PREFIX:--}test-network
+complete -F __complete${BASH_FUNK_PREFIX:--}test-all-network -- ${BASH_FUNK_PREFIX:--}test-all-network
 
 
 function -help-network() {
@@ -1324,6 +1324,6 @@ function -help-network() {
    echo -e "${p}my-public-ip\033[0m  -  Prints the public IP v4 address of this host."
    echo -e "${p}run-echo-server [BIND_ADDRESS] PORT\033[0m  -  Runs a simple single-connection TCP echo server."
    echo -e "${p}set-proxy PROXY_URL [NO_PROXY]\033[0m  -  Sets the proxy environment variables."
-   echo -e "${p}test-network\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "${p}test-all-network\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
-__BASH_FUNK_FUNCS+=( block-port is-port-open my-ips my-public-hostname my-public-ip run-echo-server set-proxy test-network )
+__BASH_FUNK_FUNCS+=( block-port is-port-open my-ips my-public-hostname my-public-ip run-echo-server set-proxy test-all-network )

@@ -36,7 +36,7 @@ The following commands are available when this module is loaded:
 1. [-git-undo](#-git-undo)
 1. [-git-update-branch](#-git-update-branch)
 1. [-github-upstream-url](#-github-upstream-url)
-1. [-test-git](#-test-git)
+1. [-test-all-git](#-test-all-git)
 
 
 ## <a name="license"></a>License
@@ -915,10 +915,10 @@ return ${PIPESTATUS[0]}
 ```
 
 
-## <a name="-test-git"></a>-test-git
+## <a name="-test-all-git"></a>-test-all-git
 
 ```
-Usage: -test-git [OPTION]...
+Usage: -test-all-git [OPTION]...
 
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 

@@ -555,7 +555,7 @@ if [[ ${_GREP_PATTERN:-} ]]; then
       filter="$filter | grep \"$p\""
    done
 fi
-ssh_hist="$(eval -- "-tail-reverse "$HISTFILE" -u | grep \"^ssh \" $filter | head -10")"
+ssh_hist="$(eval -- "${BASH_FUNK_PREFIX:--}tail-reverse "$HISTFILE" -u | grep \"^ssh \" $filter | head -10")"
 ssh_hist="${ssh_hist//\"/\\\"}"
 local ssh_cmd
 echo Please select the SSH command to execute and press [ENTER]. Press [ESC] or [CTRL]+[C] to abort:
@@ -875,7 +875,7 @@ function __complete-ssh-with-pass() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}ssh-with-pass -- ${BASH_FUNK_PREFIX:--}ssh-with-pass
 
-function -test-ssh() {
+function -test-all-ssh() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
@@ -895,7 +895,7 @@ function -test-ssh() {
    eval $opts
    return $rc
 }
-function __impl-test-ssh() {
+function __impl-test-all-ssh() {
    local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
@@ -962,16 +962,16 @@ function __impl-test-ssh() {
       return 64
    done
 
-####### test-ssh ####### START
+####### test-all-ssh ####### START
 ${BASH_FUNK_PREFIX:--}ssh-agent-add-key --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-gen-keypair --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-pubkey --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-reconnect --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-trust-host --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-with-pass --selftest && echo || return 1
-####### test-ssh ####### END
+####### test-all-ssh ####### END
 }
-function __complete-test-ssh() {
+function __complete-test-all-ssh() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
       local options=" --help "
@@ -981,7 +981,7 @@ function __complete-test-ssh() {
       COMPREPLY=($(compgen -o default -- $curr))
    fi
 }
-complete -F __complete${BASH_FUNK_PREFIX:--}test-ssh -- ${BASH_FUNK_PREFIX:--}test-ssh
+complete -F __complete${BASH_FUNK_PREFIX:--}test-all-ssh -- ${BASH_FUNK_PREFIX:--}test-all-ssh
 
 
 function -help-ssh() {
@@ -992,6 +992,6 @@ function -help-ssh() {
    echo -e "${p}ssh-reconnect [GREP_PATTERN]...\033[0m  -  Dialog that displays the last 10 issued SSH commands to execute one of them."
    echo -e "${p}ssh-trust-host HOSTNAME [PORT]\033[0m  -  Adds the public key of the given host to the ~/.ssh/known_hosts file."
    echo -e "${p}ssh-with-pass SSH_OPTION1 [SSH_OPTION]...\033[0m  -  Executes SSH with non-interactive password-based login. The password must either specified via --password <VALUE> or is read from stdin."
-   echo -e "${p}test-ssh\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
+   echo -e "${p}test-all-ssh\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
-__BASH_FUNK_FUNCS+=( ssh-agent-add-key ssh-gen-keypair ssh-pubkey ssh-reconnect ssh-trust-host ssh-with-pass test-ssh )
+__BASH_FUNK_FUNCS+=( ssh-agent-add-key ssh-gen-keypair ssh-pubkey ssh-reconnect ssh-trust-host ssh-with-pass test-all-ssh )
