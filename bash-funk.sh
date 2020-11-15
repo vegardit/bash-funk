@@ -103,6 +103,17 @@ EOL
 
       __BASH_FUNK_FUNCS=()
 
+      # defining some aliases before loading modules to be used by them https://askubuntu.com/questions/1123186/how-can-i-use-an-alias-in-a-function
+      if [[ $OSTYPE == "cygwin" || $OSTYPE == "msys" || $OSTYPE == "darwin"* ]]; then
+         shopt -s expand_aliases
+
+         # prevent: find: The environment is too large for exec()
+         alias -- find='env -i HOME="$HOME" LC_CTYPE="${LC_ALL:-${LC_CTYPE:-$LANG}}" PATH="$PATH" TERM="${TERM:-}" USER="$USER" find'
+
+         # prevent: xargs: environment is too large for exec
+         alias -- xargs='env -i HOME="$HOME" LC_CTYPE="${LC_ALL:-${LC_CTYPE:-$LANG}}" PATH="$PATH" TERM="${TERM:-}" USER="$USER" xargs'
+      fi
+
       # load all modules
       for __module in "${BASH_FUNK_ROOT}"/modules/*.sh; do
          # don't load the test module automatically

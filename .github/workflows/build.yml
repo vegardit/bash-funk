@@ -23,14 +23,17 @@ jobs:
           experimental: false
         - os: macos-11.0
           experimental: true
-        - os: macos-10.15
-          experimental: true
+        #- os: macos-10.15
+        #  experimental: true
     steps:
     - name: Git Checkout
       uses: actions/checkout@v2 #https://github.com/actions/checkout
 
     - name: Print Bash version
       run: bash --version
+
+    - name: Print POSIX memory limit
+      run: getconf ARG_MAX
 
     - name: Install bc, rng-tools
       if: startsWith(matrix.os, 'ubuntu')

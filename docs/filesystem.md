@@ -505,20 +505,7 @@ else
          fi
       done
    else
-      # to avoid "xargs: environment is too large for exec" on cygwin/msys
-      local xargsWorks=1
-      if [[ $OSTYPE == cygwin || $OSTYPE == msys ]]; then
-         if ! echo whoami | xargs &>/dev/null; then
-            local xargsWorks=
-         fi
-      fi
-      if [[ $xargsWorks ]]; then
-         find "$_START_PATH" $findOpts -print0 | LC_ALL=C xargs -r -0 -P2 $grepCmd "$_SEARCH_STRING" 2>/dev/null
-      else
-         find "$_START_PATH" $findOpts 2>/dev/null | while read file; do
-            LC_ALL=C $grepCmd "$_SEARCH_STRING" "$file" 2>/dev/null
-         done
-      fi
+      find "$_START_PATH" $findOpts -print0 | LC_ALL=C xargs -r -0 -P2 $grepCmd "$_SEARCH_STRING" 2>/dev/null
    fi
 fi
 ```
