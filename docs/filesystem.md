@@ -56,9 +56,9 @@ Parameters:
       The path to normalize.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -93,9 +93,9 @@ Parameters:
       The name of the subdirectory to locate and cd into.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -122,13 +122,13 @@ Usage: -cd-hist [OPTION]... [STEPS_OR_DIRNAME]
 Navigates back in the directory history which can be managed via pushd/popd/dirs and is automatically populated if the Bash Funk bash-prompt is installed.
 
 Parameters:
-  STEPS_OR_DIRNAME 
+  STEPS_OR_DIRNAME
       The name of the subdirectory to locate and cd into. If not specified a list of the last 20 entries is displayed.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -182,9 +182,9 @@ Parameters:
       The number of directories to navigate up in the directory tree or the glob pattern to find a matching directory.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -247,9 +247,9 @@ Options:
 -s, --sort MODE (one of: [count,word])
         Specifies how to sort the output.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -292,13 +292,13 @@ Usage: -du [OPTION]... [PATH]...
 Prints disk usage information.
 
 Parameters:
-  PATH 
+  PATH
       The path to check.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -322,13 +322,13 @@ Extracts the given archive using the compatible extractor.
 Parameters:
   ARCHIVE (required, file)
       The archive to extract.
-  TO_DIR 
+  TO_DIR
       The target folder.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -383,9 +383,9 @@ Options:
 -t, --type TYPE (one of: [d,dir,f,file])
         File type.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -421,22 +421,22 @@ Parameters:
       The string to search.
 
 Options:
--l, --lines 
+-l, --lines
         Show matching lines of the files that contain the given string.
     --maxdepth levels (integer: ?-?)
         The maximum number of levels to descend into the directory tree below the starting-point.
     --mindepth levels (integer: ?-?)
         The level of directory tree below the starting-point where to start the search.
-    --name pattern 
+    --name pattern
         Name pattern.
--u, --unpack 
+-u, --unpack
         Unpack supported archives (.zip, .jar, .war, .ear).
--v, --verbose 
+-v, --verbose
         Prints additional information during command execution.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -519,13 +519,13 @@ Usage: -ll [OPTION]... [PATH]...
 Alternative version of 'ls -lt' that prints directories (and sym-links to directories) before files and hidden entries before non-hidden entries.
 
 Parameters:
-  PATH 
+  PATH
       The path to list.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -568,14 +568,14 @@ Parameters:
 Options:
 -m, --mode MODE (pattern: "[0-7]{3}")
         The file mode for the new directory.
--p, --parents 
+-p, --parents
         Automatically create missing parent directories.
--v, --verbose 
+-v, --verbose
         Prints additional information during command execution.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -608,9 +608,9 @@ Options:
 -f, --format FORMAT (one of: [locale,iso8601,human])
         Prints the timestamp in the given format.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -679,9 +679,9 @@ Parameters:
       The file or directory to check.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -720,9 +720,9 @@ Parameters:
       The path to normalize.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -766,9 +766,9 @@ Parameters:
       The content to append to the file.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -805,9 +805,9 @@ Parameters:
       The content to write.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -838,12 +838,12 @@ Parameters:
 Options:
 -n, --lines N (integer: ?-?)
         The maximum number of lines to output.
--u, --unique 
+-u, --unique
         Don't print duplicates.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -875,9 +875,9 @@ Usage: -test-all-filesystem [OPTION]...
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.

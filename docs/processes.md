@@ -44,12 +44,12 @@ Parameters:
       The process ID of the parent process. If not specified the PID of the current Bash process is used.
 
 Options:
-    --printPPID 
+    --printPPID
         Specifies to also print the PID of the parent process.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -84,9 +84,9 @@ Parameters:
       The process ID of the child process. If not specified the PID of the current Bash process is used.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -116,9 +116,9 @@ Parameters:
       The process ID of the child process. If not specified the PID of the current Bash process is used.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -153,9 +153,9 @@ Options:
 -s, --signal VALUE (integer: 1-64)
         The signal to be send, eg. 9=KILL or 15=TERM.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -197,9 +197,9 @@ Options:
 -s, --signal VALUE (integer: 1-64)
         The signal to be send, eg. 9=KILL or 15=TERM.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -247,9 +247,9 @@ Usage: -test-all-processes [OPTION]...
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.

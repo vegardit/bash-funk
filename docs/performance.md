@@ -40,9 +40,9 @@ Usage: -cpu-count [OPTION]...
 Prints the number of logical processors.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -69,9 +69,9 @@ Options:
 -m, --mode MODE (one of: [openssl-aes128,openssl-aes256,openssl-rsa1024,openssl-rsa2048,openssl-rsa4096,cryptsetup-aes128,cryptsetup-aes256,dd-md5sum,dd-sha256sum,dd-sha512sum])
         Select the benchmark mode.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -85,10 +85,18 @@ $ -cpu-perf --mode dd-md5sum
 ```bash
 local _mode=${_mode:-openssl-rsa1024}
 case $_mode in
-   openssl-aes*) openssl speed -multi $(grep processor /proc/cpuinfo | wc -l) aes-${_mode#*aes}-cbc ;;
-   openssl-rsa*) openssl speed -multi $(grep processor /proc/cpuinfo | wc -l) ${_mode#*-} ;;
+   openssl-aes*) openssl speed -multi $(-cpu-count) aes-${_mode#*aes}-cbc ;;
+   openssl-rsa*) openssl speed -multi $(-cpu-count) ${_mode#*-} ;;
    cryptsetup-*) cryptsetup benchmark --cipher aes-cbc --key-size ${_mode#cryptsetup-} ;;
    dd-*)
+      if ! hash dd &>/dev/null; then
+         echo "-cpu-perf: Required command 'dd' is not available."
+         return 1
+      fi
+      if ! hash ${_mode#dd-} &>/dev/null; then
+         echo "-cpu-perf: Required command '${_mode#dd-}' is not available."
+         return 1
+      fi
       [[ "$OSTYPE" == "darwin"* ]] && local _bs=1m || local _bs=1M
       dd if=/dev/zero bs=$_bs count=1024 2> >(head -3 | tail -1) > >(${_mode#dd-} >/dev/null)
      ;;
@@ -103,17 +111,14 @@ Usage: -disk-latency [OPTION]... [PATH]
 
 Determines disk latency in milliseconds using 'dd'.
 
-Requirements:
-  + Command 'dd' must be available.
-
 Parameters:
   PATH (default: '.', directory)
       Path where to create the test files.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -127,16 +132,29 @@ $ -disk-latency /tmp
 
 *Implementation:*
 ```bash
-local testFile="$(mktemp "--tmpdir=$_PATH")"
-local ddResult
-if ddResult=$(set -o pipefail; dd if=/dev/zero "of=$testFile" bs=512 count=1000 oflag=dsync 2>&1 | tail -1 | sed -E 's/.*copied, ([0-9.]+) .+/\1 ms/'); then
-   rm "$testFile"
-   echo "$ddResult disk latency on device $(df -P "$_PATH" | tail -1 | cut -d' ' -f1)"
-   return 0
+if hash ioping &>/dev/null; then
+   ioping -c 1 "$_PATH"
 else
-   rm "$testFile"
-   echo $ddResult
-   return 1
+   if [[ $OSTYPE == "darwin"* ]]; then
+      local testFile="$(mktemp "$_PATH/XXXXXX")"
+   else
+      local testFile="$(mktemp --tmpdir="$_PATH")"
+   fi
+
+   if ! hash dd &>/dev/null; then
+      echo "-disk-latency: Required command 'dd' or 'ioping' is not available."
+      return 1
+   fi
+   local ddResult
+   if ddResult=$(set -o pipefail; dd if=/dev/zero "of=$testFile" bs=512 count=1000 oflag=dsync 2>&1 | tail -1 | sed -E 's/.*copied, ([0-9.]+) .+/\1 ms/'); then
+      rm "$testFile"
+      echo "$ddResult disk latency on device $(df -P "$_PATH" | tail -1 | cut -d' ' -f1)"
+      return 0
+   else
+      rm "$testFile"
+      echo $ddResult
+      return 1
+   fi
 fi
 ```
 
@@ -158,9 +176,9 @@ Options:
     --size SIZE (integer: 1-?)
         Test file size in MB (Default is 2048MB).
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -184,7 +202,11 @@ case $_mode in
          echo "-disk-perf: Required command 'dd' is not available."
          return 1
       fi
-      local testFile="$(mktemp --tmpdir="$_PATH")"
+      if [[ $OSTYPE == "darwin"* ]]; then
+         local testFile=$(mktemp "$_PATH/XXXXXX")
+      else
+         local testFile=$(mktemp --tmpdir="$_PATH")
+      fi
       echo "Testing single-threaded sequential write performance..."
       dd if=/dev/zero of="${testFile}" bs=1M count=${_size} conv=fdatasync 2>&1 | head -3 | tail -1
       echo
@@ -196,15 +218,19 @@ case $_mode in
          echo "-disk-perf: Required command 'fio' is not available. You can also try with option '--mode dd'."
          return 1
       fi
-      local testFile=$(basename $(mktemp --dry-run --tmpdir="$_PATH"))
+      if [[ $OSTYPE == "darwin"* ]]; then
+         local testFile=$(basename $(mktemp -u "$_PATH/XXXXXX"))
+      else
+         local testFile=$(basename $(mktemp --dry-run --tmpdir="$_PATH"))
+      fi
       echo "Testing multi-threaded random write performance..."
-      fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(grep processor /proc/cpuinfo | wc -l) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randwrite
+      fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(-cpu-count) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randwrite
       echo
       echo "Testing multi-threaded random read performance..."
-      fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(grep processor /proc/cpuinfo | wc -l) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randread
+      fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(-cpu-count) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randread
       echo
       echo "Testing multi-threaded random read-write (3:1) performance..."
-      fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(grep processor /proc/cpuinfo | wc -l) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randrw --rwmixread=75
+      fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(-cpu-count) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randrw --rwmixread=75
      ;;
 esac
 ```
@@ -229,9 +255,9 @@ Options:
 -P, --port PORT (integer: 0-65535)
         Ssh port.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -278,9 +304,9 @@ Usage: -test-all-performance [OPTION]...
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.

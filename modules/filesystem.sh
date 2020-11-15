@@ -59,9 +59,9 @@ function __impl-abspath() {
             echo "      The path to normalize."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -183,9 +183,9 @@ function __impl-cd-down() {
             echo "      The name of the subdirectory to locate and cd into."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -309,13 +309,13 @@ function __impl-cd-hist() {
             echo "Navigates back in the directory history which can be managed via pushd/popd/dirs and is automatically populated if the Bash Funk bash-prompt is installed."
             echo
             echo "Parameters:"
-            echo -e "  \033[1mSTEPS_OR_DIRNAME\033[22m "
+            echo -e "  \033[1mSTEPS_OR_DIRNAME\033[22m"
             echo "      The name of the subdirectory to locate and cd into. If not specified a list of the last 20 entries is displayed."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -454,9 +454,9 @@ function __impl-cd-up() {
             echo "      The number of directories to navigate up in the directory tree or the glob pattern to find a matching directory."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -606,9 +606,9 @@ function __impl-count-words() {
             echo -e "\033[1m-s, --sort MODE\033[22m (one of: [count,word])"
             echo "        Specifies how to sort the output."
             echo "    -----------------------------"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -774,13 +774,13 @@ function __impl-du() {
             echo "Prints disk usage information."
             echo
             echo "Parameters:"
-            echo -e "  \033[1mPATH\033[22m "
+            echo -e "  \033[1mPATH\033[22m"
             echo "      The path to check."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -887,13 +887,13 @@ function __impl-extract() {
             echo "Parameters:"
             echo -e "  \033[1mARCHIVE\033[22m (required, file)"
             echo "      The archive to extract."
-            echo -e "  \033[1mTO_DIR\033[22m "
+            echo -e "  \033[1mTO_DIR\033[22m"
             echo "      The target folder."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -1045,9 +1045,9 @@ function __impl-find-up() {
             echo -e "\033[1m-t, --type TYPE\033[22m (one of: [d,dir,f,file])"
             echo "        File type."
             echo "    -----------------------------"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -1199,22 +1199,22 @@ function __impl-findfiles() {
             echo "      The string to search."
             echo
             echo "Options:"
-            echo -e "\033[1m-l, --lines\033[22m "
+            echo -e "\033[1m-l, --lines\033[22m"
             echo "        Show matching lines of the files that contain the given string."
             echo -e "\033[1m    --maxdepth levels\033[22m (integer: ?-?)"
             echo "        The maximum number of levels to descend into the directory tree below the starting-point."
             echo -e "\033[1m    --mindepth levels\033[22m (integer: ?-?)"
             echo "        The level of directory tree below the starting-point where to start the search."
-            echo -e "\033[1m    --name pattern\033[22m "
+            echo -e "\033[1m    --name pattern\033[22m"
             echo "        Name pattern."
-            echo -e "\033[1m-u, --unpack\033[22m "
+            echo -e "\033[1m-u, --unpack\033[22m"
             echo "        Unpack supported archives (.zip, .jar, .war, .ear)."
-            echo -e "\033[1m-v, --verbose\033[22m "
+            echo -e "\033[1m-v, --verbose\033[22m"
             echo "        Prints additional information during command execution."
             echo "    -----------------------------"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -1444,13 +1444,13 @@ function __impl-ll() {
             echo "Alternative version of 'ls -lt' that prints directories (and sym-links to directories) before files and hidden entries before non-hidden entries."
             echo
             echo "Parameters:"
-            echo -e "  \033[1mPATH\033[22m "
+            echo -e "  \033[1mPATH\033[22m"
             echo "      The path to list."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -1576,14 +1576,14 @@ function __impl-mkcd() {
             echo "Options:"
             echo -e "\033[1m-m, --mode MODE\033[22m (pattern: \"[0-7]{3}\")"
             echo "        The file mode for the new directory."
-            echo -e "\033[1m-p, --parents\033[22m "
+            echo -e "\033[1m-p, --parents\033[22m"
             echo "        Automatically create missing parent directories."
-            echo -e "\033[1m-v, --verbose\033[22m "
+            echo -e "\033[1m-v, --verbose\033[22m"
             echo "        Prints additional information during command execution."
             echo "    -----------------------------"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -1729,9 +1729,9 @@ function __impl-modified() {
             echo -e "\033[1m-f, --format FORMAT\033[22m (one of: [locale,iso8601,human])"
             echo "        Prints the timestamp in the given format."
             echo "    -----------------------------"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -1916,9 +1916,9 @@ function __impl-owner() {
             echo "      The file or directory to check."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -2050,9 +2050,9 @@ function __impl-realpath() {
             echo "      The path to normalize."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -2187,9 +2187,9 @@ function __impl-sudo-append() {
             echo "      The content to append to the file."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -2260,8 +2260,8 @@ function __impl-sudo-append() {
       echo "$__fn: Error: Parameter CONTENT must be specified."; return 64
    fi
 
-   if ! hash "sudo" &>/dev/null; then echo "$__fn: Error: Required command 'sudo' not found on this system."; return 64; fi
-   if ! sudo -l -- tee -a &>/dev/null; then echo "$__fn: Error: User $USER misses required sudo permission for 'tee -a'"; return 64; fi
+   if ! hash "sudo" &>/dev/null; then echo "$$__fn: Error: Required command \'sudo\' not found on this system."; return 64;
+elif ! sudo -l -- $permission &>/dev/null; then echo "$$__fn: Error: User $$USER misses required sudo permission for \'$permission\'"; return 64; fi
 
 ####### sudo-append ####### START
 echo "Appending to [$_FILE_PATH]..."
@@ -2336,9 +2336,9 @@ function __impl-sudo-write() {
             echo "      The content to write."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -2418,10 +2418,10 @@ function __impl-sudo-write() {
       echo "$__fn: Error: Parameter CONTENT must be specified."; return 64
    fi
 
-   if ! hash "sudo" &>/dev/null; then echo "$__fn: Error: Required command 'sudo' not found on this system."; return 64; fi
-   if ! sudo -l -- sh -c &>/dev/null; then echo "$__fn: Error: User $USER misses required sudo permission for 'sh -c'"; return 64; fi
-   if ! hash "sudo" &>/dev/null; then echo "$__fn: Error: Required command 'sudo' not found on this system."; return 64; fi
-   if ! sudo -l -- sh chown &>/dev/null; then echo "$__fn: Error: User $USER misses required sudo permission for 'sh chown'"; return 64; fi
+   if ! hash "sudo" &>/dev/null; then echo "$$__fn: Error: Required command \'sudo\' not found on this system."; return 64;
+elif ! sudo -l -- $permission &>/dev/null; then echo "$$__fn: Error: User $$USER misses required sudo permission for \'$permission\'"; return 64; fi
+   if ! hash "sudo" &>/dev/null; then echo "$$__fn: Error: Required command \'sudo\' not found on this system."; return 64;
+elif ! sudo -l -- $permission &>/dev/null; then echo "$$__fn: Error: User $$USER misses required sudo permission for \'$permission\'"; return 64; fi
 
 ####### sudo-write ####### START
 echo "Writing [$_FILE_PATH]..."
@@ -2490,12 +2490,12 @@ function __impl-tail-reverse() {
             echo "Options:"
             echo -e "\033[1m-n, --lines N\033[22m (integer: ?-?)"
             echo "        The maximum number of lines to output."
-            echo -e "\033[1m-u, --unique\033[22m "
+            echo -e "\033[1m-u, --unique\033[22m"
             echo "        Don't print duplicates."
             echo "    -----------------------------"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -2638,9 +2638,9 @@ function __impl-test-all-filesystem() {
             echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."

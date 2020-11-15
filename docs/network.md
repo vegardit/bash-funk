@@ -51,9 +51,9 @@ Options:
 -d, --duration SECONDS (integer: ?-?)
         Duration in seconds to block the port.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -106,12 +106,12 @@ Parameters:
       Number of seconds to try to connect to the given port. Default is 5 seconds.
 
 Options:
--v, --verbose 
+-v, --verbose
         Prints additional information during command execution.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -166,9 +166,9 @@ Usage: -my-ips [OPTION]...
 Prints the configured IP v4 addresses of this host excluding 127.0.0.1.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -195,9 +195,9 @@ Options:
 -m, --method TYPE (one of: [finger,ftp,https,nslookup,telnet])
         Method to determine the public hostname. Default is 'https'.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -257,9 +257,9 @@ Options:
 -m, --method TYPE (one of: [dns,http,https,nslookup,telnet])
         Method to determine the public IP v4 address. Default is 'http'.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -325,14 +325,14 @@ Parameters:
       Number of the TCP port to be used.
 
 Options:
-    --disconnect_when string 
+    --disconnect_when string
         String that can be send to the server to disconnect the current connection.
-    --stop_when string 
+    --stop_when string
         String that can be send to the server to shut it down.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -395,16 +395,16 @@ Sets the proxy environment variables.
 Parameters:
   PROXY_URL (required)
       The proxy URL to set.
-  NO_PROXY 
+  NO_PROXY
       Proxy exclusions.
 
 Options:
--v, --verbose 
+-v, --verbose
         Prints additional information during command execution.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -445,9 +445,9 @@ Usage: -test-all-network [OPTION]...
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.

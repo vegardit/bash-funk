@@ -44,7 +44,7 @@ Usage: -ansi-alternate [OPTION]... [ANSI_SEQUENCE]...
 Alternately colorizes the line read from stdin. If stdout is no terminal highlighting is disabled automatically.
 
 Parameters:
-  ANSI_SEQUENCE 
+  ANSI_SEQUENCE
       ANSI escape sequence used for every n-th row, defaults to' '\033[35m'.
 
 Options:
@@ -53,9 +53,9 @@ Options:
     --skip LINES (integer: 0-?)
         Do not colorize the first N lines.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -129,18 +129,18 @@ Usage: -ansi-bold [OPTION]... [TEXT]
 Sets bold mode or prints the given text in bold.
 
 Parameters:
-  TEXT 
+  TEXT
       The text to print in bold.
 
 Options:
-    --off 
+    --off
         Print the ANSI escape sequence that disables sets bold attribute.
-    --on 
+    --on
         Print the ANSI escape sequence that enables sets bold attribute.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -172,12 +172,12 @@ Parameters:
       Prefix to be used for the declared variables.
 
 Options:
--e, --escape 
+-e, --escape
         If specified the escape code will be printed as octal value .
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -251,16 +251,16 @@ Usage: -ansi-colors-supported [OPTION]... [NUM_COLORS]
 Determines if the given number of ANSI colors is supported by the current terminal. If NUM_COLORS is specified, the exit value indicates if the color range is supported. If NUM_COLORS is not specified, the number of supported colors is printed with exit code 0.
 
 Parameters:
-  NUM_COLORS 
+  NUM_COLORS
       Number of colors that need to be supported.
 
 Options:
--v, --verbose 
+-v, --verbose
         Prints additional information during command execution.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -313,9 +313,9 @@ Usage: -ansi-colors16 [OPTION]...
 Prints a table with 8/16 ANSI colors.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -356,9 +356,9 @@ Usage: -ansi-colors256 [OPTION]...
 Prints a table with 256 ANSI colors.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -477,9 +477,9 @@ Usage: -ansi-reset [OPTION]...
 Prints an ANSI escape sequence that reset all ANSI attributes.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -499,18 +499,18 @@ Usage: -ansi-ul [OPTION]... [TEXT]
 Sets underlined mode or prints the given text underlined.
 
 Parameters:
-  TEXT 
+  TEXT
       The text to print underlined.
 
 Options:
-    --off 
+    --off
         Print the ANSI escape sequence that disables sets underlined attribute.
-    --on 
+    --on
         Print the ANSI escape sequence that enables sets underlined attribute.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -538,7 +538,7 @@ Usage: -cursor-pos [OPTION]...
 Performs ANSI cursor operations.
 
 Options:
-    --assign VARNAME 
+    --assign VARNAME
         Assigns the current cursor position to the variable with the given name.
 -d, --down [LINES] (default: '1', integer: ?-?)
         Moves the cursor n lines down.
@@ -546,22 +546,22 @@ Options:
         Send the ANSI sequences to the given file descriptor.
 -l, --left [COLUMNS] (default: '1', integer: ?-?)
         Move the cursor n columns forward.
-    --print 
+    --print
         Prints the current cursor position.
-    --restore 
+    --restore
         Restores the last saved cursor position.
 -r, --right [COLUMNS] (default: '1', integer: ?-?)
         Move the cursor n columns backward.
-    --save 
+    --save
         Saves the current cursor position.
-    --set ROW_AND_COL 
+    --set ROW_AND_COL
         Sets the cursor position (ROW:COL).
 -u, --up [LINES] (default: '1', integer: ?-?)
         Moves the cursor n lines up.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -620,9 +620,9 @@ Usage: -test-all-ansi [OPTION]...
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.

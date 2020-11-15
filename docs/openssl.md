@@ -47,20 +47,20 @@ Options:
         Private key file of the signing CA.
     --aliases NAME1[,...] (pattern: "[*a-zA-Z0-9_.-]+")
         Additional DNS aliases (alternative subject names).
-    --dh1024 
+    --dh1024
         Generate a certificate with DH 1024 params, that will also works with older Java 5/6 clients which otherwise would throw 'Could not generate DH keypair' exception.
--f, --force 
+-f, --force
         Do not prompt before overwriting.
     --keysize SIZE (integer: 1-?)
         Number of bits of the private key. Default is 2048.
-    --subject VALUE 
+    --subject VALUE
         Certificate subject instead of '/CN=<COMMON_NAME>'.
-    --validity DAYS 
+    --validity DAYS
         Validity in days. Default is 1095.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -153,18 +153,18 @@ Parameters:
       Common name of the CA.
 
 Options:
--f, --force 
+-f, --force
         Do not prompt before overwriting.
     --keysize SIZE (integer: 1-?)
         Number of bits of the private key. Default is 4096.
-    --subject VALUE 
+    --subject VALUE
         Certificate subject instead of '/CN=<COMMON_NAME>'.
-    --validity DAYS 
+    --validity DAYS
         Validity in days. Default is 3650.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -202,9 +202,9 @@ Usage: -test-all-openssl [OPTION]...
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.

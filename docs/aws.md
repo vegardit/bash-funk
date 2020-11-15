@@ -47,9 +47,9 @@ Usage: -aws-account-id [OPTION]...
 Prints this server's AWS account ID.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -71,9 +71,9 @@ Usage: -aws-az [OPTION]...
 Prints this server's AWS availability zone.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -98,16 +98,16 @@ Requirements:
   + Command 'aws' must be available.
 
 Parameters:
-  STACK_NAME 
+  STACK_NAME
       Name of the stack to describe.
 
 Options:
-    --region ID 
+    --region ID
         AWS region.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -138,9 +138,9 @@ Usage: -aws-instance-id [OPTION]...
 Prints this server's AWS instance ID.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -162,12 +162,12 @@ Usage: -aws-is-ec2 [OPTION]...
 Determins if this server is an EC2 instance.
 
 Options:
--v, --verbose 
+-v, --verbose
         Prints additional information during command execution.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -193,9 +193,9 @@ Usage: -aws-private-ip [OPTION]...
 Prints this server's AWS private IP address.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -217,9 +217,9 @@ Usage: -aws-region [OPTION]...
 Prints this server's AWS region.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -244,9 +244,9 @@ Requirements:
   + Command 'aws' must be available.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -270,9 +270,9 @@ Usage: -aws-vpc-cidr-block [OPTION]...
 Prints this server's AWS VPC CIDR Block.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -295,9 +295,9 @@ Usage: -aws-vpc-id [OPTION]...
 Prints this server's AWS VPC ID.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -320,9 +320,9 @@ Usage: -test-all-aws [OPTION]...
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.

@@ -71,9 +71,9 @@ Parameters:
       The path to check.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -101,20 +101,20 @@ Parameters:
       New user e-mail to set.
 
 Options:
-    --author 
+    --author
         Indicates to change the author date of the commit.
-    --committer 
+    --committer
         Indicates to change the committer date of the commit.
-    --global 
+    --global
         Performs the change against all tags and branches.
-    --pull 
+    --pull
         Execute 'git pull' before altering the commit(s).
-    --push 
+    --push
         Execute 'git push --force' after altering the commit(s).
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -172,18 +172,18 @@ Parameters:
       The new date to set.
 
 Options:
-    --author 
+    --author
         Indicates to change the author date of the commit.
-    --committer 
+    --committer
         Indicates to change the committer date of the commit.
-    --pull 
+    --pull
         Execute 'git pull' before altering the commit.
-    --push 
+    --push
         Execute 'git push --force' after altering the commit.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -236,14 +236,14 @@ Parameters:
 Options:
     --pr PR_NUMBER (integer: 1-?)
         First fetches the pull request with the given number to be able to cherry pick from that PR.
-    --pull 
+    --pull
         Execute 'git pull' before cherry picking.
-    --push 
+    --push
         Execute 'git push --force' after cherry picking.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -275,14 +275,14 @@ Usage: -git-cleanse [OPTION]...
 Reverts any uncomitted changes in the local working tree including untracked files.
 
 Options:
-    --pull 
+    --pull
         Execute 'git pull' after reset/clean.
--y, --yes 
+-y, --yes
         Answer interactive prompts with 'yes'.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -321,9 +321,9 @@ Parameters:
       The name of the branch to clone.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -347,12 +347,12 @@ Parameters:
       The name of the new branch.
 
 Options:
-    --push 
+    --push
         Execute 'git push --set-upstream origin <BRANCH_NAME>' after branch creation.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -388,9 +388,9 @@ Parameters:
       The name of the branch.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -416,12 +416,12 @@ Parameters:
       The name of the branch.
 
 Options:
-    --force 
+    --force
         Delete the branch irrespective of its merged status.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -449,9 +449,9 @@ Parameters:
       The name of the branch.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -476,12 +476,12 @@ Parameters:
       The number of the pull request to fetch.
 
 Options:
--c, --checkout 
+-c, --checkout
         Checkout the PR branch after fetching.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -509,9 +509,9 @@ Parameters:
       Number of entries to be displayed.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -535,9 +535,9 @@ Parameters:
       The path to check.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -561,9 +561,9 @@ Parameters:
       The path to check.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -587,9 +587,9 @@ Parameters:
       File to reset.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -616,16 +616,16 @@ Parameters:
       Number of commits to squash.
 
 Options:
--m, --message COMMIT_MESSAGE 
+-m, --message COMMIT_MESSAGE
         The commit message to be used instead of the original ones.
-    --pull 
+    --pull
         Execute 'git pull' before squashing.
-    --push 
+    --push
         Execute 'git push --force' after squashing.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -667,9 +667,9 @@ Parameters:
       The new protocol to use.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -731,18 +731,18 @@ Usage: -git-sync-fork [OPTION]...
 Syncs the currently checked out branch of a forked repository with it's upstream repository. Uses 'git rebase -p' instead of 'git merge' by default to prevent an extra commit for the merge operation.
 
 Options:
--b, --branch NAME 
+-b, --branch NAME
         Branch in the forked repository to sync.
-    --merge 
+    --merge
         Use 'git merge' instead of 'git rebase -p'.
-    --push 
+    --push
         Push updates to origin after sync.
-    --upstream_branch NAME 
+    --upstream_branch NAME
         Branch in the upstream repository to sync with.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -808,14 +808,14 @@ Parameters:
       Number of commits to undo.
 
 Options:
-    --push 
+    --push
         Push updates to origin after undo.
-    --reset 
+    --reset
         Removes any changes from the working tree.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -843,20 +843,20 @@ Usage: -git-update-branch [OPTION]... [BRANCH] MASTER
 Updates the given branch using 'git rebase -p' by default.
 
 Parameters:
-  BRANCH 
+  BRANCH
       Name of the branch to update.
   MASTER (required)
       Name of the branch to get updates from.
 
 Options:
-    --merge 
+    --merge
         Use 'git merge' instead of 'git rebase -p'. Rule of thumb: use 'git rebase -p' for updating personal branches and 'git merge' for updating shared branches with commits by others.
-    --push 
+    --push
         Push updates to origin after sync.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -898,9 +898,9 @@ Parameters:
       The github repository to check, e.g. 'vegardit/bash-funk'.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -923,9 +923,9 @@ Usage: -test-all-git [OPTION]...
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.

@@ -55,9 +55,9 @@ function __impl-cpu-count() {
             echo "Prints the number of logical processors."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -172,9 +172,9 @@ function __impl-cpu-perf() {
             echo -e "\033[1m-m, --mode MODE\033[22m (one of: [openssl-aes128,openssl-aes256,openssl-rsa1024,openssl-rsa2048,openssl-rsa4096,cryptsetup-aes128,cryptsetup-aes256,dd-md5sum,dd-sha256sum,dd-sha512sum])"
             echo "        Select the benchmark mode."
             echo "    -----------------------------"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -243,10 +243,18 @@ function __impl-cpu-perf() {
 ####### cpu-perf ####### START
 local _mode=${_mode:-openssl-rsa1024}
 case $_mode in
-   openssl-aes*) openssl speed -multi $(grep processor /proc/cpuinfo | wc -l) aes-${_mode#*aes}-cbc ;;
-   openssl-rsa*) openssl speed -multi $(grep processor /proc/cpuinfo | wc -l) ${_mode#*-} ;;
+   openssl-aes*) openssl speed -multi $(${BASH_FUNK_PREFIX:--}cpu-count) aes-${_mode#*aes}-cbc ;;
+   openssl-rsa*) openssl speed -multi $(${BASH_FUNK_PREFIX:--}cpu-count) ${_mode#*-} ;;
    cryptsetup-*) cryptsetup benchmark --cipher aes-cbc --key-size ${_mode#cryptsetup-} ;;
    dd-*)
+      if ! hash dd &>/dev/null; then
+         echo "$__fn: Required command 'dd' is not available."
+         return 1
+      fi
+      if ! hash ${_mode#dd-} &>/dev/null; then
+         echo "$__fn: Required command '${_mode#dd-}' is not available."
+         return 1
+      fi
       [[ "$OSTYPE" == "darwin"* ]] && local _bs=1m || local _bs=1M
       dd if=/dev/zero bs=$_bs count=1024 2> >(head -3 | tail -1) > >(${_mode#dd-} >/dev/null)
      ;;
@@ -325,17 +333,14 @@ function __impl-disk-latency() {
             echo
             echo "Determines disk latency in milliseconds using 'dd'."
             echo
-            echo "Requirements:"
-            echo "  + Command 'dd' must be available."
-            echo
             echo "Parameters:"
             echo -e "  \033[1mPATH\033[22m (default: '.', directory)"
             echo "      Path where to create the test files."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -409,19 +414,30 @@ function __impl-disk-latency() {
       if [[ ! -w "$_PATH" ]]; then echo "$__fn: Error: Directory '$_PATH' for parameter PATH is not writeable by user '$USER'."; return 64; fi
    fi
 
-   if ! hash "dd" &>/dev/null; then echo "$__fn: Error: Required command 'dd' not found on this system."; return 64; fi
-
 ####### disk-latency ####### START
-local testFile="$(mktemp "--tmpdir=$_PATH")"
-local ddResult
-if ddResult=$(set -o pipefail; dd if=/dev/zero "of=$testFile" bs=512 count=1000 oflag=dsync 2>&1 | tail -1 | sed -E 's/.*copied, ([0-9.]+) .+/\1 ms/'); then
-   rm "$testFile"
-   echo "$ddResult disk latency on device $(df -P "$_PATH" | tail -1 | cut -d' ' -f1)"
-   return 0
+if hash ioping &>/dev/null; then
+   ioping -c 1 "$_PATH"
 else
-   rm "$testFile"
-   echo $ddResult
-   return 1
+   if [[ $OSTYPE == "darwin"* ]]; then
+      local testFile="$(mktemp "$_PATH/XXXXXX")"
+   else
+      local testFile="$(mktemp --tmpdir="$_PATH")"
+   fi
+
+   if ! hash dd &>/dev/null; then
+      echo "$__fn: Required command 'dd' or 'ioping' is not available."
+      return 1
+   fi
+   local ddResult
+   if ddResult=$(set -o pipefail; dd if=/dev/zero "of=$testFile" bs=512 count=1000 oflag=dsync 2>&1 | tail -1 | sed -E 's/.*copied, ([0-9.]+) .+/\1 ms/'); then
+      rm "$testFile"
+      echo "$ddResult disk latency on device $(df -P "$_PATH" | tail -1 | cut -d' ' -f1)"
+      return 0
+   else
+      rm "$testFile"
+      echo $ddResult
+      return 1
+   fi
 fi
 ####### disk-latency ####### END
 }
@@ -490,9 +506,9 @@ function __impl-disk-perf() {
             echo -e "\033[1m    --size SIZE\033[22m (integer: 1-?)"
             echo "        Test file size in MB (Default is 2048MB)."
             echo "    -----------------------------"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -597,7 +613,11 @@ case $_mode in
          echo "$__fn: Required command 'dd' is not available."
          return 1
       fi
-      local testFile="$(mktemp --tmpdir="$_PATH")"
+      if [[ $OSTYPE == "darwin"* ]]; then
+         local testFile=$(mktemp "$_PATH/XXXXXX")
+      else
+         local testFile=$(mktemp --tmpdir="$_PATH")
+      fi
       echo "Testing single-threaded sequential write performance..."
       dd if=/dev/zero of="${testFile}" bs=1M count=${_size} conv=fdatasync 2>&1 | head -3 | tail -1
       echo
@@ -609,15 +629,19 @@ case $_mode in
          echo "$__fn: Required command 'fio' is not available. You can also try with option '--mode dd'."
          return 1
       fi
-      local testFile=$(basename $(mktemp --dry-run --tmpdir="$_PATH"))
+      if [[ $OSTYPE == "darwin"* ]]; then
+         local testFile=$(basename $(mktemp -u "$_PATH/XXXXXX"))
+      else
+         local testFile=$(basename $(mktemp --dry-run --tmpdir="$_PATH"))
+      fi
       echo "Testing multi-threaded random write performance..."
-      fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(grep processor /proc/cpuinfo | wc -l) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randwrite
+      fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(${BASH_FUNK_PREFIX:--}cpu-count) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randwrite
       echo
       echo "Testing multi-threaded random read performance..."
-      fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(grep processor /proc/cpuinfo | wc -l) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randread
+      fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(${BASH_FUNK_PREFIX:--}cpu-count) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randread
       echo
       echo "Testing multi-threaded random read-write (3:1) performance..."
-      fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(grep processor /proc/cpuinfo | wc -l) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randrw --rwmixread=75
+      fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(${BASH_FUNK_PREFIX:--}cpu-count) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randrw --rwmixread=75
      ;;
 esac
 ####### disk-perf ####### END
@@ -698,9 +722,9 @@ function __impl-scp-perf() {
             echo -e "\033[1m-P, --port PORT\033[22m (integer: 0-65535)"
             echo "        Ssh port."
             echo "    -----------------------------"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -877,9 +901,9 @@ function __impl-test-all-performance() {
             echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."

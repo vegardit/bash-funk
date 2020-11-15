@@ -49,9 +49,9 @@ Usage: -test-all [OPTION]...
 Executes the selftests of all loaded bash-funk commands.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -73,9 +73,9 @@ Usage: -test-all-test [OPTION]...
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -106,12 +106,12 @@ Usage: -test-fn-flags [OPTION]...
 Test function with custom flags.
 
 Options:
--m, --myflag 
+-m, --myflag
         My flag.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -139,9 +139,9 @@ Usage: -test-fn-multi-value-options [OPTION]...
 Test function with multi value options.
 
 Options:
--a, --aa [...] 
+-a, --aa [...]
         Option a.
--b, --bb v1[,v2..2] 
+-b, --bb v1[,v2..2]
         Option b.
 -c, --cc [...] (integer: ?-?)
         Option c.
@@ -154,9 +154,9 @@ Options:
 -g, --gg [...] (pattern: "[a-z]+")
         Option g.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -200,9 +200,9 @@ Parameters:
       Param AA.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -244,9 +244,9 @@ Parameters:
       Param FF.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -278,9 +278,9 @@ Parameters:
       Param BB.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -304,12 +304,12 @@ Usage: -test-fn-noargs [OPTION]...
 Test function with no arguments.
 
 Options:
--v, --verbose 
+-v, --verbose
         Prints additional information during command execution.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -338,12 +338,12 @@ Requirements:
   + Command 'hash' must be available.
 
 Options:
--v, --verbose 
+-v, --verbose
         Prints additional information during command execution.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -369,12 +369,12 @@ Requirements:
   + Command 'some_random_nonexistent_command' must be available.
 
 Options:
--v, --verbose 
+-v, --verbose
         Prints additional information during command execution.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -396,7 +396,7 @@ Test function with single value options.
 Options:
 -a, --aa [v] (default: 'cat')
         Option a.
--b, --bb v 
+-b, --bb v
         Option b.
 -c, --cc v (integer: ?-?)
         Option c.
@@ -409,9 +409,9 @@ Options:
 -g, --gg v (pattern: "[a-z]+")
         Option g.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -465,9 +465,9 @@ Parameters:
       Param FF.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -499,9 +499,9 @@ Parameters:
       Param BB.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.

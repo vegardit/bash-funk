@@ -52,9 +52,9 @@ Parameters:
       Password to open the key file.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -88,16 +88,16 @@ Parameters:
       Private key filename.
 
 Options:
--C, --comment COMMENT 
+-C, --comment COMMENT
         Comment.
     --keysize SIZE (integer: 1-?)
         Number of bits of the private key. Default is 4096.
--p, --password PASSWORD 
+-p, --password PASSWORD
         Password to protect the private key file.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -129,9 +129,9 @@ Parameters:
       Private key file.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -151,13 +151,13 @@ Usage: -ssh-reconnect [OPTION]... [GREP_PATTERN]...
 Dialog that displays the last 10 issued SSH commands to execute one of them.
 
 Parameters:
-  GREP_PATTERN 
+  GREP_PATTERN
       Only show SSH commands that contain the given patterns.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -204,9 +204,9 @@ Parameters:
       Remote SSH port.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -235,12 +235,12 @@ Parameters:
       SSH command line options.
 
 Options:
-    --password PASSWORD 
+    --password PASSWORD
         The password to be used.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -285,9 +285,9 @@ Usage: -test-all-ssh [OPTION]...
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.

@@ -41,16 +41,16 @@ Requirements:
   + Command 'awk' must be available.
 
 Parameters:
-  FORMULA 
+  FORMULA
       The formula to calculate.
 
 Options:
     --round PRECISION (integer: 0-?)
         Rounds the value with the given precision.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -104,9 +104,9 @@ Parameters:
       Number of decimal digits.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -143,9 +143,9 @@ Options:
     --using COMMAND (one of: [awk,bc,perl,python])
         Specifies which command to use for calculation.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -262,9 +262,9 @@ Usage: -test-all-math [OPTION]...
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.

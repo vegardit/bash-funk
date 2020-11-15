@@ -47,9 +47,9 @@ Parameters:
       Amount of RAM in MB to allocate.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -78,9 +78,9 @@ Parameters:
       The memory unit of the printed value.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -124,9 +124,9 @@ Usage: -meminfo [OPTION]...
 Prints memory information from /proc/meminfo.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -157,9 +157,9 @@ Parameters:
       The memory unit of the printed value.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -205,12 +205,12 @@ Prints memory consumption information of all running processes.
 Options:
     --color [WHEN] (default: 'auto', one of: [always,auto,never])
         Indicates when to colorize the output.
--g, --group 
+-g, --group
         Group memory usage of same processes.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -274,9 +274,9 @@ Usage: -test-all-memory [OPTION]...
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.

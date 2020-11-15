@@ -61,12 +61,12 @@ Parameters:
       Files and directories to compress.
 
 Options:
-    --checkpoint 
+    --checkpoint
         Use tar's --checkpoint feature instead of pv for progress monitoring. This is considerably slower in Cygwin.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -106,12 +106,12 @@ Parameters:
       Files and directories to compress.
 
 Options:
-    --checkpoint 
+    --checkpoint
         Use tar's --checkpoint feature instead of pv for progress monitoring. This is considerably slower in Cygwin.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -138,9 +138,9 @@ Usage: -test-all-compression [OPTION]...
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -175,12 +175,12 @@ Parameters:
       Decompress location.
 
 Options:
-    --checkpoint 
+    --checkpoint
         Use tar's --checkpoint feature instead of pv for progress monitoring. This is considerably slower in Cygwin.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -217,12 +217,12 @@ Parameters:
       Decompress location.
 
 Options:
-    --checkpoint 
+    --checkpoint
         Use tar's --checkpoint feature instead of pv for progress monitoring. This is considerably slower in Cygwin.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.

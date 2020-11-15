@@ -55,9 +55,9 @@ Parameters:
       The ASCII string to convert.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -85,9 +85,9 @@ Parameters:
       The hexa-decimal string to convert.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -115,9 +115,9 @@ Parameters:
       The path to normalize.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -150,13 +150,13 @@ Prints strings joined with the given separator.
 Parameters:
   SEPARATOR (required)
       The separator to join the strings.
-  STRING 
+  STRING
       The strings to join.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -200,9 +200,9 @@ Parameters:
       The string to convert.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -232,18 +232,18 @@ Matches the given string(s) against the glob pattern, prints the found matches a
 Parameters:
   GLOB_PATTERN (required)
       The regex pattern to match the string(s) against.
-  STRING 
+  STRING
       The strings to check.
 
 Options:
--a, --all 
+-a, --all
         Specifies that all input strings must match.
--v, --verbose 
+-v, --verbose
         Prints additional information during command execution.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -307,18 +307,18 @@ Matches the given string(s) against the regex pattern, prints the found matches 
 Parameters:
   REGEX_PATTERN (required)
       The regex pattern to match the string(s) against.
-  STRING 
+  STRING
       The strings to check.
 
 Options:
--a, --all 
+-a, --all
         Specifies that all input strings must match.
--v, --verbose 
+-v, --verbose
         Prints additional information during command execution.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -385,9 +385,9 @@ Parameters:
       Number of times to repeat the string.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -416,9 +416,9 @@ Parameters:
       The string to trim.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -446,9 +446,9 @@ Parameters:
       The string to convert.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -476,13 +476,13 @@ Usage: -strip-ansi [OPTION]... [STRING]...
 Removes any ANSI escape sequences from the given string or from stdin.
 
 Parameters:
-  STRING 
+  STRING
       The strings to strip.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -521,9 +521,9 @@ Parameters:
       The separator.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -553,9 +553,9 @@ Parameters:
       The separator.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -585,9 +585,9 @@ Parameters:
       The separator.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -617,9 +617,9 @@ Parameters:
       The separator.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -651,9 +651,9 @@ Parameters:
       The end separator.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -678,9 +678,9 @@ Usage: -test-all-strings [OPTION]...
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.

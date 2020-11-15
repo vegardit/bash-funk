@@ -80,9 +80,9 @@ Usage: -docker-debug [OPTION]...
 Installs and executes the docker-debug tool (https://github.com/zeromake/docker-debug).
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -102,9 +102,9 @@ Usage: -docker-log [OPTION]...
 Displays dockerd's log messages in realtime.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -124,9 +124,9 @@ Usage: -docker-netshoot [OPTION]...
 Starts Netshoot (https://github.com/nicolaka/netshoot) - a network trouble-shooting container.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -158,12 +158,12 @@ Usage: -docker-sh [OPTION]...
 Displays a list of all running containers and starts an interactive shell (/bin/sh) for the selected one.
 
 Options:
--u, --user USER 
+-u, --user USER
         Login user.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -193,9 +193,9 @@ Usage: -docker-top [OPTION]...
 Starts Dockly (https://lirantal.github.io/dockly/).
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -215,9 +215,9 @@ Usage: -swarm-cluster-id [OPTION]...
 Prints the Swarm cluster ID.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -237,9 +237,9 @@ Usage: -test-all-docker [OPTION]...
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
