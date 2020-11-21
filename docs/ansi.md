@@ -542,8 +542,6 @@ Options:
         Assigns the current cursor position to the variable with the given name.
 -d, --down [LINES] (default: '1', integer: ?-?)
         Moves the cursor n lines down.
-    --fd [NUM] (default: '1', integer: ?-?)
-        Send the ANSI sequences to the given file descriptor.
 -l, --left [COLUMNS] (default: '1', integer: ?-?)
         Move the cursor n columns forward.
     --print
@@ -570,40 +568,40 @@ Options:
 *Implementation:*
 ```bash
 if [[ $_save ]]; then
-   >&$_fd echo -en "\033[s"
+   echo -en "\033[s"
 fi
 
 if [[ $_restore ]]; then
-   >&$_fd echo -en "\033[u"
+   echo -en "\033[u"
 fi
 
 if [[ $_up ]]; then
-   >&$_fd echo -en "\033[${_up}A"
+   echo -en "\033[${_up}A"
 fi
 
 if [[ $_down ]]; then
-   >&$_fd echo -en "\033[${_up}B"
+   echo -en "\033[${_down}B"
 fi
 
 if [[ $_right ]]; then
-   >&$_fd echo -en "\033[${_right}C"
+   echo -en "\033[${_right}C"
 fi
 
 if [[ $_left ]]; then
-   >&$_fd echo -en "\033[${_left}D"
+   echo -en "\033[${_left}D"
 fi
 
 if [[ $_set ]]; then
-   >&$_fd echo -en "\033[${_set//:/;}H"
+   echo -en "\033[${_set//:/;}H"
 fi
 
 if [[ $_print || $_assign ]]; then
    local pos
-   >&$_fd echo -en "\E[6n" && read -sdR pos
+   echo -en "\E[6n" && read -sdR pos
    pos=${pos#*[}
    pos=${pos//;/:}
    if [[ $_print ]]; then
-      >&$_fd echo $pos
+      echo $pos
    fi
    if [[ $_assign ]]; then
       eval "$_assign=\"$pos\""

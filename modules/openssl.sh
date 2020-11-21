@@ -11,12 +11,7 @@
 # documentation: https://github.com/vegardit/bash-funk/tree/master/docs/openssl.md
 #
 
-
-function -is-loadable() {
-   hash openssl &>/dev/null
-}
-
-if ${BASH_FUNK_PREFIX:--}is-loadable; then
+if hash openssl &>/dev/null; then
 function -gen-x509cert() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
@@ -618,4 +613,3 @@ __BASH_FUNK_FUNCS+=( gen-x509cert gen-x509rootca test-all-openssl )
 else
    echo "SKIPPED"
 fi
-unset -f -- ${BASH_FUNK_PREFIX:--}is-loadable

@@ -59,14 +59,14 @@ function __impl-choose() {
             echo "      Allowed options to choose from."
             echo
             echo "Options:"
-            echo -e "\033[1m    --assign VARNAME\033[22m "
+            echo -e "\033[1m    --assign VARNAME\033[22m"
             echo "        Assigns the selected value to the variable with the given name instead of printing to stdout."
-            echo -e "\033[1m    --default OPTION\033[22m "
+            echo -e "\033[1m    --default OPTION\033[22m"
             echo "        The option to pre-selected."
             echo "    -----------------------------"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -264,9 +264,9 @@ function __impl-help() {
             echo "Prints the online help of all bash-funk commands."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -372,9 +372,9 @@ function __impl-please() {
             echo "  + Command 'sudo' must be available."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -488,9 +488,9 @@ function __impl-reload() {
             echo "Reloads bash-funk."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -601,9 +601,9 @@ function __impl-root() {
             echo "Starts an interactive shell as root user. Same as 'sudo -i'."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -704,9 +704,9 @@ function __impl-test-all-misc() {
             echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -815,12 +815,12 @@ function __impl-tweak-bash() {
             echo "Performs some usability configurations of Bash."
             echo
             echo "Options:"
-            echo -e "\033[1m-v, --verbose\033[22m "
+            echo -e "\033[1m-v, --verbose\033[22m"
             echo "        Prints additional information during command execution."
             echo "    -----------------------------"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -891,7 +891,7 @@ if [[ $- == *i* ]]; then
 fi
 
 # make ls colorful by default except on MacOS where it is not supported
-[[ ${OSTYPE} =~ "darwin" ]] || alias -- ls="command ls --color=auto"
+[[ $OSTYPE == "darwin"* ]] || alias -- ls="command ls --color=auto"
 
 #
 # aliases
@@ -1007,14 +1007,14 @@ function __impl-update() {
             echo "Updates bash-funk to the latest code from github (https://github.com/vegardit/bash-funk). All local modifications are overwritten."
             echo
             echo "Options:"
-            echo -e "\033[1m-r, --reload\033[22m "
+            echo -e "\033[1m-r, --reload\033[22m"
             echo "        Reloads the bash-funk after updating."
-            echo -e "\033[1m-y, --yes\033[22m "
+            echo -e "\033[1m-y, --yes\033[22m"
             echo "        Answer interactive prompts with 'yes'."
             echo "    -----------------------------"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -1174,12 +1174,12 @@ function __impl-var-exists() {
             echo "      Name of the Bash variable to check."
             echo
             echo "Options:"
-            echo -e "\033[1m-v, --verbose\033[22m "
+            echo -e "\033[1m-v, --verbose\033[22m"
             echo "        Prints additional information during command execution."
             echo "    -----------------------------"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -1332,9 +1332,9 @@ function __impl-wait() {
             echo "      Number of seconds to wait."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -1443,6 +1443,13 @@ function -timeout() {
       echo "Executes the COMMAND and aborts if it does not finish within the given TIMEOUT in seconds."
       [[ ${1:-} == "--help" ]] && return 0 || return 1
    fi
-   # see: http://mywiki.wooledge.org/BashFAQ/068
-   perl -e 'alarm shift; exec @ARGV' "$@";
+   if hash timeout 2>/dev/null; then
+      timeout "$@"
+   elif hash gtimeout 2>/dev/null; then
+      # MacOS: https://stackoverflow.com/a/21118126/5116073
+      gtimeout "$@"
+   else
+      # see: http://mywiki.wooledge.org/BashFAQ/068
+      perl -e 'alarm shift; exec @ARGV' "$@"
+   fi
 }

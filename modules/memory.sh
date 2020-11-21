@@ -11,12 +11,6 @@
 # documentation: https://github.com/vegardit/bash-funk/tree/master/docs/memory.md
 #
 
-
-function -is-loadable() {
-   [[ "$OSTYPE" != "darwin"* ]]
-}
-
-if ${BASH_FUNK_PREFIX:--}is-loadable; then
 function -alloc-mem() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
@@ -145,6 +139,7 @@ function __complete-alloc-mem() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}alloc-mem -- ${BASH_FUNK_PREFIX:--}alloc-mem
 
+if [ -e /proc/meminfo ]; then
 function -memfree() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
@@ -306,7 +301,9 @@ function __complete-memfree() {
    fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}memfree -- ${BASH_FUNK_PREFIX:--}memfree
+fi
 
+if [ -e /proc/meminfo ]; then
 function -meminfo() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
@@ -423,7 +420,9 @@ function __complete-meminfo() {
    fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}meminfo -- ${BASH_FUNK_PREFIX:--}meminfo
+fi
 
+if [ -e /proc/meminfo ]; then
 function -memtotal() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
@@ -585,6 +584,7 @@ function __complete-memtotal() {
    fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}memtotal -- ${BASH_FUNK_PREFIX:--}memtotal
+fi
 
 function -procmem() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
@@ -855,9 +855,9 @@ function __impl-test-all-memory() {
 
 ####### test-all-memory ####### START
 ${BASH_FUNK_PREFIX:--}alloc-mem --selftest && echo || return 1
-${BASH_FUNK_PREFIX:--}memfree --selftest && echo || return 1
-${BASH_FUNK_PREFIX:--}meminfo --selftest && echo || return 1
-${BASH_FUNK_PREFIX:--}memtotal --selftest && echo || return 1
+if [ -e /proc/meminfo ]; then ${BASH_FUNK_PREFIX:--}memfree --selftest && echo || return 1; fi
+if [ -e /proc/meminfo ]; then ${BASH_FUNK_PREFIX:--}meminfo --selftest && echo || return 1; fi
+if [ -e /proc/meminfo ]; then ${BASH_FUNK_PREFIX:--}memtotal --selftest && echo || return 1; fi
 ${BASH_FUNK_PREFIX:--}procmem --selftest && echo || return 1
 ####### test-all-memory ####### END
 }
@@ -883,9 +883,7 @@ function -help-memory() {
    echo -e "${p}procmem\033[0m  -  Prints memory consumption information of all running processes."
    echo -e "${p}test-all-memory\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
-__BASH_FUNK_FUNCS+=( alloc-mem memfree meminfo memtotal procmem test-all-memory )
-
-else
-   echo "SKIPPED"
-fi
-unset -f -- ${BASH_FUNK_PREFIX:--}is-loadable
+if [ -e /proc/meminfo ]; then __BASH_FUNK_FUNCS+=( memfree ); fi
+if [ -e /proc/meminfo ]; then __BASH_FUNK_FUNCS+=( meminfo ); fi
+if [ -e /proc/meminfo ]; then __BASH_FUNK_FUNCS+=( memtotal ); fi
+__BASH_FUNK_FUNCS+=( alloc-mem procmem test-all-memory )

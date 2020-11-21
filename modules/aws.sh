@@ -11,12 +11,7 @@
 # documentation: https://github.com/vegardit/bash-funk/tree/master/docs/aws.md
 #
 
-
-function -is-loadable() {
-   hash aws &>/dev/null || [[ -f /sys/hypervisor/uuid && $(head -c 3 /sys/hypervisor/uuid) == "ec2" ]]
-}
-
-if ${BASH_FUNK_PREFIX:--}is-loadable; then
+if hash aws &>/dev/null || [[ -f /sys/hypervisor/uuid && $(head -c 3 /sys/hypervisor/uuid) == "ec2" ]]; then
 function -aws-account-id() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
@@ -1257,4 +1252,3 @@ __BASH_FUNK_FUNCS+=( aws-account-id aws-az aws-describe-stack aws-instance-id aw
 else
    echo "SKIPPED"
 fi
-unset -f -- ${BASH_FUNK_PREFIX:--}is-loadable

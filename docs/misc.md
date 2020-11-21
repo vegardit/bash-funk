@@ -11,8 +11,15 @@ function -timeout() {
       echo "Executes the COMMAND and aborts if it does not finish within the given TIMEOUT in seconds."
       [[ ${1:-} == "--help" ]] && return 0 || return 1
    fi
-   # see: http://mywiki.wooledge.org/BashFAQ/068
-   perl -e 'alarm shift; exec @ARGV' "$@";
+   if hash timeout 2>/dev/null; then
+      timeout "$@"
+   elif hash gtimeout 2>/dev/null; then
+      # MacOS: https://stackoverflow.com/a/21118126/5116073
+      gtimeout "$@"
+   else
+      # see: http://mywiki.wooledge.org/BashFAQ/068
+      perl -e 'alarm shift; exec @ARGV' "$@"
+   fi
 }
 ```
 
@@ -62,14 +69,14 @@ Parameters:
       Allowed options to choose from.
 
 Options:
-    --assign VARNAME 
+    --assign VARNAME
         Assigns the selected value to the variable with the given name instead of printing to stdout.
-    --default OPTION 
+    --default OPTION
         The option to pre-selected.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -157,9 +164,9 @@ Usage: -help [OPTION]...
 Prints the online help of all bash-funk commands.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -184,9 +191,9 @@ Requirements:
   + Command 'sudo' must be available.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -217,9 +224,9 @@ Usage: -reload [OPTION]...
 Reloads bash-funk.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -249,9 +256,9 @@ Usage: -root [OPTION]...
 Starts an interactive shell as root user. Same as 'sudo -i'.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -271,9 +278,9 @@ Usage: -test-all-misc [OPTION]...
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -301,12 +308,12 @@ Usage: -tweak-bash [OPTION]...
 Performs some usability configurations of Bash.
 
 Options:
--v, --verbose 
+-v, --verbose
         Prints additional information during command execution.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -339,7 +346,7 @@ if [[ $- == *i* ]]; then
 fi
 
 # make ls colorful by default except on MacOS where it is not supported
-[[ ${OSTYPE} =~ "darwin" ]] || alias -- ls="command ls --color=auto"
+[[ $OSTYPE == "darwin"* ]] || alias -- ls="command ls --color=auto"
 
 #
 # aliases
@@ -408,14 +415,14 @@ Usage: -update [OPTION]...
 Updates bash-funk to the latest code from github (https://github.com/vegardit/bash-funk). All local modifications are overwritten.
 
 Options:
--r, --reload 
+-r, --reload
         Reloads the bash-funk after updating.
--y, --yes 
+-y, --yes
         Answer interactive prompts with 'yes'.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -486,12 +493,12 @@ Parameters:
       Name of the Bash variable to check.
 
 Options:
--v, --verbose 
+-v, --verbose
         Prints additional information during command execution.
     -----------------------------
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -529,9 +536,9 @@ Parameters:
       Number of seconds to wait.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.

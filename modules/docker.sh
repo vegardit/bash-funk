@@ -11,12 +11,7 @@
 # documentation: https://github.com/vegardit/bash-funk/tree/master/docs/docker.md
 #
 
-
-function -is-loadable() {
-   hash docker &>/dev/null
-}
-
-if ${BASH_FUNK_PREFIX:--}is-loadable; then
+if hash docker &>/dev/null; then
 function -docker-debug() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
@@ -803,10 +798,10 @@ function -docker-debug() {
    if [[ ! -e ~/.docker-debug/docker-debug.bin ]]; then
       echo "Installing the docker-debug tool (https://github.com/zeromake/docker-debug)..."
       mkdir -p ~/.docker-debug
-      if [[ $OSTYPE =~ "darwin" ]]; then
+      if [[ $OSTYPE == "darwin"* ]]; then
          curl -Lo ~/.docker-debug/docker-debug.bin https://github.com/zeromake/docker-debug/releases/download/0.6.3/docker-debug-darwin-amd64-upx
          chmod 700 ~/.docker-debug/docker-debug.bin
-      elif [[ $OSTYPE =~ "linux" ]]; then
+      elif [[ $OSTYPE == "linux"* ]]; then
          curl -Lo ~/.docker-debug/docker-debug.bin https://github.com/zeromake/docker-debug/releases/download/0.6.3/docker-debug-linux-amd64-upx
          chmod 700 ~/.docker-debug/docker-debug.bin
       else
@@ -830,4 +825,3 @@ function -docker-slim() {
 else
    echo "SKIPPED"
 fi
-unset -f -- ${BASH_FUNK_PREFIX:--}is-loadable

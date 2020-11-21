@@ -6,6 +6,10 @@ on:
     paths-ignore:
     - '**/*.md'
   pull_request:
+    paths-ignore:
+    - '**/*.md'
+  workflow_dispatch:
+    # https://github.blog/changelog/2020-07-06-github-actions-manual-triggers-with-workflow_dispatch/
 
 jobs:
 
@@ -38,6 +42,10 @@ jobs:
     - name: Install bc, rng-tools
       if: startsWith(matrix.os, 'ubuntu')
       run: sudo apt-get --no-install-recommends install -y bc rng-tools
+
+    - name: Install coreutils, ioping
+      if: startsWith(matrix.os, 'macos')
+      run: brew install coreutils ioping
 
     - name: Test bash-funk
       shell: bash

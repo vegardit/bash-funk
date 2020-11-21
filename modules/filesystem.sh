@@ -1497,7 +1497,7 @@ function __impl-ll() {
 [[ ! $_PATH ]] && _PATH=(.) || true
 
 local _ls="command ls -lAph \"${_PATH[@]}\""
-[[ ${OSTYPE} =~ "darwin" ]] && _ls="$_ls -G" || _ls="$_ls -I lost+found --color=always"
+[[ $OSTYPE == "darwin"* ]] && _ls="$_ls -G" || _ls="$_ls -I lost+found --color=always"
 eval $_ls | awk '
    BEGIN { dotDirs = ""; dirs = ""; dotFiles = ""; files = "" }
    /^total/                                                                                       { total = $0 }                    # capture total line
@@ -2260,8 +2260,8 @@ function __impl-sudo-append() {
       echo "$__fn: Error: Parameter CONTENT must be specified."; return 64
    fi
 
-   if ! hash "sudo" &>/dev/null; then echo "$$__fn: Error: Required command \'sudo\' not found on this system."; return 64;
-elif ! sudo -l -- $permission &>/dev/null; then echo "$$__fn: Error: User $$USER misses required sudo permission for \'$permission\'"; return 64; fi
+   if ! hash "sudo" &>/dev/null; then echo "$__fn: Error: Required command 'sudo' not found on this system."; return 64; fi
+   if ! sudo -l -- tee -a &>/dev/null; then echo "$__fn: Error: User $USER misses required sudo permission for 'tee -a'"; return 64; fi
 
 ####### sudo-append ####### START
 echo "Appending to [$_FILE_PATH]..."
@@ -2418,10 +2418,10 @@ function __impl-sudo-write() {
       echo "$__fn: Error: Parameter CONTENT must be specified."; return 64
    fi
 
-   if ! hash "sudo" &>/dev/null; then echo "$$__fn: Error: Required command \'sudo\' not found on this system."; return 64;
-elif ! sudo -l -- $permission &>/dev/null; then echo "$$__fn: Error: User $$USER misses required sudo permission for \'$permission\'"; return 64; fi
-   if ! hash "sudo" &>/dev/null; then echo "$$__fn: Error: Required command \'sudo\' not found on this system."; return 64;
-elif ! sudo -l -- $permission &>/dev/null; then echo "$$__fn: Error: User $$USER misses required sudo permission for \'$permission\'"; return 64; fi
+   if ! hash "sudo" &>/dev/null; then echo "$__fn: Error: Required command 'sudo' not found on this system."; return 64; fi
+   if ! sudo -l -- sh -c &>/dev/null; then echo "$__fn: Error: User $USER misses required sudo permission for 'sh -c'"; return 64; fi
+   if ! hash "sudo" &>/dev/null; then echo "$__fn: Error: Required command 'sudo' not found on this system."; return 64; fi
+   if ! sudo -l -- sh chown &>/dev/null; then echo "$__fn: Error: User $USER misses required sudo permission for 'sh chown'"; return 64; fi
 
 ####### sudo-write ####### START
 echo "Writing [$_FILE_PATH]..."

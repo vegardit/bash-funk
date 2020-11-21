@@ -285,8 +285,8 @@ Options:
 *Implementation:*
 ```bash
 -alloc-mem --selftest && echo || return 1
--memfree --selftest && echo || return 1
--meminfo --selftest && echo || return 1
--memtotal --selftest && echo || return 1
+if [ -e /proc/meminfo ]; then -memfree --selftest && echo || return 1; fi
+if [ -e /proc/meminfo ]; then -meminfo --selftest && echo || return 1; fi
+if [ -e /proc/meminfo ]; then -memtotal --selftest && echo || return 1; fi
 -procmem --selftest && echo || return 1
 ```

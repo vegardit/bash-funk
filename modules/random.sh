@@ -11,6 +11,7 @@
 # documentation: https://github.com/vegardit/bash-funk/tree/master/docs/random.md
 #
 
+if [ -e /proc/sys/kernel/random/entropy_avail ]; then
 function -entropy-available() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
@@ -55,9 +56,9 @@ function __impl-entropy-available() {
             echo "Determines if enough entropy bits are available perform a non-blocking read from /dev/random. Exit code 1 indicates entropy pool is not sufficiently filled."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -120,7 +121,7 @@ local avail=$(cat /proc/sys/kernel/random/entropy_avail)
 local required=$(cat /proc/sys/kernel/random/read_wakeup_threshold)
 echo "/proc/sys/kernel/random/entropy_avail: $avail"
 echo "/proc/sys/kernel/random/read_wakeup_threshold: $required"
-   (( avail > required ))
+(( avail > required ))
 ####### entropy-available ####### END
 }
 function __complete-entropy-available() {
@@ -134,7 +135,9 @@ function __complete-entropy-available() {
    fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}entropy-available -- ${BASH_FUNK_PREFIX:--}entropy-available
+fi
 
+if [ -e /proc/sys/kernel/random/entropy_avail ]; then
 function -fill-entropy() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
@@ -187,9 +190,9 @@ function __impl-fill-entropy() {
             echo "      Number of seconds the entropy pool will be filled."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -218,15 +221,15 @@ Available entropy bits after: 1039"
             __stdout="$($__fn )"; __rc=$?
             echo "$__stdout"
             if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-            __regex="^Available entropy bits before: [0-9]+.*$"
-            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Available entropy bits before: [0-9]+.*]."; return 64; fi
+            __regex="^.*Available entropy bits after: [0-9]+$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [.*Available entropy bits after: [0-9]+]."; return 64; fi
             echo -e "--> \033[32mOK\033[0m"
             echo -e "$ \033[1m$__fn 2\033[22m"
             __stdout="$($__fn 2)"; __rc=$?
             echo "$__stdout"
             if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
-            __regex="^Available entropy bits before: [0-9]+.*$"
-            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [Available entropy bits before: [0-9]+.*]."; return 64; fi
+            __regex="^.*Available entropy bits after: [0-9]+$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [.*Available entropy bits after: [0-9]+]."; return 64; fi
             echo -e "--> \033[32mOK\033[0m"
             echo "Testing function [$__fn]...DONE"
             return 0
@@ -275,9 +278,17 @@ cat /proc/sys/kernel/random/entropy_avail
 
 echo "Generating for ${_DURATION} seconds..."
 if rngd --help | grep -q -- --timeout; then
-   sudo rngd -r /dev/urandom -o /dev/random -f --timeout ${_DURATION}
+   sudo rngd --foreground -r /dev/urandom -o /dev/random --timeout ${_DURATION}
 else
-   ${BASH_FUNK_PREFIX:--}timeout ${_DURATION} sudo rngd -r /dev/urandom -o /dev/random -f
+   local timeoutCmd
+   if hash timeout 2>/dev/null; then
+      timeoutCmd="timeout"
+   elif hash gtimeout 2>/dev/null; then
+      timeoutCmd="gtimeout"
+   else
+      timeoutCmd="perl -e 'alarm shift; exec @ARGV'"
+   fi
+   sudo $timeoutCmd ${_DURATION} rngd --foreground -r /dev/urandom -o /dev/random
 fi
 
 echo -n "Available entropy bits after: "
@@ -295,6 +306,7 @@ function __complete-fill-entropy() {
    fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}fill-entropy -- ${BASH_FUNK_PREFIX:--}fill-entropy
+fi
 
 function -random-number() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
@@ -339,14 +351,20 @@ function __impl-random-number() {
             echo
             echo "Generates a random number of the given range. The range is inclusive."
             echo
+            echo "Requirements:"
+            echo "  * Either:"
+            echo "    + Command 'shuf' must be available."
+            echo "  * Or:"
+            echo "    + Command 'gshuf' must be available."
+            echo
             echo "Parameters:"
             echo -e "  \033[1mRANGE\033[22m (required, pattern: \"[1-9][0-9]*-[1-9][0-9]*\")"
             echo "      The numeric range LOW-HIGH, e.g. 1-5."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -426,8 +444,25 @@ function __impl-random-number() {
       echo "$__fn: Error: Parameter RANGE must be specified."; return 64
    fi
 
+   local __satisfied=0 __errors=()
+   if [[ $__satisfied == 0 ]]; then
+     local __has_error=0
+       if ! hash "shuf" &>/dev/null; then __has_error=1; __errors+=("Required command 'shuf' not found on this system."); fi
+     if [[ $__has_error == 0 ]]; then __satisfied=1; fi
+   fi
+   if [[ $__satisfied == 0 ]]; then
+     local __has_error=0
+       if ! hash "gshuf" &>/dev/null; then __has_error=1; __errors+=("Required command 'gshuf' not found on this system."); fi
+     if [[ $__has_error == 0 ]]; then __satisfied=1; fi
+   fi
+   if [[ $__satisfied == 0 ]]; then echo "$__fn: Error: One of these requirements must be met:"; printf "  * %s\n" "${__errors[@]}"; return 64; fi
+
 ####### random-number ####### START
-shuf -i ${_RANGE} -n 1
+if hash gshuf &>/dev/null; then # MacOS
+   gshuf -i ${_RANGE} -n 1
+else
+   shuf -i ${_RANGE} -n 1
+fi
 ####### random-number ####### END
 }
 function __complete-random-number() {
@@ -442,6 +477,7 @@ function __complete-random-number() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}random-number -- ${BASH_FUNK_PREFIX:--}random-number
 
+if ! [[ $OSTYPE == 'darwin'* && $GITHUB_ACTIONS == 'true' ]]; then
 function -random-string() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
@@ -492,9 +528,9 @@ function __impl-random-string() {
             echo "      String to choose random characters from."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -591,8 +627,8 @@ function __impl-random-string() {
    fi
 
 ####### random-string ####### START
-# "2>/dev/null" and "|| true" to mitigate "tr: write error: Broken pipe" on e.g. GitHub Actions
-env LC_CTYPE=C tr -dc "$_CHARS" </dev/urandom 2>/dev/null | head -c ${_LENGTH} || true
+# "2> >(grep -v "write error" >&2)" and "|| true" to mitigate "tr: write error: Broken pipe" on e.g. GitHub Actions
+env -i LC_CTYPE=C tr -dc "$_CHARS" </dev/urandom 2> >(grep -v "write error" >&2) | head -c ${_LENGTH} || true
 ####### random-string ####### END
 }
 function __complete-random-string() {
@@ -606,6 +642,7 @@ function __complete-random-string() {
    fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}random-string -- ${BASH_FUNK_PREFIX:--}random-string
+fi
 
 function -test-all-random() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
@@ -651,9 +688,9 @@ function __impl-test-all-random() {
             echo "Performs a selftest of all functions of this module by executing each function with option '--selftest'."
             echo
             echo "Options:"
-            echo -e "\033[1m    --help\033[22m "
+            echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
-            echo -e "\033[1m    --selftest\033[22m "
+            echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
             echo "        Terminates the option list."
@@ -695,10 +732,10 @@ function __impl-test-all-random() {
    done
 
 ####### test-all-random ####### START
-${BASH_FUNK_PREFIX:--}entropy-available --selftest && echo || return 1
-${BASH_FUNK_PREFIX:--}fill-entropy --selftest && echo || return 1
+if [ -e /proc/sys/kernel/random/entropy_avail ]; then ${BASH_FUNK_PREFIX:--}entropy-available --selftest && echo || return 1; fi
+if [ -e /proc/sys/kernel/random/entropy_avail ]; then ${BASH_FUNK_PREFIX:--}fill-entropy --selftest && echo || return 1; fi
 ${BASH_FUNK_PREFIX:--}random-number --selftest && echo || return 1
-${BASH_FUNK_PREFIX:--}random-string --selftest && echo || return 1
+if ! [[ $OSTYPE == 'darwin'* && $GITHUB_ACTIONS == 'true' ]]; then ${BASH_FUNK_PREFIX:--}random-string --selftest && echo || return 1; fi
 ####### test-all-random ####### END
 }
 function __complete-test-all-random() {
@@ -722,4 +759,7 @@ function -help-random() {
    echo -e "${p}random-string LENGTH [CHARS]\033[0m  -  Prints a random string of the given length containing the given characters."
    echo -e "${p}test-all-random\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
-__BASH_FUNK_FUNCS+=( entropy-available fill-entropy random-number random-string test-all-random )
+if [ -e /proc/sys/kernel/random/entropy_avail ]; then __BASH_FUNK_FUNCS+=( entropy-available ); fi
+if [ -e /proc/sys/kernel/random/entropy_avail ]; then __BASH_FUNK_FUNCS+=( fill-entropy ); fi
+if ! [[ $OSTYPE == 'darwin'* && $GITHUB_ACTIONS == 'true' ]]; then __BASH_FUNK_FUNCS+=( random-string ); fi
+__BASH_FUNK_FUNCS+=( random-number test-all-random )

@@ -11,12 +11,7 @@
 # documentation: https://github.com/vegardit/bash-funk/tree/master/docs/git.md
 #
 
-
-function -is-loadable() {
-   hash git &>/dev/null
-}
-
-if ${BASH_FUNK_PREFIX:--}is-loadable; then
+if hash git &>/dev/null; then
 function -git-branch-name() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
@@ -3126,4 +3121,3 @@ alias -- ${BASH_FUNK_PREFIX:--}git-ls-tags="git tag"
 else
    echo "SKIPPED"
 fi
-unset -f -- ${BASH_FUNK_PREFIX:--}is-loadable

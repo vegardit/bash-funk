@@ -54,7 +54,7 @@ $ -cpu-count
 
 *Implementation:*
 ```bash
-[[ "$OSTYPE" != "darwin"* ]] && grep processor /proc/cpuinfo | wc -l || sysctl -n hw.logicalcpu
+[[ $OSTYPE != "darwin"* ]] && grep processor /proc/cpuinfo | wc -l || sysctl -n hw.logicalcpu
 ```
 
 
@@ -97,7 +97,7 @@ case $_mode in
          echo "-cpu-perf: Required command '${_mode#dd-}' is not available."
          return 1
       fi
-      [[ "$OSTYPE" == "darwin"* ]] && local _bs=1m || local _bs=1M
+      [[ $OSTYPE == "darwin"* ]] && local _bs=1m || local _bs=1M
       dd if=/dev/zero bs=$_bs count=1024 2> >(head -3 | tail -1) > >(${_mode#dd-} >/dev/null)
      ;;
 esac

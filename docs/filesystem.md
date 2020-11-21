@@ -536,7 +536,7 @@ Options:
 [[ ! $_PATH ]] && _PATH=(.) || true
 
 local _ls="command ls -lAph \"${_PATH[@]}\""
-[[ ${OSTYPE} =~ "darwin" ]] && _ls="$_ls -G" || _ls="$_ls -I lost+found --color=always"
+[[ $OSTYPE == "darwin"* ]] && _ls="$_ls -G" || _ls="$_ls -I lost+found --color=always"
 eval $_ls | awk '
    BEGIN { dotDirs = ""; dirs = ""; dotFiles = ""; files = "" }
    /^total/                                                                                       { total = $0 }                    # capture total line

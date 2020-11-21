@@ -1271,7 +1271,7 @@ function -cursor-pos() {
    return $rc
 }
 function __impl-cursor-pos() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _save _restore _up _down _left _right _assign _set _print _fd _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _save _restore _up _down _left _right _assign _set _print _help _selftest
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1298,8 +1298,6 @@ function __impl-cursor-pos() {
             echo "        Assigns the current cursor position to the variable with the given name."
             echo -e "\033[1m-d, --down [LINES]\033[22m (default: '1', integer: ?-?)"
             echo "        Moves the cursor n lines down."
-            echo -e "\033[1m    --fd [NUM]\033[22m (default: '1', integer: ?-?)"
-            echo "        Send the ANSI sequences to the given file descriptor."
             echo -e "\033[1m-l, --left [COLUMNS]\033[22m (default: '1', integer: ?-?)"
             echo "        Move the cursor n columns forward."
             echo -e "\033[1m    --print\033[22m"
@@ -1378,11 +1376,6 @@ function __impl-cursor-pos() {
             _print=1
          ;;
 
-         --fd)
-            _fd="1"
-            __optionWithValue=fd
-         ;;
-
          --)
             __optionWithValue="--"
            ;;
@@ -1415,10 +1408,6 @@ function __impl-cursor-pos() {
                  ;;
                set)
                   _set=$__arg
-                  __optionWithValue=
-                 ;;
-               fd)
-                  _fd=$__arg
                   __optionWithValue=
                  ;;
                *)
@@ -1455,47 +1444,43 @@ function __impl-cursor-pos() {
    if [[ $_set ]]; then
       if [[ $_set == "@@##@@" ]]; then echo "$__fn: Error: Value ROW_AND_COL for option --set must be specified."; return 64; fi
    fi
-   if [[ $_fd ]]; then
-      if [[ $_fd == "@@##@@" ]]; then echo "$__fn: Error: Value NUM for option --fd must be specified."; return 64; fi
-      if [[ ! "$_fd" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_fd' for option --fd is not a numeric value."; return 64; fi
-   fi
 
 ####### cursor-pos ####### START
 if [[ $_save ]]; then
-   >&$_fd echo -en "\033[s"
+   echo -en "\033[s"
 fi
 
 if [[ $_restore ]]; then
-   >&$_fd echo -en "\033[u"
+   echo -en "\033[u"
 fi
 
 if [[ $_up ]]; then
-   >&$_fd echo -en "\033[${_up}A"
+   echo -en "\033[${_up}A"
 fi
 
 if [[ $_down ]]; then
-   >&$_fd echo -en "\033[${_up}B"
+   echo -en "\033[${_down}B"
 fi
 
 if [[ $_right ]]; then
-   >&$_fd echo -en "\033[${_right}C"
+   echo -en "\033[${_right}C"
 fi
 
 if [[ $_left ]]; then
-   >&$_fd echo -en "\033[${_left}D"
+   echo -en "\033[${_left}D"
 fi
 
 if [[ $_set ]]; then
-   >&$_fd echo -en "\033[${_set//:/;}H"
+   echo -en "\033[${_set//:/;}H"
 fi
 
 if [[ $_print || $_assign ]]; then
    local pos
-   >&$_fd echo -en "\E[6n" && read -sdR pos
+   echo -en "\E[6n" && read -sdR pos
    pos=${pos#*[}
    pos=${pos//;/:}
    if [[ $_print ]]; then
-      >&$_fd echo $pos
+      echo $pos
    fi
    if [[ $_assign ]]; then
       eval "$_assign=\"$pos\""
@@ -1506,7 +1491,7 @@ fi
 function __complete-cursor-pos() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --save --restore --up -u --down -d --left -l --right -r --assign --set --print --fd --help "
+      local options=" --save --restore --up -u --down -d --left -l --right -r --assign --set --print --help "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else

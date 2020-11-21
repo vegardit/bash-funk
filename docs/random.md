@@ -39,9 +39,9 @@ Usage: -entropy-available [OPTION]...
 Determines if enough entropy bits are available perform a non-blocking read from /dev/random. Exit code 1 indicates entropy pool is not sufficiently filled.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -63,7 +63,7 @@ local avail=$(cat /proc/sys/kernel/random/entropy_avail)
 local required=$(cat /proc/sys/kernel/random/read_wakeup_threshold)
 echo "/proc/sys/kernel/random/entropy_avail: $avail"
 echo "/proc/sys/kernel/random/read_wakeup_threshold: $required"
-   (( avail > required ))
+(( avail > required ))
 ```
 
 
@@ -83,9 +83,9 @@ Parameters:
       Number of seconds the entropy pool will be filled.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -108,9 +108,17 @@ cat /proc/sys/kernel/random/entropy_avail
 
 echo "Generating for ${_DURATION} seconds..."
 if rngd --help | grep -q -- --timeout; then
-   sudo rngd -r /dev/urandom -o /dev/random -f --timeout ${_DURATION}
+   sudo rngd --foreground -r /dev/urandom -o /dev/random --timeout ${_DURATION}
 else
-   -timeout ${_DURATION} sudo rngd -r /dev/urandom -o /dev/random -f
+   local timeoutCmd
+   if hash timeout 2>/dev/null; then
+      timeoutCmd="timeout"
+   elif hash gtimeout 2>/dev/null; then
+      timeoutCmd="gtimeout"
+   else
+      timeoutCmd="perl -e 'alarm shift; exec @ARGV'"
+   fi
+   sudo $timeoutCmd ${_DURATION} rngd --foreground -r /dev/urandom -o /dev/random
 fi
 
 echo -n "Available entropy bits after: "
@@ -125,14 +133,20 @@ Usage: -random-number [OPTION]... RANGE
 
 Generates a random number of the given range. The range is inclusive.
 
+Requirements:
+  * Either:
+    + Command 'shuf' must be available.
+  * Or:
+    + Command 'gshuf' must be available.
+
 Parameters:
   RANGE (required, pattern: "[1-9][0-9]*-[1-9][0-9]*")
       The numeric range LOW-HIGH, e.g. 1-5.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -148,7 +162,11 @@ $ -random-number 200-299
 
 *Implementation:*
 ```bash
-shuf -i ${_RANGE} -n 1
+if hash gshuf &>/dev/null; then # MacOS
+   gshuf -i ${_RANGE} -n 1
+else
+   shuf -i ${_RANGE} -n 1
+fi
 ```
 
 
@@ -166,9 +184,9 @@ Parameters:
       String to choose random characters from.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -186,8 +204,8 @@ $ -random-string 10 [:alnum:][:punct:]
 
 *Implementation:*
 ```bash
-# "2>/dev/null" and "|| true" to mitigate "tr: write error: Broken pipe" on e.g. GitHub Actions
-env LC_CTYPE=C tr -dc "$_CHARS" </dev/urandom 2>/dev/null | head -c ${_LENGTH} || true
+# "2> >(grep -v "write error" >&2)" and "|| true" to mitigate "tr: write error: Broken pipe" on e.g. GitHub Actions
+env -i LC_CTYPE=C tr -dc "$_CHARS" </dev/urandom 2> >(grep -v "write error" >&2) | head -c ${_LENGTH} || true
 ```
 
 
@@ -199,9 +217,9 @@ Usage: -test-all-random [OPTION]...
 Performs a selftest of all functions of this module by executing each function with option '--selftest'.
 
 Options:
-    --help 
+    --help
         Prints this help.
-    --selftest 
+    --selftest
         Performs a self-test.
     --
         Terminates the option list.
@@ -209,8 +227,8 @@ Options:
 
 *Implementation:*
 ```bash
--entropy-available --selftest && echo || return 1
--fill-entropy --selftest && echo || return 1
+if [ -e /proc/sys/kernel/random/entropy_avail ]; then -entropy-available --selftest && echo || return 1; fi
+if [ -e /proc/sys/kernel/random/entropy_avail ]; then -fill-entropy --selftest && echo || return 1; fi
 -random-number --selftest && echo || return 1
--random-string --selftest && echo || return 1
+if ! [[ $OSTYPE == 'darwin'* && $GITHUB_ACTIONS == 'true' ]]; then -random-string --selftest && echo || return 1; fi
 ```
