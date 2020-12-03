@@ -324,7 +324,8 @@ function __-bash-prompt() {
 
    local p_prefix
    if [[ ${BASH_FUNK_PROMPT_PREFIX:-} ]]; then
-      p_prefix="${C_RESET}${BASH_FUNK_PROMPT_PREFIX:-}${C_RESET}${p_bg} "
+      p_prefix="${C_RESET}${BASH_FUNK_PROMPT_PREFIX:-}${C_RESET}${p_bg}"
+      [[ $EUID -eq 0 ]] || p_prefix="$p_prefix "
    else
       p_prefix="${C_RESET}${p_bg}"
    fi
