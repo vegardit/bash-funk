@@ -1,4 +1,35 @@
-/.project
-/.settings
-/.svn
+# Local work folder that is not checked in
+_LOCAL/
+
+# Eclipse
+.apt_generated/
+.checkstyle
+.classpath
+.factorypath
+.project
+.settings/
+bin/
 **/.*.md.html
+
+# IntelliJ
+.idea
+*.iml
+*.ipr
+*.iws
+
+# NetBeans
+nb-configuration.xml
+
+# Visual Studio Code
+.vscode
+
+# OSX
+.DS_Store
+
+# Vim
+*.swo
+*.swp
+
+# patch
+*.orig
+*.rej
