@@ -23,6 +23,7 @@ The following commands are available when this module is loaded:
 1. [-git-clone-shallow](#-git-clone-shallow)
 1. [-git-create-empty-branch](#-git-create-empty-branch)
 1. [-git-delete-branch](#-git-delete-branch)
+1. [-git-delete-commit](#-git-delete-commit)
 1. [-git-delete-local-branch](#-git-delete-local-branch)
 1. [-git-delete-remote-branch](#-git-delete-remote-branch)
 1. [-git-fetch-pr](#-git-fetch-pr)
@@ -42,7 +43,7 @@ The following commands are available when this module is loaded:
 ## <a name="license"></a>License
 
 ```
-Copyright 2015-2020 by Vegard IT GmbH (https://vegardit.com)
+Copyright 2015-2021 by Vegard IT GmbH (https://vegardit.com)
 SPDX-License-Identifier: Apache-2.0
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -401,6 +402,32 @@ Options:
 git branch --delete --force $_BRANCH_NAME &&
 git fetch origin --prune &&
 git push origin --delete $_BRANCH_NAME
+```
+
+
+## <a name="-git-delete-commit"></a>-git-delete-commit
+
+```
+Usage: -git-delete-commit [OPTION]... COMMIT_ID
+
+Deletes a specific commit.
+
+Parameters:
+  COMMIT_ID (required)
+      The id of the commit to delete.
+
+Options:
+    --help
+        Prints this help.
+    --selftest
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+git rebase --onto ${_COMMIT_ID}^ ${_COMMIT_ID}
 ```
 
 
@@ -941,6 +968,7 @@ Options:
 -git-clone-shallow --selftest && echo || return 1
 -git-create-empty-branch --selftest && echo || return 1
 -git-delete-branch --selftest && echo || return 1
+-git-delete-commit --selftest && echo || return 1
 -git-delete-local-branch --selftest && echo || return 1
 -git-delete-remote-branch --selftest && echo || return 1
 -git-fetch-pr --selftest && echo || return 1

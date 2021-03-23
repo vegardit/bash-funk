@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2015-2020 by Vegard IT GmbH (https://vegardit.com)
+# Copyright 2015-2021 by Vegard IT GmbH (https://vegardit.com)
 # SPDX-License-Identifier: Apache-2.0
 #
 # @author Sebastian Thomschke, Vegard IT GmbH
@@ -1176,6 +1176,123 @@ function __complete-git-delete-branch() {
    fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}git-delete-branch -- ${BASH_FUNK_PREFIX:--}git-delete-branch
+
+function -git-delete-commit() {
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
+
+   set +auHt -o pipefail
+
+   __impl$__fn "$@" && rc=0 || rc=$?
+
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo -e "\nUsage: $__fn [OPTION]... COMMIT_ID\n\nType '$__fn --help' for more details."
+   fi
+   eval $opts
+   return $rc
+}
+function __impl-git-delete-commit() {
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _COMMIT_ID
+   [ -t 1 ] && __interactive=1 || true
+         for __arg in "$@"; do
+         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
+            -|--*) __args+=("$__arg") ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+         esac
+      done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
+
+         --help)
+            echo "Usage: $__fn [OPTION]... COMMIT_ID"
+            echo
+            echo "Deletes a specific commit."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mCOMMIT_ID\033[22m (required)"
+            echo "      The id of the commit to delete."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m"
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m"
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
+
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
+
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
+
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
+
+   for __param in "${__params[@]}"; do
+      if [[ ! $_COMMIT_ID ]]; then
+         _COMMIT_ID=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
+
+   if [[ $_COMMIT_ID ]]; then
+      true
+   else
+      echo "$__fn: Error: Parameter COMMIT_ID must be specified."; return 64
+   fi
+
+####### git-delete-commit ####### START
+git rebase --onto ${_COMMIT_ID}^ ${_COMMIT_ID}
+####### git-delete-commit ####### END
+}
+function __complete-git-delete-commit() {
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}git-delete-commit -- ${BASH_FUNK_PREFIX:--}git-delete-commit
 
 function -git-delete-local-branch() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
@@ -3058,6 +3175,7 @@ ${BASH_FUNK_PREFIX:--}git-cleanse --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-clone-shallow --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-create-empty-branch --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-delete-branch --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}git-delete-commit --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-delete-local-branch --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-delete-remote-branch --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-fetch-pr --selftest && echo || return 1
@@ -3096,6 +3214,7 @@ function -help-git() {
    echo -e "${p}git-clone-shallow REPO_URL [BRANCH_NAME]\033[0m  -  Creates a shallow clone of the selected branch of the given repository with a truncated history."
    echo -e "${p}git-create-empty-branch BRANCH_NAME\033[0m  -  Creates a new empty branch in the local repository."
    echo -e "${p}git-delete-branch BRANCH_NAME\033[0m  -  Deletes a branch in the local and the remote repository."
+   echo -e "${p}git-delete-commit COMMIT_ID\033[0m  -  Deletes a specific commit."
    echo -e "${p}git-delete-local-branch BRANCH_NAME\033[0m  -  Deletes a branch in the local repository."
    echo -e "${p}git-delete-remote-branch BRANCH_NAME\033[0m  -  Deletes a branch in the remote repository."
    echo -e "${p}git-fetch-pr PR_NUMBER\033[0m  -  Fetches the given pull request."
@@ -3111,7 +3230,7 @@ function -help-git() {
    echo -e "${p}github-upstream-url REPO\033[0m  -  Prints the upstream URL in case the given GitHub repository is a fork."
    echo -e "${p}test-all-git\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
-__BASH_FUNK_FUNCS+=( git-branch-name git-change-contributor git-change-date git-cherry-pick git-cleanse git-clone-shallow git-create-empty-branch git-delete-branch git-delete-local-branch git-delete-remote-branch git-fetch-pr git-log git-ls-conflicts git-ls-modified git-reset-file git-squash git-switch-remote-protocol git-sync-fork git-undo git-update-branch github-upstream-url test-all-git )
+__BASH_FUNK_FUNCS+=( git-branch-name git-change-contributor git-change-date git-cherry-pick git-cleanse git-clone-shallow git-create-empty-branch git-delete-branch git-delete-commit git-delete-local-branch git-delete-remote-branch git-fetch-pr git-log git-ls-conflicts git-ls-modified git-reset-file git-squash git-switch-remote-protocol git-sync-fork git-undo git-update-branch github-upstream-url test-all-git )
 
 alias -- ${BASH_FUNK_PREFIX:--}git-ls-branches="git branch -a"
 alias -- ${BASH_FUNK_PREFIX:--}git-ls-remotes="git remote -v"
