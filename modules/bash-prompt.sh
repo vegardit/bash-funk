@@ -179,8 +179,8 @@ function __-bash-prompt() {
 
    local p_kubectl
    if [[ ! ${BASH_FUNK_PROMPT_NO_KUBECTL:-} ]]; then
-      p_kubectl=$(kubectl config current-context)
-      if [[ -n ${p_kubectl} ]]; then
+      p_kubectl=$(kubectl config current-context 2>/dev/null)
+      if [[ -n $p_kubectl && $p_kubectl != "error:"* ]]; then
          p_kubectl="| ${C_FG_BLUE}${p_kubectl}${C_FG_BLACK} "
       fi
    fi
