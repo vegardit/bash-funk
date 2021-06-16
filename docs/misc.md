@@ -339,10 +339,14 @@ history -r
 if [[ $- == *i* ]]; then
    bind '"\e[A": history-search-backward' # enable history searching backward using arrow-up
    bind '"\e[B": history-search-forward'  # enable history searching forward using arrow-down
-   set show-all-if-ambiguous on    # show words which have more than one possible completion immediately instead of ringing the bell
-   set show-all-if-unmodified on   # show words which have more than one possible completion without any possible partial completion immediately instead of ringing the bell.
-   set completion-ignore-case on   # perform case-insensitive filename matching and completion
-   set enable-keypad on            # try to enable the application keypad
+   bind 'set enable-keypad on'            # try to enable the application keypad
+
+   # improve auto-completion
+   bind '"\e[6~": menu-complete'          # enable Pg-Up/Down to cycle through completion candidates
+   bind '"\e[5~": menu-complete-backward' # enable Pg-Up/Down to cycle through completion candidates
+   bind 'set show-all-if-ambiguous on'    # show words which have more than one possible completion immediately instead of ringing the bell
+   bind 'set show-all-if-unmodified on'   # show words which have more than one possible completion without any possible partial completion immediately instead of ringing the bell.
+   bind 'set completion-ignore-case on'   # perform case-insensitive filename matching and completion
 fi
 
 # make ls colorful by default except on MacOS where it is not supported
