@@ -891,6 +891,7 @@ if [[ $- == *i* ]]; then
    bind '"\e[5~": menu-complete-backward' # enable Pg-Up/Down to cycle through completion candidates
    bind 'set show-all-if-ambiguous on'    # show words which have more than one possible completion immediately instead of ringing the bell
    bind 'set show-all-if-unmodified on'   # show words which have more than one possible completion without any possible partial completion immediately instead of ringing the bell.
+   bind 'set colored-completion-prefix on' 2>/dev/null # highlights the common prefix of the set of possible completions. Requires Bash 4.4 or higher
    bind 'set completion-ignore-case on'   # perform case-insensitive filename matching and completion
 fi
 
