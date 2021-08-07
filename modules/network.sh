@@ -498,7 +498,16 @@ function __impl-my-ips() {
 if [[ $OSTYPE == cygwin || $OSTYPE == msys ]]; then
    ipconfig /all | grep "IPv4 Address" | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
 else
-   ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+   if [ -f /proc/net/fib_trie ]; then
+      awk '/32 host/ { if(uniq[ip]++ && ip != "127.0.0.1") print ip } {ip=$2}' /proc/net/fib_trie
+   elif hash ip &>/dev/null; then
+      ip -4 -o addr show scope global | awk '{split($4, cidr, "/"); print cidr[1]}'
+   elif hash ifconfig &>/dev/null; then
+      ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+   else
+      echo "Error: None of the required commands found: ip, ifconfig"
+      return 1
+   fi
 fi
 ####### my-ips ####### END
 }
