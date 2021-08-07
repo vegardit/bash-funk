@@ -312,7 +312,7 @@ elif hash "rpm" &>/dev/null; then
    fi
 
 else
-   echo "Error: Unable to determine installation status of ${_PACKAGE_NAME}. No supported package manager found." || :
+   echo "$__fn: Error: Unable to determine installation status of ${_PACKAGE_NAME}. No supported package manager found." || :
    return 2
 fi
 

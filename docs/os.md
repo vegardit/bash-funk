@@ -124,7 +124,7 @@ elif hash "rpm" &>/dev/null; then
    fi
 
 else
-   echo "Error: Unable to determine installation status of ${_PACKAGE_NAME}. No supported package manager found." || :
+   echo "-pkg-installed: Error: Unable to determine installation status of ${_PACKAGE_NAME}. No supported package manager found." || :
    return 2
 fi
 

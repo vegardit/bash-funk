@@ -278,7 +278,7 @@ case ${totalMemUnit} in
    [Kk][Bb]) local memTotalKB=$totalMem ;;
    [Mm][Bb]) local memTotalKB=$(( totalMem * 1024 )) ;;
    [Gg][Bb]) local memTotalKB=$(( totalMem * 1024 * 1024 )) ;;
-   *) echo "Error: Unsupported memory unit ${totalMemUnit} encountered."
+   *) echo "$__fn: Error: Unsupported memory unit ${totalMemUnit} encountered."
       return 1
      ;;
 esac
@@ -561,7 +561,7 @@ case ${totalMemUnit} in
    [Kk][Bb]) local memTotalKB=$totalMem ;;
    [Mm][Bb]) local memTotalKB=$(( totalMem * 1024 )) ;;
    [Gg][Bb]) local memTotalKB=$(( totalMem * 1024 * 1024 )) ;;
-   *) echo "Error: Unsupported memory unit ${totalMemUnit} encountered."
+   *) echo "$__fn: Error: Unsupported memory unit ${totalMemUnit} encountered."
       return 1
      ;;
 esac

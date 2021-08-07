@@ -958,7 +958,7 @@ if [[ $_TO_DIR ]]; then
 fi
 
 if [[ ! -w "$PWD" ]]; then
-   echo "Error: Path [$PWD] is not writeable."
+   echo "$__fn: Error: Path [$PWD] is not writeable."
    return 1
 fi
 
@@ -974,7 +974,7 @@ case "$_FILE" in
    *.zip)            unzip      "$_ARCHIVE" ;;
    *.Z)              uncompress "$_ARCHIVE" ;;
    *.7z)             7z x       "$_ARCHIVE" ;;
-   *) echo "Error: Unsupported archive format '$_ARCHIVE'"; return 1 ;;
+   *) echo "$__fn: Error: Unsupported archive format '$_ARCHIVE'"; return 1 ;;
 esac
 
 if [[ $_TO_DIR ]]; then
@@ -1323,12 +1323,12 @@ function __impl-findfiles() {
 
 ####### findfiles ####### START
 if [[ ! -e "$_START_PATH" ]]; then
-   echo "Error: Path [$_START_PATH] does not exist."
+   echo "$__fn: Error: Path [$_START_PATH] does not exist."
    return 1
 fi
 
 if [[ ! -r "$_START_PATH" ]]; then
-   echo "Error: Path [$_START_PATH] is not readable by user '$USER'."
+   echo "$__fn: Error: Path [$_START_PATH] is not readable by user '$USER'."
    return 1
 fi
 
