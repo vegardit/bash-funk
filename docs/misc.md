@@ -26,6 +26,7 @@ function -timeout() {
 The following commands are available when this module is loaded:
 
 1. [-choose](#-choose)
+1. [-env](#-env)
 1. [-help](#-help)
 1. [-please](#-please)
 1. [-reload](#-reload)
@@ -153,6 +154,28 @@ while true; do
       -cursor-pos --fd $dialogFD --up "$(( ${#_OPTION[@]} ))"
    fi
 done
+```
+
+
+## <a name="-env"></a>-env
+
+```
+Usage: -env [OPTION]...
+
+Prints all exported environment variables.
+
+Options:
+    --help
+        Prints this help.
+    --selftest
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+export -p | cut -d' ' -f3-
 ```
 
 
@@ -289,6 +312,7 @@ Options:
 *Implementation:*
 ```bash
 -choose --selftest && echo || return 1
+-env --selftest && echo || return 1
 -help --selftest && echo || return 1
 -please --selftest && echo || return 1
 -reload --selftest && echo || return 1

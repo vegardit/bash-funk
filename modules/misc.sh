@@ -220,6 +220,109 @@ function __complete-choose() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}choose -- ${BASH_FUNK_PREFIX:--}choose
 
+function -env() {
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
+
+   set +auHt -o pipefail
+
+   __impl$__fn "$@" && rc=0 || rc=$?
+
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
+   fi
+   eval $opts
+   return $rc
+}
+function __impl-env() {
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   [ -t 1 ] && __interactive=1 || true
+         for __arg in "$@"; do
+         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
+            -|--*) __args+=("$__arg") ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+         esac
+      done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
+
+         --help)
+            echo "Usage: $__fn [OPTION]..."
+            echo
+            echo "Prints all exported environment variables."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m"
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m"
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
+
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
+
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
+
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
+
+   for __param in "${__params[@]}"; do
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
+
+####### env ####### START
+export -p | cut -d' ' -f3-
+####### env ####### END
+}
+function __complete-env() {
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}env -- ${BASH_FUNK_PREFIX:--}env
+
 function -help() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
@@ -749,6 +852,7 @@ function __impl-test-all-misc() {
 
 ####### test-all-misc ####### START
 ${BASH_FUNK_PREFIX:--}choose --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}env --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}help --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}please --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}reload --selftest && echo || return 1
@@ -1430,6 +1534,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}wait -- ${BASH_FUNK_PREFIX:--}wait
 function -help-misc() {
    local p="\033[1m${BASH_FUNK_PREFIX:--}"
    echo -e "${p}choose OPTION1 [OPTION]...\033[0m  -  Prompts the user to choose one entry of the given list of options."
+   echo -e "${p}env\033[0m  -  Prints all exported environment variables."
    echo -e "${p}help\033[0m  -  Prints the online help of all bash-funk commands."
    echo -e "${p}please\033[0m  -  Re-runs the previously entered command with sudo."
    echo -e "${p}reload\033[0m  -  Reloads bash-funk."
@@ -1440,7 +1545,7 @@ function -help-misc() {
    echo -e "${p}var-exists VARIABLE_NAME\033[0m  -  Determines if the given variable is declared."
    echo -e "${p}wait SECONDS\033[0m  -  Waits for the given number of seconds or until the key 's' pressed."
 }
-__BASH_FUNK_FUNCS+=( choose help please reload root test-all-misc tweak-bash update var-exists wait )
+__BASH_FUNK_FUNCS+=( choose env help please reload root test-all-misc tweak-bash update var-exists wait )
 
 function -timeout() {
    if [[ $# < 2 || ${1:-} == "--help" ]]; then
