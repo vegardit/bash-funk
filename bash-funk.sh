@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 #
-# Copyright 2015-2021 by Vegard IT GmbH (https://vegardit.com)
+# Copyright 2015-2022 by Vegard IT GmbH (https://vegardit.com)
 # SPDX-License-Identifier: Apache-2.0
 #
 # @author Patrick Spielmann, Vegard IT GmbH
 # @author Sebastian Thomschke, Vegard IT GmbH
 #
 
-if [[ $_ == $0 ]]; then
+if ! (return 0 2>/dev/null); then # https://stackoverflow.com/a/28776166/5116073
    echo "The bash-funk script must be sourced"'!'" See the 'source' command."
    false
 else
