@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2015-2021 by Vegard IT GmbH (https://vegardit.com)
+# Copyright 2015-2022 by Vegard IT GmbH (https://vegardit.com)
 # SPDX-License-Identifier: Apache-2.0
 #
 # @author Sebastian Thomschke, Vegard IT GmbH
@@ -203,6 +203,130 @@ function __complete-block-port() {
    fi
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}block-port -- ${BASH_FUNK_PREFIX:--}block-port
+
+function -flush-dns() {
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
+
+   set +auHt -o pipefail
+
+   __impl$__fn "$@" && rc=0 || rc=$?
+
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
+   fi
+   eval $opts
+   return $rc
+}
+function __impl-flush-dns() {
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   [ -t 1 ] && __interactive=1 || true
+         for __arg in "$@"; do
+         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
+            -|--*) __args+=("$__arg") ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+         esac
+      done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
+
+         --help)
+            echo "Usage: $__fn [OPTION]..."
+            echo
+            echo "Flushes the local DNS cache."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --help\033[22m"
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m"
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            return 0
+           ;;
+
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
+
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
+
+         *)
+            case $__optionWithValue in
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
+
+   for __param in "${__params[@]}"; do
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
+
+####### flush-dns ####### START
+case $OSTYPE in
+   cygwin|msys) cmd="ipconfig /flushdns" ;;
+   darwin) cmd="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder" ;;
+   *)
+     if hash systemd-resolve &>/dev/null; then
+        cmd="sudo systemd-resolve --flush-caches && systemd-resolve --statistics"
+     elif hash resolvectl &>/dev/null; then
+        cmd="sudo resolvectl flush-caches && resolvectl statistics"
+     elif service nscd status &>/dev/null; then
+        cmd="sudo service nscd restart"
+     elif [ -f /etc/init.d/networking ]; then
+        cmd="sudo /etc/init.d/networking restart"
+     elif systemctl &>/dev/null; then
+        cmd="sudo systemctl restart networking"
+     else
+        echo "Unsupported system configuration. Cannot flush DNS cache."
+        exit 1
+     fi
+  ;;
+esac
+echo $cmd
+eval $cmd
+####### flush-dns ####### END
+}
+function __complete-flush-dns() {
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      COMPREPLY=($(compgen -o default -- $curr))
+   fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}flush-dns -- ${BASH_FUNK_PREFIX:--}flush-dns
 
 function -is-port-open() {
    local opts="" opt rc __fn=${FUNCNAME[0]}
@@ -1303,6 +1427,7 @@ function __impl-test-all-network() {
 
 ####### test-all-network ####### START
 ${BASH_FUNK_PREFIX:--}block-port --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}flush-dns --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}is-port-open --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}my-ips --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}my-public-hostname --selftest && echo || return 1
@@ -1327,6 +1452,7 @@ complete -F __complete${BASH_FUNK_PREFIX:--}test-all-network -- ${BASH_FUNK_PREF
 function -help-network() {
    local p="\033[1m${BASH_FUNK_PREFIX:--}"
    echo -e "${p}block-port [BIND_ADDRESS] PORT\033[0m  -  Binds to the given port and thus block other programs from binding to it."
+   echo -e "${p}flush-dns\033[0m  -  Flushes the local DNS cache."
    echo -e "${p}is-port-open HOSTNAME PORT [CONNECT_TIMEOUT_IN_SECONDS]\033[0m  -  Checks if a TCP connection can be established to the given port."
    echo -e "${p}my-ips\033[0m  -  Prints the configured IP v4 addresses of this host excluding 127.0.0.1."
    echo -e "${p}my-public-hostname\033[0m  -  Prints the public hostname of this host."
@@ -1335,4 +1461,4 @@ function -help-network() {
    echo -e "${p}set-proxy PROXY_URL [NO_PROXY]\033[0m  -  Sets the proxy environment variables."
    echo -e "${p}test-all-network\033[0m  -  Performs a selftest of all functions of this module by executing each function with option '--selftest'."
 }
-__BASH_FUNK_FUNCS+=( block-port is-port-open my-ips my-public-hostname my-public-ip run-echo-server set-proxy test-all-network )
+__BASH_FUNK_FUNCS+=( block-port flush-dns is-port-open my-ips my-public-hostname my-public-ip run-echo-server set-proxy test-all-network )

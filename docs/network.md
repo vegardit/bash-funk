@@ -5,6 +5,7 @@
 The following commands are available when this module is loaded:
 
 1. [-block-port](#-block-port)
+1. [-flush-dns](#-flush-dns)
 1. [-is-port-open](#-is-port-open)
 1. [-my-ips](#-my-ips)
 1. [-my-public-hostname](#-my-public-hostname)
@@ -17,7 +18,7 @@ The following commands are available when this module is loaded:
 ## <a name="license"></a>License
 
 ```
-Copyright 2015-2021 by Vegard IT GmbH (https://vegardit.com)
+Copyright 2015-2022 by Vegard IT GmbH (https://vegardit.com)
 SPDX-License-Identifier: Apache-2.0
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -87,6 +88,49 @@ perl << EOF
    while (\$client = \$server->accept()) { }
    close(\$server);
 EOF
+```
+
+
+## <a name="-flush-dns"></a>-flush-dns
+
+```
+Usage: -flush-dns [OPTION]...
+
+Flushes the local DNS cache.
+
+Options:
+    --help
+        Prints this help.
+    --selftest
+        Performs a self-test.
+    --
+        Terminates the option list.
+```
+
+*Implementation:*
+```bash
+case $OSTYPE in
+   cygwin|msys) cmd="ipconfig /flushdns" ;;
+   darwin) cmd="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder" ;;
+   *)
+     if hash systemd-resolve &>/dev/null; then
+        cmd="sudo systemd-resolve --flush-caches && systemd-resolve --statistics"
+     elif hash resolvectl &>/dev/null; then
+        cmd="sudo resolvectl flush-caches && resolvectl statistics"
+     elif service nscd status &>/dev/null; then
+        cmd="sudo service nscd restart"
+     elif [ -f /etc/init.d/networking ]; then
+        cmd="sudo /etc/init.d/networking restart"
+     elif systemctl &>/dev/null; then
+        cmd="sudo systemctl restart networking"
+     else
+        echo "Unsupported system configuration. Cannot flush DNS cache."
+        exit 1
+     fi
+  ;;
+esac
+echo $cmd
+eval $cmd
 ```
 
 
@@ -465,6 +509,7 @@ Options:
 *Implementation:*
 ```bash
 -block-port --selftest && echo || return 1
+-flush-dns --selftest && echo || return 1
 -is-port-open --selftest && echo || return 1
 -my-ips --selftest && echo || return 1
 -my-public-hostname --selftest && echo || return 1
