@@ -27,7 +27,7 @@ The following commands are available when this module is loaded:
 ## <a name="license"></a>License
 
 ```
-Copyright 2015-2021 by Vegard IT GmbH (https://vegardit.com)
+SPDX-FileCopyrightText: © Vegard IT GmbH (https://vegardit.com)
 SPDX-License-Identifier: Apache-2.0
 
 Licensed under the Apache License, Version 2.0 (the "License");
