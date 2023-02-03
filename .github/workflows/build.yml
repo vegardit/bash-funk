@@ -3,11 +3,15 @@ name: Build
 
 on:
   push:
+    branches:     # build all branches
+    - '**'
+    tags-ignore:  # but don't build tags
+    - '**'
     paths-ignore:
+    - '**/*.adoc'
     - '**/*.md'
+    - '.github/*.yml'
   pull_request:
-    paths-ignore:
-    - '**/*.md'
   workflow_dispatch:
     # https://github.blog/changelog/2020-07-06-github-actions-manual-triggers-with-workflow_dispatch/
 
@@ -17,33 +21,71 @@ jobs:
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.experimental }}
     strategy:
+      fail-fast: false
       matrix:
         include:
+        - os: ubuntu-22.04
+          experimental: false
         - os: ubuntu-20.04
           experimental: false
-        - os: ubuntu-18.04
-          experimental: false
+        #- os: macos-12.0
+        #  experimental: false
         - os: macos-11.0
-          experimental: true
-        #- os: macos-10.15
-        #  experimental: true
+          experimental: false
+
     steps:
     - name: Git Checkout
       uses: actions/checkout@v3 #https://github.com/actions/checkout
 
-    - name: Print Bash version
+
+    - name: "Show: environment variables"
+      run: env | sort
+
+
+    - name: "Show: Bash version"
       run: bash --version
 
-    - name: Print POSIX memory limit
+
+    - name: "Show: POSIX memory limit"
       run: getconf ARG_MAX
 
-    - name: Install bc, rng-tools
-      if: startsWith(matrix.os, 'ubuntu')
-      run: sudo apt-get --no-install-recommends install -y bc rng-tools
 
-    - name: Install coreutils, ioping
+    - name: "Linux: Configure APT"
+      if: startsWith(matrix.os, 'ubuntu')
+      run: |
+        # Workaround to avoid sporadic connectivity issues "Could not connect to azure.archive.ubuntu.com:80"
+        # see https://github.com/actions/virtual-environments/issues/675
+        echo 'APT::Acquire::Retries "3";' | sudo tee /etc/apt/apt.conf.d/80-acquire-retries
+        if ! curl --max-time 3 --output /dev/null --silent --head --fail "http://azure.archive.ubuntu.com/ubuntu/dists/"; then
+          sudo sed -i 's/azure\.//' /etc/apt/sources.list
+        fi
+
+        echo 'APT::Install-Recommends "0";'  | sudo tee /etc/apt/apt.conf.d/01-norecommends
+        echo 'APT::Install-Suggests "0";' | sudo tee -a /etc/apt/apt.conf.d/01-norecommends
+
+        # avoid potential 404 see https://github.com/actions/runner-images/issues/592
+        sudo apt-get update 
+
+
+    - name: "Linux: Install required packages"
+      if: startsWith(matrix.os, 'ubuntu')
+      run: sudo apt-get --no-install-recommends install -y bc rng-tools xxd
+
+
+    - name: "MacOS: Update brew formulas"
+      if: runner.os == 'macOS'
+      run: |
+        set -eu
+
+        echo "::group::brew update" && brew update && echo "::endgroup::"
+        echo "::group::brew config" && brew config && echo "::endgroup::"
+        echo "::group::brew list" && brew list --version && echo "::endgroup::"
+
+
+    - name: "MacOS: Install coreutils, ioping"
       if: startsWith(matrix.os, 'macos')
       run: brew install coreutils ioping
+
 
     - name: Test bash-funk
       shell: bash
