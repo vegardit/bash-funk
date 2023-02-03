@@ -277,19 +277,21 @@ echo -n "Available entropy bits before: "
 cat /proc/sys/kernel/random/entropy_avail
 
 echo "Generating for ${_DURATION} seconds..."
-if rngd --help | grep -q -- --feed-interval; then
-   sudo rngd --foreground -r /dev/urandom -o /dev/random --feed-interval ${_DURATION}
-elif rngd --help | grep -q -- --timeout; then
-   sudo rngd --foreground -r /dev/urandom -o /dev/random --timeout ${_DURATION}
+local timeoutCmd
+if hash timeout 2>/dev/null; then
+   timeoutCmd="timeout"
+elif hash gtimeout 2>/dev/null; then
+   timeoutCmd="gtimeout"
 else
-   local timeoutCmd
-   if hash timeout 2>/dev/null; then
-      timeoutCmd="timeout"
-   elif hash gtimeout 2>/dev/null; then
-      timeoutCmd="gtimeout"
-   else
-      timeoutCmd="perl -e 'alarm shift; exec @ARGV'"
-   fi
+   timeoutCmd="perl -e 'alarm shift; exec @ARGV'"
+fi
+if rngd --help | grep -q -- --feed-interval; then
+   # using timeoutCmd despite "--feed-interval" parameter because rngd in some environments randomly hangs (e.g. github actions with ubuntu 22)
+   sudo $timeoutCmd $((_DURATION + 1)) rngd --foreground -r /dev/urandom -o /dev/random --feed-interval ${_DURATION}
+elif rngd --help | grep -q -- --timeout; then
+   # using timeoutCmd despite "--timeout" parameter because rngd in some environments randomly hangs (e.g. github actions with ubuntu 22)
+   sudo $timeoutCmd $((_DURATION + 1)) rngd --foreground -r /dev/urandom -o /dev/random --timeout ${_DURATION}
+else
    sudo $timeoutCmd ${_DURATION} rngd --foreground -r /dev/urandom -o /dev/random
 fi
 
