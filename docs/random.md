@@ -107,7 +107,9 @@ echo -n "Available entropy bits before: "
 cat /proc/sys/kernel/random/entropy_avail
 
 echo "Generating for ${_DURATION} seconds..."
-if rngd --help | grep -q -- --timeout; then
+if rngd --help | grep -q -- --feed-interval; then
+   sudo rngd --foreground -r /dev/urandom -o /dev/random --feed-interval ${_DURATION}
+elif rngd --help | grep -q -- --timeout; then
    sudo rngd --foreground -r /dev/urandom -o /dev/random --timeout ${_DURATION}
 else
    local timeoutCmd
