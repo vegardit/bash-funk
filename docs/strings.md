@@ -50,6 +50,9 @@ Usage: -ascii2hex [OPTION]... ASCII_STRING
 
 Prints the hexa-decimal representation of the given ASCII string.
 
+Requirements:
+  + Command 'xxd' must be available.
+
 Parameters:
   ASCII_STRING (required)
       The ASCII string to convert.

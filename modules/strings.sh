@@ -54,6 +54,9 @@ function __impl-ascii2hex() {
             echo
             echo "Prints the hexa-decimal representation of the given ASCII string."
             echo
+            echo "Requirements:"
+            echo "  + Command 'xxd' must be available."
+            echo
             echo "Parameters:"
             echo -e "  \033[1mASCII_STRING\033[22m (required)"
             echo "      The ASCII string to convert."
@@ -122,6 +125,8 @@ function __impl-ascii2hex() {
    else
       echo "$__fn: Error: Parameter ASCII_STRING must be specified."; return 64
    fi
+
+   if ! hash "xxd" &>/dev/null; then echo "$__fn: Error: Required command 'xxd' not found on this system."; return 64; fi
 
 ####### ascii2hex ####### START
 printf "$_ASCII_STRING" | xxd -p | tr "[a-z]" "[A-z]"
