@@ -55,6 +55,8 @@ Options:
     -----------------------------
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -140,6 +142,8 @@ Options:
     -----------------------------
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -177,6 +181,8 @@ Options:
     -----------------------------
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -260,6 +266,8 @@ Options:
     -----------------------------
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -315,6 +323,8 @@ Prints a table with 8/16 ANSI colors.
 Options:
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -358,6 +368,8 @@ Prints a table with 256 ANSI colors.
 Options:
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -479,6 +491,8 @@ Prints an ANSI escape sequence that reset all ANSI attributes.
 Options:
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -510,6 +524,8 @@ Options:
     -----------------------------
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -561,6 +577,8 @@ Options:
     -----------------------------
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -622,6 +640,8 @@ Performs a selftest of all functions of this module by executing each function w
 Options:
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --

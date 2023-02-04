@@ -12,7 +12,9 @@
 #
 
 function -md5sum() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -21,9 +23,12 @@ function -md5sum() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... PATH_TO_FILE\n\nType '$__fn --help' for more details."
@@ -32,7 +37,7 @@ function -md5sum() {
    return $rc
 }
 function __impl-md5sum() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH_TO_FILE
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _PATH_TO_FILE
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -61,6 +66,8 @@ function __impl-md5sum() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -79,6 +86,8 @@ function __impl-md5sum() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -115,6 +124,7 @@ function __impl-md5sum() {
    fi
 
 ####### md5sum ####### START
+[[ $_tracecmd ]] && set -x || true
 # use md5sum if available
 if hash md5sum &>/dev/null; then
    md5sum $_PATH_TO_FILE | cut -d ' ' -f1
@@ -134,12 +144,13 @@ else
    python -c "import hashlib
 print(hashlib.md5(open('$_PATH_TO_FILE').read()).hexdigest())"
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### md5sum ####### END
 }
 function __complete-md5sum() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -149,7 +160,9 @@ function __complete-md5sum() {
 complete -F __complete${BASH_FUNK_PREFIX:--}md5sum -- ${BASH_FUNK_PREFIX:--}md5sum
 
 function -sha256sum() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -158,9 +171,12 @@ function -sha256sum() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... PATH_TO_FILE\n\nType '$__fn --help' for more details."
@@ -169,7 +185,7 @@ function -sha256sum() {
    return $rc
 }
 function __impl-sha256sum() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH_TO_FILE
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _PATH_TO_FILE
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -198,6 +214,8 @@ function __impl-sha256sum() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -216,6 +234,8 @@ function __impl-sha256sum() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -252,6 +272,7 @@ function __impl-sha256sum() {
    fi
 
 ####### sha256sum ####### START
+[[ $_tracecmd ]] && set -x || true
 # use sha256 if available
 if hash sha256 &>/dev/null; then
    sha256 $_PATH_TO_FILE | cut -d ' ' -f1
@@ -271,12 +292,13 @@ else
    python -c "import hashlib
 print(hashlib.sha256(open('$_PATH_TO_FILE').read()).hexdigest())"
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### sha256sum ####### END
 }
 function __complete-sha256sum() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -286,7 +308,9 @@ function __complete-sha256sum() {
 complete -F __complete${BASH_FUNK_PREFIX:--}sha256sum -- ${BASH_FUNK_PREFIX:--}sha256sum
 
 function -test-all-crypto() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -295,9 +319,12 @@ function -test-all-crypto() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -306,7 +333,7 @@ function -test-all-crypto() {
    return $rc
 }
 function __impl-test-all-crypto() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -331,6 +358,8 @@ function __impl-test-all-crypto() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -349,6 +378,8 @@ function __impl-test-all-crypto() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -373,15 +404,17 @@ function __impl-test-all-crypto() {
    done
 
 ####### test-all-crypto ####### START
+[[ $_tracecmd ]] && set -x || true
 ${BASH_FUNK_PREFIX:--}md5sum --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}sha256sum --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}verify-tar-md5 --selftest && echo || return 1
+[[ $_tracecmd ]] && set +x || true
 ####### test-all-crypto ####### END
 }
 function __complete-test-all-crypto() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -391,7 +424,9 @@ function __complete-test-all-crypto() {
 complete -F __complete${BASH_FUNK_PREFIX:--}test-all-crypto -- ${BASH_FUNK_PREFIX:--}test-all-crypto
 
 function -verify-tar-md5() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -400,9 +435,12 @@ function -verify-tar-md5() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [PATH_TO_ARCHIVE]...\n\nType '$__fn --help' for more details."
@@ -411,7 +449,7 @@ function -verify-tar-md5() {
    return $rc
 }
 function __impl-verify-tar-md5() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH_TO_ARCHIVE=()
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _PATH_TO_ARCHIVE=()
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -440,6 +478,8 @@ function __impl-verify-tar-md5() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -458,6 +498,8 @@ function __impl-verify-tar-md5() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -493,6 +535,7 @@ function __impl-verify-tar-md5() {
    fi
 
 ####### verify-tar-md5 ####### START
+[[ $_tracecmd ]] && set -x || true
 local path mismatch=0
 echo "Verifying..."
 for path in "${_PATH_TO_ARCHIVE[@]}"; do
@@ -512,12 +555,13 @@ done
 if [[ $mismatch == 1 ]]; then
    return 1
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### verify-tar-md5 ####### END
 }
 function __complete-verify-tar-md5() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else

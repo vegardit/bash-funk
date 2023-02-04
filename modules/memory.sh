@@ -12,7 +12,9 @@
 #
 
 function -alloc-mem() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -21,9 +23,12 @@ function -alloc-mem() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... MEMORY_IN_MB\n\nType '$__fn --help' for more details."
@@ -32,7 +37,7 @@ function -alloc-mem() {
    return $rc
 }
 function __impl-alloc-mem() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _MEMORY_IN_MB
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _MEMORY_IN_MB
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -64,6 +69,8 @@ function __impl-alloc-mem() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -82,6 +89,8 @@ function __impl-alloc-mem() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -119,18 +128,20 @@ function __impl-alloc-mem() {
    if ! hash "python" &>/dev/null; then echo "$__fn: Error: Required command 'python' not found on this system."; return 64; fi
 
 ####### alloc-mem ####### START
+[[ $_tracecmd ]] && set -x || true
 echo -n "Allocating ${_MEMORY_IN_MB} MB of memory (may take a moment)..."
 python -c "
 a='1'*1024*1024*${_MEMORY_IN_MB}
 print('DONE')
 raw_input('Press enter to exit...')
 "
+[[ $_tracecmd ]] && set +x || true
 ####### alloc-mem ####### END
 }
 function __complete-alloc-mem() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -141,7 +152,9 @@ complete -F __complete${BASH_FUNK_PREFIX:--}alloc-mem -- ${BASH_FUNK_PREFIX:--}a
 
 if [ -e /proc/meminfo ]; then
 function -memfree() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -150,9 +163,12 @@ function -memfree() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [MEMORY_UNIT]\n\nType '$__fn --help' for more details."
@@ -161,7 +177,7 @@ function -memfree() {
    return $rc
 }
 function __impl-memfree() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _MEMORY_UNIT
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _MEMORY_UNIT
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -190,6 +206,8 @@ function __impl-memfree() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -237,6 +255,8 @@ function __impl-memfree() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -271,6 +291,7 @@ function __impl-memfree() {
    fi
 
 ####### memfree ####### START
+[[ $_tracecmd ]] && set -x || true
 local totalMem=$(awk '/MemFree/ {print $2}' /proc/meminfo)
 local totalMemUnit=$(awk '/MemFree/ {print $3}' /proc/meminfo)
 
@@ -288,12 +309,13 @@ case $_MEMORY_UNIT in
    MB) echo $(( memTotalKB / 1024 )) ;;
    GB) echo $(( memTotalKB / 1024 / 1024 )) ;;
 esac
+[[ $_tracecmd ]] && set +x || true
 ####### memfree ####### END
 }
 function __complete-memfree() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -305,7 +327,9 @@ fi
 
 if [ -e /proc/meminfo ]; then
 function -meminfo() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -314,9 +338,12 @@ function -meminfo() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -325,7 +352,7 @@ function -meminfo() {
    return $rc
 }
 function __impl-meminfo() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -350,6 +377,8 @@ function __impl-meminfo() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -383,6 +412,8 @@ MemAvailable:   16143004 kB
             return 0
            ;;
 
+         --tracecmd) _tracecmd=1 ;;
+
          --)
             __optionWithValue="--"
            ;;
@@ -406,13 +437,15 @@ MemAvailable:   16143004 kB
    done
 
 ####### meminfo ####### START
+[[ $_tracecmd ]] && set -x || true
 cat /proc/meminfo
+[[ $_tracecmd ]] && set +x || true
 ####### meminfo ####### END
 }
 function __complete-meminfo() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -424,7 +457,9 @@ fi
 
 if [ -e /proc/meminfo ]; then
 function -memtotal() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -433,9 +468,12 @@ function -memtotal() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [MEMORY_UNIT]\n\nType '$__fn --help' for more details."
@@ -444,7 +482,7 @@ function -memtotal() {
    return $rc
 }
 function __impl-memtotal() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _MEMORY_UNIT
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _MEMORY_UNIT
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -473,6 +511,8 @@ function __impl-memtotal() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -521,6 +561,8 @@ function __impl-memtotal() {
             return 0
            ;;
 
+         --tracecmd) _tracecmd=1 ;;
+
          --)
             __optionWithValue="--"
            ;;
@@ -554,6 +596,7 @@ function __impl-memtotal() {
    fi
 
 ####### memtotal ####### START
+[[ $_tracecmd ]] && set -x || true
 local totalMem=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
 local totalMemUnit=$(awk '/MemTotal/ {print $3}' /proc/meminfo)
 
@@ -571,12 +614,13 @@ case $_MEMORY_UNIT in
    MB) echo $(( memTotalKB / 1024 )) ;;
    GB) echo $(( memTotalKB / 1024 / 1024 )) ;;
 esac
+[[ $_tracecmd ]] && set +x || true
 ####### memtotal ####### END
 }
 function __complete-memtotal() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -587,7 +631,9 @@ complete -F __complete${BASH_FUNK_PREFIX:--}memtotal -- ${BASH_FUNK_PREFIX:--}me
 fi
 
 function -procmem() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -596,9 +642,12 @@ function -procmem() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -607,7 +656,7 @@ function -procmem() {
    return $rc
 }
 function __impl-procmem() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _group _color _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _group _color _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -637,6 +686,8 @@ function __impl-procmem() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -655,6 +706,8 @@ function __impl-procmem() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --group|-g)
             _group=1
@@ -697,6 +750,7 @@ function __impl-procmem() {
    fi
 
 ####### procmem ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ $_group ]]; then
 
    echo "  PHYS. MEM   VIRT. MEM  USER     #  PROCESS"
@@ -742,12 +796,13 @@ else
    done | ${BASH_FUNK_PREFIX:--}ansi-alternate --color ${_color:-auto}
 
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### procmem ####### END
 }
 function __complete-procmem() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --group -g --color --help "
+      local options=" --group -g --color --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -767,7 +822,9 @@ never" -- $curr))
 complete -F __complete${BASH_FUNK_PREFIX:--}procmem -- ${BASH_FUNK_PREFIX:--}procmem
 
 function -test-all-memory() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -776,9 +833,12 @@ function -test-all-memory() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -787,7 +847,7 @@ function -test-all-memory() {
    return $rc
 }
 function __impl-test-all-memory() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -812,6 +872,8 @@ function __impl-test-all-memory() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -830,6 +892,8 @@ function __impl-test-all-memory() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -854,17 +918,19 @@ function __impl-test-all-memory() {
    done
 
 ####### test-all-memory ####### START
+[[ $_tracecmd ]] && set -x || true
 ${BASH_FUNK_PREFIX:--}alloc-mem --selftest && echo || return 1
 if [ -e /proc/meminfo ]; then ${BASH_FUNK_PREFIX:--}memfree --selftest && echo || return 1; fi
 if [ -e /proc/meminfo ]; then ${BASH_FUNK_PREFIX:--}meminfo --selftest && echo || return 1; fi
 if [ -e /proc/meminfo ]; then ${BASH_FUNK_PREFIX:--}memtotal --selftest && echo || return 1; fi
 ${BASH_FUNK_PREFIX:--}procmem --selftest && echo || return 1
+[[ $_tracecmd ]] && set +x || true
 ####### test-all-memory ####### END
 }
 function __complete-test-all-memory() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else

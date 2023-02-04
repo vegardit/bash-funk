@@ -12,7 +12,9 @@
 #
 
 function -ansi-alternate() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -21,9 +23,12 @@ function -ansi-alternate() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [ANSI_SEQUENCE]...\n\nType '$__fn --help' for more details."
@@ -32,7 +37,7 @@ function -ansi-alternate() {
    return $rc
 }
 function __impl-ansi-alternate() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _color _skip _help _selftest _ANSI_SEQUENCE=()
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _color _skip _help _selftest _tracecmd _ANSI_SEQUENCE=()
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -66,6 +71,8 @@ function __impl-ansi-alternate() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -96,6 +103,8 @@ function __impl-ansi-alternate() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --color)
             _color="auto"
@@ -150,6 +159,7 @@ function __impl-ansi-alternate() {
    fi
 
 ####### ansi-alternate ####### START
+[[ $_tracecmd ]] && set -x || true
 # check if stdin is opend on terminal (and thus not on a pipe)
 if [[ -t 0 ]]; then
    return 0
@@ -194,12 +204,13 @@ else
       echo "$line"
    done
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### ansi-alternate ####### END
 }
 function __complete-ansi-alternate() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --color --skip --help "
+      local options=" --color --skip --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -219,7 +230,9 @@ never" -- $curr))
 complete -F __complete${BASH_FUNK_PREFIX:--}ansi-alternate -- ${BASH_FUNK_PREFIX:--}ansi-alternate
 
 function -ansi-bold() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -228,9 +241,12 @@ function -ansi-bold() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [TEXT]\n\nType '$__fn --help' for more details."
@@ -239,7 +255,7 @@ function -ansi-bold() {
    return $rc
 }
 function __impl-ansi-bold() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _on _off _help _selftest _TEXT
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _on _off _help _selftest _tracecmd _TEXT
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -273,6 +289,8 @@ function __impl-ansi-bold() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -291,6 +309,8 @@ function __impl-ansi-bold() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --on)
             _on=1
@@ -327,6 +347,7 @@ function __impl-ansi-bold() {
    done
 
 ####### ansi-bold ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ $_TEXT ]]; then
    echo -ne "\033[1m$_TEXT\033[22m"
 fi
@@ -336,12 +357,13 @@ if [[ $_on ]]; then
 elif [[ $_off ]]; then
    echo -ne "\033[22m"
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### ansi-bold ####### END
 }
 function __complete-ansi-bold() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --on --off --help "
+      local options=" --on --off --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -351,7 +373,9 @@ function __complete-ansi-bold() {
 complete -F __complete${BASH_FUNK_PREFIX:--}ansi-bold -- ${BASH_FUNK_PREFIX:--}ansi-bold
 
 function -ansi-codes() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -360,9 +384,12 @@ function -ansi-codes() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [PREFIX]\n\nType '$__fn --help' for more details."
@@ -371,7 +398,7 @@ function -ansi-codes() {
    return $rc
 }
 function __impl-ansi-codes() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _escape _help _selftest _PREFIX
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _escape _help _selftest _tracecmd _PREFIX
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -403,6 +430,8 @@ function __impl-ansi-codes() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -421,6 +450,8 @@ function __impl-ansi-codes() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --escape|-e)
             _escape=1
@@ -455,6 +486,7 @@ function __impl-ansi-codes() {
    if [[ ! $_PREFIX ]]; then _PREFIX="ANSI_"; fi
 
 ####### ansi-codes ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ $_escape ]]; then
    local ESC="\033";
 else
@@ -510,12 +542,13 @@ ${_PREFIX}BG_LIGHT_MAGENTA=\"$ESC[105m\"
 ${_PREFIX}BG_LIGHT_CYAN=\"$ESC[106m\"
 ${_PREFIX}BG_WHITE=\"$ESC[107m\"
 "
+[[ $_tracecmd ]] && set +x || true
 ####### ansi-codes ####### END
 }
 function __complete-ansi-codes() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --escape -e --help "
+      local options=" --escape -e --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -525,7 +558,9 @@ function __complete-ansi-codes() {
 complete -F __complete${BASH_FUNK_PREFIX:--}ansi-codes -- ${BASH_FUNK_PREFIX:--}ansi-codes
 
 function -ansi-colors-supported() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -534,9 +569,12 @@ function -ansi-colors-supported() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [NUM_COLORS]\n\nType '$__fn --help' for more details."
@@ -545,7 +583,7 @@ function -ansi-colors-supported() {
    return $rc
 }
 function __impl-ansi-colors-supported() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _NUM_COLORS
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _verbose _NUM_COLORS
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -577,6 +615,8 @@ function __impl-ansi-colors-supported() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -616,6 +656,8 @@ function __impl-ansi-colors-supported() {
             return 0
            ;;
 
+         --tracecmd) _tracecmd=1 ;;
+
          --verbose|-v)
             _verbose=1
          ;;
@@ -647,6 +689,7 @@ function __impl-ansi-colors-supported() {
    done
 
 ####### ansi-colors-supported ####### START
+[[ $_tracecmd ]] && set -x || true
 local numColors
 if hash tput &>/dev/null; then
    numColors=$(tput colors)
@@ -675,12 +718,13 @@ else
    echo $numColors
    return 0
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### ansi-colors-supported ####### END
 }
 function __complete-ansi-colors-supported() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help --verbose -v "
+      local options=" --help --tracecmd --verbose -v "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -690,7 +734,9 @@ function __complete-ansi-colors-supported() {
 complete -F __complete${BASH_FUNK_PREFIX:--}ansi-colors-supported -- ${BASH_FUNK_PREFIX:--}ansi-colors-supported
 
 function -ansi-colors16() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -699,9 +745,12 @@ function -ansi-colors16() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -710,7 +759,7 @@ function -ansi-colors16() {
    return $rc
 }
 function __impl-ansi-colors16() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -735,6 +784,8 @@ function __impl-ansi-colors16() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -753,6 +804,8 @@ function __impl-ansi-colors16() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -777,6 +830,7 @@ function __impl-ansi-colors16() {
    done
 
 ####### ansi-colors16 ####### START
+[[ $_tracecmd ]] && set -x || true
 if ! ${BASH_FUNK_PREFIX:--}ansi-colors-supported 8; then
    echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 8 colors."
    echo
@@ -799,12 +853,13 @@ for bg in {40..47} 49 {100..107}; do
    done
    echo
 done
+[[ $_tracecmd ]] && set +x || true
 ####### ansi-colors16 ####### END
 }
 function __complete-ansi-colors16() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -814,7 +869,9 @@ function __complete-ansi-colors16() {
 complete -F __complete${BASH_FUNK_PREFIX:--}ansi-colors16 -- ${BASH_FUNK_PREFIX:--}ansi-colors16
 
 function -ansi-colors256() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -823,9 +880,12 @@ function -ansi-colors256() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -834,7 +894,7 @@ function -ansi-colors256() {
    return $rc
 }
 function __impl-ansi-colors256() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -859,6 +919,8 @@ function __impl-ansi-colors256() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -877,6 +939,8 @@ function __impl-ansi-colors256() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -901,6 +965,7 @@ function __impl-ansi-colors256() {
    done
 
 ####### ansi-colors256 ####### START
+[[ $_tracecmd ]] && set -x || true
 if ! ${BASH_FUNK_PREFIX:--}ansi-colors-supported 256; then
    echo "WARNING: Your current terminal '$TERM' is reported to not support displaying 256 colors."
    echo
@@ -1001,12 +1066,13 @@ for i in 16 {232..255} 231;do
    printf "\033[48;5;${i}m%3d \033[0m" "$i"
 done
 echo
+[[ $_tracecmd ]] && set +x || true
 ####### ansi-colors256 ####### END
 }
 function __complete-ansi-colors256() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1016,7 +1082,9 @@ function __complete-ansi-colors256() {
 complete -F __complete${BASH_FUNK_PREFIX:--}ansi-colors256 -- ${BASH_FUNK_PREFIX:--}ansi-colors256
 
 function -ansi-reset() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1025,9 +1093,12 @@ function -ansi-reset() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -1036,7 +1107,7 @@ function -ansi-reset() {
    return $rc
 }
 function __impl-ansi-reset() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1061,6 +1132,8 @@ function __impl-ansi-reset() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1079,6 +1152,8 @@ function __impl-ansi-reset() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -1103,13 +1178,15 @@ function __impl-ansi-reset() {
    done
 
 ####### ansi-reset ####### START
+[[ $_tracecmd ]] && set -x || true
 echo -ne "\033[0m"
+[[ $_tracecmd ]] && set +x || true
 ####### ansi-reset ####### END
 }
 function __complete-ansi-reset() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1119,7 +1196,9 @@ function __complete-ansi-reset() {
 complete -F __complete${BASH_FUNK_PREFIX:--}ansi-reset -- ${BASH_FUNK_PREFIX:--}ansi-reset
 
 function -ansi-ul() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1128,9 +1207,12 @@ function -ansi-ul() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [TEXT]\n\nType '$__fn --help' for more details."
@@ -1139,7 +1221,7 @@ function -ansi-ul() {
    return $rc
 }
 function __impl-ansi-ul() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _on _off _help _selftest _TEXT
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _on _off _help _selftest _tracecmd _TEXT
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1173,6 +1255,8 @@ function __impl-ansi-ul() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1191,6 +1275,8 @@ function __impl-ansi-ul() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --on)
             _on=1
@@ -1227,6 +1313,7 @@ function __impl-ansi-ul() {
    done
 
 ####### ansi-ul ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ $_TEXT ]]; then
    echo -ne "\033[4m$_TEXT\033[24m"
 fi
@@ -1236,12 +1323,13 @@ if [[ $_on ]]; then
 elif [[ $_off ]]; then
    echo -ne "\033[24m"
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### ansi-ul ####### END
 }
 function __complete-ansi-ul() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --on --off --help "
+      local options=" --on --off --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1251,7 +1339,9 @@ function __complete-ansi-ul() {
 complete -F __complete${BASH_FUNK_PREFIX:--}ansi-ul -- ${BASH_FUNK_PREFIX:--}ansi-ul
 
 function -cursor-pos() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1260,9 +1350,12 @@ function -cursor-pos() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -1271,7 +1364,7 @@ function -cursor-pos() {
    return $rc
 }
 function __impl-cursor-pos() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _save _restore _up _down _left _right _assign _set _print _fd _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _save _restore _up _down _left _right _assign _set _print _fd _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1317,6 +1410,8 @@ function __impl-cursor-pos() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1335,6 +1430,8 @@ function __impl-cursor-pos() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --save)
             _save=1
@@ -1461,6 +1558,7 @@ function __impl-cursor-pos() {
    fi
 
 ####### cursor-pos ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ $_save ]]; then
    echo -en "\033[s" >&$_fd
 fi
@@ -1501,12 +1599,13 @@ if [[ $_print || $_assign ]]; then
       eval "$_assign=\"$pos\""
     fi
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### cursor-pos ####### END
 }
 function __complete-cursor-pos() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --save --restore --up -u --down -d --left -l --right -r --assign --set --print --fd --help "
+      local options=" --save --restore --up -u --down -d --left -l --right -r --assign --set --print --fd --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1516,7 +1615,9 @@ function __complete-cursor-pos() {
 complete -F __complete${BASH_FUNK_PREFIX:--}cursor-pos -- ${BASH_FUNK_PREFIX:--}cursor-pos
 
 function -test-all-ansi() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1525,9 +1626,12 @@ function -test-all-ansi() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -1536,7 +1640,7 @@ function -test-all-ansi() {
    return $rc
 }
 function __impl-test-all-ansi() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1561,6 +1665,8 @@ function __impl-test-all-ansi() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1579,6 +1685,8 @@ function __impl-test-all-ansi() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -1603,6 +1711,7 @@ function __impl-test-all-ansi() {
    done
 
 ####### test-all-ansi ####### START
+[[ $_tracecmd ]] && set -x || true
 ${BASH_FUNK_PREFIX:--}ansi-alternate --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-bold --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-codes --selftest && echo || return 1
@@ -1612,12 +1721,13 @@ ${BASH_FUNK_PREFIX:--}ansi-colors256 --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-reset --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ansi-ul --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}cursor-pos --selftest && echo || return 1
+[[ $_tracecmd ]] && set +x || true
 ####### test-all-ansi ####### END
 }
 function __complete-test-all-ansi() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else

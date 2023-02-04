@@ -12,7 +12,9 @@
 #
 
 function -calc() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -21,9 +23,12 @@ function -calc() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [FORMULA]...\n\nType '$__fn --help' for more details."
@@ -32,7 +37,7 @@ function -calc() {
    return $rc
 }
 function __impl-calc() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _round _help _selftest _FORMULA=()
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _round _help _selftest _tracecmd _FORMULA=()
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -67,6 +72,8 @@ function __impl-calc() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -142,6 +149,8 @@ function __impl-calc() {
             return 0
            ;;
 
+         --tracecmd) _tracecmd=1 ;;
+
          --round)
             _round="@@##@@"
             __optionWithValue=round
@@ -184,6 +193,7 @@ function __impl-calc() {
    if ! hash "awk" &>/dev/null; then echo "$__fn: Error: Required command 'awk' not found on this system."; return 64; fi
 
 ####### calc ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ ! ${_FORMULA:-} ]]; then
    "$__fn: Formula is missing."
    return 1
@@ -199,12 +209,13 @@ if [[ ${_round:-} ]]; then
 else
    LC_ALL=C awk "BEGIN{print ($formula)}"
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### calc ####### END
 }
 function __complete-calc() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --round --help "
+      local options=" --round --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -214,7 +225,9 @@ function __complete-calc() {
 complete -F __complete${BASH_FUNK_PREFIX:--}calc -- ${BASH_FUNK_PREFIX:--}calc
 
 function -round() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -223,9 +236,12 @@ function -round() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... VALUE PRECISION\n\nType '$__fn --help' for more details."
@@ -234,7 +250,7 @@ function -round() {
    return $rc
 }
 function __impl-round() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _VALUE _PRECISION
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _VALUE _PRECISION
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -265,6 +281,8 @@ function __impl-round() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -313,6 +331,8 @@ function __impl-round() {
             return 0
            ;;
 
+         --tracecmd) _tracecmd=1 ;;
+
          --)
             __optionWithValue="--"
            ;;
@@ -356,13 +376,15 @@ function __impl-round() {
    fi
 
 ####### round ####### START
+[[ $_tracecmd ]] && set -x || true
 LC_ALL=C builtin printf "%.*f\n" $_PRECISION $_VALUE
+[[ $_tracecmd ]] && set +x || true
 ####### round ####### END
 }
 function __complete-round() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -372,7 +394,9 @@ function __complete-round() {
 complete -F __complete${BASH_FUNK_PREFIX:--}round -- ${BASH_FUNK_PREFIX:--}round
 
 function -simple-calc() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -381,9 +405,12 @@ function -simple-calc() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... FORMULA\n\nType '$__fn --help' for more details."
@@ -392,7 +419,7 @@ function -simple-calc() {
    return $rc
 }
 function __impl-simple-calc() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _round _using _help _selftest _FORMULA
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _round _using _help _selftest _tracecmd _FORMULA
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -426,6 +453,8 @@ function __impl-simple-calc() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -669,6 +698,8 @@ function __impl-simple-calc() {
             return 0
            ;;
 
+         --tracecmd) _tracecmd=1 ;;
+
          --round)
             _round="@@##@@"
             __optionWithValue=round
@@ -730,6 +761,7 @@ function __impl-simple-calc() {
    fi
 
 ####### simple-calc ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ $_FORMULA =~ ^([+-]?[0-9]*\.?[0-9]+)([/*^+-])([0-9]*\.?[0-9]+)$ ]]; then
    local leftNumber=${BASH_REMATCH[1]}
    local operator=${BASH_REMATCH[2]}
@@ -814,12 +846,13 @@ print(result)
 "
     ;;
 esac
+[[ $_tracecmd ]] && set +x || true
 ####### simple-calc ####### END
 }
 function __complete-simple-calc() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --round --using --help "
+      local options=" --round --using --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -840,7 +873,9 @@ python" -- $curr))
 complete -F __complete${BASH_FUNK_PREFIX:--}simple-calc -- ${BASH_FUNK_PREFIX:--}simple-calc
 
 function -test-all-math() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -849,9 +884,12 @@ function -test-all-math() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -860,7 +898,7 @@ function -test-all-math() {
    return $rc
 }
 function __impl-test-all-math() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -885,6 +923,8 @@ function __impl-test-all-math() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -903,6 +943,8 @@ function __impl-test-all-math() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -927,15 +969,17 @@ function __impl-test-all-math() {
    done
 
 ####### test-all-math ####### START
+[[ $_tracecmd ]] && set -x || true
 ${BASH_FUNK_PREFIX:--}calc --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}round --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}simple-calc --selftest && echo || return 1
+[[ $_tracecmd ]] && set +x || true
 ####### test-all-math ####### END
 }
 function __complete-test-all-math() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else

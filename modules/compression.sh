@@ -12,7 +12,9 @@
 #
 
 function -tar-gz() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -21,9 +23,12 @@ function -tar-gz() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... ARCHIVE PATH1 [PATH]...\n\nType '$__fn --help' for more details."
@@ -32,7 +37,7 @@ function -tar-gz() {
    return $rc
 }
 function __impl-tar-gz() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _checkpoint _help _selftest _ARCHIVE _PATH=()
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _checkpoint _help _selftest _tracecmd _ARCHIVE _PATH=()
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -73,6 +78,8 @@ function __impl-tar-gz() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -91,6 +98,8 @@ function __impl-tar-gz() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --checkpoint)
             _checkpoint=1
@@ -144,6 +153,7 @@ function __impl-tar-gz() {
    if ! hash "gzip" &>/dev/null; then echo "$__fn: Error: Required command 'gzip' not found on this system."; return 64; fi
 
 ####### tar-gz ####### START
+[[ $_tracecmd ]] && set -x || true
 if hash pv && [[ ! $_checkpoint ]]; then
    local total_bytes=$(du -csb "${_PATH[@]}" | tail -1 | cut -f1) &&
    tar -cf - "${_PATH[@]}" | pv -s $total_bytes | gzip > "$_ARCHIVE"
@@ -152,12 +162,13 @@ else
    local total_kb=$(du -csk "${_PATH[@]}" | tail -1 | cut -f1) &&
    tar cfvz "${_ARCHIVE}" "${_PATH[@]}" --record-size=1K --checkpoint="$(($total_kb/100))" --checkpoint-action=exec=" printf '%3d/100%%\r' \$((100*\$TAR_CHECKPOINT/$total_kb)) " --totals
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### tar-gz ####### END
 }
 function __complete-tar-gz() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --checkpoint --help "
+      local options=" --checkpoint --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -167,7 +178,9 @@ function __complete-tar-gz() {
 complete -F __complete${BASH_FUNK_PREFIX:--}tar-gz -- ${BASH_FUNK_PREFIX:--}tar-gz
 
 function -tar-zstd() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -176,9 +189,12 @@ function -tar-zstd() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... ARCHIVE PATH1 [PATH]...\n\nType '$__fn --help' for more details."
@@ -187,7 +203,7 @@ function -tar-zstd() {
    return $rc
 }
 function __impl-tar-zstd() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _checkpoint _help _selftest _ARCHIVE _PATH=()
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _checkpoint _help _selftest _tracecmd _ARCHIVE _PATH=()
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -228,6 +244,8 @@ function __impl-tar-zstd() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -246,6 +264,8 @@ function __impl-tar-zstd() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --checkpoint)
             _checkpoint=1
@@ -299,6 +319,7 @@ function __impl-tar-zstd() {
    if ! hash "zstd" &>/dev/null; then echo "$__fn: Error: Required command 'zstd' not found on this system."; return 64; fi
 
 ####### tar-zstd ####### START
+[[ $_tracecmd ]] && set -x || true
 if hash pv && [[ ! $_checkpoint ]]; then
    printf '=> %s\n' "${_PATH[@]}"
    local total_bytes=$(du -csb "${_PATH[@]}" | tail -1 | cut -f1) &&
@@ -307,12 +328,13 @@ else
    local total_kb=$(du -csk "${_PATH[@]}" | tail -1 | cut -f1) &&
    tar cfv "${_ARCHIVE}" "${_PATH[@]}" -Izstd --record-size=1K --checkpoint="$(($total_kb/100))" --checkpoint-action=exec=" printf '%3d/100%%\r' \$((100*\$TAR_CHECKPOINT/$total_kb)) " --totals
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### tar-zstd ####### END
 }
 function __complete-tar-zstd() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --checkpoint --help "
+      local options=" --checkpoint --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -322,7 +344,9 @@ function __complete-tar-zstd() {
 complete -F __complete${BASH_FUNK_PREFIX:--}tar-zstd -- ${BASH_FUNK_PREFIX:--}tar-zstd
 
 function -test-all-compression() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -331,9 +355,12 @@ function -test-all-compression() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -342,7 +369,7 @@ function -test-all-compression() {
    return $rc
 }
 function __impl-test-all-compression() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -367,6 +394,8 @@ function __impl-test-all-compression() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -385,6 +414,8 @@ function __impl-test-all-compression() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -409,16 +440,18 @@ function __impl-test-all-compression() {
    done
 
 ####### test-all-compression ####### START
+[[ $_tracecmd ]] && set -x || true
 ${BASH_FUNK_PREFIX:--}tar-gz --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}tar-zstd --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}untar-gz --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}untar-zstd --selftest && echo || return 1
+[[ $_tracecmd ]] && set +x || true
 ####### test-all-compression ####### END
 }
 function __complete-test-all-compression() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -428,7 +461,9 @@ function __complete-test-all-compression() {
 complete -F __complete${BASH_FUNK_PREFIX:--}test-all-compression -- ${BASH_FUNK_PREFIX:--}test-all-compression
 
 function -untar-gz() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -437,9 +472,12 @@ function -untar-gz() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... ARCHIVE [TARGET_DIR]\n\nType '$__fn --help' for more details."
@@ -448,7 +486,7 @@ function -untar-gz() {
    return $rc
 }
 function __impl-untar-gz() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _checkpoint _help _selftest _ARCHIVE _TARGET_DIR
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _checkpoint _help _selftest _tracecmd _ARCHIVE _TARGET_DIR
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -488,6 +526,8 @@ function __impl-untar-gz() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -506,6 +546,8 @@ function __impl-untar-gz() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --checkpoint)
             _checkpoint=1
@@ -563,18 +605,20 @@ function __impl-untar-gz() {
    if ! hash "gzip" &>/dev/null; then echo "$__fn: Error: Required command 'gzip' not found on this system."; return 64; fi
 
 ####### untar-gz ####### START
+[[ $_tracecmd ]] && set -x || true
 if hash pv && [[ ! $_checkpoint ]]; then
    pv "${_ARCHIVE}" --interval 0.5 | tar xzfv - -C "$_TARGET_DIR"
 else
    local total_kb=$(du -k "${_ARCHIVE}" | cut -f1) &&
    tar xzfv "${_ARCHIVE}" -C "$_TARGET_DIR" --record-size=1K --checkpoint="$(($total_kb/100))" --checkpoint-action=exec=" printf '%3d/100%%\r' \$((100*\$TAR_CHECKPOINT/$total_kb)) " --totals
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### untar-gz ####### END
 }
 function __complete-untar-gz() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --checkpoint --help "
+      local options=" --checkpoint --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -584,7 +628,9 @@ function __complete-untar-gz() {
 complete -F __complete${BASH_FUNK_PREFIX:--}untar-gz -- ${BASH_FUNK_PREFIX:--}untar-gz
 
 function -untar-zstd() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -593,9 +639,12 @@ function -untar-zstd() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... ARCHIVE [TARGET_DIR]\n\nType '$__fn --help' for more details."
@@ -604,7 +653,7 @@ function -untar-zstd() {
    return $rc
 }
 function __impl-untar-zstd() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _checkpoint _help _selftest _ARCHIVE _TARGET_DIR
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _checkpoint _help _selftest _tracecmd _ARCHIVE _TARGET_DIR
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -644,6 +693,8 @@ function __impl-untar-zstd() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -662,6 +713,8 @@ function __impl-untar-zstd() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --checkpoint)
             _checkpoint=1
@@ -719,18 +772,20 @@ function __impl-untar-zstd() {
    if ! hash "zstd" &>/dev/null; then echo "$__fn: Error: Required command 'zstd' not found on this system."; return 64; fi
 
 ####### untar-zstd ####### START
+[[ $_tracecmd ]] && set -x || true
 if hash pv && [[ ! $_checkpoint ]]; then
    pv "${_ARCHIVE}" --interval 0.5 | zstd -d | tar xfv - -C "$_TARGET_DIR"
 else
    local total_kb=$(du -k "${_ARCHIVE}" | cut -f1) &&
    tar xfv "${_ARCHIVE}" -C "$_TARGET_DIR" -Izstd --record-size=1K --checkpoint="$(($total_kb/100))" --checkpoint-action=exec=" printf '%3d/100%%\r' \$((100*\$TAR_CHECKPOINT/$total_kb)) " --totals
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### untar-zstd ####### END
 }
 function __complete-untar-zstd() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --checkpoint --help "
+      local options=" --checkpoint --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else

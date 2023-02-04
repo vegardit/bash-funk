@@ -78,6 +78,8 @@ Options:
     -----------------------------
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -168,6 +170,8 @@ Prints all exported environment variables.
 Options:
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -190,6 +194,8 @@ Prints the online help of all bash-funk commands.
 Options:
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -217,6 +223,8 @@ Requirements:
 Options:
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -250,6 +258,8 @@ Reloads bash-funk.
 Options:
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -282,6 +292,8 @@ Starts an interactive shell as root user. Same as 'sudo -i'.
 Options:
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -304,6 +316,8 @@ Performs a selftest of all functions of this module by executing each function w
 Options:
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -339,6 +353,8 @@ Options:
     -----------------------------
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -453,6 +469,8 @@ Options:
     -----------------------------
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -529,6 +547,8 @@ Options:
     -----------------------------
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -569,6 +589,8 @@ Parameters:
 Options:
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -626,6 +648,8 @@ Options:
     -----------------------------
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --

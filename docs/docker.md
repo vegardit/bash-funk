@@ -82,6 +82,8 @@ Installs and executes the docker-debug tool (https://github.com/zeromake/docker-
 Options:
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -104,6 +106,8 @@ Displays dockerd's log messages in realtime.
 Options:
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -126,6 +130,8 @@ Starts Netshoot (https://github.com/nicolaka/netshoot) - a network trouble-shoot
 Options:
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -163,6 +169,8 @@ Options:
     -----------------------------
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -195,6 +203,8 @@ Starts Dockly (https://lirantal.github.io/dockly/).
 Options:
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -217,6 +227,8 @@ Prints the Swarm cluster ID.
 Options:
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -239,6 +251,8 @@ Performs a selftest of all functions of this module by executing each function w
 Options:
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --

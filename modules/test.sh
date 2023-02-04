@@ -12,7 +12,9 @@
 #
 
 function -test-all() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -21,9 +23,12 @@ function -test-all() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -32,7 +37,7 @@ function -test-all() {
    return $rc
 }
 function __impl-test-all() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -57,6 +62,8 @@ function __impl-test-all() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -75,6 +82,8 @@ function __impl-test-all() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -99,15 +108,17 @@ function __impl-test-all() {
    done
 
 ####### test-all ####### START
+[[ $_tracecmd ]] && set -x || true
 for testfunc in $(compgen -A function -- ${BASH_FUNK_PREFIX:--}test-all-); do
    $testfunc || return 1
 done
+[[ $_tracecmd ]] && set +x || true
 ####### test-all ####### END
 }
 function __complete-test-all() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -117,7 +128,9 @@ function __complete-test-all() {
 complete -F __complete${BASH_FUNK_PREFIX:--}test-all -- ${BASH_FUNK_PREFIX:--}test-all
 
 function -test-all-test() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -126,9 +139,12 @@ function -test-all-test() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -137,7 +153,7 @@ function -test-all-test() {
    return $rc
 }
 function __impl-test-all-test() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -162,6 +178,8 @@ function __impl-test-all-test() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -180,6 +198,8 @@ function __impl-test-all-test() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -204,6 +224,7 @@ function __impl-test-all-test() {
    done
 
 ####### test-all-test ####### START
+[[ $_tracecmd ]] && set -x || true
 ${BASH_FUNK_PREFIX:--}test-all --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}test-fn-flags --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}test-fn-multi-value-options --selftest && echo || return 1
@@ -216,12 +237,13 @@ ${BASH_FUNK_PREFIX:--}test-fn-requires-nonexistent --selftest && echo || return 
 ${BASH_FUNK_PREFIX:--}test-fn-single-value-options --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}test-fn-single-value-parameters --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}test-fn-single-value-parameters-first-optional --selftest && echo || return 1
+[[ $_tracecmd ]] && set +x || true
 ####### test-all-test ####### END
 }
 function __complete-test-all-test() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -231,7 +253,9 @@ function __complete-test-all-test() {
 complete -F __complete${BASH_FUNK_PREFIX:--}test-all-test -- ${BASH_FUNK_PREFIX:--}test-all-test
 
 function -test-fn-flags() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -240,9 +264,12 @@ function -test-fn-flags() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -251,7 +278,7 @@ function -test-fn-flags() {
    return $rc
 }
 function __impl-test-fn-flags() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _myflag _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _myflag _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -279,6 +306,8 @@ function __impl-test-fn-flags() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -327,6 +356,8 @@ function __impl-test-fn-flags() {
             return 0
            ;;
 
+         --tracecmd) _tracecmd=1 ;;
+
          --myflag|-m)
             _myflag=1
          ;;
@@ -354,13 +385,15 @@ function __impl-test-fn-flags() {
    done
 
 ####### test-fn-flags ####### START
+[[ $_tracecmd ]] && set -x || true
 [[ $_myflag ]] && echo "myflag was specified" || echo "myflag was not specified"
+[[ $_tracecmd ]] && set +x || true
 ####### test-fn-flags ####### END
 }
 function __complete-test-fn-flags() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --myflag -m --help "
+      local options=" --myflag -m --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -370,7 +403,9 @@ function __complete-test-fn-flags() {
 complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-flags -- ${BASH_FUNK_PREFIX:--}test-fn-flags
 
 function -test-fn-multi-value-options() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -379,9 +414,12 @@ function -test-fn-multi-value-options() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -390,7 +428,7 @@ function -test-fn-multi-value-options() {
    return $rc
 }
 function __impl-test-fn-multi-value-options() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _aa _bb _cc _dd _ee _ff _gg _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _aa _bb _cc _dd _ee _ff _gg _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -430,6 +468,8 @@ function __impl-test-fn-multi-value-options() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -588,6 +628,8 @@ function __impl-test-fn-multi-value-options() {
             return 0
            ;;
 
+         --tracecmd) _tracecmd=1 ;;
+
          --aa|-a)
             _aa="@@##@@"
             __optionWithValue=aa
@@ -727,13 +769,15 @@ function __impl-test-fn-multi-value-options() {
    fi
 
 ####### test-fn-multi-value-options ####### START
+[[ $_tracecmd ]] && set -x || true
 echo "aa:${_aa[@]} bb:${_bb[@]} cc:${_cc[@]} dd:${_dd[@]} ee:${_ee[@]} ff:${_ff[@]} gg:${_gg[@]}"
+[[ $_tracecmd ]] && set +x || true
 ####### test-fn-multi-value-options ####### END
 }
 function __complete-test-fn-multi-value-options() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --aa -a --bb -b --cc -c --dd -d --ee -e --ff -f --gg -g --help "
+      local options=" --aa -a --bb -b --cc -c --dd -d --ee -e --ff -f --gg -g --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -753,7 +797,9 @@ C" -- $curr))
 complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-multi-value-options -- ${BASH_FUNK_PREFIX:--}test-fn-multi-value-options
 
 function -test-fn-multi-value-parameter-zero-or-more() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -762,9 +808,12 @@ function -test-fn-multi-value-parameter-zero-or-more() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [AA]...\n\nType '$__fn --help' for more details."
@@ -773,7 +822,7 @@ function -test-fn-multi-value-parameter-zero-or-more() {
    return $rc
 }
 function __impl-test-fn-multi-value-parameter-zero-or-more() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA=()
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _AA=()
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -802,6 +851,8 @@ function __impl-test-fn-multi-value-parameter-zero-or-more() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -857,6 +908,8 @@ function __impl-test-fn-multi-value-parameter-zero-or-more() {
             return 0
            ;;
 
+         --tracecmd) _tracecmd=1 ;;
+
          --)
             __optionWithValue="--"
            ;;
@@ -889,13 +942,15 @@ function __impl-test-fn-multi-value-parameter-zero-or-more() {
    fi
 
 ####### test-fn-multi-value-parameter-zero-or-more ####### START
+[[ $_tracecmd ]] && set -x || true
 echo "AA:${_AA[@]}"
+[[ $_tracecmd ]] && set +x || true
 ####### test-fn-multi-value-parameter-zero-or-more ####### END
 }
 function __complete-test-fn-multi-value-parameter-zero-or-more() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -905,7 +960,9 @@ function __complete-test-fn-multi-value-parameter-zero-or-more() {
 complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-multi-value-parameter-zero-or-more -- ${BASH_FUNK_PREFIX:--}test-fn-multi-value-parameter-zero-or-more
 
 function -test-fn-multi-value-parameters() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -914,9 +971,12 @@ function -test-fn-multi-value-parameters() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... AA1 AA2 BB1 BB2 CC1 CC2 DD1 DD2 EE1 EE2 [FF]...\n\nType '$__fn --help' for more details."
@@ -925,7 +985,7 @@ function -test-fn-multi-value-parameters() {
    return $rc
 }
 function __impl-test-fn-multi-value-parameters() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA=() _BB=() _CC=() _DD=() _EE=() _FF=()
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _AA=() _BB=() _CC=() _DD=() _EE=() _FF=()
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -964,6 +1024,8 @@ function __impl-test-fn-multi-value-parameters() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1094,6 +1156,8 @@ function __impl-test-fn-multi-value-parameters() {
             return 0
            ;;
 
+         --tracecmd) _tracecmd=1 ;;
+
          --)
             __optionWithValue="--"
            ;;
@@ -1177,13 +1241,15 @@ function __impl-test-fn-multi-value-parameters() {
    fi
 
 ####### test-fn-multi-value-parameters ####### START
+[[ $_tracecmd ]] && set -x || true
 echo "AA:${_AA[@]} BB:${_BB[@]} CC:${_CC[@]} DD:${_DD[@]} EE:${_EE[@]} FF:${_FF[@]}"
+[[ $_tracecmd ]] && set +x || true
 ####### test-fn-multi-value-parameters ####### END
 }
 function __complete-test-fn-multi-value-parameters() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1193,7 +1259,9 @@ function __complete-test-fn-multi-value-parameters() {
 complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-multi-value-parameters -- ${BASH_FUNK_PREFIX:--}test-fn-multi-value-parameters
 
 function -test-fn-multi-value-parameters-variable-length() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1202,9 +1270,12 @@ function -test-fn-multi-value-parameters-variable-length() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [AA1..2] BB1 BB2\n\nType '$__fn --help' for more details."
@@ -1213,7 +1284,7 @@ function -test-fn-multi-value-parameters-variable-length() {
    return $rc
 }
 function __impl-test-fn-multi-value-parameters-variable-length() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA=() _BB=()
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _AA=() _BB=()
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1244,6 +1315,8 @@ function __impl-test-fn-multi-value-parameters-variable-length() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1316,6 +1389,8 @@ function __impl-test-fn-multi-value-parameters-variable-length() {
             return 0
            ;;
 
+         --tracecmd) _tracecmd=1 ;;
+
          --)
             __optionWithValue="--"
            ;;
@@ -1369,13 +1444,15 @@ function __impl-test-fn-multi-value-parameters-variable-length() {
    fi
 
 ####### test-fn-multi-value-parameters-variable-length ####### START
+[[ $_tracecmd ]] && set -x || true
 echo "AA:${_AA[@]} BB:${_BB[@]}"
+[[ $_tracecmd ]] && set +x || true
 ####### test-fn-multi-value-parameters-variable-length ####### END
 }
 function __complete-test-fn-multi-value-parameters-variable-length() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1385,7 +1462,9 @@ function __complete-test-fn-multi-value-parameters-variable-length() {
 complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-multi-value-parameters-variable-length -- ${BASH_FUNK_PREFIX:--}test-fn-multi-value-parameters-variable-length
 
 function -test-fn-noargs() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1394,9 +1473,12 @@ function -test-fn-noargs() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -1405,7 +1487,7 @@ function -test-fn-noargs() {
    return $rc
 }
 function __impl-test-fn-noargs() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _verbose
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1433,6 +1515,8 @@ function __impl-test-fn-noargs() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1492,6 +1576,8 @@ function __impl-test-fn-noargs() {
             return 0
            ;;
 
+         --tracecmd) _tracecmd=1 ;;
+
          --verbose|-v)
             _verbose=1
          ;;
@@ -1519,13 +1605,15 @@ function __impl-test-fn-noargs() {
    done
 
 ####### test-fn-noargs ####### START
+[[ $_tracecmd ]] && set -x || true
 [[ $_verbose ]] && echo "verbose mode" || :
+[[ $_tracecmd ]] && set +x || true
 ####### test-fn-noargs ####### END
 }
 function __complete-test-fn-noargs() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help --verbose -v "
+      local options=" --help --tracecmd --verbose -v "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1535,7 +1623,9 @@ function __complete-test-fn-noargs() {
 complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-noargs -- ${BASH_FUNK_PREFIX:--}test-fn-noargs
 
 function -test-fn-requires-existing() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1544,9 +1634,12 @@ function -test-fn-requires-existing() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -1555,7 +1648,7 @@ function -test-fn-requires-existing() {
    return $rc
 }
 function __impl-test-fn-requires-existing() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _verbose
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1586,6 +1679,8 @@ function __impl-test-fn-requires-existing() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1614,6 +1709,8 @@ function __impl-test-fn-requires-existing() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --verbose|-v)
             _verbose=1
@@ -1644,13 +1741,15 @@ function __impl-test-fn-requires-existing() {
    if ! hash "hash" &>/dev/null; then echo "$__fn: Error: Required command 'hash' not found on this system."; return 64; fi
 
 ####### test-fn-requires-existing ####### START
+[[ $_tracecmd ]] && set -x || true
 [[ $_verbose ]] && echo "verbose mode" || :
+[[ $_tracecmd ]] && set +x || true
 ####### test-fn-requires-existing ####### END
 }
 function __complete-test-fn-requires-existing() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help --verbose -v "
+      local options=" --help --tracecmd --verbose -v "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1660,7 +1759,9 @@ function __complete-test-fn-requires-existing() {
 complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-requires-existing -- ${BASH_FUNK_PREFIX:--}test-fn-requires-existing
 
 function -test-fn-requires-nonexistent() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1669,9 +1770,12 @@ function -test-fn-requires-nonexistent() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -1680,7 +1784,7 @@ function -test-fn-requires-nonexistent() {
    return $rc
 }
 function __impl-test-fn-requires-nonexistent() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _verbose
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1711,6 +1815,8 @@ function __impl-test-fn-requires-nonexistent() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1736,6 +1842,8 @@ function __impl-test-fn-requires-nonexistent() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --verbose|-v)
             _verbose=1
@@ -1766,13 +1874,15 @@ function __impl-test-fn-requires-nonexistent() {
    if ! hash "some_random_nonexistent_command" &>/dev/null; then echo "$__fn: Error: Required command 'some_random_nonexistent_command' not found on this system."; return 64; fi
 
 ####### test-fn-requires-nonexistent ####### START
+[[ $_tracecmd ]] && set -x || true
 [[ $_verbose ]] && echo "verbose mode" || :
+[[ $_tracecmd ]] && set +x || true
 ####### test-fn-requires-nonexistent ####### END
 }
 function __complete-test-fn-requires-nonexistent() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help --verbose -v "
+      local options=" --help --tracecmd --verbose -v "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1782,7 +1892,9 @@ function __complete-test-fn-requires-nonexistent() {
 complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-requires-nonexistent -- ${BASH_FUNK_PREFIX:--}test-fn-requires-nonexistent
 
 function -test-fn-single-value-options() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1791,9 +1903,12 @@ function -test-fn-single-value-options() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -1802,7 +1917,7 @@ function -test-fn-single-value-options() {
    return $rc
 }
 function __impl-test-fn-single-value-options() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _aa _bb _cc _dd _ee _ff _gg _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _aa _bb _cc _dd _ee _ff _gg _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1842,6 +1957,8 @@ function __impl-test-fn-single-value-options() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1993,6 +2110,8 @@ function __impl-test-fn-single-value-options() {
             return 0
            ;;
 
+         --tracecmd) _tracecmd=1 ;;
+
          --aa|-a)
             _aa="cat"
             __optionWithValue=aa
@@ -2105,13 +2224,15 @@ function __impl-test-fn-single-value-options() {
    fi
 
 ####### test-fn-single-value-options ####### START
+[[ $_tracecmd ]] && set -x || true
 echo "aa:$_aa bb:$_bb cc:$_cc dd:$_dd ee:$_ee ff:$_ff gg:$_gg"
+[[ $_tracecmd ]] && set +x || true
 ####### test-fn-single-value-options ####### END
 }
 function __complete-test-fn-single-value-options() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --aa -a --bb -b --cc -c --dd -d --ee -e --ff -f --gg -g --help "
+      local options=" --aa -a --bb -b --cc -c --dd -d --ee -e --ff -f --gg -g --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -2131,7 +2252,9 @@ C" -- $curr))
 complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-single-value-options -- ${BASH_FUNK_PREFIX:--}test-fn-single-value-options
 
 function -test-fn-single-value-parameters() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -2140,9 +2263,12 @@ function -test-fn-single-value-parameters() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... AA BB CC DD EE [FF]\n\nType '$__fn --help' for more details."
@@ -2151,7 +2277,7 @@ function -test-fn-single-value-parameters() {
    return $rc
 }
 function __impl-test-fn-single-value-parameters() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA _BB _CC _DD _EE _FF
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _AA _BB _CC _DD _EE _FF
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -2190,6 +2316,8 @@ function __impl-test-fn-single-value-parameters() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -2306,6 +2434,8 @@ function __impl-test-fn-single-value-parameters() {
             return 0
            ;;
 
+         --tracecmd) _tracecmd=1 ;;
+
          --)
             __optionWithValue="--"
            ;;
@@ -2386,13 +2516,15 @@ function __impl-test-fn-single-value-parameters() {
    fi
 
 ####### test-fn-single-value-parameters ####### START
+[[ $_tracecmd ]] && set -x || true
 echo "AA:$_AA BB:$_BB CC:$_CC DD:$_DD EE:$_EE FF:$_FF"
+[[ $_tracecmd ]] && set +x || true
 ####### test-fn-single-value-parameters ####### END
 }
 function __complete-test-fn-single-value-parameters() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -2402,7 +2534,9 @@ function __complete-test-fn-single-value-parameters() {
 complete -F __complete${BASH_FUNK_PREFIX:--}test-fn-single-value-parameters -- ${BASH_FUNK_PREFIX:--}test-fn-single-value-parameters
 
 function -test-fn-single-value-parameters-first-optional() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -2411,9 +2545,12 @@ function -test-fn-single-value-parameters-first-optional() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [AA] BB\n\nType '$__fn --help' for more details."
@@ -2422,7 +2559,7 @@ function -test-fn-single-value-parameters-first-optional() {
    return $rc
 }
 function __impl-test-fn-single-value-parameters-first-optional() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _AA _BB
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _AA _BB
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -2453,6 +2590,8 @@ function __impl-test-fn-single-value-parameters-first-optional() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -2513,6 +2652,8 @@ function __impl-test-fn-single-value-parameters-first-optional() {
             return 0
            ;;
 
+         --tracecmd) _tracecmd=1 ;;
+
          --)
             __optionWithValue="--"
            ;;
@@ -2553,13 +2694,15 @@ function __impl-test-fn-single-value-parameters-first-optional() {
    fi
 
 ####### test-fn-single-value-parameters-first-optional ####### START
+[[ $_tracecmd ]] && set -x || true
 echo "AA:$_AA BB:$_BB"
+[[ $_tracecmd ]] && set +x || true
 ####### test-fn-single-value-parameters-first-optional ####### END
 }
 function __complete-test-fn-single-value-parameters-first-optional() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else

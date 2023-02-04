@@ -12,7 +12,9 @@
 #
 
 function -block-port() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -21,9 +23,12 @@ function -block-port() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [BIND_ADDRESS] PORT\n\nType '$__fn --help' for more details."
@@ -32,7 +37,7 @@ function -block-port() {
    return $rc
 }
 function __impl-block-port() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _duration _help _selftest _BIND_ADDRESS _PORT
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _duration _help _selftest _tracecmd _BIND_ADDRESS _PORT
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -66,6 +71,8 @@ function __impl-block-port() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -117,6 +124,8 @@ Press \[CTRL\]\+\[C\] to abort\.]."; return 64; fi
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --duration|-d)
             _duration="@@##@@"
@@ -172,6 +181,7 @@ Press \[CTRL\]\+\[C\] to abort\.]."; return 64; fi
    fi
 
 ####### block-port ####### START
+[[ $_tracecmd ]] && set -x || true
 echo "Binding to $_BIND_ADDRESS:$_PORT..."
 
 [[ $_duration ]] && local timeout="Timeout => $_duration," || local timeout="";
@@ -190,12 +200,13 @@ perl << EOF
    while (\$client = \$server->accept()) { }
    close(\$server);
 EOF
+[[ $_tracecmd ]] && set +x || true
 ####### block-port ####### END
 }
 function __complete-block-port() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --duration -d --help "
+      local options=" --duration -d --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -205,7 +216,9 @@ function __complete-block-port() {
 complete -F __complete${BASH_FUNK_PREFIX:--}block-port -- ${BASH_FUNK_PREFIX:--}block-port
 
 function -flush-dns() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -214,9 +227,12 @@ function -flush-dns() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -225,7 +241,7 @@ function -flush-dns() {
    return $rc
 }
 function __impl-flush-dns() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -250,6 +266,8 @@ function __impl-flush-dns() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -268,6 +286,8 @@ function __impl-flush-dns() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -292,6 +312,7 @@ function __impl-flush-dns() {
    done
 
 ####### flush-dns ####### START
+[[ $_tracecmd ]] && set -x || true
 case $OSTYPE in
    cygwin|msys) cmd="ipconfig /flushdns" ;;
    darwin) cmd="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder" ;;
@@ -314,12 +335,13 @@ case $OSTYPE in
 esac
 echo $cmd
 eval $cmd
+[[ $_tracecmd ]] && set +x || true
 ####### flush-dns ####### END
 }
 function __complete-flush-dns() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -329,7 +351,9 @@ function __complete-flush-dns() {
 complete -F __complete${BASH_FUNK_PREFIX:--}flush-dns -- ${BASH_FUNK_PREFIX:--}flush-dns
 
 function -is-port-open() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -338,9 +362,12 @@ function -is-port-open() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... HOSTNAME PORT [CONNECT_TIMEOUT_IN_SECONDS]\n\nType '$__fn --help' for more details."
@@ -349,7 +376,7 @@ function -is-port-open() {
    return $rc
 }
 function __impl-is-port-open() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _HOSTNAME _PORT _CONNECT_TIMEOUT_IN_SECONDS
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _verbose _HOSTNAME _PORT _CONNECT_TIMEOUT_IN_SECONDS
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -385,6 +412,8 @@ function __impl-is-port-open() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -429,6 +458,8 @@ function __impl-is-port-open() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --verbose|-v)
             _verbose=1
@@ -487,6 +518,7 @@ function __impl-is-port-open() {
    fi
 
 ####### is-port-open ####### START
+[[ $_tracecmd ]] && set -x || true
 if hash nc &>/dev/null; then
    if nc -vz -w $_CONNECT_TIMEOUT_IN_SECONDS $_HOSTNAME $_PORT; then
       portStatus=open
@@ -517,12 +549,13 @@ else
    [[ $_verbose ]] && echo "$_HOSTNAME:$_PORT is not reachable." || true
    return 1
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### is-port-open ####### END
 }
 function __complete-is-port-open() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help --verbose -v "
+      local options=" --help --tracecmd --verbose -v "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -532,7 +565,9 @@ function __complete-is-port-open() {
 complete -F __complete${BASH_FUNK_PREFIX:--}is-port-open -- ${BASH_FUNK_PREFIX:--}is-port-open
 
 function -my-ips() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -541,9 +576,12 @@ function -my-ips() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -552,7 +590,7 @@ function -my-ips() {
    return $rc
 }
 function __impl-my-ips() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -577,6 +615,8 @@ function __impl-my-ips() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -595,6 +635,8 @@ function __impl-my-ips() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -619,6 +661,7 @@ function __impl-my-ips() {
    done
 
 ####### my-ips ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ $OSTYPE == cygwin || $OSTYPE == msys ]]; then
    ipconfig /all | grep "IPv4 Address" | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
 else
@@ -633,12 +676,13 @@ else
       return 1
    fi
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### my-ips ####### END
 }
 function __complete-my-ips() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -648,7 +692,9 @@ function __complete-my-ips() {
 complete -F __complete${BASH_FUNK_PREFIX:--}my-ips -- ${BASH_FUNK_PREFIX:--}my-ips
 
 function -my-public-hostname() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -657,9 +703,12 @@ function -my-public-hostname() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -668,7 +717,7 @@ function -my-public-hostname() {
    return $rc
 }
 function __impl-my-public-hostname() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _method _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _method _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -696,6 +745,8 @@ function __impl-my-public-hostname() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -714,6 +765,8 @@ function __impl-my-public-hostname() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --method|-m)
             _method="@@##@@"
@@ -752,6 +805,7 @@ function __impl-my-public-hostname() {
    fi
 
 ####### my-public-hostname ####### START
+[[ $_tracecmd ]] && set -x || true
 case ${_method:-https} in
    finger)
       if ! hash finger &>/dev/null; then
@@ -790,12 +844,13 @@ case ${_method:-https} in
       return ${PIPESTATUS[0]}
      ;;
 esac
+[[ $_tracecmd ]] && set +x || true
 ####### my-public-hostname ####### END
 }
 function __complete-my-public-hostname() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --method -m --help "
+      local options=" --method -m --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -817,7 +872,9 @@ telnet" -- $curr))
 complete -F __complete${BASH_FUNK_PREFIX:--}my-public-hostname -- ${BASH_FUNK_PREFIX:--}my-public-hostname
 
 function -my-public-ip() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -826,9 +883,12 @@ function -my-public-ip() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -837,7 +897,7 @@ function -my-public-ip() {
    return $rc
 }
 function __impl-my-public-ip() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _method _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _method _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -865,6 +925,8 @@ function __impl-my-public-ip() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -883,6 +945,8 @@ function __impl-my-public-ip() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --method|-m)
             _method="@@##@@"
@@ -921,6 +985,7 @@ function __impl-my-public-ip() {
    fi
 
 ####### my-public-ip ####### START
+[[ $_tracecmd ]] && set -x || true
 case ${_method:-http} in
    dns)
       if hash dig &>/dev/null; then
@@ -959,12 +1024,13 @@ case ${_method:-http} in
       return ${PIPESTATUS[0]}
      ;;
 esac
+[[ $_tracecmd ]] && set +x || true
 ####### my-public-ip ####### END
 }
 function __complete-my-public-ip() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --method -m --help "
+      local options=" --method -m --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -986,7 +1052,9 @@ telnet" -- $curr))
 complete -F __complete${BASH_FUNK_PREFIX:--}my-public-ip -- ${BASH_FUNK_PREFIX:--}my-public-ip
 
 function -run-echo-server() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -995,9 +1063,12 @@ function -run-echo-server() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [BIND_ADDRESS] PORT\n\nType '$__fn --help' for more details."
@@ -1006,7 +1077,7 @@ function -run-echo-server() {
    return $rc
 }
 function __impl-run-echo-server() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _stop_when _disconnect_when _help _selftest _BIND_ADDRESS _PORT
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _stop_when _disconnect_when _help _selftest _tracecmd _BIND_ADDRESS _PORT
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1045,6 +1116,8 @@ function __impl-run-echo-server() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1063,6 +1136,8 @@ function __impl-run-echo-server() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --stop_when)
             _stop_when="@@##@@"
@@ -1131,6 +1206,7 @@ function __impl-run-echo-server() {
    if ! hash "python" &>/dev/null; then echo "$__fn: Error: Required command 'python' not found on this system."; return 64; fi
 
 ####### run-echo-server ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ ! $_stop_when ]]; then
    local _stop_when=stop
 fi
@@ -1173,12 +1249,13 @@ try:
 except KeyboardInterrupt:
    pass
 "
+[[ $_tracecmd ]] && set +x || true
 ####### run-echo-server ####### END
 }
 function __complete-run-echo-server() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --stop_when --disconnect_when --help "
+      local options=" --stop_when --disconnect_when --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1188,7 +1265,9 @@ function __complete-run-echo-server() {
 complete -F __complete${BASH_FUNK_PREFIX:--}run-echo-server -- ${BASH_FUNK_PREFIX:--}run-echo-server
 
 function -set-proxy() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1197,9 +1276,12 @@ function -set-proxy() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... PROXY_URL [NO_PROXY]\n\nType '$__fn --help' for more details."
@@ -1208,7 +1290,7 @@ function -set-proxy() {
    return $rc
 }
 function __impl-set-proxy() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _PROXY_URL _NO_PROXY
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _verbose _PROXY_URL _NO_PROXY
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1242,6 +1324,8 @@ function __impl-set-proxy() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1260,6 +1344,8 @@ function __impl-set-proxy() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --verbose|-v)
             _verbose=1
@@ -1302,6 +1388,7 @@ function __impl-set-proxy() {
    fi
 
 ####### set-proxy ####### START
+[[ $_tracecmd ]] && set -x || true
 for varname in all_proxy ALL_PROXY ftp_proxy FTP_PROXY http_proxy HTTP_PROXY https_proxy HTTPS_PROXY; do
    [[ $_verbose ]] && echo "Setting $varname=$_PROXY_URL"
    export $varname=$_PROXY_URL
@@ -1324,12 +1411,13 @@ export no_proxy="$no_proxy,$_NO_PROXY"
 [[ $_verbose ]] && echo "Setting no_proxy=$no_proxy"
 [[ $_verbose ]] && echo "Setting NO_PROXY="
 export NO_PROXY=$no_proxy
+[[ $_tracecmd ]] && set +x || true
 ####### set-proxy ####### END
 }
 function __complete-set-proxy() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help --verbose -v "
+      local options=" --help --tracecmd --verbose -v "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1339,7 +1427,9 @@ function __complete-set-proxy() {
 complete -F __complete${BASH_FUNK_PREFIX:--}set-proxy -- ${BASH_FUNK_PREFIX:--}set-proxy
 
 function -test-all-network() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1348,9 +1438,12 @@ function -test-all-network() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -1359,7 +1452,7 @@ function -test-all-network() {
    return $rc
 }
 function __impl-test-all-network() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1384,6 +1477,8 @@ function __impl-test-all-network() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1402,6 +1497,8 @@ function __impl-test-all-network() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -1426,6 +1523,7 @@ function __impl-test-all-network() {
    done
 
 ####### test-all-network ####### START
+[[ $_tracecmd ]] && set -x || true
 ${BASH_FUNK_PREFIX:--}block-port --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}flush-dns --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}is-port-open --selftest && echo || return 1
@@ -1434,12 +1532,13 @@ ${BASH_FUNK_PREFIX:--}my-public-hostname --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}my-public-ip --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}run-echo-server --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}set-proxy --selftest && echo || return 1
+[[ $_tracecmd ]] && set +x || true
 ####### test-all-network ####### END
 }
 function __complete-test-all-network() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else

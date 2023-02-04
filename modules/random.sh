@@ -13,7 +13,9 @@
 
 if [ -e /proc/sys/kernel/random/entropy_avail ]; then
 function -entropy-available() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -22,9 +24,12 @@ function -entropy-available() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -33,7 +38,7 @@ function -entropy-available() {
    return $rc
 }
 function __impl-entropy-available() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -58,6 +63,8 @@ function __impl-entropy-available() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -89,6 +96,8 @@ function __impl-entropy-available() {
             return 0
            ;;
 
+         --tracecmd) _tracecmd=1 ;;
+
          --)
             __optionWithValue="--"
            ;;
@@ -112,6 +121,7 @@ function __impl-entropy-available() {
    done
 
 ####### entropy-available ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ ! -e /proc/sys/kernel/random/read_wakeup_threshold ]]; then
    echo "$__fn: Warning: Kernel parameter /proc/sys/kernel/random/read_wakeup_threshold is not present, assuming sufficient entropy is available."
    return 0
@@ -122,12 +132,13 @@ local required=$(cat /proc/sys/kernel/random/read_wakeup_threshold)
 echo "/proc/sys/kernel/random/entropy_avail: $avail"
 echo "/proc/sys/kernel/random/read_wakeup_threshold: $required"
 (( avail > required ))
+[[ $_tracecmd ]] && set +x || true
 ####### entropy-available ####### END
 }
 function __complete-entropy-available() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -139,7 +150,9 @@ fi
 
 if [ -e /proc/sys/kernel/random/entropy_avail ]; then
 function -fill-entropy() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -148,9 +161,12 @@ function -fill-entropy() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [DURATION]\n\nType '$__fn --help' for more details."
@@ -159,7 +175,7 @@ function -fill-entropy() {
    return $rc
 }
 function __impl-fill-entropy() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _DURATION
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _DURATION
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -192,6 +208,8 @@ function __impl-fill-entropy() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -235,6 +253,8 @@ Available entropy bits after: 1039"
             return 0
            ;;
 
+         --tracecmd) _tracecmd=1 ;;
+
          --)
             __optionWithValue="--"
            ;;
@@ -273,6 +293,7 @@ Available entropy bits after: 1039"
    if ! sudo -l -- rngd &>/dev/null; then echo "$__fn: Error: User $USER misses required sudo permission for 'rngd'"; return 64; fi
 
 ####### fill-entropy ####### START
+[[ $_tracecmd ]] && set -x || true
 echo -n "Available entropy bits before: "
 cat /proc/sys/kernel/random/entropy_avail
 
@@ -297,12 +318,13 @@ fi
 
 echo -n "Available entropy bits after: "
 cat /proc/sys/kernel/random/entropy_avail
+[[ $_tracecmd ]] && set +x || true
 ####### fill-entropy ####### END
 }
 function __complete-fill-entropy() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -313,7 +335,9 @@ complete -F __complete${BASH_FUNK_PREFIX:--}fill-entropy -- ${BASH_FUNK_PREFIX:-
 fi
 
 function -random-number() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -322,9 +346,12 @@ function -random-number() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... RANGE\n\nType '$__fn --help' for more details."
@@ -333,7 +360,7 @@ function -random-number() {
    return $rc
 }
 function __impl-random-number() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _RANGE
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _RANGE
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -368,6 +395,8 @@ function __impl-random-number() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -416,6 +445,8 @@ function __impl-random-number() {
             return 0
            ;;
 
+         --tracecmd) _tracecmd=1 ;;
+
          --)
             __optionWithValue="--"
            ;;
@@ -462,17 +493,19 @@ function __impl-random-number() {
    if [[ $__satisfied == 0 ]]; then echo "$__fn: Error: One of these requirements must be met:"; printf "  * %s\n" "${__errors[@]}"; return 64; fi
 
 ####### random-number ####### START
+[[ $_tracecmd ]] && set -x || true
 if hash gshuf &>/dev/null; then # MacOS
    gshuf -i ${_RANGE} -n 1
 else
    shuf -i ${_RANGE} -n 1
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### random-number ####### END
 }
 function __complete-random-number() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -483,7 +516,9 @@ complete -F __complete${BASH_FUNK_PREFIX:--}random-number -- ${BASH_FUNK_PREFIX:
 
 if ! [[ $OSTYPE == 'darwin'* && $GITHUB_ACTIONS == 'true' ]]; then
 function -random-string() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -492,9 +527,12 @@ function -random-string() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... LENGTH [CHARS]\n\nType '$__fn --help' for more details."
@@ -503,7 +541,7 @@ function -random-string() {
    return $rc
 }
 function __impl-random-string() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _LENGTH _CHARS
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _LENGTH _CHARS
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -534,6 +572,8 @@ function __impl-random-string() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -591,6 +631,8 @@ function __impl-random-string() {
             return 0
            ;;
 
+         --tracecmd) _tracecmd=1 ;;
+
          --)
             __optionWithValue="--"
            ;;
@@ -631,14 +673,16 @@ function __impl-random-string() {
    fi
 
 ####### random-string ####### START
+[[ $_tracecmd ]] && set -x || true
 # "2> >(grep -v "write error" >&2)" and "|| true" to mitigate "tr: write error: Broken pipe" on e.g. GitHub Actions
 env -i LC_CTYPE=C tr -dc "$_CHARS" </dev/urandom 2> >(grep -v "write error" >&2) | head -c ${_LENGTH} || true
+[[ $_tracecmd ]] && set +x || true
 ####### random-string ####### END
 }
 function __complete-random-string() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -649,7 +693,9 @@ complete -F __complete${BASH_FUNK_PREFIX:--}random-string -- ${BASH_FUNK_PREFIX:
 fi
 
 function -test-all-random() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -658,9 +704,12 @@ function -test-all-random() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -669,7 +718,7 @@ function -test-all-random() {
    return $rc
 }
 function __impl-test-all-random() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -694,6 +743,8 @@ function __impl-test-all-random() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -712,6 +763,8 @@ function __impl-test-all-random() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -736,16 +789,18 @@ function __impl-test-all-random() {
    done
 
 ####### test-all-random ####### START
+[[ $_tracecmd ]] && set -x || true
 if [ -e /proc/sys/kernel/random/entropy_avail ]; then ${BASH_FUNK_PREFIX:--}entropy-available --selftest && echo || return 1; fi
 if [ -e /proc/sys/kernel/random/entropy_avail ]; then ${BASH_FUNK_PREFIX:--}fill-entropy --selftest && echo || return 1; fi
 ${BASH_FUNK_PREFIX:--}random-number --selftest && echo || return 1
 if ! [[ $OSTYPE == 'darwin'* && $GITHUB_ACTIONS == 'true' ]]; then ${BASH_FUNK_PREFIX:--}random-string --selftest && echo || return 1; fi
+[[ $_tracecmd ]] && set +x || true
 ####### test-all-random ####### END
 }
 function __complete-test-all-random() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else

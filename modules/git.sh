@@ -13,7 +13,9 @@
 
 if hash git &>/dev/null; then
 function -git-branch-name() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -22,9 +24,12 @@ function -git-branch-name() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [PATH]\n\nType '$__fn --help' for more details."
@@ -33,7 +38,7 @@ function -git-branch-name() {
    return $rc
 }
 function __impl-git-branch-name() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _PATH
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -62,6 +67,8 @@ function __impl-git-branch-name() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -80,6 +87,8 @@ function __impl-git-branch-name() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -116,13 +125,15 @@ function __impl-git-branch-name() {
    fi
 
 ####### git-branch-name ####### START
+[[ $_tracecmd ]] && set -x || true
 git -C "$_PATH" rev-parse --symbolic-full-name --abbrev-ref HEAD
+[[ $_tracecmd ]] && set +x || true
 ####### git-branch-name ####### END
 }
 function __complete-git-branch-name() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -132,7 +143,9 @@ function __complete-git-branch-name() {
 complete -F __complete${BASH_FUNK_PREFIX:--}git-branch-name -- ${BASH_FUNK_PREFIX:--}git-branch-name
 
 function -git-change-contributor() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -141,9 +154,12 @@ function -git-change-contributor() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... OLD_USER_EMAIL NEW_USER_NAME NEW_USER_EMAIL\n\nType '$__fn --help' for more details."
@@ -152,7 +168,7 @@ function -git-change-contributor() {
    return $rc
 }
 function __impl-git-change-contributor() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _pull _push _author _committer _global _help _selftest _OLD_USER_EMAIL _NEW_USER_NAME _NEW_USER_EMAIL
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _pull _push _author _committer _global _help _selftest _tracecmd _OLD_USER_EMAIL _NEW_USER_NAME _NEW_USER_EMAIL
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -196,6 +212,8 @@ function __impl-git-change-contributor() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -220,6 +238,8 @@ function __impl-git-change-contributor() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --pull)
             _pull=1
@@ -292,6 +312,7 @@ function __impl-git-change-contributor() {
    fi
 
 ####### git-change-contributor ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ $_pull ]]; then
    git pull || return 1
 fi
@@ -320,12 +341,13 @@ fi
 if [[ $_push ]]; then
    git push
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### git-change-contributor ####### END
 }
 function __complete-git-change-contributor() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --pull --push --author --committer --global --help "
+      local options=" --pull --push --author --committer --global --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -335,7 +357,9 @@ function __complete-git-change-contributor() {
 complete -F __complete${BASH_FUNK_PREFIX:--}git-change-contributor -- ${BASH_FUNK_PREFIX:--}git-change-contributor
 
 function -git-change-date() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -344,9 +368,12 @@ function -git-change-date() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... COMMIT_HASH NEW_DATE\n\nType '$__fn --help' for more details."
@@ -355,7 +382,7 @@ function -git-change-date() {
    return $rc
 }
 function __impl-git-change-date() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _pull _push _author _committer _help _selftest _COMMIT_HASH _NEW_DATE
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _pull _push _author _committer _help _selftest _tracecmd _COMMIT_HASH _NEW_DATE
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -395,6 +422,8 @@ function __impl-git-change-date() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -419,6 +448,8 @@ function __impl-git-change-date() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --pull)
             _pull=1
@@ -478,6 +509,7 @@ function __impl-git-change-date() {
    fi
 
 ####### git-change-date ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ $_pull ]]; then
    git pull || return 1
 fi
@@ -501,12 +533,13 @@ git filter-branch --force --env-filter "
 if [[ $_push ]]; then
    git push
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### git-change-date ####### END
 }
 function __complete-git-change-date() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --pull --push --author --committer --help "
+      local options=" --pull --push --author --committer --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -516,7 +549,9 @@ function __complete-git-change-date() {
 complete -F __complete${BASH_FUNK_PREFIX:--}git-change-date -- ${BASH_FUNK_PREFIX:--}git-change-date
 
 function -git-cherry-pick() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -525,9 +560,12 @@ function -git-cherry-pick() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... COMMIT_HASHES1 [COMMIT_HASHES]...\n\nType '$__fn --help' for more details."
@@ -536,7 +574,7 @@ function -git-cherry-pick() {
    return $rc
 }
 function __impl-git-cherry-pick() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _pr _pull _push _help _selftest _COMMIT_HASHES=()
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _pr _pull _push _help _selftest _tracecmd _COMMIT_HASHES=()
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -572,6 +610,8 @@ function __impl-git-cherry-pick() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -590,6 +630,8 @@ function __impl-git-cherry-pick() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --pr)
             _pr="@@##@@"
@@ -641,6 +683,7 @@ function __impl-git-cherry-pick() {
    if [[ ${#_COMMIT_HASHES[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter COMMIT_HASHES at least 1 value must be specified. Found: ${#_COMMIT_HASHES[@]}."; return 64; fi
 
 ####### git-cherry-pick ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ $_pull ]]; then
    git pull || return 1
 fi
@@ -654,12 +697,13 @@ git cherry-pick ${_COMMIT_HASHES[@]} || return 1
 if [[ $_push ]]; then
    git push
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### git-cherry-pick ####### END
 }
 function __complete-git-cherry-pick() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --pr --pull --push --help "
+      local options=" --pr --pull --push --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -669,7 +713,9 @@ function __complete-git-cherry-pick() {
 complete -F __complete${BASH_FUNK_PREFIX:--}git-cherry-pick -- ${BASH_FUNK_PREFIX:--}git-cherry-pick
 
 function -git-cleanse() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -678,9 +724,12 @@ function -git-cleanse() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -689,7 +738,7 @@ function -git-cleanse() {
    return $rc
 }
 function __impl-git-cleanse() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _pull _yes _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _pull _yes _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -719,6 +768,8 @@ function __impl-git-cleanse() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -737,6 +788,8 @@ function __impl-git-cleanse() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --pull)
             _pull=1
@@ -769,6 +822,7 @@ function __impl-git-cleanse() {
    done
 
 ####### git-cleanse ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ ! $_yes ]]; then
    read -p "Are you sure you want to erase all uncommitted changes? (y) " -n 1 -r
    echo
@@ -783,12 +837,13 @@ git reset --hard HEAD && git clean -dfx || return 1
 if [[ $_pull ]]; then
    git pull
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### git-cleanse ####### END
 }
 function __complete-git-cleanse() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --pull --yes -y --help "
+      local options=" --pull --yes -y --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -798,7 +853,9 @@ function __complete-git-cleanse() {
 complete -F __complete${BASH_FUNK_PREFIX:--}git-cleanse -- ${BASH_FUNK_PREFIX:--}git-cleanse
 
 function -git-clone-shallow() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -807,9 +864,12 @@ function -git-clone-shallow() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... REPO_URL [BRANCH_NAME]\n\nType '$__fn --help' for more details."
@@ -818,7 +878,7 @@ function -git-clone-shallow() {
    return $rc
 }
 function __impl-git-clone-shallow() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _REPO_URL _BRANCH_NAME
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _REPO_URL _BRANCH_NAME
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -849,6 +909,8 @@ function __impl-git-clone-shallow() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -867,6 +929,8 @@ function __impl-git-clone-shallow() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -907,13 +971,15 @@ function __impl-git-clone-shallow() {
    fi
 
 ####### git-clone-shallow ####### START
+[[ $_tracecmd ]] && set -x || true
 git clone --depth 1 $_REPO_URL -b $_BRANCH_NAME
+[[ $_tracecmd ]] && set +x || true
 ####### git-clone-shallow ####### END
 }
 function __complete-git-clone-shallow() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -923,7 +989,9 @@ function __complete-git-clone-shallow() {
 complete -F __complete${BASH_FUNK_PREFIX:--}git-clone-shallow -- ${BASH_FUNK_PREFIX:--}git-clone-shallow
 
 function -git-create-empty-branch() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -932,9 +1000,12 @@ function -git-create-empty-branch() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... BRANCH_NAME\n\nType '$__fn --help' for more details."
@@ -943,7 +1014,7 @@ function -git-create-empty-branch() {
    return $rc
 }
 function __impl-git-create-empty-branch() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _push _help _selftest _BRANCH_NAME
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _push _help _selftest _tracecmd _BRANCH_NAME
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -975,6 +1046,8 @@ function __impl-git-create-empty-branch() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -993,6 +1066,8 @@ function __impl-git-create-empty-branch() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --push)
             _push=1
@@ -1031,6 +1106,7 @@ function __impl-git-create-empty-branch() {
    fi
 
 ####### git-create-empty-branch ####### START
+[[ $_tracecmd ]] && set -x || true
 if git rev-parse --verify ${_BRANCH_NAME} &>/dev/null; then
    echo "$__fn: Error: A branch named [${_BRANCH_NAME}] already exists."
    return 1
@@ -1044,12 +1120,13 @@ git commit -am "Created empty branch." --allow-empty || return 1
 if [[ $_push ]]; then
    git push --set-upstream origin ${_BRANCH_NAME}
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### git-create-empty-branch ####### END
 }
 function __complete-git-create-empty-branch() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --push --help "
+      local options=" --push --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1059,7 +1136,9 @@ function __complete-git-create-empty-branch() {
 complete -F __complete${BASH_FUNK_PREFIX:--}git-create-empty-branch -- ${BASH_FUNK_PREFIX:--}git-create-empty-branch
 
 function -git-delete-branch() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1068,9 +1147,12 @@ function -git-delete-branch() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... BRANCH_NAME\n\nType '$__fn --help' for more details."
@@ -1079,7 +1161,7 @@ function -git-delete-branch() {
    return $rc
 }
 function __impl-git-delete-branch() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _BRANCH_NAME
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _BRANCH_NAME
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1108,6 +1190,8 @@ function __impl-git-delete-branch() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1126,6 +1210,8 @@ function __impl-git-delete-branch() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -1160,15 +1246,17 @@ function __impl-git-delete-branch() {
    fi
 
 ####### git-delete-branch ####### START
+[[ $_tracecmd ]] && set -x || true
 git branch --delete --force $_BRANCH_NAME &&
 git fetch origin --prune &&
 git push origin --delete $_BRANCH_NAME
+[[ $_tracecmd ]] && set +x || true
 ####### git-delete-branch ####### END
 }
 function __complete-git-delete-branch() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1178,7 +1266,9 @@ function __complete-git-delete-branch() {
 complete -F __complete${BASH_FUNK_PREFIX:--}git-delete-branch -- ${BASH_FUNK_PREFIX:--}git-delete-branch
 
 function -git-delete-commit() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1187,9 +1277,12 @@ function -git-delete-commit() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... COMMIT_ID\n\nType '$__fn --help' for more details."
@@ -1198,7 +1291,7 @@ function -git-delete-commit() {
    return $rc
 }
 function __impl-git-delete-commit() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _COMMIT_ID
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _COMMIT_ID
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1227,6 +1320,8 @@ function __impl-git-delete-commit() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1245,6 +1340,8 @@ function __impl-git-delete-commit() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -1279,13 +1376,15 @@ function __impl-git-delete-commit() {
    fi
 
 ####### git-delete-commit ####### START
+[[ $_tracecmd ]] && set -x || true
 git rebase --onto ${_COMMIT_ID}^ ${_COMMIT_ID}
+[[ $_tracecmd ]] && set +x || true
 ####### git-delete-commit ####### END
 }
 function __complete-git-delete-commit() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1295,7 +1394,9 @@ function __complete-git-delete-commit() {
 complete -F __complete${BASH_FUNK_PREFIX:--}git-delete-commit -- ${BASH_FUNK_PREFIX:--}git-delete-commit
 
 function -git-delete-local-branch() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1304,9 +1405,12 @@ function -git-delete-local-branch() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... BRANCH_NAME\n\nType '$__fn --help' for more details."
@@ -1315,7 +1419,7 @@ function -git-delete-local-branch() {
    return $rc
 }
 function __impl-git-delete-local-branch() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _force _help _selftest _BRANCH_NAME
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _force _help _selftest _tracecmd _BRANCH_NAME
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1347,6 +1451,8 @@ function __impl-git-delete-local-branch() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1365,6 +1471,8 @@ function __impl-git-delete-local-branch() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --force)
             _force=1
@@ -1403,17 +1511,19 @@ function __impl-git-delete-local-branch() {
    fi
 
 ####### git-delete-local-branch ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ $_force ]]; then
    git branch --delete --force $_BRANCH_NAME
 else
    git branch --delete $_BRANCH_NAME
  fi
+[[ $_tracecmd ]] && set +x || true
 ####### git-delete-local-branch ####### END
 }
 function __complete-git-delete-local-branch() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --force --help "
+      local options=" --force --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1423,7 +1533,9 @@ function __complete-git-delete-local-branch() {
 complete -F __complete${BASH_FUNK_PREFIX:--}git-delete-local-branch -- ${BASH_FUNK_PREFIX:--}git-delete-local-branch
 
 function -git-delete-remote-branch() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1432,9 +1544,12 @@ function -git-delete-remote-branch() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... BRANCH_NAME\n\nType '$__fn --help' for more details."
@@ -1443,7 +1558,7 @@ function -git-delete-remote-branch() {
    return $rc
 }
 function __impl-git-delete-remote-branch() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _BRANCH_NAME
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _BRANCH_NAME
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1472,6 +1587,8 @@ function __impl-git-delete-remote-branch() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1490,6 +1607,8 @@ function __impl-git-delete-remote-branch() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -1524,14 +1643,16 @@ function __impl-git-delete-remote-branch() {
    fi
 
 ####### git-delete-remote-branch ####### START
+[[ $_tracecmd ]] && set -x || true
 git fetch origin --prune &&
 git push origin --delete $_BRANCH_NAME
+[[ $_tracecmd ]] && set +x || true
 ####### git-delete-remote-branch ####### END
 }
 function __complete-git-delete-remote-branch() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1541,7 +1662,9 @@ function __complete-git-delete-remote-branch() {
 complete -F __complete${BASH_FUNK_PREFIX:--}git-delete-remote-branch -- ${BASH_FUNK_PREFIX:--}git-delete-remote-branch
 
 function -git-fetch-pr() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1550,9 +1673,12 @@ function -git-fetch-pr() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... PR_NUMBER\n\nType '$__fn --help' for more details."
@@ -1561,7 +1687,7 @@ function -git-fetch-pr() {
    return $rc
 }
 function __impl-git-fetch-pr() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _checkout _help _selftest _PR_NUMBER
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _checkout _help _selftest _tracecmd _PR_NUMBER
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1593,6 +1719,8 @@ function __impl-git-fetch-pr() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1611,6 +1739,8 @@ function __impl-git-fetch-pr() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --checkout|-c)
             _checkout=1
@@ -1650,17 +1780,19 @@ function __impl-git-fetch-pr() {
    fi
 
 ####### git-fetch-pr ####### START
+[[ $_tracecmd ]] && set -x || true
 git fetch origin pull/${_PR_NUMBER}/head:pr-${_PR_NUMBER} || return 1
 
 if [[ $_checkout ]]; then
    git checkout pr-${_PR_NUMBER}
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### git-fetch-pr ####### END
 }
 function __complete-git-fetch-pr() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --checkout -c --help "
+      local options=" --checkout -c --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1670,7 +1802,9 @@ function __complete-git-fetch-pr() {
 complete -F __complete${BASH_FUNK_PREFIX:--}git-fetch-pr -- ${BASH_FUNK_PREFIX:--}git-fetch-pr
 
 function -git-log() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1679,9 +1813,12 @@ function -git-log() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [COUNT]\n\nType '$__fn --help' for more details."
@@ -1690,7 +1827,7 @@ function -git-log() {
    return $rc
 }
 function __impl-git-log() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _COUNT
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _COUNT
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1719,6 +1856,8 @@ function __impl-git-log() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1737,6 +1876,8 @@ function __impl-git-log() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -1771,13 +1912,15 @@ function __impl-git-log() {
    fi
 
 ####### git-log ####### START
+[[ $_tracecmd ]] && set -x || true
 git log --graph -${_COUNT} --branches --remotes --tags --pretty=format:'%C(bold black)%h%Creset %<(70,trunc)%s %C(bold black)(%aN, %cr)%Cred%d' --date-order
+[[ $_tracecmd ]] && set +x || true
 ####### git-log ####### END
 }
 function __complete-git-log() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1787,7 +1930,9 @@ function __complete-git-log() {
 complete -F __complete${BASH_FUNK_PREFIX:--}git-log -- ${BASH_FUNK_PREFIX:--}git-log
 
 function -git-ls-conflicts() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1796,9 +1941,12 @@ function -git-ls-conflicts() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [PATH]\n\nType '$__fn --help' for more details."
@@ -1807,7 +1955,7 @@ function -git-ls-conflicts() {
    return $rc
 }
 function __impl-git-ls-conflicts() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _PATH
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1836,6 +1984,8 @@ function __impl-git-ls-conflicts() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1854,6 +2004,8 @@ function __impl-git-ls-conflicts() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -1890,13 +2042,15 @@ function __impl-git-ls-conflicts() {
    fi
 
 ####### git-ls-conflicts ####### START
+[[ $_tracecmd ]] && set -x || true
 git diff --name-only --diff-filter=U "$_PATH"
+[[ $_tracecmd ]] && set +x || true
 ####### git-ls-conflicts ####### END
 }
 function __complete-git-ls-conflicts() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1906,7 +2060,9 @@ function __complete-git-ls-conflicts() {
 complete -F __complete${BASH_FUNK_PREFIX:--}git-ls-conflicts -- ${BASH_FUNK_PREFIX:--}git-ls-conflicts
 
 function -git-ls-modified() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1915,9 +2071,12 @@ function -git-ls-modified() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [PATH]\n\nType '$__fn --help' for more details."
@@ -1926,7 +2085,7 @@ function -git-ls-modified() {
    return $rc
 }
 function __impl-git-ls-modified() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _PATH
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1955,6 +2114,8 @@ function __impl-git-ls-modified() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1973,6 +2134,8 @@ function __impl-git-ls-modified() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -2009,13 +2172,15 @@ function __impl-git-ls-modified() {
    fi
 
 ####### git-ls-modified ####### START
+[[ $_tracecmd ]] && set -x || true
 git -C "$_PATH" ls-files -o -m -d --exclude-standard
+[[ $_tracecmd ]] && set +x || true
 ####### git-ls-modified ####### END
 }
 function __complete-git-ls-modified() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -2025,7 +2190,9 @@ function __complete-git-ls-modified() {
 complete -F __complete${BASH_FUNK_PREFIX:--}git-ls-modified -- ${BASH_FUNK_PREFIX:--}git-ls-modified
 
 function -git-reset-file() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -2034,9 +2201,12 @@ function -git-reset-file() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... FILE\n\nType '$__fn --help' for more details."
@@ -2045,7 +2215,7 @@ function -git-reset-file() {
    return $rc
 }
 function __impl-git-reset-file() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _FILE
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _FILE
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -2074,6 +2244,8 @@ function __impl-git-reset-file() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -2092,6 +2264,8 @@ function __impl-git-reset-file() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -2126,13 +2300,15 @@ function __impl-git-reset-file() {
    fi
 
 ####### git-reset-file ####### START
+[[ $_tracecmd ]] && set -x || true
 git checkout -- "$_FILE"
+[[ $_tracecmd ]] && set +x || true
 ####### git-reset-file ####### END
 }
 function __complete-git-reset-file() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -2142,7 +2318,9 @@ function __complete-git-reset-file() {
 complete -F __complete${BASH_FUNK_PREFIX:--}git-reset-file -- ${BASH_FUNK_PREFIX:--}git-reset-file
 
 function -git-squash() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -2151,9 +2329,12 @@ function -git-squash() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... NUM_COMMITS\n\nType '$__fn --help' for more details."
@@ -2162,7 +2343,7 @@ function -git-squash() {
    return $rc
 }
 function __impl-git-squash() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _message _pull _push _help _selftest _NUM_COMMITS
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _message _pull _push _help _selftest _tracecmd _NUM_COMMITS
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -2201,6 +2382,8 @@ function __impl-git-squash() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -2219,6 +2402,8 @@ function __impl-git-squash() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --message|-m)
             _message="@@##@@"
@@ -2277,6 +2462,7 @@ function __impl-git-squash() {
    if ! hash "awk" &>/dev/null; then echo "$__fn: Error: Required command 'awk' not found on this system."; return 64; fi
 
 ####### git-squash ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ $_pull ]]; then
    git pull || return 1
 fi
@@ -2294,12 +2480,13 @@ git commit --allow-empty-message -m "${commitMsg}" || return 1
 if [[ $_push ]]; then
    git push --force
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### git-squash ####### END
 }
 function __complete-git-squash() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --message -m --pull --push --help "
+      local options=" --message -m --pull --push --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -2309,7 +2496,9 @@ function __complete-git-squash() {
 complete -F __complete${BASH_FUNK_PREFIX:--}git-squash -- ${BASH_FUNK_PREFIX:--}git-squash
 
 function -git-switch-remote-protocol() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -2318,9 +2507,12 @@ function -git-switch-remote-protocol() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... REMOTE_NAME1 [REMOTE_NAME]... PROTOCOL\n\nType '$__fn --help' for more details."
@@ -2329,7 +2521,7 @@ function -git-switch-remote-protocol() {
    return $rc
 }
 function __impl-git-switch-remote-protocol() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _REMOTE_NAME=() _PROTOCOL
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _REMOTE_NAME=() _PROTOCOL
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -2360,6 +2552,8 @@ function __impl-git-switch-remote-protocol() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -2378,6 +2572,8 @@ function __impl-git-switch-remote-protocol() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -2422,6 +2618,7 @@ function __impl-git-switch-remote-protocol() {
    fi
 
 ####### git-switch-remote-protocol ####### START
+[[ $_tracecmd ]] && set -x || true
 local url remote
 
 for remote in "${_REMOTE_NAME[@]}"; do
@@ -2465,12 +2662,13 @@ for remote in "${_REMOTE_NAME[@]}"; do
       return 1
    fi
 done
+[[ $_tracecmd ]] && set +x || true
 ####### git-switch-remote-protocol ####### END
 }
 function __complete-git-switch-remote-protocol() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -2480,7 +2678,9 @@ function __complete-git-switch-remote-protocol() {
 complete -F __complete${BASH_FUNK_PREFIX:--}git-switch-remote-protocol -- ${BASH_FUNK_PREFIX:--}git-switch-remote-protocol
 
 function -git-sync-fork() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -2489,9 +2689,12 @@ function -git-sync-fork() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -2500,7 +2703,7 @@ function -git-sync-fork() {
    return $rc
 }
 function __impl-git-sync-fork() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _branch _upstream_branch _merge _push _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _branch _upstream_branch _merge _push _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -2534,6 +2737,8 @@ function __impl-git-sync-fork() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -2552,6 +2757,8 @@ function __impl-git-sync-fork() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --branch|-b)
             _branch="@@##@@"
@@ -2609,6 +2816,7 @@ function __impl-git-sync-fork() {
    fi
 
 ####### git-sync-fork ####### START
+[[ $_tracecmd ]] && set -x || true
 local currBranch currBranch_remote currBranch_remoteURL upstreamURL
 
 # e.g. 'master'
@@ -2652,12 +2860,13 @@ if [[ $_push ]]; then
    echo "Pushing updates to 'origin/$currBranch'..."
    git push --follow-tags --force origin $currBranch
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### git-sync-fork ####### END
 }
 function __complete-git-sync-fork() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --branch -b --upstream_branch --merge --push --help "
+      local options=" --branch -b --upstream_branch --merge --push --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -2667,7 +2876,9 @@ function __complete-git-sync-fork() {
 complete -F __complete${BASH_FUNK_PREFIX:--}git-sync-fork -- ${BASH_FUNK_PREFIX:--}git-sync-fork
 
 function -git-undo() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -2676,9 +2887,12 @@ function -git-undo() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [NUM_COMMITS]\n\nType '$__fn --help' for more details."
@@ -2687,7 +2901,7 @@ function -git-undo() {
    return $rc
 }
 function __impl-git-undo() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _reset _push _help _selftest _NUM_COMMITS
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _reset _push _help _selftest _tracecmd _NUM_COMMITS
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -2721,6 +2935,8 @@ function __impl-git-undo() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -2739,6 +2955,8 @@ function __impl-git-undo() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --reset)
             _reset=1
@@ -2782,6 +3000,7 @@ function __impl-git-undo() {
    fi
 
 ####### git-undo ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ $_reset ]]; then
    git reset --hard HEAD~${_NUM_COMMITS} && git clean -dfx || return 1
 else
@@ -2791,12 +3010,13 @@ fi
 if [[ $_push ]]; then
    git push --force
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### git-undo ####### END
 }
 function __complete-git-undo() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --reset --push --help "
+      local options=" --reset --push --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -2806,7 +3026,9 @@ function __complete-git-undo() {
 complete -F __complete${BASH_FUNK_PREFIX:--}git-undo -- ${BASH_FUNK_PREFIX:--}git-undo
 
 function -git-update-branch() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -2815,9 +3037,12 @@ function -git-update-branch() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [BRANCH] MASTER\n\nType '$__fn --help' for more details."
@@ -2826,7 +3051,7 @@ function -git-update-branch() {
    return $rc
 }
 function __impl-git-update-branch() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _merge _push _help _selftest _BRANCH _MASTER
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _merge _push _help _selftest _tracecmd _BRANCH _MASTER
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -2862,6 +3087,8 @@ function __impl-git-update-branch() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -2880,6 +3107,8 @@ function __impl-git-update-branch() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --merge)
             _merge=1
@@ -2926,6 +3155,7 @@ function __impl-git-update-branch() {
    fi
 
 ####### git-update-branch ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ ! ${_BRANCH:-} ]]; then
    _BRANCH=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) || return 1
 fi
@@ -2945,12 +3175,13 @@ if [[ $_push ]]; then
    echo "Pushing updates to 'origin/$_BRANCH'..."
    git push --follow-tags --force origin $_BRANCH
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### git-update-branch ####### END
 }
 function __complete-git-update-branch() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --merge --push --help "
+      local options=" --merge --push --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -2960,7 +3191,9 @@ function __complete-git-update-branch() {
 complete -F __complete${BASH_FUNK_PREFIX:--}git-update-branch -- ${BASH_FUNK_PREFIX:--}git-update-branch
 
 function -github-upstream-url() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -2969,9 +3202,12 @@ function -github-upstream-url() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... REPO\n\nType '$__fn --help' for more details."
@@ -2980,7 +3216,7 @@ function -github-upstream-url() {
    return $rc
 }
 function __impl-github-upstream-url() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _REPO
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _REPO
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -3009,6 +3245,8 @@ function __impl-github-upstream-url() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -3027,6 +3265,8 @@ function __impl-github-upstream-url() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -3061,16 +3301,18 @@ function __impl-github-upstream-url() {
    fi
 
 ####### github-upstream-url ####### START
+[[ $_tracecmd ]] && set -x || true
 hash wget &>/dev/null && local get="wget -qO-" || local get="curl -fs"
 
 $get https://api.github.com/repos/$_REPO | grep -A100 '"parent":' | grep clone_url | head -n1 | cut -d'"' -f4
 return ${PIPESTATUS[0]}
+[[ $_tracecmd ]] && set +x || true
 ####### github-upstream-url ####### END
 }
 function __complete-github-upstream-url() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -3080,7 +3322,9 @@ function __complete-github-upstream-url() {
 complete -F __complete${BASH_FUNK_PREFIX:--}github-upstream-url -- ${BASH_FUNK_PREFIX:--}github-upstream-url
 
 function -test-all-git() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -3089,9 +3333,12 @@ function -test-all-git() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -3100,7 +3347,7 @@ function -test-all-git() {
    return $rc
 }
 function __impl-test-all-git() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -3125,6 +3372,8 @@ function __impl-test-all-git() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -3143,6 +3392,8 @@ function __impl-test-all-git() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -3167,6 +3418,7 @@ function __impl-test-all-git() {
    done
 
 ####### test-all-git ####### START
+[[ $_tracecmd ]] && set -x || true
 ${BASH_FUNK_PREFIX:--}git-branch-name --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-change-contributor --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-change-date --selftest && echo || return 1
@@ -3189,12 +3441,13 @@ ${BASH_FUNK_PREFIX:--}git-sync-fork --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-undo --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}git-update-branch --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}github-upstream-url --selftest && echo || return 1
+[[ $_tracecmd ]] && set +x || true
 ####### test-all-git ####### END
 }
 function __complete-test-all-git() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else

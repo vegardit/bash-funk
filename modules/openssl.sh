@@ -13,7 +13,9 @@
 
 if hash openssl &>/dev/null; then
 function -gen-x509cert() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -22,9 +24,12 @@ function -gen-x509cert() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... FQ_DNS_NAME\n\nType '$__fn --help' for more details."
@@ -33,7 +38,7 @@ function -gen-x509cert() {
    return $rc
 }
 function __impl-gen-x509cert() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _CAkey _CAcert _keysize _validity _subject _aliases _dh1024 _force _help _selftest _FQ_DNS_NAME
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _CAkey _CAcert _keysize _validity _subject _aliases _dh1024 _force _help _selftest _tracecmd _FQ_DNS_NAME
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -79,6 +84,8 @@ function __impl-gen-x509cert() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -97,6 +104,8 @@ function __impl-gen-x509cert() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --CAkey)
             _CAkey="@@##@@"
@@ -226,6 +235,7 @@ function __impl-gen-x509cert() {
    fi
 
 ####### gen-x509cert ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ ! ${_force:-} ]]; then
    if [[ -e "${_FQ_DNS_NAME}.key" ]]; then
       echo "${_FQ_DNS_NAME}.key already exists. Use option --force to overwrite."
@@ -296,12 +306,13 @@ if [[ ${_dh1024:-} ]]; then
    # will degrade website rating to B on https://www.ssllabs.com/ssltest/
    openssl dhparam 1024 >> "${_FQ_DNS_NAME}.crt"
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### gen-x509cert ####### END
 }
 function __complete-gen-x509cert() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --CAkey --CAcert --keysize --validity --subject --aliases --dh1024 --force -f --help "
+      local options=" --CAkey --CAcert --keysize --validity --subject --aliases --dh1024 --force -f --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -311,7 +322,9 @@ function __complete-gen-x509cert() {
 complete -F __complete${BASH_FUNK_PREFIX:--}gen-x509cert -- ${BASH_FUNK_PREFIX:--}gen-x509cert
 
 function -gen-x509rootca() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -320,9 +333,12 @@ function -gen-x509rootca() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... COMMON_NAME\n\nType '$__fn --help' for more details."
@@ -331,7 +347,7 @@ function -gen-x509rootca() {
    return $rc
 }
 function __impl-gen-x509rootca() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _validity _keysize _subject _force _help _selftest _COMMON_NAME
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _validity _keysize _subject _force _help _selftest _tracecmd _COMMON_NAME
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -369,6 +385,8 @@ function __impl-gen-x509rootca() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -387,6 +405,8 @@ function __impl-gen-x509rootca() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --validity)
             _validity="@@##@@"
@@ -464,6 +484,7 @@ function __impl-gen-x509rootca() {
    fi
 
 ####### gen-x509rootca ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ ! ${_force:-} ]]; then
    if [[ -e "${_COMMON_NAME}.key" ]]; then
       echo "${_COMMON_NAME}.key already exists. Use option --force to overwrite."
@@ -483,12 +504,13 @@ echo " -> file [${_COMMON_NAME}.key] created."
 echo "Generating certificate with subject [$_subject]..."
 openssl req -x509 -new -key "${_COMMON_NAME}.key" -days ${_validity:-3650} -out "${_COMMON_NAME}.crt" -subj "${_subject}" || return 1
 echo " -> file [${_COMMON_NAME}.crt] created."
+[[ $_tracecmd ]] && set +x || true
 ####### gen-x509rootca ####### END
 }
 function __complete-gen-x509rootca() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --validity --keysize --subject --force -f --help "
+      local options=" --validity --keysize --subject --force -f --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -498,7 +520,9 @@ function __complete-gen-x509rootca() {
 complete -F __complete${BASH_FUNK_PREFIX:--}gen-x509rootca -- ${BASH_FUNK_PREFIX:--}gen-x509rootca
 
 function -test-all-openssl() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -507,9 +531,12 @@ function -test-all-openssl() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -518,7 +545,7 @@ function -test-all-openssl() {
    return $rc
 }
 function __impl-test-all-openssl() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -543,6 +570,8 @@ function __impl-test-all-openssl() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -561,6 +590,8 @@ function __impl-test-all-openssl() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -585,14 +616,16 @@ function __impl-test-all-openssl() {
    done
 
 ####### test-all-openssl ####### START
+[[ $_tracecmd ]] && set -x || true
 ${BASH_FUNK_PREFIX:--}gen-x509cert --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}gen-x509rootca --selftest && echo || return 1
+[[ $_tracecmd ]] && set +x || true
 ####### test-all-openssl ####### END
 }
 function __complete-test-all-openssl() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else

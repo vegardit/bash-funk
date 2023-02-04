@@ -12,7 +12,9 @@
 #
 
 function -get-child-pids() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -21,9 +23,12 @@ function -get-child-pids() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [PARENT_PID]\n\nType '$__fn --help' for more details."
@@ -32,7 +37,7 @@ function -get-child-pids() {
    return $rc
 }
 function __impl-get-child-pids() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _printPPID _help _selftest _PARENT_PID
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _printPPID _help _selftest _tracecmd _PARENT_PID
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -64,6 +69,8 @@ function __impl-get-child-pids() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -82,6 +89,8 @@ function __impl-get-child-pids() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --printPPID)
             _printPPID=1
@@ -121,6 +130,7 @@ function __impl-get-child-pids() {
    fi
 
 ####### get-child-pids ####### START
+[[ $_tracecmd ]] && set -x || true
 local childPids # intentional declaration in a separate line, see http://stackoverflow.com/a/42854176
 childPids=$(command ps -o pid --no-headers --ppid $_PARENT_PID 2>/dev/null | sed -e 's!\s!!g'; exit ${PIPESTATUS[0]})
 if [[ $? != 0 ]]; then
@@ -133,12 +143,13 @@ done
 if [[ $_printPPID ]]; then
    echo $_PARENT_PID
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### get-child-pids ####### END
 }
 function __complete-get-child-pids() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --printPPID --help "
+      local options=" --printPPID --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -148,7 +159,9 @@ function __complete-get-child-pids() {
 complete -F __complete${BASH_FUNK_PREFIX:--}get-child-pids -- ${BASH_FUNK_PREFIX:--}get-child-pids
 
 function -get-parent-pid() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -157,9 +170,12 @@ function -get-parent-pid() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [CHILD_PID]\n\nType '$__fn --help' for more details."
@@ -168,7 +184,7 @@ function -get-parent-pid() {
    return $rc
 }
 function __impl-get-parent-pid() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _CHILD_PID
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _CHILD_PID
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -197,6 +213,8 @@ function __impl-get-parent-pid() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -215,6 +233,8 @@ function __impl-get-parent-pid() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -250,6 +270,7 @@ function __impl-get-parent-pid() {
    fi
 
 ####### get-parent-pid ####### START
+[[ $_tracecmd ]] && set -x || true
 local parentPid # intentional declaration in a separate line, see http://stackoverflow.com/a/42854176
 parentPid=$(cat /proc/${_CHILD_PID}/stat 2>/dev/null | awk '{print $4}'; exit ${PIPESTATUS[0]})
 if [[ $? != 0 ]]; then
@@ -257,12 +278,13 @@ if [[ $? != 0 ]]; then
    return 1
 fi
 echo $parentPid
+[[ $_tracecmd ]] && set +x || true
 ####### get-parent-pid ####### END
 }
 function __complete-get-parent-pid() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -272,7 +294,9 @@ function __complete-get-parent-pid() {
 complete -F __complete${BASH_FUNK_PREFIX:--}get-parent-pid -- ${BASH_FUNK_PREFIX:--}get-parent-pid
 
 function -get-toplevel-parent-pid() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -281,9 +305,12 @@ function -get-toplevel-parent-pid() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [CHILD_PID]\n\nType '$__fn --help' for more details."
@@ -292,7 +319,7 @@ function -get-toplevel-parent-pid() {
    return $rc
 }
 function __impl-get-toplevel-parent-pid() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _CHILD_PID
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _CHILD_PID
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -321,6 +348,8 @@ function __impl-get-toplevel-parent-pid() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -339,6 +368,8 @@ function __impl-get-toplevel-parent-pid() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -374,6 +405,7 @@ function __impl-get-toplevel-parent-pid() {
    fi
 
 ####### get-toplevel-parent-pid ####### START
+[[ $_tracecmd ]] && set -x || true
 local pid=$_CHILD_PID
 while [[ $pid != 0 ]]; do
    pid=$(${BASH_FUNK_PREFIX:--}get-parent-pid ${pid})
@@ -383,12 +415,13 @@ while [[ $pid != 0 ]]; do
    fi
 done
 echo ${pid}
+[[ $_tracecmd ]] && set +x || true
 ####### get-toplevel-parent-pid ####### END
 }
 function __complete-get-toplevel-parent-pid() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -398,7 +431,9 @@ function __complete-get-toplevel-parent-pid() {
 complete -F __complete${BASH_FUNK_PREFIX:--}get-toplevel-parent-pid -- ${BASH_FUNK_PREFIX:--}get-toplevel-parent-pid
 
 function -kill-childs() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -407,9 +442,12 @@ function -kill-childs() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [PARENT_PID]\n\nType '$__fn --help' for more details."
@@ -418,7 +456,7 @@ function -kill-childs() {
    return $rc
 }
 function __impl-kill-childs() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _signal _help _selftest _PARENT_PID
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _signal _help _selftest _tracecmd _PARENT_PID
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -450,6 +488,8 @@ function __impl-kill-childs() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -468,6 +508,8 @@ function __impl-kill-childs() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --signal|-s)
             _signal="@@##@@"
@@ -518,6 +560,7 @@ function __impl-kill-childs() {
    fi
 
 ####### kill-childs ####### START
+[[ $_tracecmd ]] && set -x || true
 local signal=${_signal:-15}
 
 local childPids # intentional declaration in a separate line, see http://stackoverflow.com/a/42854176
@@ -531,12 +574,13 @@ for childPid in $childPids; do
    echo "Killing process with PID $childPid..."
    kill -s $signal $childPid 2> /dev/null || :
 done
+[[ $_tracecmd ]] && set +x || true
 ####### kill-childs ####### END
 }
 function __complete-kill-childs() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --signal -s --help "
+      local options=" --signal -s --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -546,7 +590,9 @@ function __complete-kill-childs() {
 complete -F __complete${BASH_FUNK_PREFIX:--}kill-childs -- ${BASH_FUNK_PREFIX:--}kill-childs
 
 function -kill-listener() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -555,9 +601,12 @@ function -kill-listener() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... PORT\n\nType '$__fn --help' for more details."
@@ -566,7 +615,7 @@ function -kill-listener() {
    return $rc
 }
 function __impl-kill-listener() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _signal _help _selftest _PORT
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _signal _help _selftest _tracecmd _PORT
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -601,6 +650,8 @@ function __impl-kill-listener() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -619,6 +670,8 @@ function __impl-kill-listener() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --signal|-s)
             _signal="@@##@@"
@@ -673,6 +726,7 @@ function __impl-kill-listener() {
    if ! hash "netstat" &>/dev/null; then echo "$__fn: Error: Required command 'netstat' not found on this system."; return 64; fi
 
 ####### kill-listener ####### START
+[[ $_tracecmd ]] && set -x || true
 local signal=${_signal:-15}
 if hash netstat &>/dev/null; then
    local listener=$(netstat -lantp 2>/dev/null | sed -En "s/^tcp\s+[0-9]+\s+[0-9]+ .*:$_PORT .* (-|[0-9]+\/[^ ]*)\s+$/\1/p" | uniq || :)
@@ -702,12 +756,13 @@ if [[ $listener ]]; then
    kill -$signal $pid
    return
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### kill-listener ####### END
 }
 function __complete-kill-listener() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --signal -s --help "
+      local options=" --signal -s --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -717,7 +772,9 @@ function __complete-kill-listener() {
 complete -F __complete${BASH_FUNK_PREFIX:--}kill-listener -- ${BASH_FUNK_PREFIX:--}kill-listener
 
 function -test-all-processes() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -726,9 +783,12 @@ function -test-all-processes() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -737,7 +797,7 @@ function -test-all-processes() {
    return $rc
 }
 function __impl-test-all-processes() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -762,6 +822,8 @@ function __impl-test-all-processes() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -780,6 +842,8 @@ function __impl-test-all-processes() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -804,17 +868,19 @@ function __impl-test-all-processes() {
    done
 
 ####### test-all-processes ####### START
+[[ $_tracecmd ]] && set -x || true
 ${BASH_FUNK_PREFIX:--}get-child-pids --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}get-parent-pid --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}get-toplevel-parent-pid --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}kill-childs --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}kill-listener --selftest && echo || return 1
+[[ $_tracecmd ]] && set +x || true
 ####### test-all-processes ####### END
 }
 function __complete-test-all-processes() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else

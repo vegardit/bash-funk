@@ -12,7 +12,9 @@
 #
 
 function -abspath() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -21,9 +23,12 @@ function -abspath() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [PATH]\n\nType '$__fn --help' for more details."
@@ -32,7 +37,7 @@ function -abspath() {
    return $rc
 }
 function __impl-abspath() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _PATH
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -61,6 +66,8 @@ function __impl-abspath() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -79,6 +86,8 @@ function __impl-abspath() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -109,6 +118,7 @@ function __impl-abspath() {
    if [[ ! $_PATH ]]; then _PATH="."; fi
 
 ####### abspath ####### START
+[[ $_tracecmd ]] && set -x || true
 
 # use realpath if available
 if hash realpath &>/dev/null; then
@@ -119,12 +129,13 @@ else
    python -c "import os
 print(os.path.abspath('$_PATH'))"
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### abspath ####### END
 }
 function __complete-abspath() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -134,7 +145,9 @@ function __complete-abspath() {
 complete -F __complete${BASH_FUNK_PREFIX:--}abspath -- ${BASH_FUNK_PREFIX:--}abspath
 
 function -cd-down() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -143,9 +156,12 @@ function -cd-down() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [START_AT] DIR_NAME\n\nType '$__fn --help' for more details."
@@ -154,7 +170,7 @@ function -cd-down() {
    return $rc
 }
 function __impl-cd-down() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _START_AT _DIR_NAME
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _START_AT _DIR_NAME
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -185,6 +201,8 @@ function __impl-cd-down() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -203,6 +221,8 @@ function __impl-cd-down() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -243,6 +263,7 @@ function __impl-cd-down() {
    fi
 
 ####### cd-down ####### START
+[[ $_tracecmd ]] && set -x || true
 local path=$(find $_START_AT -name "$_DIR_NAME" -type d -print -quit 2>/dev/null || true);
 if [[ $path ]]; then
    echo "$path"
@@ -251,12 +272,13 @@ else
    echo "$__fn: $_DIR_NAME: No such directory"
    return 1
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### cd-down ####### END
 }
 function __complete-cd-down() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -266,7 +288,9 @@ function __complete-cd-down() {
 complete -F __complete${BASH_FUNK_PREFIX:--}cd-down -- ${BASH_FUNK_PREFIX:--}cd-down
 
 function -cd-hist() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -275,9 +299,12 @@ function -cd-hist() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [STEPS_OR_DIRNAME]\n\nType '$__fn --help' for more details."
@@ -286,7 +313,7 @@ function -cd-hist() {
    return $rc
 }
 function __impl-cd-hist() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _STEPS_OR_DIRNAME
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _STEPS_OR_DIRNAME
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -315,6 +342,8 @@ function __impl-cd-hist() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -333,6 +362,8 @@ function __impl-cd-hist() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -361,6 +392,7 @@ function __impl-cd-hist() {
    done
 
 ####### cd-hist ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ ! $_STEPS_OR_DIRNAME ]]; then
    echo "Directory history:"
    for (( __idx=2; __idx<${#DIRSTACK[*]}; __idx++ )); do
@@ -392,12 +424,13 @@ else
    echo "$__fn: $_STEPS_OR_DIRNAME: No such directory in history"
    return 1
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### cd-hist ####### END
 }
 function __complete-cd-hist() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -407,7 +440,9 @@ function __complete-cd-hist() {
 complete -F __complete${BASH_FUNK_PREFIX:--}cd-hist -- ${BASH_FUNK_PREFIX:--}cd-hist
 
 function -cd-up() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -416,9 +451,12 @@ function -cd-up() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [LEVEL_OR_PATTERN]\n\nType '$__fn --help' for more details."
@@ -427,7 +465,7 @@ function -cd-up() {
    return $rc
 }
 function __impl-cd-up() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _LEVEL_OR_PATTERN
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _LEVEL_OR_PATTERN
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -456,6 +494,8 @@ function __impl-cd-up() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -474,6 +514,8 @@ function __impl-cd-up() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -504,6 +546,7 @@ function __impl-cd-up() {
    if [[ ! $_LEVEL_OR_PATTERN ]]; then _LEVEL_OR_PATTERN=".."; fi
 
 ####### cd-up ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ $_LEVEL_OR_PATTERN == ".." ]]; then
    cd ..
    return 0
@@ -539,12 +582,13 @@ else
    echo "$__fn: $_LEVEL_OR_PATTERN: No such directory"
    return 1
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### cd-up ####### END
 }
 function __complete-cd-up() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -554,7 +598,9 @@ function __complete-cd-up() {
 complete -F __complete${BASH_FUNK_PREFIX:--}cd-up -- ${BASH_FUNK_PREFIX:--}cd-up
 
 function -count-words() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -563,9 +609,12 @@ function -count-words() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... WORD1 [WORD]...\n\nType '$__fn --help' for more details."
@@ -574,7 +623,7 @@ function -count-words() {
    return $rc
 }
 function __impl-count-words() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _sort _file _help _selftest _WORD=()
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _sort _file _help _selftest _tracecmd _WORD=()
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -608,6 +657,8 @@ function __impl-count-words() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -626,6 +677,8 @@ function __impl-count-words() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --sort|-s)
             _sort="@@##@@"
@@ -683,6 +736,7 @@ function __impl-count-words() {
    if [[ ${#_WORD[@]} -lt 1 ]]; then echo "$__fn: Error: For parameter WORD at least 1 value must be specified. Found: ${#_WORD[@]}."; return 64; fi
 
 ####### count-words ####### START
+[[ $_tracecmd ]] && set -x || true
 local sedCmds grepCmds
 for word in "${_WORD[@]}"; do
    sedCmds="s/$word/\n$word\n/g; $sedCmds"
@@ -707,12 +761,13 @@ else
       cat /dev/fd/0 | sed "$sedCmds" | grep $grepCmds | sort | uniq -c
    fi
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### count-words ####### END
 }
 function __complete-count-words() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --sort -s --file -f --help "
+      local options=" --sort -s --file -f --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -731,7 +786,9 @@ word" -- $curr))
 complete -F __complete${BASH_FUNK_PREFIX:--}count-words -- ${BASH_FUNK_PREFIX:--}count-words
 
 function -du() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -740,9 +797,12 @@ function -du() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [PATH]...\n\nType '$__fn --help' for more details."
@@ -751,7 +811,7 @@ function -du() {
    return $rc
 }
 function __impl-du() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH=()
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _PATH=()
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -780,6 +840,8 @@ function __impl-du() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -798,6 +860,8 @@ function __impl-du() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -824,15 +888,17 @@ function __impl-du() {
    done
 
 ####### du ####### START
+[[ $_tracecmd ]] && set -x || true
 [[ ! $_PATH ]] && _PATH=(.) || true
 
 du -s -h "${_PATH[@]}"
+[[ $_tracecmd ]] && set +x || true
 ####### du ####### END
 }
 function __complete-du() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -842,7 +908,9 @@ function __complete-du() {
 complete -F __complete${BASH_FUNK_PREFIX:--}du -- ${BASH_FUNK_PREFIX:--}du
 
 function -extract() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -851,9 +919,12 @@ function -extract() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... ARCHIVE [TO_DIR]\n\nType '$__fn --help' for more details."
@@ -862,7 +933,7 @@ function -extract() {
    return $rc
 }
 function __impl-extract() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _ARCHIVE _TO_DIR
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _ARCHIVE _TO_DIR
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -893,6 +964,8 @@ function __impl-extract() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -911,6 +984,8 @@ function __impl-extract() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -951,6 +1026,7 @@ function __impl-extract() {
    fi
 
 ####### extract ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ $_TO_DIR ]]; then
    local origPWD="$PWD"
    mkdir "$_TO_DIR"
@@ -980,12 +1056,13 @@ esac
 if [[ $_TO_DIR ]]; then
    cd "$origPWD"
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### extract ####### END
 }
 function __complete-extract() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -995,7 +1072,9 @@ function __complete-extract() {
 complete -F __complete${BASH_FUNK_PREFIX:--}extract -- ${BASH_FUNK_PREFIX:--}extract
 
 function -find-up() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1004,9 +1083,12 @@ function -find-up() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... FILENAME\n\nType '$__fn --help' for more details."
@@ -1015,7 +1097,7 @@ function -find-up() {
    return $rc
 }
 function __impl-find-up() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _type _help _selftest _FILENAME
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _type _help _selftest _tracecmd _FILENAME
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1047,6 +1129,8 @@ function __impl-find-up() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1065,6 +1149,8 @@ function __impl-find-up() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --type|-t)
             _type="@@##@@"
@@ -1113,6 +1199,7 @@ function __impl-find-up() {
    fi
 
 ####### find-up ####### START
+[[ $_tracecmd ]] && set -x || true
 local path=$PWD
 while [[ $path ]]; do
    case $_type in
@@ -1124,12 +1211,13 @@ while [[ $path ]]; do
 done
 echo "$__fn: '$_FILENAME': No such file or directory"
 return 1
+[[ $_tracecmd ]] && set +x || true
 ####### find-up ####### END
 }
 function __complete-find-up() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --type -t --help "
+      local options=" --type -t --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1150,7 +1238,9 @@ file" -- $curr))
 complete -F __complete${BASH_FUNK_PREFIX:--}find-up -- ${BASH_FUNK_PREFIX:--}find-up
 
 function -findfiles() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1159,9 +1249,12 @@ function -findfiles() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [START_PATH] SEARCH_STRING\n\nType '$__fn --help' for more details."
@@ -1170,7 +1263,7 @@ function -findfiles() {
    return $rc
 }
 function __impl-findfiles() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _lines _unpack _maxdepth _mindepth _name _help _selftest _verbose _START_PATH _SEARCH_STRING
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _lines _unpack _maxdepth _mindepth _name _help _selftest _tracecmd _verbose _START_PATH _SEARCH_STRING
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1214,6 +1307,8 @@ function __impl-findfiles() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1232,6 +1327,8 @@ function __impl-findfiles() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --lines|-l)
             _lines=1
@@ -1322,6 +1419,7 @@ function __impl-findfiles() {
    fi
 
 ####### findfiles ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ ! -e "$_START_PATH" ]]; then
    echo "$__fn: Error: Path [$_START_PATH] does not exist."
    return 1
@@ -1386,12 +1484,13 @@ else
       find "$_START_PATH" $findOpts -print0 | LC_ALL=C xargs -r -0 -P2 $grepCmd "$_SEARCH_STRING" 2>/dev/null
    fi
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### findfiles ####### END
 }
 function __complete-findfiles() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --lines -l --unpack -u --maxdepth --mindepth --name --help --verbose -v "
+      local options=" --lines -l --unpack -u --maxdepth --mindepth --name --help --tracecmd --verbose -v "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1401,7 +1500,9 @@ function __complete-findfiles() {
 complete -F __complete${BASH_FUNK_PREFIX:--}findfiles -- ${BASH_FUNK_PREFIX:--}findfiles
 
 function -ll() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1410,9 +1511,12 @@ function -ll() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [PATH]...\n\nType '$__fn --help' for more details."
@@ -1421,7 +1525,7 @@ function -ll() {
    return $rc
 }
 function __impl-ll() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH=()
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _PATH=()
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1450,6 +1554,8 @@ function __impl-ll() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1468,6 +1574,8 @@ function __impl-ll() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -1494,6 +1602,7 @@ function __impl-ll() {
    done
 
 ####### ll ####### START
+[[ $_tracecmd ]] && set -x || true
 [[ ! $_PATH ]] && _PATH=(.) || true
 
 local _ls="command ls -lAph \"${_PATH[@]}\""
@@ -1512,12 +1621,13 @@ eval $_ls | awk '
    /^l[rwxXst+-]+.? .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m)?[.].+[^\/]/            { dotFiles = dotFiles "\n" $0 };  # capture hidden sym-links to files
    /^l[rwxXst+-]+.? .* ([0-9][0-9][0-9][0-9]|[0-9]+:[0-9]+) (\033\[[0-9;]+m[^.]|[^\033^.]).*[^\/]$/ { files    = files    "\n" $0 };  # capture normal sym-links to files
    END { print total dotDirs dirs dotFiles files }'
+[[ $_tracecmd ]] && set +x || true
 ####### ll ####### END
 }
 function __complete-ll() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1527,7 +1637,9 @@ function __complete-ll() {
 complete -F __complete${BASH_FUNK_PREFIX:--}ll -- ${BASH_FUNK_PREFIX:--}ll
 
 function -mkcd() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1536,9 +1648,12 @@ function -mkcd() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... PATH\n\nType '$__fn --help' for more details."
@@ -1547,7 +1662,7 @@ function -mkcd() {
    return $rc
 }
 function __impl-mkcd() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _mode _parents _help _selftest _verbose _PATH
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _mode _parents _help _selftest _tracecmd _verbose _PATH
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1583,6 +1698,8 @@ function __impl-mkcd() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1601,6 +1718,8 @@ function __impl-mkcd() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --mode|-m)
             _mode="@@##@@"
@@ -1657,6 +1776,7 @@ function __impl-mkcd() {
    fi
 
 ####### mkcd ####### START
+[[ $_tracecmd ]] && set -x || true
 local mkdirOpts
 
 [[ $_mode    ]] && mkdirOpts="$mkdirOpts -m $_mode" || true
@@ -1664,12 +1784,13 @@ local mkdirOpts
 [[ $_verbose ]] && mkdirOpts="$mkdirOpts -v" || true
 
 mkdir "$_PATH" && cd "$_PATH"
+[[ $_tracecmd ]] && set +x || true
 ####### mkcd ####### END
 }
 function __complete-mkcd() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --mode -m --parents -p --help --verbose -v "
+      local options=" --mode -m --parents -p --help --tracecmd --verbose -v "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1679,7 +1800,9 @@ function __complete-mkcd() {
 complete -F __complete${BASH_FUNK_PREFIX:--}mkcd -- ${BASH_FUNK_PREFIX:--}mkcd
 
 function -modified() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1688,9 +1811,12 @@ function -modified() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [PATH]\n\nType '$__fn --help' for more details."
@@ -1699,7 +1825,7 @@ function -modified() {
    return $rc
 }
 function __impl-modified() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _format _help _selftest _PATH
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _format _help _selftest _tracecmd _PATH
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1731,6 +1857,8 @@ function __impl-modified() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1749,6 +1877,8 @@ function __impl-modified() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --format|-f)
             _format="@@##@@"
@@ -1798,6 +1928,7 @@ function __impl-modified() {
    fi
 
 ####### modified ####### START
+[[ $_tracecmd ]] && set -x || true
 local _format=${_format:-timestamp}
 
 case $_format in
@@ -1844,12 +1975,13 @@ print(datetime.datetime.fromtimestamp(int(os.path.getmtime('$_PATH'))).isoformat
       fi
      ;;
 esac
+[[ $_tracecmd ]] && set +x || true
 ####### modified ####### END
 }
 function __complete-modified() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --format -f --help "
+      local options=" --format -f --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1869,7 +2001,9 @@ human" -- $curr))
 complete -F __complete${BASH_FUNK_PREFIX:--}modified -- ${BASH_FUNK_PREFIX:--}modified
 
 function -owner() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1878,9 +2012,12 @@ function -owner() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [PATH]\n\nType '$__fn --help' for more details."
@@ -1889,7 +2026,7 @@ function -owner() {
    return $rc
 }
 function __impl-owner() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _PATH
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1918,6 +2055,8 @@ function __impl-owner() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1936,6 +2075,8 @@ function __impl-owner() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -1972,6 +2113,7 @@ function __impl-owner() {
    fi
 
 ####### owner ####### START
+[[ $_tracecmd ]] && set -x || true
 # use stat if available
 if hash stat &>/dev/null; then
    echo $(stat -c %U "$_PATH")
@@ -1988,12 +2130,13 @@ else
    python -c "import os, pwd
 print(pwd.getpwuid(os.stat('$_PATH').st_uid).pw_name)"
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### owner ####### END
 }
 function __complete-owner() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -2003,7 +2146,9 @@ function __complete-owner() {
 complete -F __complete${BASH_FUNK_PREFIX:--}owner -- ${BASH_FUNK_PREFIX:--}owner
 
 function -realpath() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -2012,9 +2157,12 @@ function -realpath() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [PATH]\n\nType '$__fn --help' for more details."
@@ -2023,7 +2171,7 @@ function -realpath() {
    return $rc
 }
 function __impl-realpath() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _PATH
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -2052,6 +2200,8 @@ function __impl-realpath() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -2070,6 +2220,8 @@ function __impl-realpath() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -2104,6 +2256,7 @@ function __impl-realpath() {
    fi
 
 ####### realpath ####### START
+[[ $_tracecmd ]] && set -x || true
 # use readlink if available
 if hash readlink &>/dev/null; then
    readlink -m "$_PATH"
@@ -2120,12 +2273,13 @@ else
    python -c "import os
 print(os.path.realpath('$_PATH'))"
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### realpath ####### END
 }
 function __complete-realpath() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -2135,7 +2289,9 @@ function __complete-realpath() {
 complete -F __complete${BASH_FUNK_PREFIX:--}realpath -- ${BASH_FUNK_PREFIX:--}realpath
 
 function -sudo-append() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -2144,9 +2300,12 @@ function -sudo-append() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... FILE_PATH CONTENT\n\nType '$__fn --help' for more details."
@@ -2155,7 +2314,7 @@ function -sudo-append() {
    return $rc
 }
 function __impl-sudo-append() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _FILE_PATH _CONTENT
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _FILE_PATH _CONTENT
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -2189,6 +2348,8 @@ function __impl-sudo-append() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -2218,6 +2379,8 @@ function __impl-sudo-append() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -2264,14 +2427,16 @@ function __impl-sudo-append() {
    if ! sudo -l -- tee -a &>/dev/null; then echo "$__fn: Error: User $USER misses required sudo permission for 'tee -a'"; return 64; fi
 
 ####### sudo-append ####### START
+[[ $_tracecmd ]] && set -x || true
 echo "Appending to [$_FILE_PATH]..."
 echo "$_CONTENT" | sudo tee -a "$_FILE_PATH" > /dev/null
+[[ $_tracecmd ]] && set +x || true
 ####### sudo-append ####### END
 }
 function __complete-sudo-append() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -2281,7 +2446,9 @@ function __complete-sudo-append() {
 complete -F __complete${BASH_FUNK_PREFIX:--}sudo-append -- ${BASH_FUNK_PREFIX:--}sudo-append
 
 function -sudo-write() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -2290,9 +2457,12 @@ function -sudo-write() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... FILE_PATH OWNER CONTENT\n\nType '$__fn --help' for more details."
@@ -2301,7 +2471,7 @@ function -sudo-write() {
    return $rc
 }
 function __impl-sudo-write() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _FILE_PATH _OWNER _CONTENT
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _FILE_PATH _OWNER _CONTENT
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -2338,6 +2508,8 @@ function __impl-sudo-write() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -2367,6 +2539,8 @@ function __impl-sudo-write() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -2424,14 +2598,16 @@ function __impl-sudo-write() {
    if ! sudo -l -- sh chown &>/dev/null; then echo "$__fn: Error: User $USER misses required sudo permission for 'sh chown'"; return 64; fi
 
 ####### sudo-write ####### START
+[[ $_tracecmd ]] && set -x || true
 echo "Writing [$_FILE_PATH]..."
 sudo sh -c "echo '$_CONTENT' > '$_FILE_PATH'" && sudo chown "$_OWNER" "$_FILE_PATH"
+[[ $_tracecmd ]] && set +x || true
 ####### sudo-write ####### END
 }
 function __complete-sudo-write() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -2441,7 +2617,9 @@ function __complete-sudo-write() {
 complete -F __complete${BASH_FUNK_PREFIX:--}sudo-write -- ${BASH_FUNK_PREFIX:--}sudo-write
 
 function -tail-reverse() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -2450,9 +2628,12 @@ function -tail-reverse() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... FILE\n\nType '$__fn --help' for more details."
@@ -2461,7 +2642,7 @@ function -tail-reverse() {
    return $rc
 }
 function __impl-tail-reverse() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _unique _lines _help _selftest _FILE
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _unique _lines _help _selftest _tracecmd _FILE
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -2495,6 +2676,8 @@ function __impl-tail-reverse() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -2513,6 +2696,8 @@ function __impl-tail-reverse() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --unique|-u)
             _unique=1
@@ -2567,6 +2752,7 @@ function __impl-tail-reverse() {
    fi
 
 ####### tail-reverse ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ $_unique ]]; then
    if [[ $_lines ]]; then
       awk "{lines[len++]=\$0} END {for(i=len-1;i>=0;i--) if (occurrences[lines[i]]++ == 0) { print lines[i]; count++; if (count>=$_lines) break}}" $_FILE
@@ -2580,12 +2766,13 @@ if [[ $_unique ]]; then
       awk "{lines[len++]=\$0} END {for(i=len-1;i>=0;i--) print lines[i]}" $_FILE
    fi
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### tail-reverse ####### END
 }
 function __complete-tail-reverse() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --unique -u --lines -n --help "
+      local options=" --unique -u --lines -n --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -2595,7 +2782,9 @@ function __complete-tail-reverse() {
 complete -F __complete${BASH_FUNK_PREFIX:--}tail-reverse -- ${BASH_FUNK_PREFIX:--}tail-reverse
 
 function -test-all-filesystem() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -2604,9 +2793,12 @@ function -test-all-filesystem() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -2615,7 +2807,7 @@ function -test-all-filesystem() {
    return $rc
 }
 function __impl-test-all-filesystem() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -2640,6 +2832,8 @@ function __impl-test-all-filesystem() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -2658,6 +2852,8 @@ function __impl-test-all-filesystem() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -2682,6 +2878,7 @@ function __impl-test-all-filesystem() {
    done
 
 ####### test-all-filesystem ####### START
+[[ $_tracecmd ]] && set -x || true
 ${BASH_FUNK_PREFIX:--}abspath --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}cd-down --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}cd-hist --selftest && echo || return 1
@@ -2699,12 +2896,13 @@ ${BASH_FUNK_PREFIX:--}realpath --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}sudo-append --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}sudo-write --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}tail-reverse --selftest && echo || return 1
+[[ $_tracecmd ]] && set +x || true
 ####### test-all-filesystem ####### END
 }
 function __complete-test-all-filesystem() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else

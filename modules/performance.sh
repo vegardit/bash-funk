@@ -12,7 +12,9 @@
 #
 
 function -cpu-count() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -21,9 +23,12 @@ function -cpu-count() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -32,7 +37,7 @@ function -cpu-count() {
    return $rc
 }
 function __impl-cpu-count() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -57,6 +62,8 @@ function __impl-cpu-count() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -87,6 +94,8 @@ function __impl-cpu-count() {
             return 0
            ;;
 
+         --tracecmd) _tracecmd=1 ;;
+
          --)
             __optionWithValue="--"
            ;;
@@ -110,13 +119,15 @@ function __impl-cpu-count() {
    done
 
 ####### cpu-count ####### START
+[[ $_tracecmd ]] && set -x || true
 [[ $OSTYPE != "darwin"* ]] && grep processor /proc/cpuinfo | wc -l || sysctl -n hw.logicalcpu
+[[ $_tracecmd ]] && set +x || true
 ####### cpu-count ####### END
 }
 function __complete-cpu-count() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -126,7 +137,9 @@ function __complete-cpu-count() {
 complete -F __complete${BASH_FUNK_PREFIX:--}cpu-count -- ${BASH_FUNK_PREFIX:--}cpu-count
 
 function -cpu-perf() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -135,9 +148,12 @@ function -cpu-perf() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -146,7 +162,7 @@ function -cpu-perf() {
    return $rc
 }
 function __impl-cpu-perf() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _mode _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _mode _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -174,6 +190,8 @@ function __impl-cpu-perf() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -203,6 +221,8 @@ function __impl-cpu-perf() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --mode|-m)
             _mode="@@##@@"
@@ -241,6 +261,7 @@ function __impl-cpu-perf() {
    fi
 
 ####### cpu-perf ####### START
+[[ $_tracecmd ]] && set -x || true
 local _mode=${_mode:-openssl-rsa1024}
 case $_mode in
    openssl-aes*) openssl speed -multi $(${BASH_FUNK_PREFIX:--}cpu-count) aes-${_mode#*aes}-cbc ;;
@@ -259,12 +280,13 @@ case $_mode in
       dd if=/dev/zero bs=$_bs count=1024 2> >(head -3 | tail -1) > >(${_mode#dd-} >/dev/null)
      ;;
 esac
+[[ $_tracecmd ]] && set +x || true
 ####### cpu-perf ####### END
 }
 function __complete-cpu-perf() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --mode -m --help "
+      local options=" --mode -m --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -291,7 +313,9 @@ dd-sha512sum" -- $curr))
 complete -F __complete${BASH_FUNK_PREFIX:--}cpu-perf -- ${BASH_FUNK_PREFIX:--}cpu-perf
 
 function -disk-latency() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -300,9 +324,12 @@ function -disk-latency() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [PATH]\n\nType '$__fn --help' for more details."
@@ -311,7 +338,7 @@ function -disk-latency() {
    return $rc
 }
 function __impl-disk-latency() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PATH
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _PATH
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -340,6 +367,8 @@ function __impl-disk-latency() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -379,6 +408,8 @@ function __impl-disk-latency() {
             return 0
            ;;
 
+         --tracecmd) _tracecmd=1 ;;
+
          --)
             __optionWithValue="--"
            ;;
@@ -415,6 +446,7 @@ function __impl-disk-latency() {
    fi
 
 ####### disk-latency ####### START
+[[ $_tracecmd ]] && set -x || true
 if hash ioping &>/dev/null; then
    ioping -c 1 "$_PATH"
 else
@@ -439,12 +471,13 @@ else
       return 1
    fi
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### disk-latency ####### END
 }
 function __complete-disk-latency() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -454,7 +487,9 @@ function __complete-disk-latency() {
 complete -F __complete${BASH_FUNK_PREFIX:--}disk-latency -- ${BASH_FUNK_PREFIX:--}disk-latency
 
 function -disk-perf() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -463,9 +498,12 @@ function -disk-perf() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [PATH]\n\nType '$__fn --help' for more details."
@@ -474,7 +512,7 @@ function -disk-perf() {
    return $rc
 }
 function __impl-disk-perf() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _mode _size _help _selftest _PATH
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _mode _size _help _selftest _tracecmd _PATH
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -508,6 +546,8 @@ function __impl-disk-perf() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -541,6 +581,8 @@ Testing single-threaded sequential read performance...
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --mode|-m)
             _mode="@@##@@"
@@ -605,6 +647,7 @@ Testing single-threaded sequential read performance...
    fi
 
 ####### disk-perf ####### START
+[[ $_tracecmd ]] && set -x || true
 local _size=${_size:-2048}
 local _mode=${_mode:-fio}
 case $_mode in
@@ -644,12 +687,13 @@ case $_mode in
       fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --directory="$_PATH" --numjobs $(${BASH_FUNK_PREFIX:--}cpu-count) --name=$testFile --bs=4k --iodepth=64 --size=${_size}M --readwrite=randrw --rwmixread=75
      ;;
 esac
+[[ $_tracecmd ]] && set +x || true
 ####### disk-perf ####### END
 }
 function __complete-disk-perf() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --mode -m --size --help "
+      local options=" --mode -m --size --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -668,7 +712,9 @@ fio" -- $curr))
 complete -F __complete${BASH_FUNK_PREFIX:--}disk-perf -- ${BASH_FUNK_PREFIX:--}disk-perf
 
 function -scp-perf() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -677,9 +723,12 @@ function -scp-perf() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... TARGET [SIZE_MB]\n\nType '$__fn --help' for more details."
@@ -688,7 +737,7 @@ function -scp-perf() {
    return $rc
 }
 function __impl-scp-perf() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _port _identity_file _help _selftest _TARGET _SIZE_MB
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _port _identity_file _help _selftest _tracecmd _TARGET _SIZE_MB
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -724,6 +773,8 @@ function __impl-scp-perf() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -742,6 +793,8 @@ function __impl-scp-perf() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --port|-P)
             _port="@@##@@"
@@ -815,6 +868,7 @@ function __impl-scp-perf() {
    fi
 
 ####### scp-perf ####### START
+[[ $_tracecmd ]] && set -x || true
 local dataFile=$(mktemp)
 
 local sshOpts=""
@@ -843,12 +897,13 @@ echo "Removing test data on $_TARGET..."
 ssh $sshOpts "$_TARGET" "rm ${dataFile}-copy"
 echo "Removing local test data..."
 rm $dataFile
+[[ $_tracecmd ]] && set +x || true
 ####### scp-perf ####### END
 }
 function __complete-scp-perf() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --port -P --identity_file -i --help "
+      local options=" --port -P --identity_file -i --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -858,7 +913,9 @@ function __complete-scp-perf() {
 complete -F __complete${BASH_FUNK_PREFIX:--}scp-perf -- ${BASH_FUNK_PREFIX:--}scp-perf
 
 function -test-all-performance() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -867,9 +924,12 @@ function -test-all-performance() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -878,7 +938,7 @@ function -test-all-performance() {
    return $rc
 }
 function __impl-test-all-performance() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -903,6 +963,8 @@ function __impl-test-all-performance() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -921,6 +983,8 @@ function __impl-test-all-performance() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -945,17 +1009,19 @@ function __impl-test-all-performance() {
    done
 
 ####### test-all-performance ####### START
+[[ $_tracecmd ]] && set -x || true
 ${BASH_FUNK_PREFIX:--}cpu-count --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}cpu-perf --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}disk-latency --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}disk-perf --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}scp-perf --selftest && echo || return 1
+[[ $_tracecmd ]] && set +x || true
 ####### test-all-performance ####### END
 }
 function __complete-test-all-performance() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else

@@ -13,7 +13,9 @@
 
 if hash aws &>/dev/null || [[ -f /sys/hypervisor/uuid && $(head -c 3 /sys/hypervisor/uuid) == "ec2" ]]; then
 function -aws-account-id() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -22,9 +24,12 @@ function -aws-account-id() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -33,7 +38,7 @@ function -aws-account-id() {
    return $rc
 }
 function __impl-aws-account-id() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -58,6 +63,8 @@ function __impl-aws-account-id() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -76,6 +83,8 @@ function __impl-aws-account-id() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -100,15 +109,17 @@ function __impl-aws-account-id() {
    done
 
 ####### aws-account-id ####### START
+[[ $_tracecmd ]] && set -x || true
 hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
 $http_get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/accountId/ {print $4}'
+[[ $_tracecmd ]] && set +x || true
 ####### aws-account-id ####### END
 }
 function __complete-aws-account-id() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -118,7 +129,9 @@ function __complete-aws-account-id() {
 complete -F __complete${BASH_FUNK_PREFIX:--}aws-account-id -- ${BASH_FUNK_PREFIX:--}aws-account-id
 
 function -aws-az() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -127,9 +140,12 @@ function -aws-az() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -138,7 +154,7 @@ function -aws-az() {
    return $rc
 }
 function __impl-aws-az() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -163,6 +179,8 @@ function __impl-aws-az() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -181,6 +199,8 @@ function __impl-aws-az() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -205,15 +225,17 @@ function __impl-aws-az() {
    done
 
 ####### aws-az ####### START
+[[ $_tracecmd ]] && set -x || true
 hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
 $http_get http://169.254.169.254/latest/meta-data/placement/availability-zone
+[[ $_tracecmd ]] && set +x || true
 ####### aws-az ####### END
 }
 function __complete-aws-az() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -223,7 +245,9 @@ function __complete-aws-az() {
 complete -F __complete${BASH_FUNK_PREFIX:--}aws-az -- ${BASH_FUNK_PREFIX:--}aws-az
 
 function -aws-describe-stack() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -232,9 +256,12 @@ function -aws-describe-stack() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [STACK_NAME]\n\nType '$__fn --help' for more details."
@@ -243,7 +270,7 @@ function -aws-describe-stack() {
    return $rc
 }
 function __impl-aws-describe-stack() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _region _help _selftest _STACK_NAME
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _region _help _selftest _tracecmd _STACK_NAME
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -278,6 +305,8 @@ function __impl-aws-describe-stack() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -296,6 +325,8 @@ function __impl-aws-describe-stack() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --region)
             _region="@@##@@"
@@ -339,6 +370,7 @@ function __impl-aws-describe-stack() {
    if ! hash "aws" &>/dev/null; then echo "$__fn: Error: Required command 'aws' not found on this system."; return 64; fi
 
 ####### aws-describe-stack ####### START
+[[ $_tracecmd ]] && set -x || true
 hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
 if [[ ! $_region ]]; then
@@ -351,12 +383,13 @@ if [[ ! $_STACK_NAME ]]; then
 fi
 
 aws --region $_region cloudformation describe-stacks --stack-name $_STACK_NAME 2>&1
+[[ $_tracecmd ]] && set +x || true
 ####### aws-describe-stack ####### END
 }
 function __complete-aws-describe-stack() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --region --help "
+      local options=" --region --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -366,7 +399,9 @@ function __complete-aws-describe-stack() {
 complete -F __complete${BASH_FUNK_PREFIX:--}aws-describe-stack -- ${BASH_FUNK_PREFIX:--}aws-describe-stack
 
 function -aws-instance-id() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -375,9 +410,12 @@ function -aws-instance-id() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -386,7 +424,7 @@ function -aws-instance-id() {
    return $rc
 }
 function __impl-aws-instance-id() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -411,6 +449,8 @@ function __impl-aws-instance-id() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -429,6 +469,8 @@ function __impl-aws-instance-id() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -453,15 +495,17 @@ function __impl-aws-instance-id() {
    done
 
 ####### aws-instance-id ####### START
+[[ $_tracecmd ]] && set -x || true
 hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
 $http_get http://169.254.169.254/latest/meta-data/instance-id
+[[ $_tracecmd ]] && set +x || true
 ####### aws-instance-id ####### END
 }
 function __complete-aws-instance-id() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -471,7 +515,9 @@ function __complete-aws-instance-id() {
 complete -F __complete${BASH_FUNK_PREFIX:--}aws-instance-id -- ${BASH_FUNK_PREFIX:--}aws-instance-id
 
 function -aws-is-ec2() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -480,9 +526,12 @@ function -aws-is-ec2() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -491,7 +540,7 @@ function -aws-is-ec2() {
    return $rc
 }
 function __impl-aws-is-ec2() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _verbose
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -519,6 +568,8 @@ function __impl-aws-is-ec2() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -537,6 +588,8 @@ function __impl-aws-is-ec2() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --verbose|-v)
             _verbose=1
@@ -565,6 +618,7 @@ function __impl-aws-is-ec2() {
    done
 
 ####### aws-is-ec2 ####### START
+[[ $_tracecmd ]] && set -x || true
 if [[ -f /sys/hypervisor/uuid && $(head -c 3 /sys/hypervisor/uuid) == "ec2" ]]; then
    [[ $_verbose ]] && echo "This is an AWS EC2 instance." || true
    return 0
@@ -572,12 +626,13 @@ else
    [[ $_verbose ]] && echo "This is no AWS EC2 instance." || true
    return 1
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### aws-is-ec2 ####### END
 }
 function __complete-aws-is-ec2() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help --verbose -v "
+      local options=" --help --tracecmd --verbose -v "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -587,7 +642,9 @@ function __complete-aws-is-ec2() {
 complete -F __complete${BASH_FUNK_PREFIX:--}aws-is-ec2 -- ${BASH_FUNK_PREFIX:--}aws-is-ec2
 
 function -aws-private-ip() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -596,9 +653,12 @@ function -aws-private-ip() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -607,7 +667,7 @@ function -aws-private-ip() {
    return $rc
 }
 function __impl-aws-private-ip() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -632,6 +692,8 @@ function __impl-aws-private-ip() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -650,6 +712,8 @@ function __impl-aws-private-ip() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -674,15 +738,17 @@ function __impl-aws-private-ip() {
    done
 
 ####### aws-private-ip ####### START
+[[ $_tracecmd ]] && set -x || true
 hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
 $http_get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/privateIp/ {print $4}'
+[[ $_tracecmd ]] && set +x || true
 ####### aws-private-ip ####### END
 }
 function __complete-aws-private-ip() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -692,7 +758,9 @@ function __complete-aws-private-ip() {
 complete -F __complete${BASH_FUNK_PREFIX:--}aws-private-ip -- ${BASH_FUNK_PREFIX:--}aws-private-ip
 
 function -aws-region() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -701,9 +769,12 @@ function -aws-region() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -712,7 +783,7 @@ function -aws-region() {
    return $rc
 }
 function __impl-aws-region() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -737,6 +808,8 @@ function __impl-aws-region() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -755,6 +828,8 @@ function __impl-aws-region() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -779,15 +854,17 @@ function __impl-aws-region() {
    done
 
 ####### aws-region ####### START
+[[ $_tracecmd ]] && set -x || true
 hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
 $http_get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/region/ {print $4}'
+[[ $_tracecmd ]] && set +x || true
 ####### aws-region ####### END
 }
 function __complete-aws-region() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -797,7 +874,9 @@ function __complete-aws-region() {
 complete -F __complete${BASH_FUNK_PREFIX:--}aws-region -- ${BASH_FUNK_PREFIX:--}aws-region
 
 function -aws-stack-name() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -806,9 +885,12 @@ function -aws-stack-name() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -817,7 +899,7 @@ function -aws-stack-name() {
    return $rc
 }
 function __impl-aws-stack-name() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -845,6 +927,8 @@ function __impl-aws-stack-name() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -863,6 +947,8 @@ function __impl-aws-stack-name() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -889,17 +975,19 @@ function __impl-aws-stack-name() {
    if ! hash "aws" &>/dev/null; then echo "$__fn: Error: Required command 'aws' not found on this system."; return 64; fi
 
 ####### aws-stack-name ####### START
+[[ $_tracecmd ]] && set -x || true
 hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
 local region=$($http_get http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F\" '/region/ {print $4}')
 local instanceId=$($http_get http://169.254.169.254/latest/meta-data/instance-id)
 aws ec2 describe-instances --region $region --instance-id $instanceId --query 'Reservations[*].Instances[*].Tags[?Key==`aws:cloudformation:stack-name`].Value' --output text
+[[ $_tracecmd ]] && set +x || true
 ####### aws-stack-name ####### END
 }
 function __complete-aws-stack-name() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -909,7 +997,9 @@ function __complete-aws-stack-name() {
 complete -F __complete${BASH_FUNK_PREFIX:--}aws-stack-name -- ${BASH_FUNK_PREFIX:--}aws-stack-name
 
 function -aws-vpc-cidr-block() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -918,9 +1008,12 @@ function -aws-vpc-cidr-block() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -929,7 +1022,7 @@ function -aws-vpc-cidr-block() {
    return $rc
 }
 function __impl-aws-vpc-cidr-block() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -954,6 +1047,8 @@ function __impl-aws-vpc-cidr-block() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -972,6 +1067,8 @@ function __impl-aws-vpc-cidr-block() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -996,16 +1093,18 @@ function __impl-aws-vpc-cidr-block() {
    done
 
 ####### aws-vpc-cidr-block ####### START
+[[ $_tracecmd ]] && set -x || true
 hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
 local mac=$($http_get http://169.254.169.254/latest/meta-data/mac)
 $http_get http://169.254.169.254/latest/meta-data/network/interfaces/macs/$mac/vpc-ipv4-cidr-block
+[[ $_tracecmd ]] && set +x || true
 ####### aws-vpc-cidr-block ####### END
 }
 function __complete-aws-vpc-cidr-block() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1015,7 +1114,9 @@ function __complete-aws-vpc-cidr-block() {
 complete -F __complete${BASH_FUNK_PREFIX:--}aws-vpc-cidr-block -- ${BASH_FUNK_PREFIX:--}aws-vpc-cidr-block
 
 function -aws-vpc-id() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1024,9 +1125,12 @@ function -aws-vpc-id() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -1035,7 +1139,7 @@ function -aws-vpc-id() {
    return $rc
 }
 function __impl-aws-vpc-id() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1060,6 +1164,8 @@ function __impl-aws-vpc-id() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1078,6 +1184,8 @@ function __impl-aws-vpc-id() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -1102,16 +1210,18 @@ function __impl-aws-vpc-id() {
    done
 
 ####### aws-vpc-id ####### START
+[[ $_tracecmd ]] && set -x || true
 hash wget &>/dev/null && local http_get="wget -qO-" || local http_get="curl -s"
 
 local mac=$($http_get http://169.254.169.254/latest/meta-data/mac)
 $http_get http://169.254.169.254/latest/meta-data/network/interfaces/macs/$mac/vpc-id
+[[ $_tracecmd ]] && set +x || true
 ####### aws-vpc-id ####### END
 }
 function __complete-aws-vpc-id() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -1121,7 +1231,9 @@ function __complete-aws-vpc-id() {
 complete -F __complete${BASH_FUNK_PREFIX:--}aws-vpc-id -- ${BASH_FUNK_PREFIX:--}aws-vpc-id
 
 function -test-all-aws() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -1130,9 +1242,12 @@ function -test-all-aws() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -1141,7 +1256,7 @@ function -test-all-aws() {
    return $rc
 }
 function __impl-test-all-aws() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -1166,6 +1281,8 @@ function __impl-test-all-aws() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -1184,6 +1301,8 @@ function __impl-test-all-aws() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -1208,6 +1327,7 @@ function __impl-test-all-aws() {
    done
 
 ####### test-all-aws ####### START
+[[ $_tracecmd ]] && set -x || true
 ${BASH_FUNK_PREFIX:--}aws-account-id --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}aws-az --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}aws-describe-stack --selftest && echo || return 1
@@ -1218,12 +1338,13 @@ ${BASH_FUNK_PREFIX:--}aws-region --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}aws-stack-name --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}aws-vpc-cidr-block --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}aws-vpc-id --selftest && echo || return 1
+[[ $_tracecmd ]] && set +x || true
 ####### test-all-aws ####### END
 }
 function __complete-test-all-aws() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else

@@ -12,7 +12,9 @@
 #
 
 function -ssh-agent-add-key() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -21,9 +23,12 @@ function -ssh-agent-add-key() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... KEY_FILE PASSWORD\n\nType '$__fn --help' for more details."
@@ -32,7 +37,7 @@ function -ssh-agent-add-key() {
    return $rc
 }
 function __impl-ssh-agent-add-key() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _KEY_FILE _PASSWORD
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _KEY_FILE _PASSWORD
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -68,6 +73,8 @@ function __impl-ssh-agent-add-key() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -86,6 +93,8 @@ function __impl-ssh-agent-add-key() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -135,6 +144,7 @@ function __impl-ssh-agent-add-key() {
    if ! hash "expect" &>/dev/null; then echo "$__fn: Error: Required command 'expect' not found on this system."; return 64; fi
 
 ####### ssh-agent-add-key ####### START
+[[ $_tracecmd ]] && set -x || true
 eval $(ssh-agent)
 
 expect << EOF
@@ -143,12 +153,13 @@ expect << EOF
    send "$_PASSWORD\r"
    expect eof
 EOF
+[[ $_tracecmd ]] && set +x || true
 ####### ssh-agent-add-key ####### END
 }
 function __complete-ssh-agent-add-key() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -158,7 +169,9 @@ function __complete-ssh-agent-add-key() {
 complete -F __complete${BASH_FUNK_PREFIX:--}ssh-agent-add-key -- ${BASH_FUNK_PREFIX:--}ssh-agent-add-key
 
 function -ssh-gen-keypair() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -167,9 +180,12 @@ function -ssh-gen-keypair() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... FILENAME\n\nType '$__fn --help' for more details."
@@ -178,7 +194,7 @@ function -ssh-gen-keypair() {
    return $rc
 }
 function __impl-ssh-gen-keypair() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _comment _password _keysize _help _selftest _FILENAME
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _comment _password _keysize _help _selftest _tracecmd _FILENAME
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -217,6 +233,8 @@ function __impl-ssh-gen-keypair() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -235,6 +253,8 @@ function __impl-ssh-gen-keypair() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --comment|-C)
             _comment="@@##@@"
@@ -310,18 +330,20 @@ function __impl-ssh-gen-keypair() {
    if ! hash "ssh-keygen" &>/dev/null; then echo "$__fn: Error: Required command 'ssh-keygen' not found on this system."; return 64; fi
 
 ####### ssh-gen-keypair ####### START
+[[ $_tracecmd ]] && set -x || true
 local opts
 # if password is specified and new OpenSSH key format is supported by ssh-keygen, then enable it
 if [[ ${_password:-} ]] && ssh-keygen --help 2>&1 | grep -q -- " -o "; then
    opts=-o -a 500
 fi
 ssh-keygen -t rsa -f $_FILENAME -N "${_password:-}" -b ${_keysize:-4096} -C "${_comment:-}" $opts
+[[ $_tracecmd ]] && set +x || true
 ####### ssh-gen-keypair ####### END
 }
 function __complete-ssh-gen-keypair() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --comment -C --password -p --keysize --help "
+      local options=" --comment -C --password -p --keysize --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -331,7 +353,9 @@ function __complete-ssh-gen-keypair() {
 complete -F __complete${BASH_FUNK_PREFIX:--}ssh-gen-keypair -- ${BASH_FUNK_PREFIX:--}ssh-gen-keypair
 
 function -ssh-pubkey() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -340,9 +364,12 @@ function -ssh-pubkey() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... PRIVATE_KEY_FILE\n\nType '$__fn --help' for more details."
@@ -351,7 +378,7 @@ function -ssh-pubkey() {
    return $rc
 }
 function __impl-ssh-pubkey() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _PRIVATE_KEY_FILE
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _PRIVATE_KEY_FILE
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -383,6 +410,8 @@ function __impl-ssh-pubkey() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -401,6 +430,8 @@ function __impl-ssh-pubkey() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -439,13 +470,15 @@ function __impl-ssh-pubkey() {
    if ! hash "ssh-keygen" &>/dev/null; then echo "$__fn: Error: Required command 'ssh-keygen' not found on this system."; return 64; fi
 
 ####### ssh-pubkey ####### START
+[[ $_tracecmd ]] && set -x || true
 ssh-keygen -y -f $_PRIVATE_KEY_FILE
+[[ $_tracecmd ]] && set +x || true
 ####### ssh-pubkey ####### END
 }
 function __complete-ssh-pubkey() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -455,7 +488,9 @@ function __complete-ssh-pubkey() {
 complete -F __complete${BASH_FUNK_PREFIX:--}ssh-pubkey -- ${BASH_FUNK_PREFIX:--}ssh-pubkey
 
 function -ssh-reconnect() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -464,9 +499,12 @@ function -ssh-reconnect() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... [GREP_PATTERN]...\n\nType '$__fn --help' for more details."
@@ -475,7 +513,7 @@ function -ssh-reconnect() {
    return $rc
 }
 function __impl-ssh-reconnect() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _GREP_PATTERN=()
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _GREP_PATTERN=()
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -504,6 +542,8 @@ function __impl-ssh-reconnect() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -522,6 +562,8 @@ function __impl-ssh-reconnect() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -548,6 +590,7 @@ function __impl-ssh-reconnect() {
    done
 
 ####### ssh-reconnect ####### START
+[[ $_tracecmd ]] && set -x || true
 local filter=
 if [[ ${_GREP_PATTERN:-} ]]; then
    local p
@@ -567,12 +610,13 @@ read -e -p "$ " -i "$ssh_cmd" ssh_cmd
 echo -e "Executing command [\033[35m$ssh_cmd\033[0m]..."
 history -s -- "$ssh_cmd"
 eval -- $ssh_cmd
+[[ $_tracecmd ]] && set +x || true
 ####### ssh-reconnect ####### END
 }
 function __complete-ssh-reconnect() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -582,7 +626,9 @@ function __complete-ssh-reconnect() {
 complete -F __complete${BASH_FUNK_PREFIX:--}ssh-reconnect -- ${BASH_FUNK_PREFIX:--}ssh-reconnect
 
 function -ssh-trust-host() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -591,9 +637,12 @@ function -ssh-trust-host() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... HOSTNAME [PORT]\n\nType '$__fn --help' for more details."
@@ -602,7 +651,7 @@ function -ssh-trust-host() {
    return $rc
 }
 function __impl-ssh-trust-host() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _HOSTNAME _PORT
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _HOSTNAME _PORT
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -636,6 +685,8 @@ function __impl-ssh-trust-host() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -654,6 +705,8 @@ function __impl-ssh-trust-host() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -701,15 +754,17 @@ function __impl-ssh-trust-host() {
    if ! hash "ssh-keyscan" &>/dev/null; then echo "$__fn: Error: Required command 'ssh-keyscan' not found on this system."; return 64; fi
 
 ####### ssh-trust-host ####### START
+[[ $_tracecmd ]] && set -x || true
 touch ~/.ssh/known_hosts
 ssh-keyscan -t rsa,dsa -p $_PORT $_HOSTNAME 2>/dev/null | sort -u - ~/.ssh/known_hosts > ~/.ssh/known_hosts.tmp
 mv ~/.ssh/known_hosts.tmp ~/.ssh/known_hosts
+[[ $_tracecmd ]] && set +x || true
 ####### ssh-trust-host ####### END
 }
 function __complete-ssh-trust-host() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -719,7 +774,9 @@ function __complete-ssh-trust-host() {
 complete -F __complete${BASH_FUNK_PREFIX:--}ssh-trust-host -- ${BASH_FUNK_PREFIX:--}ssh-trust-host
 
 function -ssh-with-pass() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -728,9 +785,12 @@ function -ssh-with-pass() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... SSH_OPTION1 [SSH_OPTION]...\n\nType '$__fn --help' for more details."
@@ -739,7 +799,7 @@ function -ssh-with-pass() {
    return $rc
 }
 function __impl-ssh-with-pass() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _password _help _selftest _SSH_OPTION=()
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _password _help _selftest _tracecmd _SSH_OPTION=()
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -774,6 +834,8 @@ function __impl-ssh-with-pass() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -800,6 +862,8 @@ function __impl-ssh-with-pass() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --password)
             _password="@@##@@"
@@ -843,6 +907,7 @@ function __impl-ssh-with-pass() {
    if ! hash "ssh" &>/dev/null; then echo "$__fn: Error: Required command 'ssh' not found on this system."; return 64; fi
 
 ####### ssh-with-pass ####### START
+[[ $_tracecmd ]] && set -x || true
 local askPassPW
 if [[ ${_password:-} ]]; then
    askPassPW=$_password
@@ -861,12 +926,13 @@ echo "#!/usr/bin/env bash
 chmod 770 $askPassFile
 
 SSH_ASKPASS=$askPassFile DISPLAY=${DISPLAY:-:0} setsid -w -- ssh ${_SSH_OPTION[@]} </dev/null
+[[ $_tracecmd ]] && set +x || true
 ####### ssh-with-pass ####### END
 }
 function __complete-ssh-with-pass() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --password --help "
+      local options=" --password --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -876,7 +942,9 @@ function __complete-ssh-with-pass() {
 complete -F __complete${BASH_FUNK_PREFIX:--}ssh-with-pass -- ${BASH_FUNK_PREFIX:--}ssh-with-pass
 
 function -test-all-ssh() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -885,9 +953,12 @@ function -test-all-ssh() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -896,7 +967,7 @@ function -test-all-ssh() {
    return $rc
 }
 function __impl-test-all-ssh() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -921,6 +992,8 @@ function __impl-test-all-ssh() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -939,6 +1012,8 @@ function __impl-test-all-ssh() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -963,18 +1038,20 @@ function __impl-test-all-ssh() {
    done
 
 ####### test-all-ssh ####### START
+[[ $_tracecmd ]] && set -x || true
 ${BASH_FUNK_PREFIX:--}ssh-agent-add-key --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-gen-keypair --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-pubkey --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-reconnect --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-trust-host --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}ssh-with-pass --selftest && echo || return 1
+[[ $_tracecmd ]] && set +x || true
 ####### test-all-ssh ####### END
 }
 function __complete-test-all-ssh() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else

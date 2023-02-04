@@ -12,7 +12,9 @@
 #
 
 function -command-exists() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -21,9 +23,12 @@ function -command-exists() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... COMMAND\n\nType '$__fn --help' for more details."
@@ -32,7 +37,7 @@ function -command-exists() {
    return $rc
 }
 function __impl-command-exists() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _COMMAND
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _verbose _COMMAND
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -64,6 +69,8 @@ function __impl-command-exists() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -120,6 +127,8 @@ function __impl-command-exists() {
             return 0
            ;;
 
+         --tracecmd) _tracecmd=1 ;;
+
          --verbose|-v)
             _verbose=1
          ;;
@@ -157,6 +166,7 @@ function __impl-command-exists() {
    fi
 
 ####### command-exists ####### START
+[[ $_tracecmd ]] && set -x || true
 if hash "$_COMMAND" &>/dev/null; then
    [[ $_verbose ]] && echo "'${_COMMAND}' is available." || :
    return 0
@@ -164,12 +174,13 @@ else
    [[ $_verbose ]] && echo "'${_COMMAND}' not found." || :
    return 1
 fi
+[[ $_tracecmd ]] && set +x || true
 ####### command-exists ####### END
 }
 function __complete-command-exists() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help --verbose -v "
+      local options=" --help --tracecmd --verbose -v "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -179,7 +190,9 @@ function __complete-command-exists() {
 complete -F __complete${BASH_FUNK_PREFIX:--}command-exists -- ${BASH_FUNK_PREFIX:--}command-exists
 
 function -pkg-installed() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -188,9 +201,12 @@ function -pkg-installed() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]... PACKAGE_NAME\n\nType '$__fn --help' for more details."
@@ -199,7 +215,7 @@ function -pkg-installed() {
    return $rc
 }
 function __impl-pkg-installed() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _verbose _PACKAGE_NAME
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd _verbose _PACKAGE_NAME
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -231,6 +247,8 @@ function __impl-pkg-installed() {
             echo "    -----------------------------"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -249,6 +267,8 @@ function __impl-pkg-installed() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --verbose|-v)
             _verbose=1
@@ -287,6 +307,7 @@ function __impl-pkg-installed() {
    fi
 
 ####### pkg-installed ####### START
+[[ $_tracecmd ]] && set -x || true
 if hash "yum" &>/dev/null; then
    if yum list installed "${_PACKAGE_NAME}" &>/dev/null; then
       [[ $_verbose ]] && echo "${_PACKAGE_NAME} is installed." || :
@@ -318,12 +339,13 @@ fi
 
 [[ $_verbose ]] && echo "${_PACKAGE_NAME} is NOT installed." || :
 return 1
+[[ $_tracecmd ]] && set +x || true
 ####### pkg-installed ####### END
 }
 function __complete-pkg-installed() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help --verbose -v "
+      local options=" --help --tracecmd --verbose -v "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else
@@ -333,7 +355,9 @@ function __complete-pkg-installed() {
 complete -F __complete${BASH_FUNK_PREFIX:--}pkg-installed -- ${BASH_FUNK_PREFIX:--}pkg-installed
 
 function -test-all-os() {
-   local opts="" opt rc __fn=${FUNCNAME[0]}
+   if [[ "$-" == *x* ]]; then set +x; local opts="set -x"; else local opts=""; fi
+
+   local opt rc __fn=${FUNCNAME[0]}
    for opt in a u H t; do
       [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
    done
@@ -342,9 +366,12 @@ function -test-all-os() {
       shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
    done
 
-   set +auHt -o pipefail
+   set +auHtx -o pipefail
 
+   local _ps4=$PS4
+   PS4='+\033[90m[$?] $BASH_SOURCE:$LINENO ${FUNCNAME[0]}()\033[0m '
    __impl$__fn "$@" && rc=0 || rc=$?
+   PS4=$_ps4
 
    if [[ $rc == 64 && -t 1 ]]; then
       echo -e "\nUsage: $__fn [OPTION]...\n\nType '$__fn --help' for more details."
@@ -353,7 +380,7 @@ function -test-all-os() {
    return $rc
 }
 function __impl-test-all-os() {
-   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _help _selftest _tracecmd
    [ -t 1 ] && __interactive=1 || true
          for __arg in "$@"; do
          case "$__arg" in
@@ -378,6 +405,8 @@ function __impl-test-all-os() {
             echo "Options:"
             echo -e "\033[1m    --help\033[22m"
             echo "        Prints this help."
+            echo -e "\033[1m    --tracecmd\033[22m"
+            echo "        Enables bash debug mode (set -x)."
             echo -e "\033[1m    --selftest\033[22m"
             echo "        Performs a self-test."
             echo -e "    \033[1m--\033[22m"
@@ -396,6 +425,8 @@ function __impl-test-all-os() {
             echo "Testing function [$__fn]...DONE"
             return 0
            ;;
+
+         --tracecmd) _tracecmd=1 ;;
 
          --)
             __optionWithValue="--"
@@ -420,14 +451,16 @@ function __impl-test-all-os() {
    done
 
 ####### test-all-os ####### START
+[[ $_tracecmd ]] && set -x || true
 ${BASH_FUNK_PREFIX:--}command-exists --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}pkg-installed --selftest && echo || return 1
+[[ $_tracecmd ]] && set +x || true
 ####### test-all-os ####### END
 }
 function __complete-test-all-os() {
    local curr=${COMP_WORDS[COMP_CWORD]}
    if [[ ${curr} == -* ]]; then
-      local options=" --help "
+      local options=" --help --tracecmd "
       for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
       COMPREPLY=($(compgen -o default -W '$options' -- $curr))
    else

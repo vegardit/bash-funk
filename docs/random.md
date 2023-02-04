@@ -41,6 +41,8 @@ Determines if enough entropy bits are available perform a non-blocking read from
 Options:
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -85,6 +87,8 @@ Parameters:
 Options:
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -150,6 +154,8 @@ Parameters:
 Options:
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -190,6 +196,8 @@ Parameters:
 Options:
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
@@ -223,6 +231,8 @@ Performs a selftest of all functions of this module by executing each function w
 Options:
     --help
         Prints this help.
+    --tracecmd
+        Enables bash debug mode (set -x).
     --selftest
         Performs a self-test.
     --
