@@ -36,6 +36,7 @@ The following commands are available when this module is loaded:
 1. [-update](#-update)
 1. [-var-exists](#-var-exists)
 1. [-wait](#-wait)
+1. [-weather](#-weather)
 
 
 ## <a name="license"></a>License
@@ -321,6 +322,7 @@ Options:
 -update --selftest && echo || return 1
 -var-exists --selftest && echo || return 1
 -wait --selftest && echo || return 1
+-weather --selftest && echo || return 1
 ```
 
 
@@ -596,4 +598,72 @@ for (( i = 0; i < _SECONDS; i++ )); do
    [[ $char == "s" ]] && break
 done
 echo
+```
+
+
+## <a name="-weather"></a>-weather
+
+```
+Usage: -weather [OPTION]... [LOCATION]
+
+Displays local weather conditions/forecast. Uses https://wttr.in.
+
+Parameters:
+  LOCATION
+      The location (name or GPS coordinates) for the weather region. If not specified location is determined based on public IP address.
+
+Options:
+    --color [WHEN] (default: 'auto', one of: [always,auto,never])
+        Indicates when to colorize the output.
+-f, --forcast [DAYS] (default: '1', integer: 0-3)
+        Number of days to show weather forecast (1=today, 2=today+tomorrow,...).
+-g, --geoservice [ID] (default: 'ipinfo.io', one of: [ipinfo.io,ipapi.co,ip-api.com])
+        The geo location serivce to be used when auto-detecting the location.
+-l, --lang [LANG] (default: 'en')
+        Language, e.g. 'en', 'de'.
+-u, --units UNITS (one of: [m,u])
+        System of measurement units to be used: m = metric, u = USCS.
+    -----------------------------
+    --help
+        Prints this help.
+    --selftest
+        Performs a self-test.
+    --
+        Terminates the option list.
+
+Examples:
+$  -weather Berlin
+    \   /     Sunny
+     .-.      26 °C
+  ― (   ) ―   ↗ 6 km/h
+     \`-’      11 km
+    /   \     0.0 mm
+
+$  -weather Paris -l fr
+     .-.      Pluie légère
+    (   ).    +4(-2) °C
+   (___(__)   ↗ 33 km/h
+    ‘ ‘ ‘ ‘   10 km
+   ‘ ‘ ‘ ‘    0.2 mm
+```
+
+*Implementation:*
+```bash
+local request_options+="${_units:-}${_forcast:-2}"
+
+case "${_color:-auto}" in
+  never) request_options+='T' ;;
+  auto)  if ! -ansi-colors-supported 8 || [[ ! -t 1 ]]; then request_options+='T'; fi ;;
+esac
+
+hash wget &>/dev/null && local http_get="wget --timeout 5 -qO-" || local http_get="curl -sSf --max-time 5"
+if [[ -z $_LOCATION ]]; then
+  case ${_geoservice:-ipinfo.io} in
+    ip-api.com) _LOCATION=$($http_get ip-api.com/line/?fields=lat,lon | paste -sd ',' -) ;;
+    ipapi.co)   _LOCATION=$($http_get https://ipapi.co/latlong) ;;
+    ipinfo.io)  _LOCATION=$($http_get https://ipinfo.io | grep loc | cut -d'"' -f4) ;;
+  esac
+fi
+
+$http_get --header "Accept-Language: ${_lang:-en}" wttr.in/$_LOCATION?$request_options
 ```

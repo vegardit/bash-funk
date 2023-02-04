@@ -861,6 +861,7 @@ ${BASH_FUNK_PREFIX:--}tweak-bash --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}update --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}var-exists --selftest && echo || return 1
 ${BASH_FUNK_PREFIX:--}wait --selftest && echo || return 1
+${BASH_FUNK_PREFIX:--}weather --selftest && echo || return 1
 ####### test-all-misc ####### END
 }
 function __complete-test-all-misc() {
@@ -1530,6 +1531,270 @@ function __complete-wait() {
 }
 complete -F __complete${BASH_FUNK_PREFIX:--}wait -- ${BASH_FUNK_PREFIX:--}wait
 
+function -weather() {
+   local opts="" opt rc __fn=${FUNCNAME[0]}
+   for opt in a u H t; do
+      [[ $- =~ $opt ]] && opts="set -$opt; $opts" || opts="set +$opt; $opts"
+   done
+   shopt -q -o pipefail && opts="set -o pipefail; $opts" || opts="set +o pipefail; $opts"
+   for opt in nullglob extglob nocasematch nocaseglob; do
+      shopt -q $opt && opts="shopt -s $opt; $opts" || opts="shopt -u $opt; $opts"
+   done
+
+   set +auHt -o pipefail
+
+   __impl$__fn "$@" && rc=0 || rc=$?
+
+   if [[ $rc == 64 && -t 1 ]]; then
+      echo -e "\nUsage: $__fn [OPTION]... [LOCATION]\n\nType '$__fn --help' for more details."
+   fi
+   eval $opts
+   return $rc
+}
+function __impl-weather() {
+   local __args=() __arg __idx __noMoreFlags __optionWithValue __params=() __interactive __fn=${FUNCNAME[0]/__impl/} _lang _units _forcast _geoservice _color _help _selftest _LOCATION
+   [ -t 1 ] && __interactive=1 || true
+         for __arg in "$@"; do
+         case "$__arg" in
+            --) __noMoreFlags=1; __args+=("--") ;;
+            -|--*) __args+=("$__arg") ;;
+            -*) [[ $__noMoreFlags == "1" ]] && __args+=("$__arg") || for ((__idx=1; __idx<${#__arg}; __idx++)); do __args+=("-${__arg:$__idx:1}"); done ;;
+            *) __args+=("$__arg") ;;
+         esac
+      done
+   for __arg in "${__args[@]}"; do
+      if [[ $__optionWithValue == "--" ]]; then
+         __params+=("$__arg")
+         continue
+      fi
+      case "$__arg" in
+
+         --help)
+            echo "Usage: $__fn [OPTION]... [LOCATION]"
+            echo
+            echo "Displays local weather conditions/forecast. Uses https://wttr.in."
+            echo
+            echo "Parameters:"
+            echo -e "  \033[1mLOCATION\033[22m"
+            echo "      The location (name or GPS coordinates) for the weather region. If not specified location is determined based on public IP address."
+            echo
+            echo "Options:"
+            echo -e "\033[1m    --color [WHEN]\033[22m (default: 'auto', one of: [always,auto,never])"
+            echo "        Indicates when to colorize the output."
+            echo -e "\033[1m-f, --forcast [DAYS]\033[22m (default: '1', integer: 0-3)"
+            echo "        Number of days to show weather forecast (1=today, 2=today+tomorrow,...)."
+            echo -e "\033[1m-g, --geoservice [ID]\033[22m (default: 'ipinfo.io', one of: [ipinfo.io,ipapi.co,ip-api.com])"
+            echo "        The geo location serivce to be used when auto-detecting the location."
+            echo -e "\033[1m-l, --lang [LANG]\033[22m (default: 'en')"
+            echo "        Language, e.g. 'en', 'de'."
+            echo -e "\033[1m-u, --units UNITS\033[22m (one of: [m,u])"
+            echo "        System of measurement units to be used: m = metric, u = USCS."
+            echo "    -----------------------------"
+            echo -e "\033[1m    --help\033[22m"
+            echo "        Prints this help."
+            echo -e "\033[1m    --selftest\033[22m"
+            echo "        Performs a self-test."
+            echo -e "    \033[1m--\033[22m"
+            echo "        Terminates the option list."
+            echo
+            echo "Examples:"
+            echo -e "$ \033[1m ${BASH_FUNK_PREFIX:--}weather Berlin\033[22m"
+            echo -e "    \   /     Sunny
+     .-.      26 °C
+  ― (   ) ―   ↗ 6 km/h
+     \`-’      11 km
+    /   \     0.0 mm
+"
+            echo -e "$ \033[1m ${BASH_FUNK_PREFIX:--}weather Paris -l fr\033[22m"
+            echo "     .-.      Pluie légère
+    (   ).    +4(-2) °C
+   (___(__)   ↗ 33 km/h
+    ‘ ‘ ‘ ‘   10 km
+   ‘ ‘ ‘ ‘    0.2 mm"
+            echo
+            return 0
+           ;;
+
+         --selftest)
+            echo "Testing function [$__fn]..."
+            echo -e "$ \033[1m$__fn --help\033[22m"
+            local __stdout __rc
+            __stdout="$($__fn --help)"; __rc=$?
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn \033[22m"
+            __stdout="$($__fn )"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^.*Weather report.*$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [.*Weather report.*]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn -l de\033[22m"
+            __stdout="$($__fn -l de)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^.*Wetterbericht.*$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [.*Wetterbericht.*]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn Bavaria --lang de\033[22m"
+            __stdout="$($__fn Bavaria --lang de)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^.*Wetterbericht.*Bayern.*$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [.*Wetterbericht.*Bayern.*]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo -e "$ \033[1m$__fn --lang de --forcast 0 --color always\033[22m"
+            __stdout="$($__fn --lang de --forcast 0 --color always)"; __rc=$?
+            echo "$__stdout"
+            if [[ $__rc != 0 ]]; then echo -e "--> \033[31mFAILED\033[0m - exit code [$__rc] instead of expected [0]."; return 64; fi
+            __regex="^.*\[0m.*$"
+            if [[ ! "$__stdout" =~ $__regex ]]; then echo -e "--> \033[31mFAILED\033[0m - stdout [$__stdout] does not match required pattern [.*\[0m.*]."; return 64; fi
+            echo -e "--> \033[32mOK\033[0m"
+            echo "Testing function [$__fn]...DONE"
+            return 0
+           ;;
+
+         --lang|-l)
+            _lang="en"
+            __optionWithValue=lang
+         ;;
+
+         --units|-u)
+            _units="@@##@@"
+            __optionWithValue=units
+         ;;
+
+         --forcast|-f)
+            _forcast="1"
+            __optionWithValue=forcast
+         ;;
+
+         --geoservice|-g)
+            _geoservice="ipinfo.io"
+            __optionWithValue=geoservice
+         ;;
+
+         --color)
+            _color="auto"
+            __optionWithValue=color
+         ;;
+
+         --)
+            __optionWithValue="--"
+           ;;
+         -*)
+            echo "$__fn: invalid option: '$__arg'"
+            return 64
+           ;;
+
+         *)
+            case $__optionWithValue in
+               lang)
+                  _lang=$__arg
+                  __optionWithValue=
+                 ;;
+               units)
+                  _units=$__arg
+                  __optionWithValue=
+                 ;;
+               forcast)
+                  _forcast=$__arg
+                  __optionWithValue=
+                 ;;
+               geoservice)
+                  _geoservice=$__arg
+                  __optionWithValue=
+                 ;;
+               color)
+                  _color=$__arg
+                  __optionWithValue=
+                 ;;
+               *)
+                  __params+=("$__arg")
+            esac
+           ;;
+      esac
+   done
+
+   for __param in "${__params[@]}"; do
+      if [[ ! $_LOCATION && ${#__params[@]} > 0 ]]; then
+         _LOCATION=$__param
+         continue
+      fi
+      echo "$__fn: Error: too many parameters: '$__param'"
+      return 64
+   done
+
+   if [[ $_units ]]; then
+      if [[ $_units == "@@##@@" ]]; then echo "$__fn: Error: Value UNITS for option --units must be specified."; return 64; fi
+      if [[ $_units != 'm' && $_units != 'u' ]]; then echo "$__fn: Error: Value '$_units' for option --units is not one of the allowed values [m,u]."; return 64; fi
+   fi
+   if [[ $_forcast ]]; then
+      if [[ $_forcast == "@@##@@" ]]; then echo "$__fn: Error: Value DAYS for option --forcast must be specified."; return 64; fi
+      if [[ ! "$_forcast" =~ ^-?[0-9]*$ ]]; then echo "$__fn: Error: Value '$_forcast' for option --forcast is not a numeric value."; return 64; fi
+      if [[ $_forcast -lt 0 ]]; then echo "$__fn: Error: Value '$_forcast' for option --forcast is too low. Must be >= 0."; return 64; fi
+      if [[ $_forcast -gt 3 ]]; then echo "$__fn: Error: Value '$_forcast' for option --forcast is too high. Must be <= 3."; return 64; fi
+   fi
+   if [[ $_geoservice ]]; then
+      if [[ $_geoservice == "@@##@@" ]]; then echo "$__fn: Error: Value ID for option --geoservice must be specified."; return 64; fi
+      if [[ $_geoservice != 'ipinfo.io' && $_geoservice != 'ipapi.co' && $_geoservice != 'ip-api.com' ]]; then echo "$__fn: Error: Value '$_geoservice' for option --geoservice is not one of the allowed values [ipinfo.io,ipapi.co,ip-api.com]."; return 64; fi
+   fi
+   if [[ $_color ]]; then
+      if [[ $_color == "@@##@@" ]]; then echo "$__fn: Error: Value WHEN for option --color must be specified."; return 64; fi
+      if [[ $_color != 'always' && $_color != 'auto' && $_color != 'never' ]]; then echo "$__fn: Error: Value '$_color' for option --color is not one of the allowed values [always,auto,never]."; return 64; fi
+   fi
+
+####### weather ####### START
+local request_options+="${_units:-}${_forcast:-2}"
+
+case "${_color:-auto}" in
+  never) request_options+='T' ;;
+  auto)  if ! ${BASH_FUNK_PREFIX:--}ansi-colors-supported 8 || [[ ! -t 1 ]]; then request_options+='T'; fi ;;
+esac
+
+hash wget &>/dev/null && local http_get="wget --timeout 5 -qO-" || local http_get="curl -sSf --max-time 5"
+if [[ -z $_LOCATION ]]; then
+  case ${_geoservice:-ipinfo.io} in
+    ip-api.com) _LOCATION=$($http_get ip-api.com/line/?fields=lat,lon | paste -sd ',' -) ;;
+    ipapi.co)   _LOCATION=$($http_get https://ipapi.co/latlong) ;;
+    ipinfo.io)  _LOCATION=$($http_get https://ipinfo.io | grep loc | cut -d'"' -f4) ;;
+  esac
+fi
+
+$http_get --header "Accept-Language: ${_lang:-en}" wttr.in/$_LOCATION?$request_options
+####### weather ####### END
+}
+function __complete-weather() {
+   local curr=${COMP_WORDS[COMP_CWORD]}
+   if [[ ${curr} == -* ]]; then
+      local options=" --lang -l --units -u --forcast -f --geoservice -g --color --help "
+      for o in "${COMP_WORDS[@]}"; do options=${options/ $o / }; done
+      COMPREPLY=($(compgen -o default -W '$options' -- $curr))
+   else
+      local prev="${COMP_WORDS[COMP_CWORD-1]}"
+      case $prev in
+         --units|-u)
+            COMPREPLY=($(compgen -o default -W "m
+u" -- $curr))
+              ;;
+         --geoservice|-g)
+            COMPREPLY=($(compgen -o default -W "ipinfo.io
+ipapi.co
+ip-api.com" -- $curr))
+              ;;
+         --color)
+            COMPREPLY=($(compgen -o default -W "always
+auto
+never" -- $curr))
+              ;;
+         *)
+            COMPREPLY=($(compgen -o default -- $curr))
+           ;;
+      esac
+   fi
+}
+complete -F __complete${BASH_FUNK_PREFIX:--}weather -- ${BASH_FUNK_PREFIX:--}weather
+
 
 function -help-misc() {
    local p="\033[1m${BASH_FUNK_PREFIX:--}"
@@ -1544,8 +1809,9 @@ function -help-misc() {
    echo -e "${p}update\033[0m  -  Updates bash-funk to the latest code from github (https://github.com/vegardit/bash-funk). All local modifications are overwritten."
    echo -e "${p}var-exists VARIABLE_NAME\033[0m  -  Determines if the given variable is declared."
    echo -e "${p}wait SECONDS\033[0m  -  Waits for the given number of seconds or until the key 's' pressed."
+   echo -e "${p}weather [LOCATION]\033[0m  -  Displays local weather conditions/forecast. Uses https://wttr.in."
 }
-__BASH_FUNK_FUNCS+=( choose env help please reload root test-all-misc tweak-bash update var-exists wait )
+__BASH_FUNK_FUNCS+=( choose env help please reload root test-all-misc tweak-bash update var-exists wait weather )
 
 function -timeout() {
    if [[ $# < 2 || ${1:-} == "--help" ]]; then
