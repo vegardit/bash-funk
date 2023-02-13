@@ -1709,7 +1709,7 @@ function __impl-weather() {
             echo "        Indicates when to colorize the output."
             echo -e "\033[1m-f, --forcast [DAYS]\033[22m (default: '1', integer: 0-3)"
             echo "        Number of days to show weather forecast (1=today, 2=today+tomorrow,...)."
-            echo -e "\033[1m-g, --geoservice [ID]\033[22m (default: 'ipinfo.io', one of: [ipinfo.io,ipapi.co,ip-api.com])"
+            echo -e "\033[1m-g, --geoservice [ID]\033[22m (default: 'ubuntu.com', one of: [ubuntu.com,ip-api.com,ipapi.co,ipinfo.io])"
             echo "        The geo location serivce to be used when auto-detecting the location."
             echo -e "\033[1m-l, --lang [LANG]\033[22m (default: 'en')"
             echo "        Language, e.g. 'en', 'de'."
@@ -1800,7 +1800,7 @@ function __impl-weather() {
          ;;
 
          --geoservice|-g)
-            _geoservice="ipinfo.io"
+            _geoservice="ubuntu.com"
             __optionWithValue=geoservice
          ;;
 
@@ -1867,7 +1867,7 @@ function __impl-weather() {
    fi
    if [[ $_geoservice ]]; then
       if [[ $_geoservice == "@@##@@" ]]; then echo "$__fn: Error: Value ID for option --geoservice must be specified."; return 64; fi
-      if [[ $_geoservice != 'ipinfo.io' && $_geoservice != 'ipapi.co' && $_geoservice != 'ip-api.com' ]]; then echo "$__fn: Error: Value '$_geoservice' for option --geoservice is not one of the allowed values [ipinfo.io,ipapi.co,ip-api.com]."; return 64; fi
+      if [[ $_geoservice != 'ubuntu.com' && $_geoservice != 'ip-api.com' && $_geoservice != 'ipapi.co' && $_geoservice != 'ipinfo.io' ]]; then echo "$__fn: Error: Value '$_geoservice' for option --geoservice is not one of the allowed values [ubuntu.com,ip-api.com,ipapi.co,ipinfo.io]."; return 64; fi
    fi
    if [[ $_color ]]; then
       if [[ $_color == "@@##@@" ]]; then echo "$__fn: Error: Value WHEN for option --color must be specified."; return 64; fi
@@ -1886,6 +1886,7 @@ esac
 hash wget &>/dev/null && local http_get="wget --timeout 5 -qO-" || local http_get="curl -sSf --max-time 5"
 if [[ -z $_LOCATION ]]; then
   case ${_geoservice:-ipinfo.io} in
+    ubuntu.com) _LOCATION=$($http_get http://geoip.ubuntu.com/lookup | sed 's/^.*<Latitude>\([0-9.]\{,7\}\)<\/Latitude><Longitude>\([0-9.]\{,7\}\).*$/\1,\2/') ;;
     ip-api.com) _LOCATION=$($http_get ip-api.com/line/?fields=lat,lon | paste -sd ',' -) ;;
     ipapi.co)   _LOCATION=$($http_get https://ipapi.co/latlong) ;;
     ipinfo.io)  _LOCATION=$($http_get https://ipinfo.io | grep loc | cut -d'"' -f4) ;;
@@ -1910,9 +1911,10 @@ function __complete-weather() {
 u" -- $curr))
               ;;
          --geoservice|-g)
-            COMPREPLY=($(compgen -o default -W "ipinfo.io
+            COMPREPLY=($(compgen -o default -W "ubuntu.com
+ip-api.com
 ipapi.co
-ip-api.com" -- $curr))
+ipinfo.io" -- $curr))
               ;;
          --color)
             COMPREPLY=($(compgen -o default -W "always

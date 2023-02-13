@@ -639,7 +639,7 @@ Options:
         Indicates when to colorize the output.
 -f, --forcast [DAYS] (default: '1', integer: 0-3)
         Number of days to show weather forecast (1=today, 2=today+tomorrow,...).
--g, --geoservice [ID] (default: 'ipinfo.io', one of: [ipinfo.io,ipapi.co,ip-api.com])
+-g, --geoservice [ID] (default: 'ubuntu.com', one of: [ubuntu.com,ip-api.com,ipapi.co,ipinfo.io])
         The geo location serivce to be used when auto-detecting the location.
 -l, --lang [LANG] (default: 'en')
         Language, e.g. 'en', 'de'.
@@ -683,6 +683,7 @@ esac
 hash wget &>/dev/null && local http_get="wget --timeout 5 -qO-" || local http_get="curl -sSf --max-time 5"
 if [[ -z $_LOCATION ]]; then
   case ${_geoservice:-ipinfo.io} in
+    ubuntu.com) _LOCATION=$($http_get http://geoip.ubuntu.com/lookup | sed 's/^.*<Latitude>\([0-9.]\{,7\}\)<\/Latitude><Longitude>\([0-9.]\{,7\}\).*$/\1,\2/') ;;
     ip-api.com) _LOCATION=$($http_get ip-api.com/line/?fields=lat,lon | paste -sd ',' -) ;;
     ipapi.co)   _LOCATION=$($http_get https://ipapi.co/latlong) ;;
     ipinfo.io)  _LOCATION=$($http_get https://ipinfo.io | grep loc | cut -d'"' -f4) ;;
