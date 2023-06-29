@@ -328,7 +328,7 @@ Creates a shallow clone of the selected branch of the given repository with a tr
 Parameters:
   REPO_URL (required)
       The URL to the git repository to clone.
-  BRANCH_NAME (default: 'master')
+  BRANCH_NAME (default: 'main')
       The name of the branch to clone.
 
 Options:
@@ -817,7 +817,7 @@ Options:
 ```bash
 local currBranch currBranch_remote currBranch_remoteURL upstreamURL
 
-# e.g. 'master'
+# e.g. 'main'
 if [[ ${_branch:-} ]]; then
    currBranch=$_branch
 else
@@ -905,14 +905,14 @@ fi
 ## <a name="-git-update-branch"></a>-git-update-branch
 
 ```
-Usage: -git-update-branch [OPTION]... [BRANCH] MASTER
+Usage: -git-update-branch [OPTION]... [BRANCH] MAIN
 
 Updates the given branch using 'git rebase -p' by default.
 
 Parameters:
   BRANCH
       Name of the branch to update.
-  MASTER (required)
+  MAIN (required)
       Name of the branch to get updates from.
 
 Options:
@@ -937,15 +937,15 @@ if [[ ! ${_BRANCH:-} ]]; then
    _BRANCH=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD) || return 1
 fi
 
-git checkout $_MASTER &&
+git checkout $_MAIN &&
 git pull &&
 git checkout $_BRANCH || return 1
 
-echo "Incorporating updates from '$_MASTER' into '$_BRANCH'..."
+echo "Incorporating updates from '$_MAIN' into '$_BRANCH'..."
 if [[ $_merge ]]; then
-   git merge $_MASTER || return 1
+   git merge $_MAIN || return 1
 else
-   git rebase -p $_MASTER || return 1
+   git rebase -p $_MAIN || return 1
 fi
 
 if [[ $_push ]]; then

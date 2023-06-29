@@ -508,7 +508,7 @@ fi
 
 # update via Git
 if [[ -e "${BASH_FUNK_ROOT}/.git" ]]; then
-   ( cd "${BASH_FUNK_ROOT}" && git config core.autocrlf false && git fetch && git reset origin/master --hard && git pull ) || return
+   ( cd "${BASH_FUNK_ROOT}" && git config core.autocrlf false && git fetch && git reset origin/main --hard && git pull ) || return
    [[ $_reload ]] && -reload || true
    return
 fi
@@ -524,7 +524,7 @@ else
       get="wget -qO-"
    fi
 fi
-( cd "${BASH_FUNK_ROOT}" && $get https://github.com/vegardit/bash-funk/tarball/master | tar -xzv --strip-components 1 ) || return
+( cd "${BASH_FUNK_ROOT}" && $get https://github.com/vegardit/bash-funk/tarball/main | tar -xzv --strip-components 1 ) || return
 [[ $_reload ]] && -reload || true
 return
 ```

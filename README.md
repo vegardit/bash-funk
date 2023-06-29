@@ -63,7 +63,7 @@ The command [-help](docs/misc.md#-help) shows a list of all available commands
 
 Execute:
 ```bash
-git clone https://github.com/vegardit/bash-funk --branch master --single-branch ~/bash-funk
+git clone https://github.com/vegardit/bash-funk --branch main --single-branch ~/bash-funk
 ```
 
 ### <a name="install-with-svn"></a>Using Subversion
@@ -79,7 +79,7 @@ Execute:
 ```bash
 mkdir ~/bash-funk && \
 cd ~/bash-funk && \
-curl -#L https://github.com/vegardit/bash-funk/tarball/master | tar -xzv --strip-components 1
+curl -#L https://github.com/vegardit/bash-funk/tarball/main | tar -xzv --strip-components 1
 ```
 
 ### <a name="install-with-wget"></a>Using wget
@@ -88,7 +88,7 @@ Execute:
 ```bash
 mkdir ~/bash-funk && \
 cd ~/bash-funk && \
-wget -qO- --show-progress https://github.com/vegardit/bash-funk/tarball/master | tar -xzv --strip-components 1
+wget -qO- --show-progress https://github.com/vegardit/bash-funk/tarball/main | tar -xzv --strip-components 1
 ```
 
 ### <a name="install-win-portable"></a>Portable on Windows
