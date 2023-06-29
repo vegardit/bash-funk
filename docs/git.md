@@ -127,7 +127,7 @@ Options:
 Examples:
 $  -git-change-contributor --author alice@example.com bob bob@example.com
 
-$  -git-change-contributor --author --comitter alice@example.com bob bob@example.com
+$  -git-change-contributor --author --committer alice@example.com bob bob@example.com
 ```
 
 *Implementation:*
@@ -136,7 +136,7 @@ if [[ $_pull ]]; then
    git pull || return 1
 fi
 
-if [[ ! $_author && ! $_comitter ]]; then
+if [[ ! $_author && ! $_committer ]]; then
    echo "-git-change-contributor: Error: The --author and/or --committer flag need to be specified."
    return 1
 fi
@@ -198,7 +198,7 @@ Options:
 Examples:
 $  -git-change-date --author fe65a726b8f07cbcedc1d4b76fbdbf53678a31cf "\$(date --date '27 days ago')"
 
-$  -git-change-date --author --comitter $(git log --format='%H' -n 1) "\$(date --date '15 hours ago')"
+$  -git-change-date --author --committer $(git log --format='%H' -n 1) "\$(date --date '15 hours ago')"
 ```
 
 *Implementation:*
@@ -207,7 +207,7 @@ if [[ $_pull ]]; then
    git pull || return 1
 fi
 
-if [[ ! $_author && ! $_comitter ]]; then
+if [[ ! $_author && ! $_committer ]]; then
    echo "-git-change-date: Error: The --author and/or --committer flag need to be specified."
    return 1
 fi

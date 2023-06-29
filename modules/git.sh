@@ -222,7 +222,7 @@ function __impl-git-change-contributor() {
             echo "Examples:"
             echo -e "$ \033[1m ${BASH_FUNK_PREFIX:--}git-change-contributor --author alice@example.com bob bob@example.com\033[22m"
             echo
-            echo -e "$ \033[1m ${BASH_FUNK_PREFIX:--}git-change-contributor --author --comitter alice@example.com bob bob@example.com\033[22m"
+            echo -e "$ \033[1m ${BASH_FUNK_PREFIX:--}git-change-contributor --author --committer alice@example.com bob bob@example.com\033[22m"
             echo
             echo
             return 0
@@ -317,7 +317,7 @@ if [[ $_pull ]]; then
    git pull || return 1
 fi
 
-if [[ ! $_author && ! $_comitter ]]; then
+if [[ ! $_author && ! $_committer ]]; then
    echo "$__fn: Error: The --author and/or --committer flag need to be specified."
    return 1
 fi
@@ -432,7 +432,7 @@ function __impl-git-change-date() {
             echo "Examples:"
             echo -e "$ \033[1m ${BASH_FUNK_PREFIX:--}git-change-date --author fe65a726b8f07cbcedc1d4b76fbdbf53678a31cf \"\$(date --date '27 days ago')\"\033[22m"
             echo
-            echo -e "$ \033[1m ${BASH_FUNK_PREFIX:--}git-change-date --author --comitter $(git log --format='%H' -n 1) \"\$(date --date '15 hours ago')\"\033[22m"
+            echo -e "$ \033[1m ${BASH_FUNK_PREFIX:--}git-change-date --author --committer $(git log --format='%H' -n 1) \"\$(date --date '15 hours ago')\"\033[22m"
             echo
             echo
             return 0
@@ -514,7 +514,7 @@ if [[ $_pull ]]; then
    git pull || return 1
 fi
 
-if [[ ! $_author && ! $_comitter ]]; then
+if [[ ! $_author && ! $_committer ]]; then
    echo "$__fn: Error: The --author and/or --committer flag need to be specified."
    return 1
 fi
