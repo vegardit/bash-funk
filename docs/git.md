@@ -153,9 +153,9 @@ local filter="
 "
 
 if [[ $_global ]]; then
-   git filter-branch --force --env-filter "$filter" --tag-name-filter cat -- --branches --tags
+   FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch --force --env-filter "$filter" --tag-name-filter cat -- --branches --tags
 else
-   git filter-branch --force --env-filter "$filter"
+   FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch --force --env-filter "$filter"
 fi
 if [[ $_push ]]; then
    git push
@@ -212,7 +212,7 @@ if [[ ! $_author && ! $_committer ]]; then
    return 1
 fi
 
-git filter-branch --force --env-filter "
+FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch --force --env-filter "
    if [ \$GIT_COMMIT = $_COMMIT_HASH ]; then
       if [ $_author ]; then
          export GIT_AUTHOR_DATE='$_NEW_DATE'
