@@ -184,11 +184,19 @@ EOL
       echo "You are ready to go. Enjoy"'!'
 
       # show information about detached screens
-      if hash screen &>/dev/null; then
-         __screens="$(screen -list | grep "etached)" | sort | sed -En "s/\s+(.*)\s+.*/  screen -r \1/p")"
-         if [[ $__screens ]]; then
+      if [[ -z $STY && -z $TMUX ]]; then
+         if hash screen &>/dev/null; then
+            __screens=$(screen -list | grep "etached)" | sort | sed -En "s/\s+(.*)\s+.*/  screen -r \1/p")
+         fi
+         if hash tmux &>/dev/null; then
+            # https://github.com/tmux/tmux/wiki/Formats#summary-of-modifiers
+            [[ -z $__screens ]] || __screens+="\n"
+            __screens+=$(tmux list-sessions -f "#{==:#{session_attached},0}" -F "  tmux attach-session -t #{session_name}" 2>/dev/null)
+         fi
+
+         if [[ -n $__screens ]]; then
             echo
-            echo "The following detached screens have been detected:"
+            echo "The following detached sessions have been detected:"
 
             if [[ $TERM == "cygwin" ]]; then
                echo -e "\033[1m\033[30m${__screens}\033[0m"

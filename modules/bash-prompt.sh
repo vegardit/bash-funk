@@ -12,9 +12,6 @@ else
    BASH_FUNK_DIRS_COLOR="${BASH_FUNK_DIRS_COLOR:-0;94}"
 fi
 
-if ! hash screen &>/dev/null; then
-   BASH_FUNK_PROMPT_NO_SCREENS=1
-fi
 if ! hash svn &>/dev/null; then
    BASH_FUNK_PROMPT_NO_SVN=1
 fi
@@ -154,16 +151,30 @@ function __-bash-prompt() {
    local p_screens
    if [[ ! ${BASH_FUNK_PROMPT_NO_SCREENS:-} ]]; then
       # determine number of attached and detached screens
-      p_screens=$(screen -ls 2>/dev/null | grep "tached)" | wc -l);
-      if [[ ${STY:-} ]]; then
-         # don't count the current screen session
-         (( p_screens-- ))
+      if hash screen &>/dev/null; then
+         p_screens=$(screen -ls 2>/dev/null | grep "tached)" | wc -l)
+         if [[ -n $STY ]]; then
+            # don't count the current screen session
+            (( p_screens-- ))
+         fi
+         case "$p_screens" in
+            0) p_screens= ;;
+            1) p_screens="| ${C_FG_LIGHT_YELLOW}1 screen${C_FG_BLACK} " ;;
+            *) p_screens="| ${C_FG_LIGHT_YELLOW}$p_screens screens${C_FG_BLACK} " ;;
+         esac
       fi
-      case "$p_screens" in
-         0) p_screens= ;;
-         1) p_screens="| ${C_FG_LIGHT_YELLOW}1 screen${C_FG_BLACK} " ;;
-         *) p_screens="| ${C_FG_LIGHT_YELLOW}$p_screens screens${C_FG_BLACK} " ;;
-      esac
+      if hash tmux &>/dev/null; then
+         p_tmux=$(tmux list-sessions 2>/dev/null | wc -l)
+         if [[ -n $TMUX ]]; then
+            # don't count the current screen session
+            (( p_tmux-- ))
+         fi
+         case "$p_tmux" in
+            0) p_tmux= ;;
+            1) p_tmux="| ${C_FG_LIGHT_YELLOW}1 tmux${C_FG_BLACK} " ;;
+            *) p_tmux="| ${C_FG_LIGHT_YELLOW}$p_tmux tmux${C_FG_BLACK} " ;;
+         esac
+      fi
    fi
 
 
@@ -171,6 +182,8 @@ function __-bash-prompt() {
    if [[ ! ${BASH_FUNK_PROMPT_NO_TTY:-} ]]; then
       if [[ ${STY:-} ]]; then
          p_tty="| tty #\l ${C_FG_LIGHT_YELLOW}(screen)${C_FG_BLACK} "
+      elif [[ ${TMUX:-} ]]; then
+         p_tty="| tty #\l ${C_FG_LIGHT_YELLOW}(tmux)${C_FG_BLACK} "
       else
          p_tty="| tty #\l "
       fi
@@ -330,7 +343,7 @@ function __-bash-prompt() {
       p_prefix="${C_RESET}${p_bg}"
    fi
 
-   local LINE1="${p_prefix}${p_lastRC}${p_user}${p_host}${p_date}${p_jobs}${p_screens}${p_tty}${p_kubectl}${p_scm}${C_RESET}"
+   local LINE1="${p_prefix}${p_lastRC}${p_user}${p_host}${p_date}${p_jobs}${p_screens}${p_tmux}${p_tty}${p_kubectl}${p_scm}${C_RESET}"
    local LINE2="[\033[${BASH_FUNK_DIRS_COLOR}m${pwd}${C_RESET}]"
    local LINE3="$ "
    PS1="\n$LINE1\n$LINE2\n$LINE3"
