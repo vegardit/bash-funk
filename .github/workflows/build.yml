@@ -1,4 +1,4 @@
-# https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
 name: Build
 
 on:
@@ -12,6 +12,9 @@ on:
     - '**/*.md'
     - '.github/*.yml'
   pull_request:
+    paths-ignore:
+    - '**/*.adoc'
+    - '**/*.md'
   workflow_dispatch:
     # https://github.blog/changelog/2020-07-06-github-actions-manual-triggers-with-workflow_dispatch/
 
@@ -28,10 +31,10 @@ jobs:
           experimental: false
         - os: ubuntu-20.04
           experimental: false
-        #- os: macos-12.0
+        #- os: macos-12.0  # not enough runners available
         #  experimental: false
         - os: macos-11.0
-          experimental: false
+          experimental: true
 
     steps:
     - name: Git Checkout
