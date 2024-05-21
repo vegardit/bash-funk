@@ -31,10 +31,10 @@ jobs:
           experimental: false
         - os: ubuntu-20.04
           experimental: false
-        #- os: macos-12.0  # not enough runners available
-        #  experimental: false
-        - os: macos-11.0
-          experimental: true
+        - os: macos-14 # ARM
+          experimental: false
+        - os: macos-12 # x86
+          experimental: false
 
     steps:
     - name: Git Checkout
