@@ -25,16 +25,13 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       fail-fast: false
-      matrix:
+      matrix:  # https://github.com/actions/runner-images#available-images
         include:
-        - os: ubuntu-22.04
-          experimental: false
-        - os: ubuntu-20.04
-          experimental: false
-        - os: macos-14 # ARM
-          experimental: false
-        - os: macos-12 # x86
-          experimental: false
+        - { os: ubuntu-24.04, experimental: false }
+        - { os: ubuntu-22.04, experimental: false }
+        - { os: ubuntu-20.04, experimental: false }
+        - { os: macos-14, experimental: false } # ARM
+        - { os: macos-13, experimental: false } # x86
 
     steps:
     - name: Git Checkout
