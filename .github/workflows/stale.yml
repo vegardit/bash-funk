@@ -1,0 +1,20 @@
+# https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
+name: Stale issues
+
+on:
+  schedule:
+    # https://docs.github.com/en/actions/reference/events-that-trigger-workflows
+    - cron: '0 15 1,15 * *'
+  workflow_dispatch:
+    # https://docs.github.com/en/actions/reference/events-that-trigger-workflows#workflow_dispatch
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run stale action
+        uses: sebthom/gha-shared/.github/actions/stale@v1
