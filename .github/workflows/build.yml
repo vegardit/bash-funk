@@ -3,10 +3,10 @@
 # SPDX-License-Identifier: Apache-2.0
 # SPDX-ArtifactOfProjectHomePage: https://github.com/vegardit/bash-funk
 #
-# https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
+# https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax
 name: Build
 
-on:  # https://docs.github.com/en/actions/reference/events-that-trigger-workflows
+on:  # https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows
   push:
     branches-ignore:  # build all branches except:
     - 'dependabot/**'  # prevent GHA triggered twice (once for commit to the branch and once for opening/syncing the PR)
@@ -21,7 +21,7 @@ on:  # https://docs.github.com/en/actions/reference/events-that-trigger-workflow
     - '**/*.adoc'
     - '**/*.md'
   workflow_dispatch:
-    # https://docs.github.com/en/actions/reference/events-that-trigger-workflows#workflow_dispatch
+    # https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#workflow_dispatch
 
 
 defaults:
@@ -40,13 +40,25 @@ jobs:
       fail-fast: false
       matrix:  # https://github.com/actions/runner-images#available-images
         include:
+        - { os: ubuntu-26.04, experimental: false }
+        - { os: ubuntu-26.04-arm, experimental: false }
         - { os: ubuntu-24.04, experimental: false }
+        - { os: ubuntu-24.04-arm, experimental: false }
         - { os: ubuntu-22.04, experimental: false }
-        - { os: macos-15, experimental: false } # ARM
-        - { os: macos-14, experimental: false } # ARM
-        - { os: macos-13, experimental: false } # x86
+        - { os: ubuntu-22.04-arm, experimental: false }
+        - { os: macos-26, experimental: false }  # ARM
+        - { os: macos-26-intel, experimental: false }
+        - { os: macos-15, experimental: false }  # ARM
+        - { os: macos-15-intel, experimental: false }
+        - { os: macos-14, experimental: false }  # ARM
 
     steps:
+    - name: Harden the runner (Audit all outbound calls)
+      uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+      with:
+        egress-policy: audit
+
+
     - name: "Show: GitHub context"
       env:
         GITHUB_CONTEXT: ${{ toJSON(github) }}
@@ -58,7 +70,8 @@ jobs:
 
 
     - name: Git Checkout
-      uses: actions/checkout@v7  # https://github.com/actions/checkout
+      # https://github.com/actions/checkout
+      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
 
     - name: "Show: Bash version"
