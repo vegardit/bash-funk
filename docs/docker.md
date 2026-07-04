@@ -8,27 +8,53 @@ The following statements are automatically executed when this module loads:
 
 ```bash
 function -docker-debug() {
+   local docker_debug_bin=~/.docker-debug/docker-debug.bin
+   local -a docker_debug_cmd_prefix=(sudo)
+   if [[ $OSTYPE == "msys"* || $OSTYPE == "cygwin"* || $OSTYPE == "mingw"* || $OSTYPE == "win32"* ]]; then
+      docker_debug_bin=~/.docker-debug/docker-debug.exe
+      docker_debug_cmd_prefix=()
+   fi
+
    if hash docker-debug &>/dev/null; then
-      sudo docker-debug "$@"
+      "${docker_debug_cmd_prefix[@]}" docker-debug "$@"
       return
    fi
 
-   if [[ ! -e ~/.docker-debug/docker-debug.bin ]]; then
+   if [[ ! -e $docker_debug_bin ]]; then
       echo "Installing the docker-debug tool (https://github.com/zeromake/docker-debug)..."
       mkdir -p ~/.docker-debug
+      local docker_debug_os docker_debug_arch docker_debug_ext
       if [[ $OSTYPE == "darwin"* ]]; then
-         curl -Lo ~/.docker-debug/docker-debug.bin https://github.com/zeromake/docker-debug/releases/download/0.6.3/docker-debug-darwin-amd64-upx
-         chmod 700 ~/.docker-debug/docker-debug.bin
+         docker_debug_os=darwin
       elif [[ $OSTYPE == "linux"* ]]; then
-         curl -Lo ~/.docker-debug/docker-debug.bin https://github.com/zeromake/docker-debug/releases/download/0.6.3/docker-debug-linux-amd64-upx
-         chmod 700 ~/.docker-debug/docker-debug.bin
+         docker_debug_os=linux
+      elif [[ $OSTYPE == "msys"* || $OSTYPE == "cygwin"* || $OSTYPE == "mingw"* || $OSTYPE == "win32"* ]]; then
+         docker_debug_os=windows
+         docker_debug_ext=.exe
       else
          echo "$OSTYPE is not supported!"
          return 1
       fi
+
+      docker_debug_arch=$( uname -m )
+      if [[ $docker_debug_arch == "x86_64" || $docker_debug_arch == "amd64" ]]; then
+         docker_debug_arch=amd64
+      elif [[ $docker_debug_arch == "arm64" || $docker_debug_arch == "aarch64" ]]; then
+         docker_debug_arch=arm64
+      else
+         echo "Architecture [$docker_debug_arch] is not supported!"
+         return 1
+      fi
+      if [[ $docker_debug_os == "windows" && $docker_debug_arch != "amd64" ]]; then
+         echo "Architecture [$docker_debug_arch] is not supported on Windows!"
+         return 1
+      fi
+
+      curl -fLo "$docker_debug_bin" "https://github.com/zeromake/docker-debug/releases/download/v0.7.11/docker-debug-${docker_debug_os}-${docker_debug_arch}${docker_debug_ext}" || return 1
+      chmod 700 "$docker_debug_bin" || return 1
    fi
 
-   sudo ~/.docker-debug/docker-debug.bin "$@"
+   "${docker_debug_cmd_prefix[@]}" "$docker_debug_bin" "$@"
 }
 
 function -docker-slim() {
